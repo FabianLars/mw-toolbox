@@ -14,7 +14,7 @@ some standalone scripts for automated tasks on http://de.leagueoflegends.wikia.c
   
   
 ## Upcoming:
-* Handling of Response Codes form Riot's API (imo not really needed at the moment when called once per week)
+* Handling of Response Codes from Riot's API (imo not really needed at the moment when called once per week)
 
 
 
