@@ -4,7 +4,7 @@
 
 // 1.) Get Current Champion Rotation from Riot's API
 
-$configs = json_decode(file_get_contents($_SERVER["DOCUMENT_ROOT"] . '/../httpdocs/configs.json'), true);
+$configs = (require $_SERVER["DOCUMENT_ROOT"] . '/../custom/config.php');
 $requestUrl = 'https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key='.$configs['riotapi']['productionKey'];
 
 $champList = json_decode(file_get_contents('champsById.json'), true);
