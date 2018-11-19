@@ -4,7 +4,8 @@ some standalone scripts for automated tasks on http://de.leagueoflegends.wikia.c
 ## Scripts
 * No. 1: api_rotation.php
   * Called weekly via CRON-Job to update the wiki's champion rotation template with the new rotation fetched from Riot's API.
-
+* No. 2: cdn_skinlink.php
+  * redirects to the 3D-Skinviewer on [teemo.gg](https://www.teemo.gg/model-viewer) via [communitydragon](https://communitydragon.org) files.
 
 
 ## Helper Files:
