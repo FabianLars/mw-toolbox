@@ -1,7 +1,7 @@
 <?php
 $decJson = json_decode(file_get_contents('https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json'), true);
 $skinId = '';
-$skin = str_replace('_', ' ', $_GET['skin']);
+$skin = str_replace('_', ' ', $_SERVER['QUERY_STRING']);
 
 foreach (array_values($decJson) as $value) {
     if ($value['name'] == $skin) {
