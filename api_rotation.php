@@ -50,6 +50,8 @@ $page_content = $server_output3[array_keys($server_output3)[0]]['revisions'][0][
 
 preg_match('/^(\|([A-Za-z\|\s]+))}}/m', $page_content, $matches);
 
+$page_content = str_replace($matches[1], '|' . implode('|', $rotation), $page_content);
+
 curl_setopt($ch, CURLOPT_URL, $wApiUrl.'?'.http_build_query(array('action' => 'query', 'format' => 'json', 'prop' => 'info', 'intoken' => 'edit', 'titles' => 'Vorlage:Aktuelle_Championrotation')));
 
 $editToken = json_decode(curl_exec($ch), true);
