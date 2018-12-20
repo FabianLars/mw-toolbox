@@ -17,8 +17,8 @@ function convert($champtoconvert)
 {
     $configs = [
         'wikia' => [
-            'botName' => 'FabianLars.bot',
-            'botPassword' => 'X12wZPT9V4cnLO',
+            'botName' => 'xxx',
+            'botPassword' => 'xxx',
         ],
     ];
     $champs = json_decode(file_get_contents('champsById.json'), true);
