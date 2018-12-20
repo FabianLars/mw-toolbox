@@ -48,7 +48,7 @@ $server_output3 = json_decode(curl_exec($ch), true)['query']['pages'];
 
 $page_content = $server_output3[array_keys($server_output3)[0]]['revisions'][0]['*'];
 
-preg_match('/^(\|([A-Za-z\|\s]+))}}/m', $page_content, $matches);
+preg_match('/^(\|([A-Za-z\' \|\s]+))}}/m', $page_content, $matches);
 
 $page_content = str_replace($matches[1], '|' . implode('|', $rotation), $page_content);
 
