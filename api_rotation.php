@@ -7,7 +7,7 @@
 $configs = require('./private/config.php');
 $requestUrl = 'https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key='.$configs['riotapi']['productionKey'];
 
-$champList = json_decode(file_get_contents('champsById.json'), true);
+$champList = json_decode(file_get_contents('./wikibot/champsById.json'), true);
 
 $rotationResult = file_get_contents($requestUrl, true);
 $rotationDecoded = json_decode($rotationResult, true);
