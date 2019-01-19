@@ -2,7 +2,7 @@
 
 // Batch Delete
 
-$configs = require($_SERVER["DOCUMENT_ROOT"] . '/../private/config.php');
+$configs = require('./private/config.php');
 $arrToDelete = file('todelete.txt', FILE_IGNORE_NEW_LINES);
 
 $wApiUrl = 'http://de.leagueoflegends.wikia.com/api.php';

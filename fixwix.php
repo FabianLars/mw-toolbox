@@ -15,12 +15,7 @@ function getStat(array $arr, string $stat, $fallback = -1)
 
 function convert($champtoconvert)
 {
-    $configs = [
-        'wikia' => [
-            'botName' => 'FabianLars.bot',
-            'botPassword' => 'X12wZPT9V4cnLO',
-        ],
-    ];
+    $configs = require('./private/config.php');
     $champs = json_decode(file_get_contents('champsById.json'), true);
     $_GET['pbe'] = false;
     $champsRito = json_decode(file_get_contents('champsByIdRito.json'), true);
