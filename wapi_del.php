@@ -5,7 +5,7 @@
 $configs = require('./private/config.php');
 $arrToDelete = file('todelete.txt', FILE_IGNORE_NEW_LINES);
 
-$wApiUrl = 'http://de.leagueoflegends.wikia.com/api.php';
+$wApiUrl = 'https://leagueoflegends.fandom.com/de/api.php';
 
 $ch = curl_init();
 

@@ -21,7 +21,7 @@ sort($rotation);
 
 // 2.) wikia bot account login; get current page content; regex replace the updated champs; save to wiki
 
-$wApiUrl = 'http://de.leagueoflegends.wikia.com/api.php';
+$wApiUrl = 'https://leagueoflegends.fandom.com/de/api.php';
 
 $ch = curl_init();
 

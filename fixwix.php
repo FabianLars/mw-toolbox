@@ -21,7 +21,7 @@ function convert($champtoconvert)
     $champsRito = json_decode(file_get_contents('champsByIdRito.json'), true);
     $binJson = json_decode(file_get_contents('http://raw.communitydragon.org/latest/game/data/characters/' . $champsRito[$champtoconvert] . '/' . $champsRito[$champtoconvert] . '.bin.json'), true);
 
-    $wApiUrl = 'http://de.leagueoflegends.wikia.com/api.php';
+    $wApiUrl = 'https://leagueoflegends.fandom.com/de/api.php';
 
     $ch2 = curl_init();
 

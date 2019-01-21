@@ -32,7 +32,7 @@ function convert($champtoconvert)
     $output = curl_exec($ch);
     curl_close($ch);
 
-    $wApiUrl = 'http://de.leagueoflegends.wikia.com/api.php';
+    $wApiUrl = 'https://leagueoflegends.fandom.com/de/api.php';
 
     $ch2 = curl_init();
 
