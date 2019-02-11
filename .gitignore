@@ -9,3 +9,4 @@ out
 gen
 .gitignore
 .idea/
+.private/
