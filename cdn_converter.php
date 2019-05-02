@@ -17,10 +17,9 @@ function convert($champtoconvert)
 {
     $configs = require('./private/config.php');
     $champs = json_decode(file_get_contents('champsById.json'), true);
-    $_GET['pbe'] = false;
     $champsRito = json_decode(file_get_contents('champsByIdRito.json'), true);
-    $pluginJson = $_GET['pbe'] == true ? json_decode(file_get_contents('https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/champions/' . $champtoconvert . '.json'), true) : json_decode(file_get_contents('https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/de_de/v1/champions/' . $champtoconvert . '.json'), true);
-    $binJson = json_decode(file_get_contents('http://raw.communitydragon.org/latest/game/data/characters/' . $champsRito[$champtoconvert] . '/' . $champsRito[$champtoconvert] . '.bin.json'), true);
+    $pluginJson = json_decode(file_get_contents('https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/champions/' . $champtoconvert . '.json'), true);
+    $binJson = json_decode(file_get_contents('http://raw.communitydragon.org/pbe/game/data/characters/' . $champsRito[$champtoconvert] . '/' . $champsRito[$champtoconvert] . '.bin.json'), true);
     $ddragon = json_decode(file_get_contents('https://ddragon.leagueoflegends.com/cdn/8.24.1/data/de_DE/champion/' . $pluginJson['alias'] . '.json'), true);
 
     $ch = curl_init();
@@ -258,8 +257,10 @@ function convert($champtoconvert)
     print_r($output);
 
 }
-
+/*
 foreach ($champs as $key => $val) {
     convert($key);
     sleep(5);
 }
+    */
+convert(350);
