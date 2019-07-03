@@ -4,8 +4,7 @@
 
 // 1.) Get Current Champion Rotation from Riot's API
 
-$configs = require('./private/config.php');
-$requestUrl = 'https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key='.$configs['riotapi']['productionKey'];
+$requestUrl = 'https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key='.getenv('RIOT_API_KEY');
 
 $champList = json_decode(file_get_contents('./wikibot/champsById.json'), true);
 
@@ -28,7 +27,7 @@ $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $wApiUrl);
 curl_setopt($ch, CURLOPT_COOKIEFILE, '');
 curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(array('action' => 'login', 'format' => 'json', 'lgname' => $configs['wikia']['botName'], 'lgpassword' => $configs['wikia']['botPassword'])));
+curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(array('action' => 'login', 'format' => 'json', 'lgname' => getenv('FANDOM_BOT_NAME'), 'lgpassword' => getenv('FANDOM_BOT_PASSWORD'))));
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
 $server_output = curl_exec($ch);
@@ -37,7 +36,7 @@ $json = json_decode($server_output);
 
 $token = (string) $json->login->token;
 
-curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(array('action' => 'login', 'format' => 'json', 'lgname' => $configs['wikia']['botName'], 'lgpassword' => $configs['wikia']['botPassword'], 'lgtoken' => $token)));
+curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(array('action' => 'login', 'format' => 'json', 'lgname' => getenv('FANDOM_BOT_NAME'), 'lgpassword' => getenv('FANDOM_BOT_PASSWORD'), 'lgtoken' => $token)));
 
 $server_output2 = curl_exec($ch);
 
