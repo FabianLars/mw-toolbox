@@ -2,21 +2,104 @@
 
 //  --- WEEKLY EXECUTION VIA CRON-TASK ---
 
+// 0.) heredoc-String of wiki-template
+function getWikiTemplate($rotations, $rotationNewPlayers) {
+    $datesFrom = [
+        date_format(date_sub(date_create(), date_interval_create_from_date_string('14 days')), 'j. F Y'),
+        date_format(date_sub(date_create(), date_interval_create_from_date_string('7 days')), 'j. F Y'),
+        date('j. F Y'),
+    ];
+
+    $datesTo = [
+        date_format(date_sub(date_create(), date_interval_create_from_date_string('7 days')), 'j. F Y'),
+        date('j. F Y'),
+        date_format(date_add(date_create(), date_interval_create_from_date_string('7 days')), 'j. F Y'),
+    ];
+
+    return <<<EOT
+<div style="text-align:center; font-size: 125%; font-weight:bold; margin: 2px 0 0;">[[Kostenlose Championrotation]]</div><div style="text-align:left; font-size: 80%; font-weight:bold; margin: 2px 0 0;">[[Vorlage:Aktuelle Championrotation|Bearbeiten]]</div>
+<tabber>Klassisch=
+{{#ifeq:{{FULLPAGENAME}}|Vorlage:Aktuelle Championrotation|{{#ifeq:{{#time:N|{{CURRENTTIMESTAMP}}}}|2|{{#ifexpr:{{#expr:{{#time:U|{{REVISIONTIMESTAMP}}}}+100000}}<{{#time:U|{{CURRENTTIMESTAMP}}}}|[[Kategorie:Datumskategorie Championrotation]]}}}}}}{{Aktuelle Championrotation/var
+|specialweek      = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|specialstartdate = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|specialenddate   = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|datefrom         = <!-- Nur für die ARAM-Rotation verwendet, sonst leer lassen! -->
+|dateto           = <!-- Nur für die ARAM-Rotation verwendet, sonst leer lassen! -->
+|lastchecked      = <!-- Nur für die Rotation neuer Accounts, sonst leer lassen! -->
+$rotations[0]}}
+
+
+|-|ARAM=
+<p style="text-align: center; margin: 0 15%;">''Alle Zufällig''-Spiele erlauben es Spielern, Champions aus den letzten beiden Championrotationen sowie aus der aktuellen zu rollen. Dopplungen erhohen hierbei nicht die Wahrscheinlichkeit, den Champion zu ziehen.</p>
+{{Aktuelle Championrotation/var
+|specialweek      = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|specialstartdate = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|specialenddate   = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|datefrom         = $datesFrom[0]
+|dateto           = $datesTo[0]
+|lastchecked      = <!-- Nur für die Rotation neuer Accounts, sonst leer lassen! -->
+$rotations[2]}}
+
+{{Aktuelle Championrotation/var
+|specialweek      = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|specialstartdate = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|specialenddate   = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|datefrom         = $datesFrom[1]
+|dateto           = $datesTo[1]
+|lastchecked      = <!-- Nur für die Rotation neuer Accounts, sonst leer lassen!-->
+$rotations[1]}}
+
+{{Aktuelle Championrotation/var
+|specialweek      = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|specialstartdate = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|specialenddate   = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|datefrom         = $datesFrom[2]
+|dateto           = $datesTo[2]
+|lastchecked      = <!-- Nur für die Rotation neuer Accounts, sonst leer lassen! -->
+$rotations[0]}}
+
+
+|-|Neue Accounts=
+<p style="text-align: center; margin: 0 15%;">Vor [[Erfahrung (Beschwörer)|Stufe 11]] haben Spieler Zugriff auf eine andere Championrotation. Diese wird seltener aktualisiert, deshalb könnte es sein, dass die folgende Liste nicht mehr korrekt ist.</p>
+{{Aktuelle Championrotation/var
+|specialweek      = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|specialstartdate = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|specialenddate   = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|datefrom         = <!-- Nur für die ARAM-Rotation verwendet, sonst leer lassen! -->
+|dateto           = <!-- Nur für die ARAM-Rotation verwendet, sonst leer lassen! -->
+|lastchecked      = $datesFrom[2]
+$rotationNewPlayers}}
+</tabber><noinclude>{{Dokumentation}}<noinclude>
+EOT;
+}
+
+
 // 1.) Get Current Champion Rotation from Riot's API
 
-$requestUrl = 'https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key='.getenv('RIOT_API_KEY');
+$requestUrl = 'https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key=RGAPI-6ef58387-eb6b-4d66-b05e-7c1457326ab2';
 
-$champList = json_decode(file_get_contents('./wikibot/champsById.json'), true);
+$champList = json_decode(file_get_contents('../wikibot/champsById.json'), true);
 
 $rotationResult = file_get_contents($requestUrl, true);
 $rotationDecoded = json_decode($rotationResult, true);
 $rotation = $rotationDecoded['freeChampionIds'];
+$newPlayers = $rotationDecoded['freeChampionIdsForNewPlayers'];
 
 foreach ($rotation as $key => $value) {
     $rotation[$key] = $champList[$value];
 }
 
+foreach ($newPlayers as $key => $value) {
+    $newPlayers[$key] = $champList[$value];
+}
+
 sort($rotation);
+sort($newPlayers);
+
+$rotation_arr = unserialize(file_get_contents("rotation.txt"));
+array_unshift($rotation_arr, '|'. implode('|', $rotation));
+array_pop($rotation_arr);
+file_put_contents("rotation.txt", serialize($rotation_arr));
 
 // 2.) wikia bot account login; get current page content; regex replace the updated champs; save to wiki
 
@@ -41,21 +124,15 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(array('action' => 'login',
 $server_output2 = curl_exec($ch);
 
 curl_setopt($ch, CURLOPT_HTTPGET, 1);
-curl_setopt($ch, CURLOPT_URL, $wApiUrl.'?'.http_build_query(array('action' => 'query', 'format' => 'json', 'prop' => 'revisions', 'rvprop' => 'content', 'titles' => 'Vorlage:Aktuelle_Championrotation')));
-
-$server_output3 = json_decode(curl_exec($ch), true)['query']['pages'];
-
-$page_content = $server_output3[array_keys($server_output3)[0]]['revisions'][0]['*'];
-
-preg_match('/^(\|([A-Za-z\'&\. \|\s]+))}}/m', $page_content, $matches);
-
-$page_content = str_replace($matches[1], '|' . implode('|', $rotation), $page_content);
-
 curl_setopt($ch, CURLOPT_URL, $wApiUrl.'?'.http_build_query(array('action' => 'query', 'format' => 'json', 'prop' => 'info', 'intoken' => 'edit', 'titles' => 'Vorlage:Aktuelle_Championrotation')));
 
 $editToken = json_decode(curl_exec($ch), true);
 
 $editToken = reset($editToken['query']['pages'])['edittoken'];
+
+$page_content = getWikiTemplate($rotation_arr, '|' . implode('|', $newPlayers));
+
+print_r($page_content);
 
 curl_setopt($ch, CURLOPT_URL, $wApiUrl);
 curl_setopt($ch, CURLOPT_POST, 1);
