@@ -132,8 +132,6 @@ $editToken = reset($editToken['query']['pages'])['edittoken'];
 
 $page_content = getWikiTemplate($rotation_arr, '|' . implode('|', $newPlayers));
 
-print_r($page_content);
-
 curl_setopt($ch, CURLOPT_URL, $wApiUrl);
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(array('action' => 'edit', 'format' => 'json', 'summary' => 'automated process', 'bot' => 1, 'title' => 'Vorlage:Aktuelle_Championrotation', 'text' => $page_content, 'token' => $editToken)));
