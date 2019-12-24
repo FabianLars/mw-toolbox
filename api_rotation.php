@@ -76,9 +76,9 @@ EOT;
 
 // 1.) Get Current Champion Rotation from Riot's API
 
-$requestUrl = 'https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key=RGAPI-6ef58387-eb6b-4d66-b05e-7c1457326ab2';
+$requestUrl = 'https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key='.getenv('RIOT_API_KEY');
 
-$champList = json_decode(file_get_contents('../wikibot/champsById.json'), true);
+$champList = json_decode(file_get_contents('/home/fabianlars/wikibot/champsById.json'), true);
 
 $rotationResult = file_get_contents($requestUrl, true);
 $rotationDecoded = json_decode($rotationResult, true);
@@ -96,10 +96,10 @@ foreach ($newPlayers as $key => $value) {
 sort($rotation);
 sort($newPlayers);
 
-$rotation_arr = unserialize(file_get_contents("rotation.txt"));
+$rotation_arr = unserialize(file_get_contents("/home/fabianlars/wikibot/rotation.txt"));
 array_unshift($rotation_arr, '|'. implode('|', $rotation));
 array_pop($rotation_arr);
-file_put_contents("rotation.txt", serialize($rotation_arr));
+file_put_contents("/home/fabianlars/wikibot/rotation.txt", serialize($rotation_arr));
 
 // 2.) wikia bot account login; get current page content; regex replace the updated champs; save to wiki
 
