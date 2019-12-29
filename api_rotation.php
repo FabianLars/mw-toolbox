@@ -1,6 +1,7 @@
 <?php
 
 //  --- WEEKLY EXECUTION VIA CRON-TASK ---
+setlocale(LC_TIME, 'de_DE');
 
 // 0.) heredoc-String of wiki-template
 function getWikiTemplate($rotations, $rotationNewPlayers) {
