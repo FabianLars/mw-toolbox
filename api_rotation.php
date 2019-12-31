@@ -1,20 +1,21 @@
 <?php
 
 //  --- WEEKLY EXECUTION VIA CRON-TASK ---
-setlocale(LC_TIME, 'de_DE');
+setlocale(LC_TIME, array('de_DE.UTF-8','de_DE@euro','de_DE','german'));
 
 // 0.) heredoc-String of wiki-template
 function getWikiTemplate($rotations, $rotationNewPlayers) {
+    $df = "%e. %B %Y";
     $datesFrom = [
-        date_format(date_sub(date_create(), date_interval_create_from_date_string('14 days')), 'j. F Y'),
-        date_format(date_sub(date_create(), date_interval_create_from_date_string('7 days')), 'j. F Y'),
-        date('j. F Y'),
+        strftime($df,strftime(date_timestamp_get(date_sub(date_create(), date_interval_create_from_date_string('14 days'))))),
+        strftime($df,date_timestamp_get(date_sub(date_create(), date_interval_create_from_date_string('7 days')))),
+        strftime($df),
     ];
 
     $datesTo = [
-        date_format(date_sub(date_create(), date_interval_create_from_date_string('7 days')), 'j. F Y'),
-        date('j. F Y'),
-        date_format(date_add(date_create(), date_interval_create_from_date_string('7 days')), 'j. F Y'),
+        strftime($df,date_timestamp_get(date_sub(date_create(), date_interval_create_from_date_string('7 days')))),
+        strftime("%e. %B %Y"),
+        strftime($df,date_timestamp_get(date_add(date_create(), date_interval_create_from_date_string('7 days')))),
     ];
 
     return <<<EOT
@@ -73,6 +74,7 @@ $rotationNewPlayers}}
 </tabber><noinclude>{{Dokumentation}}<noinclude>
 EOT;
 }
+
 
 
 // 1.) Get Current Champion Rotation from Riot's API
