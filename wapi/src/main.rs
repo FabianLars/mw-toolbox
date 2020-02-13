@@ -53,11 +53,8 @@ pub struct Skin {
     pub name: String,
 }
 
-// https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/champion-summary.json
-
 #[tokio::main]
 async fn main() {
-    // GET /hello/warp => 200 OK with body "Hello, warp!"
     let link = warp::path!("wapi" / "skinlink" / String / String)
         .map(|champ: String, skin: String| {
             let champ = percent_encoding::percent_decode(champ.as_bytes()).decode_utf8().unwrap().replace("_", " ");
