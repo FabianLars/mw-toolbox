@@ -1377,6 +1377,7 @@ dependencies = [
 name = "wapi"
 version = "0.1.0"
 dependencies = [
+ "percent-encoding",
  "reqwest",
  "serde",
  "serde_json",
