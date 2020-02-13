@@ -61,7 +61,7 @@ async fn main() {
     let link = warp::path!("wapi" / "skinlink" / String / String)
         .map(|champ: String, skin: String| {
             let champ = percent_encoding::percent_decode(champ.as_bytes()).decode_utf8().unwrap().replace("_", " ");
-            let skin = percent_encoding::percent_decode(skin.as_bytes()).decode_utf8().unwrap().replace("_", " ");
+            let skin = percent_encoding::percent_decode(skin.as_bytes()).decode_utf8().unwrap().replace("_", " ").replace("~", "/");
             let (c, s) = get_skin(champ, skin);
             warp::redirect(format!("https://www.teemo.gg/model-viewer?skinid={}-{}&model-type=champions", c, s).parse::<Uri>().unwrap())
         });
