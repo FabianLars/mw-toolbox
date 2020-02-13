@@ -36,7 +36,6 @@ pub struct SummaryEntry {
     pub roles: Vec<String>,
 }
 
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Champ {
     pub name: String,
