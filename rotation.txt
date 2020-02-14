@@ -1,1 +1,0 @@
-a:3:{i:0;s:93:"|Ashe|Corki|Garen|Jax|Karma|Morgana|Nasus|Rammus|Rek'Sai|Sylas|Tryndamere|Vi|Xayah|Yorick|Zed";i:1;s:99:"|Diana|Fizz|Galio|Gragas|Jhin|Lucian|Malphite|Nami|Neeko|Nocturne|Sejuani|Singed|Taric|Teemo|Wukong";i:2;s:113:"|Caitlyn|Kalista|Kled|Lux|Nautilus|Nunu & Willump|Orianna|Rengar|Rumble|Senna|Talon|Trundle|Veigar|Vel'Koz|Viktor";}
