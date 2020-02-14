@@ -65,7 +65,10 @@ async fn main() {
     let update_champfile = warp::path!("wapi" / "update" / "champs" )
         .and_then(update_champs);
 
-    warp::serve(link.or(update_champfile))
+    let get_champfile = warp::path!("wapi" / "champs")
+        .and(warp::fs::file("./champions.json"));
+
+    warp::serve(link.or(update_champfile).or(get_champfile))
         .run(([127, 0, 0, 1], 3030))
         .await;
 }
