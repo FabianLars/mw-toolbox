@@ -9,17 +9,21 @@ enum Cli {
         #[structopt(parse(from_os_str))]
         path: std::path::PathBuf
     },
-    Rotation
+    Rotation,
+    List {
+        list_type: String,
+        #[structopt(parse(from_os_str))]
+        destination: std::path::PathBuf
+    }
 }
 
 fn main() {
     let args = Cli::from_args();
-    //let content = std::fs::read_to_string(&args.delete.path)
-    //    .expect("could not read file");
 
     match args {
-        Cli::Delete { path } => commands::delete::delete_pages(std::fs::read_to_string(&path).expect("could not read file")),
+        Cli::Delete { path } => commands::delete::delete_pages(std::fs::read_to_string(&path).expect("could not read file path")),
         Cli::Rotation => commands::rotation::update_rotation(),
+        Cli::List { list_type, destination } => commands::list::distributor(list_type, destination),
     }
 
 }

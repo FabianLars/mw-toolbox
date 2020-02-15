@@ -42,14 +42,14 @@ pub fn update_rotation() {
     let res = client.get("https://fabianlars.de/wapi/champs").send().expect("Can't get champions json file").text().expect("Can't get body from champions json file request");
     let champions: HashMap<i32, Champ> = serde_json::from_str(&res).expect("Can't convert response to json");
 
-    let res = client.get(riot_api_url).send().expect("Can't get rotations").text().expect("Can't get body from rotations request");
+    let res = client.get(&riot_api_url).send().expect("Can't get rotations").text().expect("Can't get body from rotations request");
     let rotations: Rotations = serde_json::from_str(&res).expect("Can't convert response to json");
 
     let mut rotation: Vec<String> = rotations.free_champion_ids.iter().map(|x| champions[x].name.clone()).collect();
     let mut new_players: Vec<String> = rotations.free_champion_ids_for_new_players.iter().map(|x| champions[x].name.clone()).collect();
     rotation.sort();
     new_players.sort();
-    let mut new_players: String = new_players.iter().map(|x| "|".to_owned() + x).collect();
+    let new_players: String = new_players.iter().map(|x| "|".to_owned() + x).collect();
 
     let mut history: Vec<String> = serde_json::from_reader(&std::fs::File::open("history.json").expect("Can't read history.json")).expect("Can't read history.json");
     history.pop();
@@ -119,7 +119,7 @@ pub fn update_rotation() {
     "#, history[0], dates[0], dates[1], history[2], dates[1], dates[2], history[1], dates[2], dates[3], history[0], dates[2], new_players);
 
     client.post(wiki_api_url)
-        .form(&[("action", "edit"), ("reason", "automated action"), ("bot", 1), ("title", "Vorlage:Aktuelle_Championrotation"), ("text", template), ("token", &edit_token)])
+        .form(&[("action", "edit"), ("reason", "automated action"), ("bot", "1"), ("title", "Vorlage:Aktuelle_Championrotation"), ("text", &template), ("token", &edit_token)])
         .send().expect("Can't edit Vorlage:Aktuelle_Championrotation");
 }
 
