@@ -1,10 +1,3 @@
-.idea
-*.iml
-out
-gen
-.gitignore
-.idea/
-.private/
 target/
 champions.json
 history.json
