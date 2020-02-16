@@ -1,6 +1,6 @@
 # wtools
 some tools to interact with http://leagueoflegends.fandom.com/de/wiki/  
-more or less connected to [wapi](https://github.com/FabianLars/wapi)
+more or less connected to [wapi](https://github.com/FabianLars/wapi)  
 client-side usage  
 run via "cargo run [toolname] ([arg])" (or build it and run as wtools)  
 these commands need FANDOM_BOT_NAME and FANDOM_BOT_PASSWORD environment variables as of now  
