@@ -1,20 +1,56 @@
+use futures::{future::TryFutureExt, try_join};
 use serde::{Deserialize, Serialize};
+use serde_json::{Result, Value};
 use std::collections::HashMap;
+use std::fs::File;
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Champ {
-    name: String,
-    codename: String,
-    alias: String,
-    id: i32,
-    skins: Vec<Skin>,
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ChampSrc {
+    pub id: i32,
+    pub is_base: bool,
+    pub name: String,
+    pub splash_path: String,
+    pub uncentered_splash_path: String,
+    pub tile_path: String,
+    pub load_screen_path: String,
+    pub skin_type: String,
+    pub rarity: String,
+    pub is_legacy: bool,
+    pub splash_video_path: Value,
+    pub features_text: Value,
+    pub chroma_path: Value,
+    pub emblems: Value,
+    pub region_rarity_id: i64,
+    pub rarity_gem_path: Value,
+    pub skin_lines: Value,
+    pub description: Value,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Skin {
-    id: i32,
-    id_long: i32,
-    name: String,
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SummaryEntry {
+    pub id: i32,
+    pub name: String,
+    pub alias: String,
+    pub square_portrait_path: String,
+    pub roles: Vec<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Champ {
+    pub name: String,
+    pub codename: String,
+    pub alias: String,
+    pub id: i32,
+    pub skins: Vec<Skin>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Skin {
+    pub id: i32,
+    pub id_long: i32,
+    pub name: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -25,7 +61,63 @@ struct Rotations {
     max_new_player_level: i32,
 }
 
-pub fn update_rotation() {
+pub async fn champs() -> Result<()> {
+    let client = reqwest::Client::new();
+
+    let fut1 = async {
+        let response = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/champion-summary.json").send().await?.json::<Vec<SummaryEntry>>().await?;
+        Ok::<Vec<SummaryEntry>, reqwest::Error>(response)
+    }.map_err(|_e| "Can't get or convert champion-summary.json".to_string());
+    let fut2 = async {
+        let response = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").send().await?.json::<HashMap<String, ChampSrc>>().await?;
+        Ok::<HashMap<String, ChampSrc>, reqwest::Error>(response)
+    }.map_err(|_e| "Can't get or convert skins.json".to_string());
+
+    let (summary, skins) = try_join!(fut1, fut2).unwrap();
+
+    let mut champions = HashMap::new();
+
+    for c in summary.iter() {
+        if c.id == -1 {
+            continue;
+        };
+        let temp = Champ {
+            name: c.name.clone(),
+            codename: c.alias.to_lowercase(),
+            alias: c.alias.clone(),
+            id: c.id,
+            skins: Vec::new(),
+        };
+        champions.insert(temp.id, temp);
+    }
+
+    for (s, c) in skins.iter() {
+        let skinpart: Vec<char> = s.chars().rev().take(3).collect();
+        let skinid = format!("{}{}{}", skinpart[2], skinpart[1], skinpart[0])
+            .parse::<i32>()
+            .unwrap();
+        let champpart: Vec<char> = s.chars().take(c.id.to_string().len() - 3).collect();
+        let champstring: String = champpart.into_iter().collect();
+        let champid: i32 = champstring.parse::<i32>().unwrap();
+
+        let temp = Skin {
+            id: skinid,
+            id_long: s.parse().unwrap(),
+            name: c.name.clone(),
+        };
+
+        champions.get_mut(&champid).unwrap().skins.push(temp);
+    }
+
+    ::serde_json::to_writer(
+        &File::create("champions.json").expect("Can't create champions.json file"),
+        &champions,
+    )?;
+
+    Ok(())
+}
+
+pub async fn rotation() -> Result<()> {
     let riot_api_url = "https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key="
         .to_owned()
         + &std::env::var("RIOT_API_KEY").unwrap();
@@ -49,18 +141,20 @@ pub fn update_rotation() {
                 .to_string(),
         ),
     ];
-    let client = reqwest::blocking::Client::builder()
+    let client = reqwest::Client::builder()
         .cookie_store(true)
         .build()
         .unwrap();
 
-    crate::helpers::wiki::wiki_login(&client);
+    crate::helpers::wiki::wiki_login(&client).await;
 
     let res = client
         .get("https://fabianlars.de/wapi/champs")
         .send()
+        .await
         .expect("Can't get champions json file")
         .text()
+        .await
         .expect("Can't get body from champions json file request");
     let champions: HashMap<i32, Champ> =
         serde_json::from_str(&res).expect("Can't convert response to json");
@@ -68,8 +162,10 @@ pub fn update_rotation() {
     let res = client
         .get(&riot_api_url)
         .send()
+        .await
         .expect("Can't get rotations")
         .text()
+        .await
         .expect("Can't get body from rotations request");
     let rotations: Rotations = serde_json::from_str(&res).expect("Can't convert response to json");
 
@@ -115,8 +211,10 @@ pub fn update_rotation() {
             .unwrap(),
         )
         .send()
+        .await
         .expect("Can't get edit token")
         .text()
+        .await
         .expect("Can't get edit token from response body");
     let json: serde_json::Value = serde_json::from_str(&res).unwrap();
     let (_i, o) = json["query"]["pages"]
@@ -208,7 +306,10 @@ pub fn update_rotation() {
             ("token", &edit_token),
         ])
         .send()
+        .await
         .expect("Can't edit Vorlage:Aktuelle_Championrotation");
+
+    Ok(())
 }
 
 fn rename_m(d: String) -> String {

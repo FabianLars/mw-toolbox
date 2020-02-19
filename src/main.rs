@@ -9,25 +9,39 @@ enum Cli {
         #[structopt(parse(from_os_str))]
         path: std::path::PathBuf,
     },
-    Rotation,
     List {
         list_type: String,
         #[structopt(parse(from_os_str))]
         destination: std::path::PathBuf,
     },
+    Update {
+        update_type: String,
+    },
 }
 
-fn main() {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Cli::from_args();
 
     match args {
-        Cli::Delete { path } => commands::delete::delete_pages(
-            std::fs::read_to_string(&path).expect("could not read file path"),
-        ),
-        Cli::Rotation => commands::rotation::update_rotation(),
+        Cli::Delete { path } => {
+            commands::delete::delete_pages(
+                std::fs::read_to_string(&path).expect("could not read file path"),
+            )
+            .await?
+        }
         Cli::List {
             list_type,
             destination,
-        } => commands::list::distributor(list_type, destination),
+        } => match list_type.as_str() {
+            "images" => commands::list::images(destination).await?,
+            _ => panic!("Invalid list_type"),
+        },
+        Cli::Update { update_type } => match update_type.as_str() {
+            "rotation" | "rotations" => commands::update::rotation().await?,
+            "champs" | "champions" => commands::update::champs().await?,
+            _ => panic!("Invalid update_type"),
+        },
     }
+    Ok(())
 }
