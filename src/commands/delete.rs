@@ -1,10 +1,7 @@
-use serde_json::{Result, Value};
+use serde_json::Value;
 
-pub async fn delete_pages(content: String) -> Result<()> {
-    let client = reqwest::Client::builder()
-        .cookie_store(true)
-        .build()
-        .unwrap();
+pub async fn delete_pages(content: String) -> Result<(), Box<dyn std::error::Error>> {
+    let client = reqwest::Client::builder().cookie_store(true).build()?;
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
     let mut pages = "".to_owned();
@@ -14,7 +11,7 @@ pub async fn delete_pages(content: String) -> Result<()> {
     }
     pages.pop();
 
-    crate::helpers::wiki::wiki_login(&client).await;
+    crate::helpers::wiki::wiki_login(&client).await?;
 
     let res = client
         .post(wiki_api_url)
@@ -26,13 +23,11 @@ pub async fn delete_pages(content: String) -> Result<()> {
             ("titles", &pages),
         ])
         .send()
-        .await
-        .expect("Can't get delete token")
+        .await?
         .text()
-        .await
-        .expect("Can't get delete token from response body");
+        .await?;
 
-    let json: Value = serde_json::from_str(&res).unwrap();
+    let json: Value = serde_json::from_str(&res)?;
     let (_i, o) = json["query"]["pages"]
         .as_object()
         .unwrap()

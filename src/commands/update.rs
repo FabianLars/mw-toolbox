@@ -1,6 +1,6 @@
 use futures::{future::TryFutureExt, try_join};
 use serde::{Deserialize, Serialize};
-use serde_json::{Result, Value};
+use serde_json::Value;
 use std::collections::HashMap;
 use std::fs::File;
 
@@ -61,7 +61,7 @@ struct Rotations {
     max_new_player_level: i32,
 }
 
-pub async fn champs() -> Result<()> {
+pub async fn champs() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
 
     let fut1 = async {
@@ -73,7 +73,7 @@ pub async fn champs() -> Result<()> {
         Ok::<HashMap<String, ChampSrc>, reqwest::Error>(response)
     }.map_err(|_e| "Can't get or convert skins.json".to_string());
 
-    let (summary, skins) = try_join!(fut1, fut2).unwrap();
+    let (summary, skins) = try_join!(fut1, fut2)?;
 
     let mut champions = HashMap::new();
 
@@ -93,34 +93,29 @@ pub async fn champs() -> Result<()> {
 
     for (s, c) in skins.iter() {
         let skinpart: Vec<char> = s.chars().rev().take(3).collect();
-        let skinid = format!("{}{}{}", skinpart[2], skinpart[1], skinpart[0])
-            .parse::<i32>()
-            .unwrap();
+        let skinid = format!("{}{}{}", skinpart[2], skinpart[1], skinpart[0]).parse::<i32>()?;
         let champpart: Vec<char> = s.chars().take(c.id.to_string().len() - 3).collect();
         let champstring: String = champpart.into_iter().collect();
-        let champid: i32 = champstring.parse::<i32>().unwrap();
+        let champid: i32 = champstring.parse::<i32>()?;
 
         let temp = Skin {
             id: skinid,
-            id_long: s.parse().unwrap(),
+            id_long: s.parse()?,
             name: c.name.clone(),
         };
 
         champions.get_mut(&champid).unwrap().skins.push(temp);
     }
 
-    ::serde_json::to_writer(
-        &File::create("champions.json").expect("Can't create champions.json file"),
-        &champions,
-    )?;
+    ::serde_json::to_writer(&File::create("champions.json")?, &champions)?;
 
     Ok(())
 }
 
-pub async fn rotation() -> Result<()> {
+pub async fn rotation() -> Result<(), Box<dyn std::error::Error>> {
     let riot_api_url = "https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key="
         .to_owned()
-        + &std::env::var("RIOT_API_KEY").unwrap();
+        + &std::env::var("RIOT_API_KEY")?;
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
     let curr_date = chrono::Utc::today();
     let dates = [
@@ -141,33 +136,19 @@ pub async fn rotation() -> Result<()> {
                 .to_string(),
         ),
     ];
-    let client = reqwest::Client::builder()
-        .cookie_store(true)
-        .build()
-        .unwrap();
+    let client = reqwest::Client::builder().cookie_store(true).build()?;
 
-    crate::helpers::wiki::wiki_login(&client).await;
+    crate::helpers::wiki::wiki_login(&client).await?;
 
-    let res = client
+    let champions: HashMap<i32, Champ> = client
         .get("https://fabianlars.de/wapi/champs")
         .send()
-        .await
-        .expect("Can't get champions json file")
-        .text()
-        .await
-        .expect("Can't get body from champions json file request");
-    let champions: HashMap<i32, Champ> =
-        serde_json::from_str(&res).expect("Can't convert response to json");
+        .await?
+        .json()
+        .await?;
 
-    let res = client
-        .get(&riot_api_url)
-        .send()
-        .await
-        .expect("Can't get rotations")
-        .text()
-        .await
-        .expect("Can't get body from rotations request");
-    let rotations: Rotations = serde_json::from_str(&res).expect("Can't convert response to json");
+    let res = client.get(&riot_api_url).send().await?.text().await?;
+    let rotations: Rotations = serde_json::from_str(&res)?;
 
     let mut rotation: Vec<String> = rotations
         .free_champion_ids
@@ -183,40 +164,28 @@ pub async fn rotation() -> Result<()> {
     new_players.sort();
     let new_players: String = new_players.iter().map(|x| "|".to_owned() + x).collect();
 
-    let mut history: Vec<String> = serde_json::from_reader(
-        &std::fs::File::open("history.json").expect("Can't read history.json"),
-    )
-    .expect("Can't read history.json");
+    let mut history: Vec<String> = serde_json::from_reader(&std::fs::File::open("history.json")?)?;
     history.pop();
     history.insert(0, rotation.iter().map(|x| "|".to_owned() + x).collect());
 
-    serde_json::to_writer(
-        &std::fs::File::create("history.json").expect("Can't write history.json"),
-        &history,
-    )
-    .expect("Can't write history.json");
+    serde_json::to_writer(&std::fs::File::create("history.json")?, &history)?;
 
     let res = client
-        .get(
-            reqwest::Url::parse_with_params(
-                wiki_api_url,
-                &[
-                    ("action", "query"),
-                    ("format", "json"),
-                    ("prop", "info"),
-                    ("intoken", "edit"),
-                    ("titles", "Vorlage:Aktuelle_Championrotation"),
-                ],
-            )
-            .unwrap(),
-        )
+        .get(reqwest::Url::parse_with_params(
+            wiki_api_url,
+            &[
+                ("action", "query"),
+                ("format", "json"),
+                ("prop", "info"),
+                ("intoken", "edit"),
+                ("titles", "Vorlage:Aktuelle_Championrotation"),
+            ],
+        )?)
         .send()
-        .await
-        .expect("Can't get edit token")
+        .await?
         .text()
-        .await
-        .expect("Can't get edit token from response body");
-    let json: serde_json::Value = serde_json::from_str(&res).unwrap();
+        .await?;
+    let json: serde_json::Value = serde_json::from_str(&res)?;
     let (_i, o) = json["query"]["pages"]
         .as_object()
         .unwrap()
@@ -306,8 +275,7 @@ pub async fn rotation() -> Result<()> {
             ("token", &edit_token),
         ])
         .send()
-        .await
-        .expect("Can't edit Vorlage:Aktuelle_Championrotation");
+        .await?;
 
     Ok(())
 }

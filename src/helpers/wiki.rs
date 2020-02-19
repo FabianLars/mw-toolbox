@@ -1,8 +1,8 @@
 use serde_json::Value;
 
-pub async fn wiki_login(client: &reqwest::Client) {
-    let botname = std::env::var("FANDOM_BOT_NAME").unwrap();
-    let botpw = std::env::var("FANDOM_BOT_PASSWORD").unwrap();
+pub async fn wiki_login(client: &reqwest::Client) -> Result<(), Box<dyn std::error::Error>> {
+    let botname = std::env::var("FANDOM_BOT_NAME")?;
+    let botpw = std::env::var("FANDOM_BOT_PASSWORD")?;
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
     let res = client
@@ -14,13 +14,11 @@ pub async fn wiki_login(client: &reqwest::Client) {
             ("lgpassword", &botpw),
         ])
         .send()
-        .await
-        .expect("Can't get login token")
+        .await?
         .text()
-        .await
-        .expect("Can't get login token from response body");
+        .await?;
 
-    let json: Value = serde_json::from_str(&res).unwrap();
+    let json: Value = serde_json::from_str(&res)?;
     let token: String = String::from(json["login"]["token"].as_str().unwrap());
 
     client
@@ -33,6 +31,7 @@ pub async fn wiki_login(client: &reqwest::Client) {
             ("lgtoken", &token),
         ])
         .send()
-        .await
-        .expect("Can't login with token");
+        .await?;
+
+    Ok(())
 }

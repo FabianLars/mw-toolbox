@@ -25,10 +25,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match args {
         Cli::Delete { path } => {
-            commands::delete::delete_pages(
-                std::fs::read_to_string(&path).expect("could not read file path"),
-            )
-            .await?
+            commands::delete::delete_pages(std::fs::read_to_string(&path)?).await?
         }
         Cli::List {
             list_type,
