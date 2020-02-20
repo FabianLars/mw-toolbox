@@ -1,12 +1,16 @@
 # wtools
 some tools to interact with http://leagueoflegends.fandom.com/de/wiki/  
 more or less connected to [wapi](https://github.com/FabianLars/wapi)  
-client-side usage  
-run via "cargo run [toolname] ([arg])" (or build it and run as wtools)  
-these commands need FANDOM_BOT_NAME and FANDOM_BOT_PASSWORD environment variables as of now  
-uses limited editing rate of ~1 edit per second according to fandoms rules
-* eg. "cargo run delete ../todelete.txt"
-  * deletes every page listed in specified file (separation via newline)
+uses limited editing rate of ~1 edit per second according to fandoms rules  
+Interaction with Riot's API only via CLI (Only "update rotation" for now)  
+As of now your Fandom Account requires the bot flag for some commands  
+* start GUI:
+  * double click exe or run cargo run or wtools in terminal
+* CLI usage:
+  * run via "[cargo run|wtools] <command> (<arg if needed>)" (or build it and run as wtools)  
+    * these commands need FANDOM_BOT_NAME, FANDOM_BOT_PASSWORD and/or RIOT_API_KEY (depends on command) environment variables as of now  
+    * example: "cargo run delete ../todelete.txt"
+      * deletes every page listed in specified file (separation via newline)
   
   
   
