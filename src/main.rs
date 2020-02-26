@@ -1,7 +1,7 @@
 use structopt::StructOpt;
 
 mod commands;
-#[cfg(feature = "gui-iced")]
+#[cfg(any(feature = "gui-iced", feature = "gui-azul"))]
 mod gui;
 mod helpers;
 
@@ -22,7 +22,7 @@ enum Subcommands {
     Test,
 }
 
-#[cfg(feature = "gui-iced")]
+#[cfg(any(feature = "gui-iced", feature = "gui-azul"))]
 #[derive(StructOpt, Debug)]
 struct Cli {
     #[structopt(subcommand)]
@@ -31,11 +31,14 @@ struct Cli {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    #[cfg(feature = "gui-iced")]
+    #[cfg(any(feature = "gui-iced", feature = "gui-azul"))]
     let args = Cli::from_args();
-    #[cfg(feature = "gui-iced")]
+    #[cfg(any(feature = "gui-iced", feature = "gui-azul"))]
     match args.subcommands {
-        None => gui::start(),
+        #[cfg(feature = "gui-iced")]
+        None => gui::iced::start(),
+        #[cfg(feature = "gui-azul")]
+        None => gui::azul::start(),
         Some(x) => match x {
             Subcommands::Delete { path } => {
                 commands::delete::delete_pages(std::fs::read_to_string(&path)?).await?
@@ -57,9 +60,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         },
     }
 
-    #[cfg(not(feature = "gui-iced"))]
+    #[cfg(not(any(feature = "gui-iced", feature = "gui-azul")))]
     let args = Subcommands::from_args();
-    #[cfg(not(feature = "gui-iced"))]
+    #[cfg(not(any(feature = "gui-iced", feature = "gui-azul")))]
     match args {
         Subcommands::Delete { path } => {
             commands::delete::delete_pages(std::fs::read_to_string(&path)?).await?

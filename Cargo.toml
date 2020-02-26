@@ -6,6 +6,7 @@ edition = "2018"
 
 [features]
 gui-iced = ["iced", "directories"]
+gui-azul = []
 riot-api = []
 
 [dependencies]
@@ -18,3 +19,4 @@ chrono = "0.4"
 futures = "0.3"
 iced = { git = "https://github.com/FabianLars/iced.git", branch = "master", features = ["tokio"], optional = true }
 directories = { version = "2.0", optional = true }
+#azul = { git = "https://github.com/maps4print/azul", branch = "unvendor_dependencies_2", optional = true }
