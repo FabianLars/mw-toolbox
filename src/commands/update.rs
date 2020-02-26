@@ -53,6 +53,7 @@ pub struct Skin {
     pub name: String,
 }
 
+#[cfg(feature = "riot-api")]
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 struct Rotations {
@@ -112,6 +113,7 @@ pub async fn champs() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+#[cfg(feature = "riot-api")]
 pub async fn rotation() -> Result<(), Box<dyn std::error::Error>> {
     let riot_api_url = "https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key="
         .to_owned()

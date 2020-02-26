@@ -48,6 +48,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 _ => panic!("Invalid list_type"),
             },
             Subcommands::Update { update_type } => match update_type.as_str() {
+                #[cfg(feature = "riot-api")]
                 "rotation" | "rotations" => commands::update::rotation().await?,
                 "champs" | "champions" => commands::update::champs().await?,
                 _ => panic!("Invalid update_type"),
@@ -71,6 +72,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             _ => panic!("Invalid list_type"),
         },
         Subcommands::Update { update_type } => match update_type.as_str() {
+            #[cfg(feature = "riot-api")]
             "rotation" | "rotations" => commands::update::rotation().await?,
             "champs" | "champions" => commands::update::champs().await?,
             _ => panic!("Invalid update_type"),
