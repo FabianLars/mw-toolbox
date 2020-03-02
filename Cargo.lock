@@ -1013,7 +1013,7 @@ dependencies = [
 [[package]]
 name = "iced"
 version = "0.1.0-beta"
-source = "git+https://github.com/FabianLars/iced.git#1ad83889be32b1bdb746e751aa620fad85b864b0"
+source = "git+https://github.com/FabianLars/iced.git#767096b9bbe091f6fed2a3ff31a4c6cc1131ecea"
 dependencies = [
  "iced_futures",
  "iced_web",
@@ -1024,12 +1024,12 @@ dependencies = [
 [[package]]
 name = "iced_core"
 version = "0.1.0"
-source = "git+https://github.com/FabianLars/iced.git#1ad83889be32b1bdb746e751aa620fad85b864b0"
+source = "git+https://github.com/FabianLars/iced.git#767096b9bbe091f6fed2a3ff31a4c6cc1131ecea"
 
 [[package]]
 name = "iced_futures"
 version = "0.1.0-alpha"
-source = "git+https://github.com/FabianLars/iced.git#1ad83889be32b1bdb746e751aa620fad85b864b0"
+source = "git+https://github.com/FabianLars/iced.git#767096b9bbe091f6fed2a3ff31a4c6cc1131ecea"
 dependencies = [
  "futures 0.3.4",
  "log",
@@ -1040,7 +1040,7 @@ dependencies = [
 [[package]]
 name = "iced_native"
 version = "0.1.0"
-source = "git+https://github.com/FabianLars/iced.git#1ad83889be32b1bdb746e751aa620fad85b864b0"
+source = "git+https://github.com/FabianLars/iced.git#767096b9bbe091f6fed2a3ff31a4c6cc1131ecea"
 dependencies = [
  "iced_core",
  "iced_futures",
@@ -1052,7 +1052,7 @@ dependencies = [
 [[package]]
 name = "iced_style"
 version = "0.1.0-alpha"
-source = "git+https://github.com/FabianLars/iced.git#1ad83889be32b1bdb746e751aa620fad85b864b0"
+source = "git+https://github.com/FabianLars/iced.git#767096b9bbe091f6fed2a3ff31a4c6cc1131ecea"
 dependencies = [
  "iced_core",
 ]
@@ -1060,7 +1060,7 @@ dependencies = [
 [[package]]
 name = "iced_web"
 version = "0.1.0"
-source = "git+https://github.com/FabianLars/iced.git#1ad83889be32b1bdb746e751aa620fad85b864b0"
+source = "git+https://github.com/FabianLars/iced.git#767096b9bbe091f6fed2a3ff31a4c6cc1131ecea"
 dependencies = [
  "dodrio",
  "iced_core",
@@ -1075,7 +1075,7 @@ dependencies = [
 [[package]]
 name = "iced_wgpu"
 version = "0.1.0"
-source = "git+https://github.com/FabianLars/iced.git#1ad83889be32b1bdb746e751aa620fad85b864b0"
+source = "git+https://github.com/FabianLars/iced.git#767096b9bbe091f6fed2a3ff31a4c6cc1131ecea"
 dependencies = [
  "font-kit",
  "glam",
@@ -1091,7 +1091,7 @@ dependencies = [
 [[package]]
 name = "iced_winit"
 version = "0.1.0-alpha"
-source = "git+https://github.com/FabianLars/iced.git#1ad83889be32b1bdb746e751aa620fad85b864b0"
+source = "git+https://github.com/FabianLars/iced.git#767096b9bbe091f6fed2a3ff31a4c6cc1131ecea"
 dependencies = [
  "iced_native",
  "log",
