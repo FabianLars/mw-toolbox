@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-pub async fn delete_pages(content: String) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn delete_pages(content: String, loginname: String, loginpassword: String) -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
@@ -11,7 +11,7 @@ pub async fn delete_pages(content: String) -> Result<(), Box<dyn std::error::Err
     }
     pages.pop();
 
-    crate::helpers::wiki::wiki_login(&client).await?;
+    crate::helpers::wiki::wiki_login(&client, loginname, loginpassword).await?;
 
     let res = client
         .post(wiki_api_url)

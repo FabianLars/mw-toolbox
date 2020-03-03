@@ -114,7 +114,7 @@ pub async fn champs() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[cfg(feature = "riot-api")]
-pub async fn rotation() -> Result<(), Box<dyn std::error::Error>> {
+pub async fn rotation(loginname: String, loginpassword: String) -> Result<(), Box<dyn std::error::Error>> {
     let riot_api_url = "https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key="
         .to_owned()
         + &std::env::var("RIOT_API_KEY")?;
@@ -140,7 +140,7 @@ pub async fn rotation() -> Result<(), Box<dyn std::error::Error>> {
     ];
     let client = reqwest::Client::builder().cookie_store(true).build()?;
 
-    crate::helpers::wiki::wiki_login(&client).await?;
+    crate::helpers::wiki::wiki_login(&client, loginname, loginpassword).await?;
 
     let champions: HashMap<i32, Champ> = client
         .get("https://fabianlars.de/wapi/champs")

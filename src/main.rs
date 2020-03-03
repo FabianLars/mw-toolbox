@@ -9,17 +9,28 @@ mod helpers;
 enum Subcommands {
     Delete {
         #[structopt(parse(from_os_str))]
-        path: std::path::PathBuf,
+        input: std::path::PathBuf,
+        #[structopt(short = "n", long, env = "FANDOM_BOT_NAME")]
+        loginname: String,
+        #[structopt(short = "p", long, env = "FANDOM_BOT_PASSWORD")]
+        loginpassword: String,
     },
     List {
         list_type: String,
         #[structopt(parse(from_os_str))]
-        destination: std::path::PathBuf,
+        output: std::path::PathBuf,
+        #[structopt(short = "n", long, env = "FANDOM_BOT_NAME")]
+        loginname: String,
+        #[structopt(short = "p", long, env = "FANDOM_BOT_PASSWORD")]
+        loginpassword: String,
     },
     Update {
         update_type: String,
+        #[structopt(short = "n", long, env = "FANDOM_BOT_NAME")]
+        loginname: String,
+        #[structopt(short = "p", long, env = "FANDOM_BOT_PASSWORD")]
+        loginpassword: String,
     },
-    Test,
 }
 
 #[cfg(any(feature = "gui-iced", feature = "gui-azul"))]
@@ -40,23 +51,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         #[cfg(feature = "gui-azul")]
         None => gui::azul::start(),
         Some(x) => match x {
-            Subcommands::Delete { path } => {
-                commands::delete::delete_pages(std::fs::read_to_string(&path)?).await?
+            Subcommands::Delete { input, loginname, loginpassword } => {
+                commands::delete::delete_pages(std::fs::read_to_string(&input)?, loginname, loginpassword).await?
             }
             Subcommands::List {
                 list_type,
-                destination,
+                output,
+                loginname,
+                loginpassword,
+
             } => match list_type.as_str() {
-                "images" => commands::list::images(destination).await?,
+                "images" => commands::list::images(output, loginname, loginpassword).await?,
                 _ => panic!("Invalid list_type"),
             },
-            Subcommands::Update { update_type } => match update_type.as_str() {
+            Subcommands::Update { update_type, loginname, loginpassword } => match update_type.as_str() {
                 #[cfg(feature = "riot-api")]
-                "rotation" | "rotations" => commands::update::rotation().await?,
+                "rotation" | "rotations" => commands::update::rotation(loginname, loginpassword).await?,
                 "champs" | "champions" => commands::update::champs().await?,
                 _ => panic!("Invalid update_type"),
             },
-            Subcommands::Test {} => commands::test::test().await?,
         },
     }
 
@@ -64,23 +77,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Subcommands::from_args();
     #[cfg(not(any(feature = "gui-iced", feature = "gui-azul")))]
     match args {
-        Subcommands::Delete { path } => {
-            commands::delete::delete_pages(std::fs::read_to_string(&path)?).await?
+        Subcommands::Delete { input, loginname, loginpassword } => {
+            commands::delete::delete_pages(std::fs::read_to_string(&input)?, loginname, loginpassword).await?
         }
         Subcommands::List {
             list_type,
-            destination,
+            output,
+            loginname,
+            loginpassword
         } => match list_type.as_str() {
-            "images" => commands::list::images(destination).await?,
+            "images" => commands::list::images(output, loginname, loginpassword).await?,
             _ => panic!("Invalid list_type"),
         },
-        Subcommands::Update { update_type } => match update_type.as_str() {
+        Subcommands::Update { update_type, loginname, loginpassword } => match update_type.as_str() {
             #[cfg(feature = "riot-api")]
-            "rotation" | "rotations" => commands::update::rotation().await?,
+            "rotation" | "rotations" => commands::update::rotation(loginname, loginpassword).await?,
             "champs" | "champions" => commands::update::champs().await?,
             _ => panic!("Invalid update_type"),
         },
-        Subcommands::Test {} => commands::test::test().await?,
     }
 
     Ok(())

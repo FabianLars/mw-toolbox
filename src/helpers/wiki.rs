@@ -1,8 +1,6 @@
 use serde_json::Value;
 
-pub async fn wiki_login(client: &reqwest::Client) -> Result<(), Box<dyn std::error::Error>> {
-    let botname = std::env::var("FANDOM_BOT_NAME")?;
-    let botpw = std::env::var("FANDOM_BOT_PASSWORD")?;
+pub async fn wiki_login(client: &reqwest::Client, botname: String, botpw: String) -> Result<(), Box<dyn std::error::Error>> {
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
     let res = client

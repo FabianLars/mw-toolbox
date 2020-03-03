@@ -5,6 +5,7 @@ authors = ["FabianLars"]
 edition = "2018"
 
 [features]
+default = ["gui-iced"]
 gui-iced = ["iced", "directories"]
 gui-azul = []
 riot-api = []

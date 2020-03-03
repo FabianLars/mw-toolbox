@@ -173,7 +173,8 @@ impl Application for App {
                                 Message::LoginPasswordChanged,
                             )
                             .padding(10)
-                            .size(30),
+                            .size(30)
+                            .password(),
                         ),
                 )
                 .push(ChosenCommand::ALL.iter().cloned().fold(
