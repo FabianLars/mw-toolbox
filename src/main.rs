@@ -1,101 +1,197 @@
-use structopt::StructOpt;
-
 mod commands;
-#[cfg(any(feature = "gui-iced", feature = "gui-azul"))]
 mod gui;
 mod helpers;
 
+use structopt::{ StructOpt, clap::arg_enum };
+
 #[derive(StructOpt, Debug)]
-enum Subcommands {
+enum Subcommand {
     Delete {
         #[structopt(parse(from_os_str))]
         input: std::path::PathBuf,
-        #[structopt(short = "n", long, env = "FANDOM_BOT_NAME")]
-        loginname: String,
-        #[structopt(short = "p", long, env = "FANDOM_BOT_PASSWORD")]
-        loginpassword: String,
     },
     List {
-        list_type: String,
+        #[structopt(subcommand)]
+        list_type: ListType,
+
         #[structopt(parse(from_os_str))]
-        output: std::path::PathBuf,
-        #[structopt(short = "n", long, env = "FANDOM_BOT_NAME")]
-        loginname: String,
-        #[structopt(short = "p", long, env = "FANDOM_BOT_PASSWORD")]
-        loginpassword: String,
+        output: Option<std::path::PathBuf>,
     },
     Update {
-        update_type: String,
-        #[structopt(short = "n", long, env = "FANDOM_BOT_NAME")]
-        loginname: String,
-        #[structopt(short = "p", long, env = "FANDOM_BOT_PASSWORD")]
-        loginpassword: String,
+        #[structopt(subcommand)]
+        update_type: UpdateType,
+
+        #[structopt(parse(from_os_str))]
+        output: Option<std::path::PathBuf>,
     },
 }
 
-#[cfg(any(feature = "gui-iced", feature = "gui-azul"))]
+arg_enum!{
+    #[derive(Debug)]
+    enum Format {
+        Json,
+        Newline,
+    }
+}
+
+#[derive(StructOpt, Debug)]
+enum UpdateType {
+    #[cfg(feature = "riot-api")]
+    Rotation,
+    #[cfg(feature = "riot-api")]
+    Rotations,
+
+    Champs,
+    Champions,
+}
+
+#[derive(StructOpt, Debug)]
+enum ListType {
+    Allimages,
+    Allpages,
+    Alllinks,
+    Allcategories,
+    Backlinks,
+    Categorymembers,
+    Embeddedin,
+    Imageusage,
+    Iwbacklinks,
+    Langbacklinks,
+    Search,
+    Exturlusage,
+    Protectedtitles,
+    Querypage,
+    Wkpoppages,
+    Unconvertedinfoboxes,
+    Allinfoboxes,
+}
+
 #[derive(StructOpt, Debug)]
 struct Cli {
     #[structopt(subcommand)]
-    subcommands: Option<Subcommands>,
+    command: Option<Subcommand>,
+
+    #[structopt(short, long, case_insensitive = true, possible_values = &Format::variants(), default_value = "newline", about = "Format to use for input and/or output (json or newline seperation). Newline is default.")]
+    format: Format,
+
+    #[structopt(short = "n", long, env = "FANDOM_BOT_NAME")]
+    loginname: String,
+    #[structopt(short = "p", long, env = "FANDOM_BOT_PASSWORD")]
+    loginpassword: String,
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    #[cfg(any(feature = "gui-iced", feature = "gui-azul"))]
-    let args = Cli::from_args();
-    #[cfg(any(feature = "gui-iced", feature = "gui-azul"))]
-    match args.subcommands {
-        #[cfg(feature = "gui-iced")]
+    match Cli::from_args().command {
         None => gui::iced::start(),
-        #[cfg(feature = "gui-azul")]
-        None => gui::azul::start(),
         Some(x) => match x {
-            Subcommands::Delete { input, loginname, loginpassword } => {
-                commands::delete::delete_pages(std::fs::read_to_string(&input)?, loginname, loginpassword).await?
-            }
-            Subcommands::List {
-                list_type,
-                output,
-                loginname,
-                loginpassword,
-
-            } => match list_type.as_str() {
-                "images" => commands::list::images(output, loginname, loginpassword).await?,
-                _ => panic!("Invalid list_type"),
+            Subcommand::Delete { .. } => commands::delete::delete_pages(DeleteProps::new(Cli::from_args())).await?,
+            Subcommand::List { list_type, .. } => match list_type {
+                ListType::Allimages => commands::list::allimages(ListProps::new(Cli::from_args())).await?,
+                _ => panic!("invalid list type")
             },
-            Subcommands::Update { update_type, loginname, loginpassword } => match update_type.as_str() {
+            Subcommand::Update { update_type, .. } => match update_type {
+                UpdateType::Champs | UpdateType::Champions => commands::update::champs(UpdateProps::new(Cli::from_args())).await?,
                 #[cfg(feature = "riot-api")]
-                "rotation" | "rotations" => commands::update::rotation(loginname, loginpassword).await?,
-                "champs" | "champions" => commands::update::champs().await?,
-                _ => panic!("Invalid update_type"),
+                UpdateType::Rotation | UpdateType::Rotations => commands::update::rotation(UpdateProps::new(Cli::from_args())).await?,
             },
-        },
-    }
-
-    #[cfg(not(any(feature = "gui-iced", feature = "gui-azul")))]
-    let args = Subcommands::from_args();
-    #[cfg(not(any(feature = "gui-iced", feature = "gui-azul")))]
-    match args {
-        Subcommands::Delete { input, loginname, loginpassword } => {
-            commands::delete::delete_pages(std::fs::read_to_string(&input)?, loginname, loginpassword).await?
         }
-        Subcommands::List {
-            list_type,
-            output,
-            loginname,
-            loginpassword
-        } => match list_type.as_str() {
-            "images" => commands::list::images(output, loginname, loginpassword).await?,
-            _ => panic!("Invalid list_type"),
-        },
-        Subcommands::Update { update_type, loginname, loginpassword } => match update_type.as_str() {
-            #[cfg(feature = "riot-api")]
-            "rotation" | "rotations" => commands::update::rotation(loginname, loginpassword).await?,
-            "champs" | "champions" => commands::update::champs().await?,
-            _ => panic!("Invalid update_type"),
-        },
     }
-
     Ok(())
+}
+
+pub struct DeleteProps {
+    input: String,
+    format: Format,
+    loginname: String,
+    loginpassword: String,
+}
+
+impl DeleteProps {
+    fn new(args: Cli) -> Self {
+        let input: String = match args.command.unwrap() {
+            Subcommand::Delete { input } => std::fs::read_to_string(input).unwrap(),
+            _ => panic!("weird error")
+        };
+
+        let format = match args.format {
+            Format::Json => Format::Json,
+            _ => Format::Newline,
+        };
+
+        return Self {
+            input,
+            format,
+            loginname: args.loginname,
+            loginpassword: args.loginpassword,
+        }
+    }
+}
+
+pub struct ListProps {
+    output: std::path::PathBuf,
+    format: Format,
+    loginname: String,
+    loginpassword: String,
+}
+
+impl ListProps {
+    fn new(args: Cli) -> Self {
+        let format = match args.format {
+            Format::Json => Format::Json,
+             _ => Format::Newline,
+        };
+
+        let output = match args.command.unwrap() {
+            Subcommand::List { output, .. } => match output {
+                Some(x) => x,
+                None => match format {
+                    Format::Json => std::path::PathBuf::from("./wtools_output.json"),
+                    _ => std::path::PathBuf::from("./wtools_output.txt"),
+                }
+            },
+            _ => panic!("weird error")
+        };
+
+        return Self {
+            output,
+            format,
+            loginname: args.loginname,
+            loginpassword: args.loginpassword,
+        }
+    }
+}
+
+pub struct UpdateProps {
+    output: std::path::PathBuf,
+    format: Format,
+    loginname: String,
+    loginpassword: String,
+}
+
+impl UpdateProps {
+    fn new(args: Cli) -> Self {
+        let format = match args.format {
+            Format::Json => Format::Json,
+            _ => Format::Newline,
+        };
+
+        let output = match args.command.unwrap() {
+            Subcommand::Update { output, .. } => match output {
+                Some(x) => x,
+                None => match format {
+                    Format::Json => std::path::PathBuf::from("./wtools_output.json"),
+                    _ => std::path::PathBuf::from("./wtools_output.txt"),
+                }
+            },
+            _ => panic!("weird error")
+        };
+
+        return Self {
+            output,
+            format,
+            loginname: args.loginname,
+            loginpassword: args.loginpassword,
+        }
+    }
 }

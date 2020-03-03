@@ -62,7 +62,7 @@ struct Rotations {
     max_new_player_level: i32,
 }
 
-pub async fn champs() -> Result<(), Box<dyn std::error::Error>> {
+pub async fn champs(props: super::super::UpdateProps) -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
 
     let fut1 = async {
@@ -114,7 +114,7 @@ pub async fn champs() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[cfg(feature = "riot-api")]
-pub async fn rotation(loginname: String, loginpassword: String) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn rotation(props: super::super::UpdateProps) -> Result<(), Box<dyn std::error::Error>> {
     let riot_api_url = "https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key="
         .to_owned()
         + &std::env::var("RIOT_API_KEY")?;

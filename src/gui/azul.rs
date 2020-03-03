@@ -1,4 +1,4 @@
-use azul::{
+/* use azul::{
     prelude::*,
     widgets::{button::Button, label::Label},
 };
@@ -34,4 +34,4 @@ pub fn start() {
         .create_window(WindowCreateOptions::default(), css::native())
         .unwrap();
     app.run(window).unwrap();
-}
+} */
