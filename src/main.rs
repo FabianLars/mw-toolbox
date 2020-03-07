@@ -92,6 +92,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             Subcommand::Delete { .. } => commands::delete::delete_pages(DeleteProps::new(Cli::from_args())).await?,
             Subcommand::List { list_type, .. } => match list_type {
                 ListType::Allimages => commands::list::allimages(ListProps::new(Cli::from_args())).await?,
+                ListType::Allpages => commands::list::allpages(ListProps::new(Cli::from_args())).await?,
                 _ => panic!("invalid list type")
             },
             Subcommand::Move { .. } => commands::massmove::move_pages(MoveProps::new(Cli::from_args())).await?,
