@@ -17,6 +17,10 @@ enum Subcommand {
         #[structopt(parse(from_os_str))]
         output: Option<std::path::PathBuf>,
     },
+    Move {
+        #[structopt(parse(from_os_str))]
+        input: std::path::PathBuf,
+    },
     Update {
         #[structopt(subcommand)]
         update_type: UpdateType,
@@ -90,6 +94,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 ListType::Allimages => commands::list::allimages(ListProps::new(Cli::from_args())).await?,
                 _ => panic!("invalid list type")
             },
+            Subcommand::Move { .. } => commands::massmove::move_pages(MoveProps::new(Cli::from_args())).await?,
             Subcommand::Update { update_type, .. } => match update_type {
                 UpdateType::Champs | UpdateType::Champions => commands::update::champs(UpdateProps::new(Cli::from_args())).await?,
                 #[cfg(feature = "riot-api")]
@@ -155,6 +160,34 @@ impl ListProps {
 
         return Self {
             output,
+            format,
+            loginname: args.loginname,
+            loginpassword: args.loginpassword,
+        }
+    }
+}
+
+pub struct MoveProps {
+    input: String,
+    format: Format,
+    loginname: String,
+    loginpassword: String,
+}
+
+impl MoveProps {
+    fn new(args: Cli) -> Self {
+        let format = match args.format {
+            Format::Json => Format::Json,
+            _ => Format::Newline,
+        };
+
+        let input: String = match args.command.unwrap() {
+            Subcommand::Move { input } => std::fs::read_to_string(input).unwrap(),
+            _ => panic!("weird error")
+        };
+
+        return Self {
+            input,
             format,
             loginname: args.loginname,
             loginpassword: args.loginpassword,
