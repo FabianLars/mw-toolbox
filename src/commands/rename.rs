@@ -38,8 +38,9 @@ pub async fn move_pages(props: super::super::MoveProps) -> Result<(), Box<dyn st
 
     for line in props.input.lines() {
         // Needs to be edited before use
-        let dest = line.replace("Vorlage:Data ", "Vorlage:Rune data/");
-        let dest = dest.replace(" (Rune)", "");
+        //let dest = line.replace("Vorlage:Data ", "Vorlage:Rune data/");
+        //let dest = dest.replace(" (Rune)", "");
+        let dest = line.replace(" (Rune)", "");
 
         println!("{:?}xxx{:?}", line, dest);
 
