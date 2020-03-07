@@ -93,9 +93,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             Subcommand::List { list_type, .. } => match list_type {
                 ListType::Allimages => commands::list::allimages(ListProps::new(Cli::from_args())).await?,
                 ListType::Allpages => commands::list::allpages(ListProps::new(Cli::from_args())).await?,
-                _ => panic!("invalid list type")
+                ListType::Alllinks => commands::list::alllinks(ListProps::new(Cli::from_args())).await?,
+                ListType::Allcategories => commands::list::allcategories(ListProps::new(Cli::from_args())).await?,
+                ListType::Backlinks => commands::list::backlinks(ListProps::new(Cli::from_args())).await?,
+                ListType::Categorymembers => commands::list::categorymembers(ListProps::new(Cli::from_args())).await?,
+                ListType::Embeddedin => commands::list::embeddedin(ListProps::new(Cli::from_args())).await?,
+                ListType::Imageusage => commands::list::imageusage(ListProps::new(Cli::from_args())).await?,
+                ListType::Iwbacklinks => commands::list::iwbacklinks(ListProps::new(Cli::from_args())).await?,
+                ListType::Langbacklinks => commands::list::langbacklinks(ListProps::new(Cli::from_args())).await?,
+                ListType::Search => commands::list::search(ListProps::new(Cli::from_args())).await?,
+                ListType::Exturlusage => commands::list::exturlusage(ListProps::new(Cli::from_args())).await?,
+                ListType::Protectedtitles => commands::list::protectedtitles(ListProps::new(Cli::from_args())).await?,
+                ListType::Querypage => commands::list::querypage(ListProps::new(Cli::from_args())).await?,
+                ListType::Wkpoppages => commands::list::wkpoppages(ListProps::new(Cli::from_args())).await?,
+                ListType::Unconvertedinfoboxes => commands::list::unconvertedinfoboxes(ListProps::new(Cli::from_args())).await?,
+                ListType::Allinfoboxes => commands::list::allinfoboxes(ListProps::new(Cli::from_args())).await?,
             },
-            Subcommand::Move { .. } => commands::massmove::move_pages(MoveProps::new(Cli::from_args())).await?,
+            Subcommand::Move { .. } => commands::rename::move_pages(MoveProps::new(Cli::from_args())).await?,
             Subcommand::Update { update_type, .. } => match update_type {
                 UpdateType::Champs | UpdateType::Champions => commands::update::champs(UpdateProps::new(Cli::from_args())).await?,
                 #[cfg(feature = "riot-api")]
