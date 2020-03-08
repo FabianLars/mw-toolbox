@@ -14,7 +14,9 @@ enum Subcommand {
         #[structopt(subcommand)]
         list_type: ListType,
 
-        #[structopt(parse(from_os_str))]
+        parameter: Option<String>,
+
+        #[structopt(short, long, parse(from_os_str))]
         output: Option<std::path::PathBuf>,
     },
     Move {
@@ -25,7 +27,7 @@ enum Subcommand {
         #[structopt(subcommand)]
         update_type: UpdateType,
 
-        #[structopt(parse(from_os_str))]
+        #[structopt(short, long, parse(from_os_str))]
         output: Option<std::path::PathBuf>,
     },
 }
@@ -151,6 +153,7 @@ impl DeleteProps {
 pub struct ListProps {
     output: std::path::PathBuf,
     format: Format,
+    parameter: String,
     loginname: String,
     loginpassword: String,
 }
@@ -162,20 +165,31 @@ impl ListProps {
              _ => Format::Newline,
         };
 
-        let output = match args.command.unwrap() {
-            Subcommand::List { output, .. } => match output {
+        let out: std::path::PathBuf;
+        let param: String;
+
+        match args.command.unwrap() {
+            Subcommand::List { output, parameter, .. } => {
+            out = match output {
                 Some(x) => x,
                 None => match format {
                     Format::Json => std::path::PathBuf::from("./wtools_output.json"),
                     _ => std::path::PathBuf::from("./wtools_output.txt"),
                 }
-            },
+            };
+
+            param = match parameter {
+                Some(x) => x,
+                None => "".to_string(),
+            };
+        },
             _ => panic!("weird error")
-        };
+        }
 
         return Self {
-            output,
+            output: out,
             format,
+            parameter: param,
             loginname: args.loginname,
             loginpassword: args.loginpassword,
         }

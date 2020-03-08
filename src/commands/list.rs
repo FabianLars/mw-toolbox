@@ -20,44 +20,51 @@ pub async fn allcategories(props: super::super::ListProps) -> Result<(), Box<dyn
     Ok(())
 }
 
-pub async fn backlinks(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    panic!("Not supported as of know");
+pub async fn backlinks(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
+    if props.parameter == "" { panic!("missing bltitle: Title to search"); }
+    props.parameter = format!("&btitle={}", props.parameter);
     get_from_api(props, "backlinks", "bl").await?;
     Ok(())
 }
 
-pub async fn categorymembers(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    panic!("Not supported as of know");
+pub async fn categorymembers(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
+    if props.parameter == "" { panic!("missing cmtitle: Which category to enumerate (must include 'Category:' prefix"); }
+    props.parameter = format!("&cmtitle={}", props.parameter);
     get_from_api(props, "categorymembers", "cm").await?;
     Ok(())
 }
 
-pub async fn embeddedin(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    panic!("Not supported as of know");
+pub async fn embeddedin(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
+    if props.parameter == "" { panic!("missing eititle: Title to search"); }
+    props.parameter = format!("&eititle={}", props.parameter);
     get_from_api(props, "embeddedin", "ei").await?;
     Ok(())
 }
 
-pub async fn imageusage(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    panic!("Not supported as of know");
+pub async fn imageusage(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
+    if props.parameter == "" { panic!("missing iutitle: Title to search"); }
+    props.parameter = format!("&iutitle={}", props.parameter);
     get_from_api(props, "imageusage", "iu").await?;
     Ok(())
 }
 
-pub async fn iwbacklinks(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    panic!("Not supported as of know");
+pub async fn iwbacklinks(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
+    if props.parameter == "" { panic!("missing iwblprefix: Prefix for the interwiki"); }
+    props.parameter = format!("&iwblprefix={}", props.parameter);
     get_from_api(props, "iwbacklinks", "iwbl").await?;
     Ok(())
 }
 
-pub async fn langbacklinks(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    panic!("Not supported as of know");
+pub async fn langbacklinks(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
+    if props.parameter == "" { panic!("missing lbllang: Language for the language link"); }
+    props.parameter = format!("&lbllang={}", props.parameter);
     get_from_api(props, "langbacklinks", "lbl").await?;
     Ok(())
 }
 
-pub async fn search(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    panic!("Not supported as of know");
+pub async fn search(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
+    if props.parameter == "" { panic!("missing srsearch: Search for all page titles (or content) that has this value"); }
+    props.parameter = format!("&srsearch={}", props.parameter);
     get_from_api(props, "search", "sr").await?;
     Ok(())
 }
@@ -72,8 +79,9 @@ pub async fn protectedtitles(props: super::super::ListProps) -> Result<(), Box<d
     Ok(())
 }
 
-pub async fn querypage(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    panic!("Not supported as of know");
+pub async fn querypage(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
+    if props.parameter == "" { panic!("missing qppage: The name of the special page. Note, this is case sensitive"); }
+    props.parameter = format!("&qppage={}", props.parameter);
     get_from_api(props, "querypage", "qp").await?;
     Ok(())
 }
@@ -100,7 +108,6 @@ async fn get_from_api(props: super::super::ListProps, long: &str, short: &str) -
     let mut results: Vec<String> = Vec::new();
     let getter = match short {
         "ac" => "*",
-
         _ => "title",
     };
 
@@ -108,7 +115,7 @@ async fn get_from_api(props: super::super::ListProps, long: &str, short: &str) -
     crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     while has_next {
-        let res = client.get(&(format!("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}&{}limit=5000", long, short).to_string() + &continue_from)).send().await?.text().await?;
+        let res = client.get(&(format!("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}&{}limit=5000{}", long, short, props.parameter).to_string() + &continue_from)).send().await?.text().await?;
         let json: Value = serde_json::from_str(&res)?;
         if json["query"][long].is_object() {
             for (_, x) in json["query"][long].as_object().unwrap().iter() {
