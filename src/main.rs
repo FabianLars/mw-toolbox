@@ -77,7 +77,8 @@ struct Cli {
     #[structopt(subcommand)]
     command: Option<Subcommand>,
 
-    #[structopt(short, long, case_insensitive = true, possible_values = &Format::variants(), default_value = "newline", about = "Format to use for input and/or output (json or newline seperation). Newline is default.")]
+    /// Format to use for input and/or output (json or newline seperation). Newline is default.
+    #[structopt(short, long, case_insensitive = true, possible_values = &Format::variants(), default_value = "newline")]
     format: Format,
 
     #[structopt(short = "n", long, env = "FANDOM_BOT_NAME")]
@@ -160,21 +161,30 @@ pub struct ListProps {
 
 impl ListProps {
     fn new(args: Cli) -> Self {
-        let format = match args.format {
-            Format::Json => Format::Json,
-             _ => Format::Newline,
-        };
-
+        let format: Format;
         let out: std::path::PathBuf;
         let param: String;
 
         match args.command.unwrap() {
             Subcommand::List { output, parameter, .. } => {
             out = match output {
-                Some(x) => x,
-                None => match format {
-                    Format::Json => std::path::PathBuf::from("./wtools_output.json"),
-                    _ => std::path::PathBuf::from("./wtools_output.txt"),
+                Some(x) => {
+                    if x.clone().into_os_string().into_string().unwrap_or("".to_string()).contains(".json") {
+                        format = Format::Json;
+                    } else {
+                        format = Format::Newline;
+                    }
+                    x
+                },
+                None => match args.format {
+                    Format::Json => {
+                        format = Format::Json;
+                        std::path::PathBuf::from("./wtools_output.json")
+                    },
+                    _ => {
+                        format = Format::Newline;
+                        std::path::PathBuf::from("./wtools_output.txt")
+                    },
                 }
             };
 
