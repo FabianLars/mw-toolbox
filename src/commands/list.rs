@@ -115,8 +115,7 @@ async fn get_from_api(props: super::super::ListProps, long: &str, short: &str) -
     crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     while has_next {
-        let res = client.get(&(format!("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}&{}limit=5000{}", long, short, props.parameter).to_string() + &continue_from)).send().await?.text().await?;
-        let json: Value = serde_json::from_str(&res)?;
+        let json: Value = serde_json::from_str(&client.get(&(format!("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}&{}limit=5000{}", long, short, props.parameter).to_string() + &continue_from)).send().await?.text().await?)?;
         if json["query"][long].is_object() {
             for (_, x) in json["query"][long].as_object().unwrap().iter() {
                 results.push(x[getter].as_str().unwrap().to_string())
