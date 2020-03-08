@@ -1,4 +1,5 @@
 use serde_json::Value;
+use std::io::prelude::*;
 
 pub async fn allimages(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
     get_from_api(props, "allimages", "ai").await?;
@@ -136,7 +137,21 @@ async fn get_from_api(props: super::super::ListProps, long: &str, short: &str) -
             }
         }
     }
-    ::serde_json::to_writer(&std::fs::File::create(props.output)?, &results)?;
+
+    match props.format {
+        super::super::Format::Json => ::serde_json::to_writer(&std::fs::File::create(props.output)?, &results)?,
+        super::super::Format::Newline => {
+            // this is needed because doing this with openoptions throws an os error
+            let mut file = std::fs::File::create(&props.output)?;
+            file = std::fs::OpenOptions::new().append(true).open(props.output)?;
+
+            for s in results {
+                if let Err(e) = writeln!(file, "{}", s) {
+                eprintln!("Couldn't write to file: {}", e)
+                }
+            }
+        }
+    }
 
     Ok(())
 }
@@ -153,30 +168,20 @@ async fn get_infobox_lists(props: super::super::ListProps, typ: &str) -> Result<
             results.push(x["title"].as_str().unwrap().to_string())
         }
 
-    ::serde_json::to_writer(&std::fs::File::create(props.output)?, &results)?;
+    match props.format {
+        super::super::Format::Json => ::serde_json::to_writer(&std::fs::File::create(props.output)?, &results)?,
+        super::super::Format::Newline => {
+            // this is needed because doing this with openoptions throws an os error
+            let mut file = std::fs::File::create(&props.output)?;
+            file = std::fs::OpenOptions::new().append(true).open(props.output)?;
+
+            for s in results {
+                if let Err(e) = writeln!(file, "{}", s) {
+                eprintln!("Couldn't write to file: {}", e)
+                }
+            }
+        }
+    }
 
     Ok(())
 }
-
-/* async fn get_shortname(long: &str) -> String {
-    match long {
-        "allimages" => "ai".to_string(),
-        "allpages" => "ap".to_string(),
-        "alllinks" => "al".to_string(),
-        "allcategories" => "ac".to_string(),
-        "backlinks" => "bl".to_string(),
-        "categorymembers" => "cm".to_string(),
-        "embeddedin" => "ei".to_string(),
-        "imageusage" => "iu".to_string(),
-        "iwbacklinks" => "iwbl".to_string(),
-        "langbacklinks" => "lbl".to_string(),
-        "search" => "sr".to_string(),
-        "exturlusage" => "eu".to_string(),
-        "protectedtitles" => "pt".to_string(),
-        "querypage" => "qp".to_string(),
-        "wkpoppages" => "wk".to_string(),
-        //"unconvertedinfoboxes" => "",
-        //"allinfoboxes" => "",
-        _ => panic!("Weird error! (wrong list type?"),
-    }
-} */

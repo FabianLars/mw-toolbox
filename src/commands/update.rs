@@ -140,7 +140,7 @@ pub async fn rotation(props: super::super::UpdateProps) -> Result<(), Box<dyn st
     ];
     let client = reqwest::Client::builder().cookie_store(true).build()?;
 
-    crate::helpers::wiki::wiki_login(&client, loginname, loginpassword).await?;
+    crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     let champions: HashMap<i32, Champ> = client
         .get("https://fabianlars.de/wapi/champs")
