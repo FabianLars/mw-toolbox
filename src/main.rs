@@ -165,7 +165,7 @@ impl ListProps {
         let out: std::path::PathBuf;
         let param: String;
 
-        match args.command.unwrap() {
+        match args.command.expect("args.command") {
             Subcommand::List { output, parameter, .. } => {
             out = match output {
                 Some(x) => {

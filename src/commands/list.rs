@@ -1,5 +1,6 @@
 use serde_json::Value;
 use std::io::prelude::*;
+use std::collections::HashMap;
 
 pub async fn allimages(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
     get_from_api(props, "allimages", "ai").await?;
@@ -71,7 +72,40 @@ pub async fn search(mut props: super::super::ListProps) -> Result<(), Box<dyn st
 }
 
 pub async fn exturlusage(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    get_from_api(props, "exturlusage", "eu").await?;
+    /* get_from_api(props, "exturlusage", "eu").await?;
+    Ok(()) */
+    let client = reqwest::Client::builder().cookie_store(true).build()?;
+    let mut has_next: bool = true;
+    let mut continue_from = String::new();
+    let mut results: HashMap<String, Vec<String>> = HashMap::new();
+
+    crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+
+    while has_next {
+        let json: Value = serde_json::from_str(&client.get(&("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list=exturlusage&eulimit=5000".to_string() + &continue_from)).send().await?.text().await?)?;
+
+        for x in json["query"]["exturlusage"].as_array().expect("as_array").iter() {
+            let title = x["title"].as_str().unwrap_or("unwrap error").to_string();
+            let url = x["url"].as_str().unwrap_or("unwrap error").to_string();
+
+            if results.contains_key(&title) {
+                results.get_mut(&title).unwrap().push(url);
+            } else {
+                results.insert(title, vec![url]);
+            }
+        }
+
+        match json.get("query-continue") {
+            None => has_next = false,
+            Some(_) => {
+                continue_from = "&euoffset=".to_string() + &json["query-continue"]["exturlusage"]["euoffset"].as_i64().expect("as_str").to_string()
+            }
+        }
+    }
+
+
+    ::serde_json::to_writer(&std::fs::File::create(props.output)?, &results)?;
+
     Ok(())
 }
 
@@ -111,32 +145,39 @@ async fn get_from_api(props: super::super::ListProps, long: &str, short: &str) -
         "ac" => "*",
         _ => "title",
     };
+    let from = match short {
+        "eu" => "offset",
+        _ => "from"
+    };
 
 
     crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     while has_next {
+        let temp: String;
         let json: Value = serde_json::from_str(&client.get(&(format!("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}&{}limit=5000{}", long, short, props.parameter).to_string() + &continue_from)).send().await?.text().await?)?;
         if json["query"][long].is_object() {
-            for (_, x) in json["query"][long].as_object().unwrap().iter() {
-                results.push(x[getter].as_str().unwrap().to_string())
+            for (_, x) in json["query"][long].as_object().expect("as_object").iter() {
+                results.push(x[getter].as_str().expect("as_str(object)").to_string())
             }
         } else if json["query"][long].is_array() {
-            for x in json["query"][long].as_array().unwrap().iter() {
-                results.push(x[getter].as_str().unwrap().to_string())
+            for x in json["query"][long].as_array().expect("as_array").iter() {
+                results.push(x[getter].as_str().expect("as_str(array)").to_string())
             }
         }
 
         match json.get("query-continue") {
             None => has_next = false,
             Some(_) => {
-                continue_from = format!("&{}from=", short).to_string()
-                    + &json["query-continue"][long][format!("{}from", short)]
-                        .as_str()
-                        .unwrap()
+                temp = match json["query-continue"][long][format!("{}{}", short, from)].as_str() {
+                    Some(x) => x.to_owned(),
+                    None => json["query-continue"][long][format!("{}{}", short, from)].as_i64().expect("as_i64(query-continue)").to_string()
+                };
+                continue_from = format!("&{}{}=", short, from).to_string() + &temp
+                }
             }
         }
-    }
+
 
     match props.format {
         super::super::Format::Json => ::serde_json::to_writer(&std::fs::File::create(props.output)?, &results)?,
