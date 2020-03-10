@@ -2,7 +2,7 @@ mod commands;
 mod gui;
 mod helpers;
 
-use clap::Clap;
+use clap::{Clap, arg_enum};
 
 #[derive(Clap, Debug)]
 enum Subcommand {
@@ -12,26 +12,7 @@ enum Subcommand {
         input: std::path::PathBuf,
     },
     List {
-        #[clap(case_insensitive = true, possible_values(&[
-            "allimages",
-            "allpages",
-            "alllinks",
-            "allcategories",
-            "backlinks",
-            "categorymembers",
-            "embeddedin",
-            "imageusage",
-            "iwbacklinks",
-            "langbacklinks",
-            "search",
-            "exturlusage",
-            "protectedtitles",
-            "querypage",
-            "wkpoppages",
-            "unconvertedinfoboxes",
-            "allinfoboxes",
-        ]))]
-        list_type: String,
+        list_type: ListType,
 
         parameter: Option<String>,
 
@@ -44,7 +25,6 @@ enum Subcommand {
         input: std::path::PathBuf,
     },
     Update {
-        #[clap(subcommand)]
         update_type: UpdateType,
 
         #[clap(short, long, parse(from_os_str))]
@@ -52,15 +32,37 @@ enum Subcommand {
     },
 }
 
-#[derive(Clap, Debug)]
-enum UpdateType {
-    #[cfg(feature = "riot-api")]
-    Rotation,
-    #[cfg(feature = "riot-api")]
-    Rotations,
+arg_enum! {
+    #[derive(Debug)]
+    enum UpdateType {
+        Champs,
+        Champions,
+        Rotation,
+        Rotations
+    }
+}
 
-    Champs,
-    Champions,
+arg_enum! {
+    #[derive(Debug)]
+    enum ListType {
+        Allimages,
+        Allpages,
+        Alllinks,
+        Allcategories,
+        Backlinks,
+        Categorymembers,
+        Embeddedin,
+        Imageusage,
+        Iwbacklinks,
+        Langbacklinks,
+        Search,
+        Exturlusage,
+        Protectedtitles,
+        Querypage,
+        Wkpoppages,
+        Unconvertedinfoboxes,
+        Allinfoboxes
+    }
 }
 
 #[derive(Clap, Debug)]
@@ -80,31 +82,31 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         None => gui::iced::start(),
         Some(x) => match x {
             Subcommand::Delete { .. } => commands::delete::delete_pages(DeleteProps::new(Cli::parse())).await?,
-            Subcommand::List { list_type, .. } => match list_type.to_lowercase().as_str() {
-                "allimages" => commands::list::allimages(ListProps::new(Cli::parse())).await?,
-                "allpages" => commands::list::allpages(ListProps::new(Cli::parse())).await?,
-                "alllinks" => commands::list::alllinks(ListProps::new(Cli::parse())).await?,
-                "allcategories" => commands::list::allcategories(ListProps::new(Cli::parse())).await?,
-                "backlinks" => commands::list::backlinks(ListProps::new(Cli::parse())).await?,
-                "categorymembers" => commands::list::categorymembers(ListProps::new(Cli::parse())).await?,
-                "embeddedin" => commands::list::embeddedin(ListProps::new(Cli::parse())).await?,
-                "imageusage" => commands::list::imageusage(ListProps::new(Cli::parse())).await?,
-                "iwbacklinks" => commands::list::iwbacklinks(ListProps::new(Cli::parse())).await?,
-                "langbacklinks" => commands::list::langbacklinks(ListProps::new(Cli::parse())).await?,
-                "search" => commands::list::search(ListProps::new(Cli::parse())).await?,
-                "exturlusage" => commands::list::exturlusage(ListProps::new(Cli::parse())).await?,
-                "protectedtitles" => commands::list::protectedtitles(ListProps::new(Cli::parse())).await?,
-                "querypage" => commands::list::querypage(ListProps::new(Cli::parse())).await?,
-                "wkpoppages" => commands::list::wkpoppages(ListProps::new(Cli::parse())).await?,
-                "unconvertedinfoboxes" => commands::list::unconvertedinfoboxes(ListProps::new(Cli::parse())).await?,
-                "allinfoboxes" => commands::list::allinfoboxes(ListProps::new(Cli::parse())).await?,
-                _ => panic!("LOL"),
+            Subcommand::List { list_type, .. } => match list_type {
+                ListType::Allimages => commands::list::allimages(ListProps::new(Cli::parse())).await?,
+                ListType::Allpages => commands::list::allpages(ListProps::new(Cli::parse())).await?,
+                ListType::Alllinks => commands::list::alllinks(ListProps::new(Cli::parse())).await?,
+                ListType::Allcategories => commands::list::allcategories(ListProps::new(Cli::parse())).await?,
+                ListType::Backlinks => commands::list::backlinks(ListProps::new(Cli::parse())).await?,
+                ListType::Categorymembers => commands::list::categorymembers(ListProps::new(Cli::parse())).await?,
+                ListType::Embeddedin => commands::list::embeddedin(ListProps::new(Cli::parse())).await?,
+                ListType::Imageusage => commands::list::imageusage(ListProps::new(Cli::parse())).await?,
+                ListType::Iwbacklinks => commands::list::iwbacklinks(ListProps::new(Cli::parse())).await?,
+                ListType::Langbacklinks => commands::list::langbacklinks(ListProps::new(Cli::parse())).await?,
+                ListType::Search => commands::list::search(ListProps::new(Cli::parse())).await?,
+                ListType::Exturlusage => commands::list::exturlusage(ListProps::new(Cli::parse())).await?,
+                ListType::Protectedtitles => commands::list::protectedtitles(ListProps::new(Cli::parse())).await?,
+                ListType::Querypage => commands::list::querypage(ListProps::new(Cli::parse())).await?,
+                ListType::Wkpoppages => commands::list::wkpoppages(ListProps::new(Cli::parse())).await?,
+                ListType::Unconvertedinfoboxes => commands::list::unconvertedinfoboxes(ListProps::new(Cli::parse())).await?,
+                ListType::Allinfoboxes => commands::list::allinfoboxes(ListProps::new(Cli::parse())).await?,
             },
             Subcommand::Move { .. } => commands::rename::move_pages(MoveProps::new(Cli::parse())).await?,
             Subcommand::Update { update_type, .. } => match update_type {
                 UpdateType::Champs | UpdateType::Champions => commands::update::champs().await?,
                 #[cfg(feature = "riot-api")]
                 UpdateType::Rotation | UpdateType::Rotations => commands::update::rotation(UpdateProps::new(Cli::parse())).await?,
+                _ => panic!("did you use update rotation without feature flag 'riot-api' being set?"),
             },
         }
     }
