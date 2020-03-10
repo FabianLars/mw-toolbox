@@ -1,5 +1,4 @@
 use serde_json::Value;
-use std::io::prelude::*;
 use std::collections::HashMap;
 
 pub async fn allimages(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
@@ -177,23 +176,7 @@ async fn get_from_api(props: super::super::ListProps, long: &str, short: &str) -
                 }
             }
         }
-
-
-    match props.format {
-        super::super::Format::Json => ::serde_json::to_writer(&std::fs::File::create(props.output)?, &results)?,
-        super::super::Format::Newline => {
-            // this is needed because doing this with openoptions throws an os error
-            let mut file = std::fs::File::create(&props.output)?;
-            file = std::fs::OpenOptions::new().append(true).open(props.output)?;
-
-            for s in results {
-                if let Err(e) = writeln!(file, "{}", s) {
-                eprintln!("Couldn't write to file: {}", e)
-                }
-            }
-        }
-    }
-
+    ::serde_json::to_writer(&std::fs::File::create(props.output)?, &results)?;
     Ok(())
 }
 
@@ -203,26 +186,12 @@ async fn get_infobox_lists(props: super::super::ListProps, typ: &str) -> Result<
 
     crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
-        let res = client.get(&(format!("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}", typ).to_string())).send().await?.text().await?;
-        let json: Value = serde_json::from_str(&res)?;
-        for x in json["query"][typ].as_array().unwrap().iter() {
-            results.push(x["title"].as_str().unwrap().to_string())
-        }
-
-    match props.format {
-        super::super::Format::Json => ::serde_json::to_writer(&std::fs::File::create(props.output)?, &results)?,
-        super::super::Format::Newline => {
-            // this is needed because doing this with openoptions throws an os error
-            let mut file = std::fs::File::create(&props.output)?;
-            file = std::fs::OpenOptions::new().append(true).open(props.output)?;
-
-            for s in results {
-                if let Err(e) = writeln!(file, "{}", s) {
-                eprintln!("Couldn't write to file: {}", e)
-                }
-            }
-        }
+    let res = client.get(&(format!("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}", typ).to_string())).send().await?.text().await?;
+    let json: Value = serde_json::from_str(&res)?;
+    for x in json["query"][typ].as_array().unwrap().iter() {
+        results.push(x["title"].as_str().unwrap().to_string())
     }
 
+    ::serde_json::to_writer(&std::fs::File::create(props.output)?, &results)?;
     Ok(())
 }

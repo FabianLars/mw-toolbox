@@ -2,11 +2,12 @@ mod commands;
 mod gui;
 mod helpers;
 
-use structopt::{ StructOpt, clap::arg_enum };
+use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
 enum Subcommand {
     Delete {
+        /// uses newline seperation
         #[structopt(parse(from_os_str))]
         input: std::path::PathBuf,
     },
@@ -20,6 +21,7 @@ enum Subcommand {
         output: Option<std::path::PathBuf>,
     },
     Move {
+        /// uses newline seperation
         #[structopt(parse(from_os_str))]
         input: std::path::PathBuf,
     },
@@ -30,14 +32,6 @@ enum Subcommand {
         #[structopt(short, long, parse(from_os_str))]
         output: Option<std::path::PathBuf>,
     },
-}
-
-arg_enum!{
-    #[derive(Debug)]
-    enum Format {
-        Json,
-        Newline,
-    }
 }
 
 #[derive(StructOpt, Debug)]
@@ -77,10 +71,6 @@ struct Cli {
     #[structopt(subcommand)]
     command: Option<Subcommand>,
 
-    /// Format to use for input and/or output (json or newline seperation). Newline is default.
-    #[structopt(short, long, case_insensitive = true, possible_values = &Format::variants(), default_value = "newline")]
-    format: Format,
-
     #[structopt(short = "n", long, env = "FANDOM_BOT_NAME")]
     loginname: String,
     #[structopt(short = "p", long, env = "FANDOM_BOT_PASSWORD")]
@@ -114,7 +104,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             },
             Subcommand::Move { .. } => commands::rename::move_pages(MoveProps::new(Cli::from_args())).await?,
             Subcommand::Update { update_type, .. } => match update_type {
-                UpdateType::Champs | UpdateType::Champions => commands::update::champs(UpdateProps::new(Cli::from_args())).await?,
+                UpdateType::Champs | UpdateType::Champions => commands::update::champs().await?,
                 #[cfg(feature = "riot-api")]
                 UpdateType::Rotation | UpdateType::Rotations => commands::update::rotation(UpdateProps::new(Cli::from_args())).await?,
             },
@@ -125,7 +115,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 pub struct DeleteProps {
     input: String,
-    format: Format,
     loginname: String,
     loginpassword: String,
 }
@@ -137,14 +126,9 @@ impl DeleteProps {
             _ => panic!("weird error")
         };
 
-        let format = match args.format {
-            Format::Json => Format::Json,
-            _ => Format::Newline,
-        };
 
         return Self {
             input,
-            format,
             loginname: args.loginname,
             loginpassword: args.loginpassword,
         }
@@ -153,7 +137,6 @@ impl DeleteProps {
 
 pub struct ListProps {
     output: std::path::PathBuf,
-    format: Format,
     parameter: String,
     loginname: String,
     loginpassword: String,
@@ -161,31 +144,14 @@ pub struct ListProps {
 
 impl ListProps {
     fn new(args: Cli) -> Self {
-        let format: Format;
         let out: std::path::PathBuf;
         let param: String;
 
         match args.command.expect("args.command") {
             Subcommand::List { output, parameter, .. } => {
             out = match output {
-                Some(x) => {
-                    if x.clone().into_os_string().into_string().unwrap_or("".to_string()).contains(".json") {
-                        format = Format::Json;
-                    } else {
-                        format = Format::Newline;
-                    }
-                    x
-                },
-                None => match args.format {
-                    Format::Json => {
-                        format = Format::Json;
-                        std::path::PathBuf::from("./wtools_output.json")
-                    },
-                    _ => {
-                        format = Format::Newline;
-                        std::path::PathBuf::from("./wtools_output.txt")
-                    },
-                }
+                Some(x) => x,
+                None => std::path::PathBuf::from("./wtools_output.json"),
             };
 
             param = match parameter {
@@ -198,7 +164,6 @@ impl ListProps {
 
         return Self {
             output: out,
-            format,
             parameter: param,
             loginname: args.loginname,
             loginpassword: args.loginpassword,
@@ -208,18 +173,12 @@ impl ListProps {
 
 pub struct MoveProps {
     input: String,
-    format: Format,
     loginname: String,
     loginpassword: String,
 }
 
 impl MoveProps {
     fn new(args: Cli) -> Self {
-        let format = match args.format {
-            Format::Json => Format::Json,
-            _ => Format::Newline,
-        };
-
         let input: String = match args.command.unwrap() {
             Subcommand::Move { input } => std::fs::read_to_string(input).unwrap(),
             _ => panic!("weird error")
@@ -227,41 +186,32 @@ impl MoveProps {
 
         return Self {
             input,
-            format,
             loginname: args.loginname,
             loginpassword: args.loginpassword,
         }
     }
 }
 
+#[cfg(feature = "riot-api")]
 pub struct UpdateProps {
     output: std::path::PathBuf,
-    format: Format,
     loginname: String,
     loginpassword: String,
 }
 
+#[cfg(feature = "riot-api")]
 impl UpdateProps {
     fn new(args: Cli) -> Self {
-        let format = match args.format {
-            Format::Json => Format::Json,
-            _ => Format::Newline,
-        };
-
         let output = match args.command.unwrap() {
             Subcommand::Update { output, .. } => match output {
                 Some(x) => x,
-                None => match format {
-                    Format::Json => std::path::PathBuf::from("./wtools_output.json"),
-                    _ => std::path::PathBuf::from("./wtools_output.txt"),
-                }
+                None => std::path::PathBuf::from("./wtools_output.json"),
             },
             _ => panic!("weird error")
         };
 
         return Self {
             output,
-            format,
             loginname: args.loginname,
             loginpassword: args.loginpassword,
         }

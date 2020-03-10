@@ -62,7 +62,7 @@ struct Rotations {
     max_new_player_level: i32,
 }
 
-pub async fn champs(props: super::super::UpdateProps) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn champs() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
 
     let fut1 = async {
@@ -282,6 +282,7 @@ pub async fn rotation(props: super::super::UpdateProps) -> Result<(), Box<dyn st
     Ok(())
 }
 
+#[cfg(feature = "riot-api")]
 fn rename_m(d: String) -> String {
     if d.contains("January") {
         d.replace("January", "Januar").to_string()
