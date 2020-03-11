@@ -30,6 +30,10 @@ enum Subcommand {
         #[clap(short, long, parse(from_os_str))]
         output: Option<std::path::PathBuf>,
     },
+    Upload {
+        #[clap(parse(from_os_str))]
+        input: std::path::PathBuf,
+    }
 }
 
 arg_enum! {
@@ -108,6 +112,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 UpdateType::Rotation | UpdateType::Rotations => commands::update::rotation(UpdateProps::new(Cli::parse())).await?,
                 _ => panic!("did you use update rotation without feature flag 'riot-api' being set?"),
             },
+            Subcommand::Upload { .. } => commands::upload::upload(UploadProps::new(Cli::parse())).await?,
         }
     }
     Ok(())
@@ -212,6 +217,48 @@ impl UpdateProps {
 
         return Self {
             output,
+            loginname: args.loginname,
+            loginpassword: args.loginpassword,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+enum UploadInput {
+    File(std::path::PathBuf),
+    Files(Vec<std::path::PathBuf>),
+    Folder(std::path::PathBuf),
+}
+
+impl Default for UploadInput {
+    fn default() -> Self {
+        UploadInput::File(std::path::PathBuf::new())
+    }
+}
+
+pub struct UploadProps {
+    input: UploadInput,
+    loginname: String,
+    loginpassword: String,
+}
+
+impl UploadProps {
+    fn new(args: Cli) -> Self {
+        let input  = match args.command.unwrap() {
+            Subcommand::Upload { input, .. } => {
+                if std::fs::metadata(&input).expect("get metadata for given path").is_dir() {
+                    UploadInput::Folder(input)
+                } else if std::fs::metadata(&input).expect("get metadata for given path").is_file() {
+                    UploadInput::File(input)
+                } else {
+                    panic!("weird error");
+                }
+            },
+            _ => panic!("weird error")
+        };
+
+        return Self {
+            input,
             loginname: args.loginname,
             loginpassword: args.loginpassword,
         }

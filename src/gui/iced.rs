@@ -21,7 +21,10 @@ struct State {
     lp_input: text_input::State,
     lp_input_value: String,
     chosen_command: ChosenCommand,
-    apply_button: button::State,
+    file_button: button::State,
+    folder_button: button::State,
+    execute_button: button::State,
+    selected_files: super::super::UploadInput,
     dirty: bool,
     saving: bool,
 }
@@ -31,6 +34,7 @@ enum ChosenCommand {
     Delete,
     List,
     Update,
+    Upload,
 }
 
 impl Default for ChosenCommand {
@@ -40,10 +44,11 @@ impl Default for ChosenCommand {
 }
 
 impl ChosenCommand {
-    pub const ALL: [ChosenCommand; 3] = [
+    pub const ALL: [ChosenCommand; 4] = [
         ChosenCommand::Delete,
         ChosenCommand::List,
         ChosenCommand::Update,
+        ChosenCommand::Upload,
     ];
 }
 
@@ -54,7 +59,10 @@ enum Message {
     LoginNameChanged(String),
     LoginPasswordChanged(String),
     CommandSelected(ChosenCommand),
-    ApplyPressed,
+    FileButtonPressed,
+    FolderButtonPressed,
+    ExecuteButtonPressed,
+    Executed(Result<(), ExecuteError>),
 }
 
 impl Application for App {
@@ -111,7 +119,43 @@ impl Application for App {
                     Message::CommandSelected(selected) => {
                         state.chosen_command = selected;
                     }
-                    Message::ApplyPressed => (),
+                    Message::FileButtonPressed => {
+                        let result = nfd::open_file_multiple_dialog(None, None).unwrap_or_else(|e| {
+                            panic!(e);
+                        });
+
+                        match result {
+                            nfd::Response::Okay(file_path) => state.selected_files = super::super::UploadInput::File(std::path::PathBuf::from(file_path)),
+                            nfd::Response::OkayMultiple(files) => {
+                                let mut temp: Vec<std::path::PathBuf> = Vec::new();
+                                for f in files {
+                                    temp.push(std::path::PathBuf::from(f));
+                                }
+                                state.selected_files = super::super::UploadInput::Files(temp)
+                            },
+                            nfd::Response::Cancel => println!("User canceled"),
+                        }
+                    },
+                    Message::FolderButtonPressed => {
+                        let result = nfd::open_pick_folder(None).unwrap_or_else(|e| {
+                            panic!(e);
+                        });
+
+                        match result {
+                            nfd::Response::Okay(folder_path) => state.selected_files = super::super::UploadInput::Folder(std::path::PathBuf::from(folder_path)),
+                            nfd::Response::Cancel => println!("User canceled"),
+                            _ => (),
+                        }
+                    }
+                    Message::ExecuteButtonPressed => {
+                        if state.chosen_command == ChosenCommand::Upload {
+                            return Command::perform(crate::commands::upload::from_gui(super::super::UploadProps {
+                                input: state.selected_files.clone(),
+                                loginname: state.ln_input_value.clone(),
+                                loginpassword: state.lp_input_value.clone()
+                            }), Message::Executed);
+                        }
+                    },
                     Message::Saved(_) => {
                         state.saving = false;
                         saved = true;
@@ -150,11 +194,60 @@ impl Application for App {
                 lp_input,
                 lp_input_value,
                 chosen_command,
-                apply_button,
+                file_button,
+                folder_button,
+                execute_button,
+                selected_files,
                 ..
-            }) => Column::new()
+            }) => {
+                let mut text_files = String::new();
+                match selected_files {
+                    super::super::UploadInput::File(x) => text_files.push_str(x.file_name().unwrap_or(std::ffi::OsStr::new("")).to_str().expect("file to gui text")),
+                    super::super::UploadInput::Files(x) => {
+                        for f in x {
+                            text_files.push_str(f.file_name().unwrap().to_str().expect("files to gui text"));
+                            text_files.push_str(", ");
+                        }
+                    },
+                    super::super::UploadInput::Folder(x) => {
+                        for f in std::fs::read_dir(x).expect("read folder for gui text") {
+                            text_files.push_str(f.unwrap().file_name().to_str().expect("folder -> file name to str (gui)"));
+                            text_files.push_str(", ");
+                        }
+                    }
+                }
+
+                let cmd_container = match chosen_command {
+                    ChosenCommand::Upload => Column::new().push(Row::new().push(
+                    Text::new(text_files)
+                ))
+                .push(Container::new(
+                Row::new().padding(10).spacing(20)
+                    .push(
+                        Button::new(
+                            file_button,
+                            Text::new("Select File(s)"),
+                        ).on_press(Message::FileButtonPressed)
+                    )
+                    .push(
+                        Button::new(
+                            folder_button,
+                            Text::new("Select Folder"),
+                        ).on_press(Message::FolderButtonPressed)
+                    )
+                    .push(
+                        Button::new(
+                            execute_button,
+                            Text::new("Execute"),
+                        ).on_press(Message::ExecuteButtonPressed)
+                    )
+                ).width(iced::Length::Fill).align_x(iced::Align::Center)),
+                _ => Column::new(),
+                };
+
+                Column::new()
                 .push(
-                    Row::new()
+                    Row::new().padding(10).spacing(10)
                         .push(
                             TextInput::new(
                                 ln_input,
@@ -162,8 +255,7 @@ impl Application for App {
                                 ln_input_value,
                                 Message::LoginNameChanged,
                             )
-                            .padding(10)
-                            .size(30),
+                                .size(40)
                         )
                         .push(
                             TextInput::new(
@@ -172,8 +264,7 @@ impl Application for App {
                                 lp_input_value,
                                 Message::LoginPasswordChanged,
                             )
-                            .padding(10)
-                            .size(30)
+                                .size(40)
                             .password(),
                         ),
                 )
@@ -188,7 +279,9 @@ impl Application for App {
                         ))
                     },
                 ))
-                .into(),
+                .push(cmd_container)
+                .into()
+            },
         }
     }
 }
@@ -214,6 +307,11 @@ struct SavedState {
 enum LoadError {
     FileError,
     FormatError,
+}
+
+#[derive(Debug, Clone)]
+pub enum ExecuteError {
+    Upload,
 }
 
 #[derive(Debug, Clone)]
@@ -279,7 +377,7 @@ impl SavedState {
         }
 
         // This is a simple way to save at most once every couple seconds
-        tokio::time::delay_for(std::time::Duration::from_secs(2)).await;
+        tokio::time::delay_for(std::time::Duration::from_secs(1)).await;
 
         Ok(())
     }

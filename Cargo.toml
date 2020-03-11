@@ -15,5 +15,6 @@ serde_json = "1.0"
 clap = { git = "https://github.com/clap-rs/clap/" }
 chrono = "0.4"
 futures = "0.3"
-iced = { git = "https://github.com/FabianLars/iced.git", branch = "master", features = ["tokio"] }
+iced = { git = "https://github.com/hecrj/iced.git", branch = "master", features = ["tokio"] }
 directories ="2.0"
+nfd = { git = "https://github.com/EmbarkStudios/nfd-rs.git" }

@@ -551,11 +551,32 @@ dependencies = [
 
 [[package]]
 name = "euclid"
+version = "0.19.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "596b99621b9477e7a5f94d2d8dd13a9c5c302ac358b822c67a42b6f1054450e1"
+dependencies = [
+ "euclid_macros",
+ "num-traits",
+]
+
+[[package]]
+name = "euclid"
 version = "0.20.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f852d320142e1cceb15dccef32ed72a9970b83109d8a4e24b1ab04d579f485d"
 dependencies = [
  "num-traits",
+]
+
+[[package]]
+name = "euclid_macros"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fdcb84c18ea5037a1c5a23039b4ff29403abce2e0d6b1daa11cf0bde2b30be15"
+dependencies = [
+ "proc-macro2 0.4.30",
+ "quote 0.6.13",
+ "syn 0.15.44",
 ]
 
 [[package]]
@@ -592,7 +613,7 @@ dependencies = [
  "core-text",
  "dirs",
  "dwrote",
- "euclid",
+ "euclid 0.20.7",
  "float-ord",
  "freetype",
  "lazy_static",
@@ -752,6 +773,12 @@ checksum = "c31b6d751ae2c7f11320402d34e41349dd1016f8d5d45e48c4312bc8625af50c"
 dependencies = [
  "byteorder",
 ]
+
+[[package]]
+name = "gcc"
+version = "0.3.55"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8f5f3913fa0bfe7ee1fd8248b6b9f42a5af4b9d65ec2dd2c3c26132b950ecfc2"
 
 [[package]]
 name = "getrandom"
@@ -916,6 +943,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "guillotiere"
+version = "0.4.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "487a6681128d476cdee36c51c44138268ce43c854bc15390fe31a984e02aefa4"
+dependencies = [
+ "euclid 0.19.9",
+ "svg_fmt",
+]
+
+[[package]]
 name = "h2"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1028,7 +1065,7 @@ dependencies = [
 [[package]]
 name = "iced"
 version = "0.1.0-beta"
-source = "git+https://github.com/FabianLars/iced.git#767096b9bbe091f6fed2a3ff31a4c6cc1131ecea"
+source = "git+https://github.com/hecrj/iced.git#3f785472c4c43faf16e8e611bd0cec06ab1f9da9"
 dependencies = [
  "iced_futures",
  "iced_web",
@@ -1039,12 +1076,12 @@ dependencies = [
 [[package]]
 name = "iced_core"
 version = "0.1.0"
-source = "git+https://github.com/FabianLars/iced.git#767096b9bbe091f6fed2a3ff31a4c6cc1131ecea"
+source = "git+https://github.com/hecrj/iced.git#3f785472c4c43faf16e8e611bd0cec06ab1f9da9"
 
 [[package]]
 name = "iced_futures"
 version = "0.1.0-alpha"
-source = "git+https://github.com/FabianLars/iced.git#767096b9bbe091f6fed2a3ff31a4c6cc1131ecea"
+source = "git+https://github.com/hecrj/iced.git#3f785472c4c43faf16e8e611bd0cec06ab1f9da9"
 dependencies = [
  "futures 0.3.4",
  "log",
@@ -1055,7 +1092,7 @@ dependencies = [
 [[package]]
 name = "iced_native"
 version = "0.1.0"
-source = "git+https://github.com/FabianLars/iced.git#767096b9bbe091f6fed2a3ff31a4c6cc1131ecea"
+source = "git+https://github.com/hecrj/iced.git#3f785472c4c43faf16e8e611bd0cec06ab1f9da9"
 dependencies = [
  "iced_core",
  "iced_futures",
@@ -1067,7 +1104,7 @@ dependencies = [
 [[package]]
 name = "iced_style"
 version = "0.1.0-alpha"
-source = "git+https://github.com/FabianLars/iced.git#767096b9bbe091f6fed2a3ff31a4c6cc1131ecea"
+source = "git+https://github.com/hecrj/iced.git#3f785472c4c43faf16e8e611bd0cec06ab1f9da9"
 dependencies = [
  "iced_core",
 ]
@@ -1075,7 +1112,7 @@ dependencies = [
 [[package]]
 name = "iced_web"
 version = "0.1.0"
-source = "git+https://github.com/FabianLars/iced.git#767096b9bbe091f6fed2a3ff31a4c6cc1131ecea"
+source = "git+https://github.com/hecrj/iced.git#3f785472c4c43faf16e8e611bd0cec06ab1f9da9"
 dependencies = [
  "dodrio",
  "iced_core",
@@ -1090,11 +1127,12 @@ dependencies = [
 [[package]]
 name = "iced_wgpu"
 version = "0.1.0"
-source = "git+https://github.com/FabianLars/iced.git#767096b9bbe091f6fed2a3ff31a4c6cc1131ecea"
+source = "git+https://github.com/hecrj/iced.git#3f785472c4c43faf16e8e611bd0cec06ab1f9da9"
 dependencies = [
  "font-kit",
  "glam",
  "glyph_brush",
+ "guillotiere",
  "iced_native",
  "iced_style",
  "log",
@@ -1106,7 +1144,7 @@ dependencies = [
 [[package]]
 name = "iced_winit"
 version = "0.1.0-alpha"
-source = "git+https://github.com/FabianLars/iced.git#767096b9bbe091f6fed2a3ff31a4c6cc1131ecea"
+source = "git+https://github.com/hecrj/iced.git#3f785472c4c43faf16e8e611bd0cec06ab1f9da9"
 dependencies = [
  "iced_native",
  "log",
@@ -1254,7 +1292,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ca04310c9807612a311506106000b6eccb2e27bca9bfb594ce80fb8a31231f9d"
 dependencies = [
  "arrayvec 0.4.12",
- "euclid",
+ "euclid 0.20.7",
  "num-traits",
 ]
 
@@ -1414,6 +1452,14 @@ dependencies = [
  "cfg-if",
  "libc",
  "winapi 0.3.8",
+]
+
+[[package]]
+name = "nfd"
+version = "0.0.4"
+source = "git+https://github.com/EmbarkStudios/nfd-rs.git#07578c5fea4d7b1f35fbf128f04b6264c3bf3c5a"
+dependencies = [
+ "gcc",
 ]
 
 [[package]]
@@ -2203,6 +2249,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6446ced80d6c486436db5c078dde11a9f73d42b57fb273121e160b84f63d894c"
 
 [[package]]
+name = "svg_fmt"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "20e5f95e89d737f30cd1f98a9af9a85c2a1cc162cfedfba5a0c54cf92d7206fc"
+
+[[package]]
 name = "syn"
 version = "0.15.44"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2671,7 +2723,8 @@ dependencies = [
 [[package]]
 name = "wgpu_glyph"
 version = "0.7.0"
-source = "git+https://github.com/hecrj/wgpu_glyph?branch=fix/font-load-panic#6a46351babd794d757747c1f04713b1b2c171edc"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9702496606511a7446d299a5d407c62237bb6847d1a3b64e2d485d61c5129da1"
 dependencies = [
  "glyph_brush",
  "log",
@@ -2735,9 +2788,9 @@ dependencies = [
 
 [[package]]
 name = "winit"
-version = "0.21.0"
+version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "65a5c1a5ef76ac31cc97ad29489acdbed2178f3fc12ca00ee6cb11d60adb5a3a"
+checksum = "02e9092b71b48ad6a0d98835a786308d10760cc09369d02e4a166608327f1f26"
 dependencies = [
  "android_glue",
  "bitflags",
@@ -2799,6 +2852,7 @@ dependencies = [
  "directories",
  "futures 0.3.4",
  "iced",
+ "nfd",
  "reqwest",
  "serde",
  "serde_json",
