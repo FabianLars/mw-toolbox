@@ -1,6 +1,6 @@
 use iced::{
-    button, text_input, Application, Button, Column, Command, Container, Element,
-    HorizontalAlignment, Length, Radio, Row, Settings, Text, TextInput,
+    button, scrollable, text_input, Align, Application, Button, Column, Command, Container,
+    Element, HorizontalAlignment, Length, Radio, Row, Scrollable, Settings, Text, TextInput,
 };
 use serde::{Deserialize, Serialize};
 
@@ -25,6 +25,7 @@ struct State {
     folder_button: button::State,
     execute_button: button::State,
     selected_files: super::super::UploadInput,
+    upload_scrollable: scrollable::State,
     dirty: bool,
     saving: bool,
 }
@@ -120,42 +121,54 @@ impl Application for App {
                         state.chosen_command = selected;
                     }
                     Message::FileButtonPressed => {
-                        let result = nfd::open_file_multiple_dialog(None, None).unwrap_or_else(|e| {
-                            panic!(e);
-                        });
+                        let result =
+                            nfd::open_file_multiple_dialog(None, None).unwrap_or_else(|e| {
+                                panic!(e);
+                            });
 
                         match result {
-                            nfd::Response::Okay(file_path) => state.selected_files = super::super::UploadInput::File(std::path::PathBuf::from(file_path)),
+                            nfd::Response::Okay(file_path) => {
+                                state.selected_files = super::super::UploadInput::File(
+                                    std::path::PathBuf::from(file_path),
+                                )
+                            }
                             nfd::Response::OkayMultiple(files) => {
                                 let mut temp: Vec<std::path::PathBuf> = Vec::new();
                                 for f in files {
                                     temp.push(std::path::PathBuf::from(f));
                                 }
                                 state.selected_files = super::super::UploadInput::Files(temp)
-                            },
+                            }
                             nfd::Response::Cancel => println!("User canceled"),
                         }
-                    },
+                    }
                     Message::FolderButtonPressed => {
                         let result = nfd::open_pick_folder(None).unwrap_or_else(|e| {
                             panic!(e);
                         });
 
                         match result {
-                            nfd::Response::Okay(folder_path) => state.selected_files = super::super::UploadInput::Folder(std::path::PathBuf::from(folder_path)),
+                            nfd::Response::Okay(folder_path) => {
+                                state.selected_files = super::super::UploadInput::Folder(
+                                    std::path::PathBuf::from(folder_path),
+                                )
+                            }
                             nfd::Response::Cancel => println!("User canceled"),
                             _ => (),
                         }
                     }
                     Message::ExecuteButtonPressed => {
                         if state.chosen_command == ChosenCommand::Upload {
-                            return Command::perform(crate::commands::upload::from_gui(super::super::UploadProps {
-                                input: state.selected_files.clone(),
-                                loginname: state.ln_input_value.clone(),
-                                loginpassword: state.lp_input_value.clone()
-                            }), Message::Executed);
+                            return Command::perform(
+                                crate::commands::upload::from_gui(super::super::UploadProps {
+                                    input: state.selected_files.clone(),
+                                    loginname: state.ln_input_value.clone(),
+                                    loginpassword: state.lp_input_value.clone(),
+                                }),
+                                Message::Executed,
+                            );
                         }
-                    },
+                    }
                     Message::Saved(_) => {
                         state.saving = false;
                         saved = true;
@@ -198,90 +211,131 @@ impl Application for App {
                 folder_button,
                 execute_button,
                 selected_files,
+                upload_scrollable,
                 ..
             }) => {
+                let navbar = Container::new(
+                    Column::new()
+                        .push(
+                            Row::new()
+                                .padding(10)
+                                .spacing(10)
+                                .push(
+                                    TextInput::new(
+                                        ln_input,
+                                        "Fandom Username",
+                                        ln_input_value,
+                                        Message::LoginNameChanged,
+                                    )
+                                    .size(40),
+                                )
+                                .push(
+                                    TextInput::new(
+                                        lp_input,
+                                        "Fandom Password",
+                                        lp_input_value,
+                                        Message::LoginPasswordChanged,
+                                    )
+                                    .size(40)
+                                    .password(),
+                                ),
+                        )
+                        .push(ChosenCommand::ALL.iter().cloned().fold(
+                            Row::new().padding(10),
+                            |row, cmd| {
+                                row.push(Radio::new(
+                                    cmd,
+                                    &format!("{:?}", cmd),
+                                    Some(chosen_command.to_owned()),
+                                    Message::CommandSelected,
+                                ))
+                            },
+                        )),
+                );
+
                 let mut text_files = String::new();
                 match selected_files {
-                    super::super::UploadInput::File(x) => text_files.push_str(x.file_name().unwrap_or(std::ffi::OsStr::new("")).to_str().expect("file to gui text")),
+                    super::super::UploadInput::File(x) => text_files.push_str(
+                        x.file_name()
+                            .unwrap_or(std::ffi::OsStr::new(""))
+                            .to_str()
+                            .expect("file to gui text"),
+                    ),
                     super::super::UploadInput::Files(x) => {
                         for f in x {
-                            text_files.push_str(f.file_name().unwrap().to_str().expect("files to gui text"));
-                            text_files.push_str(", ");
+                            text_files.push_str(
+                                f.file_name().unwrap().to_str().expect("files to gui text"),
+                            );
+                            text_files.push_str("\n");
                         }
-                    },
+                    }
                     super::super::UploadInput::Folder(x) => {
                         for f in std::fs::read_dir(x).expect("read folder for gui text") {
-                            text_files.push_str(f.unwrap().file_name().to_str().expect("folder -> file name to str (gui)"));
-                            text_files.push_str(", ");
+                            text_files.push_str(
+                                f.unwrap()
+                                    .file_name()
+                                    .to_str()
+                                    .expect("folder -> file name to str (gui)"),
+                            );
+                            text_files.push_str("\n");
                         }
                     }
                 }
 
-                let cmd_container = match chosen_command {
-                    ChosenCommand::Upload => Column::new().push(Row::new().push(
-                    Text::new(text_files)
-                ))
-                .push(Container::new(
-                Row::new().padding(10).spacing(20)
-                    .push(
-                        Button::new(
-                            file_button,
-                            Text::new("Select File(s)"),
-                        ).on_press(Message::FileButtonPressed)
-                    )
-                    .push(
-                        Button::new(
-                            folder_button,
-                            Text::new("Select Folder"),
-                        ).on_press(Message::FolderButtonPressed)
-                    )
-                    .push(
-                        Button::new(
-                            execute_button,
-                            Text::new("Execute"),
-                        ).on_press(Message::ExecuteButtonPressed)
-                    )
-                ).width(iced::Length::Fill).align_x(iced::Align::Center)),
-                _ => Column::new(),
-                };
-
-                Column::new()
-                .push(
-                    Row::new().padding(10).spacing(10)
+                let cmd_container = Container::new(match chosen_command {
+                    ChosenCommand::Upload => Column::new()
                         .push(
-                            TextInput::new(
-                                ln_input,
-                                "Fandom Username",
-                                ln_input_value,
-                                Message::LoginNameChanged,
+                            Container::new(
+                                Scrollable::new(upload_scrollable).push(Text::new(text_files)),
                             )
-                                .size(40)
+                            .width(Length::Fill)
+                            .height(Length::Fill)
+                            .align_x(Align::Center),
                         )
                         .push(
-                            TextInput::new(
-                                lp_input,
-                                "Fandom Password",
-                                lp_input_value,
-                                Message::LoginPasswordChanged,
+                            Container::new(
+                                Row::new()
+                                    .padding(10)
+                                    .spacing(20)
+                                    .push(
+                                        Button::new(file_button, Text::new("Select File(s)"))
+                                            .on_press(Message::FileButtonPressed),
+                                    )
+                                    .push(
+                                        Button::new(folder_button, Text::new("Select Folder"))
+                                            .on_press(Message::FolderButtonPressed),
+                                    )
+                                    .push(
+                                        Button::new(execute_button, Text::new("Execute"))
+                                            .on_press(Message::ExecuteButtonPressed),
+                                    ),
                             )
-                                .size(40)
-                            .password(),
+                            .width(Length::Fill)
+                            .height(Length::Shrink)
+                            .align_x(Align::Center),
                         ),
-                )
-                .push(ChosenCommand::ALL.iter().cloned().fold(
-                    Row::new().padding(10),
-                    |row, cmd| {
-                        row.push(Radio::new(
-                            cmd,
-                            &format!("{:?}", cmd),
-                            Some(chosen_command.to_owned()),
-                            Message::CommandSelected,
-                        ))
-                    },
-                ))
-                .push(cmd_container)
-                .into()
-            },
+                    _ => Column::new(),
+                });
+
+                let content = Column::new()
+                    .push(
+                        navbar
+                            .height(Length::FillPortion(2))
+                            .style(super::style::Theme::Dark),
+                    )
+                    .push(
+                        cmd_container
+                            .height(Length::FillPortion(10))
+                            .style(super::style::Theme::Dark),
+                    );
+
+                Container::new(content)
+                    .width(Length::Fill)
+                    .height(Length::Fill)
+                    .center_x()
+                    .center_y()
+                    .into()
+            }
         }
     }
 }
