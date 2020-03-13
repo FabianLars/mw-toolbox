@@ -218,8 +218,9 @@ dependencies = [
 
 [[package]]
 name = "clipboard_macos"
-version = "0.1.0-alpha"
-source = "git+https://github.com/hecrj/window_clipboard?rev=22c6dd6c04cd05d528029b50a30c56417cd4bebf#22c6dd6c04cd05d528029b50a30c56417cd4bebf"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "145a7f9e9b89453bc0a5e32d166456405d389cea5b578f57f1274b1397588a95"
 dependencies = [
  "objc",
  "objc-foundation",
@@ -228,24 +229,18 @@ dependencies = [
 
 [[package]]
 name = "clipboard_wayland"
-version = "0.1.0-alpha"
-source = "git+https://github.com/hecrj/window_clipboard?rev=22c6dd6c04cd05d528029b50a30c56417cd4bebf#22c6dd6c04cd05d528029b50a30c56417cd4bebf"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "88fa1b449e43a33bc4155e712e7239d67269e8fb9df13c135cdfa8a710c17422"
 dependencies = [
  "smithay-clipboard",
 ]
 
 [[package]]
-name = "clipboard_windows"
-version = "0.1.0-alpha"
-source = "git+https://github.com/hecrj/window_clipboard?rev=22c6dd6c04cd05d528029b50a30c56417cd4bebf#22c6dd6c04cd05d528029b50a30c56417cd4bebf"
-dependencies = [
- "clipboard-win",
-]
-
-[[package]]
 name = "clipboard_x11"
-version = "0.1.0-alpha"
-source = "git+https://github.com/hecrj/window_clipboard?rev=22c6dd6c04cd05d528029b50a30c56417cd4bebf#22c6dd6c04cd05d528029b50a30c56417cd4bebf"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "137cbd60c42327a8d63e710cee5a4d6a1ac41cdc90449ea2c2c63bd5e186290a"
 dependencies = [
  "xcb",
 ]
@@ -1065,7 +1060,7 @@ dependencies = [
 [[package]]
 name = "iced"
 version = "0.1.0-beta"
-source = "git+https://github.com/hecrj/iced.git#3f785472c4c43faf16e8e611bd0cec06ab1f9da9"
+source = "git+https://github.com/hecrj/iced.git#f1168187c917f84130e97be81e2ccd4181fe9539"
 dependencies = [
  "iced_futures",
  "iced_web",
@@ -1076,12 +1071,12 @@ dependencies = [
 [[package]]
 name = "iced_core"
 version = "0.1.0"
-source = "git+https://github.com/hecrj/iced.git#3f785472c4c43faf16e8e611bd0cec06ab1f9da9"
+source = "git+https://github.com/hecrj/iced.git#f1168187c917f84130e97be81e2ccd4181fe9539"
 
 [[package]]
 name = "iced_futures"
 version = "0.1.0-alpha"
-source = "git+https://github.com/hecrj/iced.git#3f785472c4c43faf16e8e611bd0cec06ab1f9da9"
+source = "git+https://github.com/hecrj/iced.git#f1168187c917f84130e97be81e2ccd4181fe9539"
 dependencies = [
  "futures 0.3.4",
  "log",
@@ -1092,7 +1087,7 @@ dependencies = [
 [[package]]
 name = "iced_native"
 version = "0.1.0"
-source = "git+https://github.com/hecrj/iced.git#3f785472c4c43faf16e8e611bd0cec06ab1f9da9"
+source = "git+https://github.com/hecrj/iced.git#f1168187c917f84130e97be81e2ccd4181fe9539"
 dependencies = [
  "iced_core",
  "iced_futures",
@@ -1104,7 +1099,7 @@ dependencies = [
 [[package]]
 name = "iced_style"
 version = "0.1.0-alpha"
-source = "git+https://github.com/hecrj/iced.git#3f785472c4c43faf16e8e611bd0cec06ab1f9da9"
+source = "git+https://github.com/hecrj/iced.git#f1168187c917f84130e97be81e2ccd4181fe9539"
 dependencies = [
  "iced_core",
 ]
@@ -1112,7 +1107,7 @@ dependencies = [
 [[package]]
 name = "iced_web"
 version = "0.1.0"
-source = "git+https://github.com/hecrj/iced.git#3f785472c4c43faf16e8e611bd0cec06ab1f9da9"
+source = "git+https://github.com/hecrj/iced.git#f1168187c917f84130e97be81e2ccd4181fe9539"
 dependencies = [
  "dodrio",
  "iced_core",
@@ -1127,7 +1122,7 @@ dependencies = [
 [[package]]
 name = "iced_wgpu"
 version = "0.1.0"
-source = "git+https://github.com/hecrj/iced.git#3f785472c4c43faf16e8e611bd0cec06ab1f9da9"
+source = "git+https://github.com/hecrj/iced.git#f1168187c917f84130e97be81e2ccd4181fe9539"
 dependencies = [
  "font-kit",
  "glam",
@@ -1144,7 +1139,7 @@ dependencies = [
 [[package]]
 name = "iced_winit"
 version = "0.1.0-alpha"
-source = "git+https://github.com/hecrj/iced.git#3f785472c4c43faf16e8e611bd0cec06ab1f9da9"
+source = "git+https://github.com/hecrj/iced.git#f1168187c917f84130e97be81e2ccd4181fe9539"
 dependencies = [
  "iced_native",
  "log",
@@ -2776,12 +2771,13 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
 name = "window_clipboard"
-version = "0.1.0-alpha.2"
-source = "git+https://github.com/hecrj/window_clipboard?rev=22c6dd6c04cd05d528029b50a30c56417cd4bebf#22c6dd6c04cd05d528029b50a30c56417cd4bebf"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "edcfde4a2b330a44ce91aaa3a1634d492b7ac32ebdde8316f141009f953fa152"
 dependencies = [
+ "clipboard-win",
  "clipboard_macos",
  "clipboard_wayland",
- "clipboard_windows",
  "clipboard_x11",
  "raw-window-handle",
 ]
