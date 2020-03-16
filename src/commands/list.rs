@@ -6,8 +6,27 @@ pub async fn allimages(props: super::super::ListProps) -> Result<(), Box<dyn std
     Ok(())
 }
 
-pub async fn allpages(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    get_from_api(props, "allpages", "ap").await?;
+pub async fn allpages(
+    mut props: super::super::ListProps,
+) -> Result<(), Box<dyn std::error::Error>> {
+    if props.parameter == "all".to_string() {
+        let namespaces = vec![
+            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
+            "110", "111", "1200", "1201", "1202", "2000", "2001", "2002", "500", "501", "502",
+            "503", "828", "829",
+        ];
+        for ns in namespaces {
+            props.output = format!("wtools_output{}.json", ns).parse().unwrap();
+            props.parameter = format!("&apnamespace={}", ns);
+            get_from_api(props.clone(), "allpages", "ap").await?;
+        }
+    } else {
+        if props.parameter == "".to_string() {
+            props.parameter = "0".to_string();
+        }
+        props.parameter = format!("&apnamespace={}", props.parameter);
+        get_from_api(props, "allpages", "ap").await?;
+    }
     Ok(())
 }
 
@@ -16,55 +35,83 @@ pub async fn alllinks(props: super::super::ListProps) -> Result<(), Box<dyn std:
     Ok(())
 }
 
-pub async fn allcategories(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn allcategories(
+    props: super::super::ListProps,
+) -> Result<(), Box<dyn std::error::Error>> {
     get_from_api(props, "allcategories", "ac").await?;
     Ok(())
 }
 
-pub async fn backlinks(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "" { panic!("missing bltitle: Title to search"); }
+pub async fn backlinks(
+    mut props: super::super::ListProps,
+) -> Result<(), Box<dyn std::error::Error>> {
+    if props.parameter == "" {
+        panic!("missing bltitle: Title to search");
+    }
     props.parameter = format!("&btitle={}", props.parameter);
     get_from_api(props, "backlinks", "bl").await?;
     Ok(())
 }
 
-pub async fn categorymembers(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "" { panic!("missing cmtitle: Which category to enumerate (must include 'Category:' prefix"); }
+pub async fn categorymembers(
+    mut props: super::super::ListProps,
+) -> Result<(), Box<dyn std::error::Error>> {
+    if props.parameter == "" {
+        panic!("missing cmtitle: Which category to enumerate (must include 'Category:' prefix");
+    }
     props.parameter = format!("&cmtitle={}", props.parameter);
     get_from_api(props, "categorymembers", "cm").await?;
     Ok(())
 }
 
-pub async fn embeddedin(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "" { panic!("missing eititle: Title to search"); }
+pub async fn embeddedin(
+    mut props: super::super::ListProps,
+) -> Result<(), Box<dyn std::error::Error>> {
+    if props.parameter == "" {
+        panic!("missing eititle: Title to search");
+    }
     props.parameter = format!("&eititle={}", props.parameter);
     get_from_api(props, "embeddedin", "ei").await?;
     Ok(())
 }
 
-pub async fn imageusage(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "" { panic!("missing iutitle: Title to search"); }
+pub async fn imageusage(
+    mut props: super::super::ListProps,
+) -> Result<(), Box<dyn std::error::Error>> {
+    if props.parameter == "" {
+        panic!("missing iutitle: Title to search");
+    }
     props.parameter = format!("&iutitle={}", props.parameter);
     get_from_api(props, "imageusage", "iu").await?;
     Ok(())
 }
 
-pub async fn iwbacklinks(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "" { panic!("missing iwblprefix: Prefix for the interwiki"); }
+pub async fn iwbacklinks(
+    mut props: super::super::ListProps,
+) -> Result<(), Box<dyn std::error::Error>> {
+    if props.parameter == "" {
+        panic!("missing iwblprefix: Prefix for the interwiki");
+    }
     props.parameter = format!("&iwblprefix={}", props.parameter);
     get_from_api(props, "iwbacklinks", "iwbl").await?;
     Ok(())
 }
 
-pub async fn langbacklinks(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "" { panic!("missing lbllang: Language for the language link"); }
+pub async fn langbacklinks(
+    mut props: super::super::ListProps,
+) -> Result<(), Box<dyn std::error::Error>> {
+    if props.parameter == "" {
+        panic!("missing lbllang: Language for the language link");
+    }
     props.parameter = format!("&lbllang={}", props.parameter);
     get_from_api(props, "langbacklinks", "lbl").await?;
     Ok(())
 }
 
 pub async fn search(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "" { panic!("missing srsearch: Search for all page titles (or content) that has this value"); }
+    if props.parameter == "" {
+        panic!("missing srsearch: Search for all page titles (or content) that has this value");
+    }
     props.parameter = format!("&srsearch={}", props.parameter);
     get_from_api(props, "search", "sr").await?;
     Ok(())
@@ -83,7 +130,11 @@ pub async fn exturlusage(props: super::super::ListProps) -> Result<(), Box<dyn s
     while has_next {
         let json: Value = serde_json::from_str(&client.get(&("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list=exturlusage&eulimit=5000".to_string() + &continue_from)).send().await?.text().await?)?;
 
-        for x in json["query"]["exturlusage"].as_array().expect("as_array").iter() {
+        for x in json["query"]["exturlusage"]
+            .as_array()
+            .expect("as_array")
+            .iter()
+        {
             let title = x["title"].as_str().unwrap_or("unwrap error").to_string();
             let url = x["url"].as_str().unwrap_or("unwrap error").to_string();
 
@@ -97,24 +148,33 @@ pub async fn exturlusage(props: super::super::ListProps) -> Result<(), Box<dyn s
         match json.get("query-continue") {
             None => has_next = false,
             Some(_) => {
-                continue_from = "&euoffset=".to_string() + &json["query-continue"]["exturlusage"]["euoffset"].as_i64().expect("as_str").to_string()
+                continue_from = "&euoffset=".to_string()
+                    + &json["query-continue"]["exturlusage"]["euoffset"]
+                        .as_i64()
+                        .expect("as_str")
+                        .to_string()
             }
         }
     }
-
 
     ::serde_json::to_writer(&std::fs::File::create(props.output)?, &results)?;
 
     Ok(())
 }
 
-pub async fn protectedtitles(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn protectedtitles(
+    props: super::super::ListProps,
+) -> Result<(), Box<dyn std::error::Error>> {
     get_from_api(props, "protectedtitles", "pt").await?;
     Ok(())
 }
 
-pub async fn querypage(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "" { panic!("missing qppage: The name of the special page. Note, this is case sensitive"); }
+pub async fn querypage(
+    mut props: super::super::ListProps,
+) -> Result<(), Box<dyn std::error::Error>> {
+    if props.parameter == "" {
+        panic!("missing qppage: The name of the special page. Note, this is case sensitive");
+    }
     props.parameter = format!("&qppage={}", props.parameter);
     get_from_api(props, "querypage", "qp").await?;
     Ok(())
@@ -125,17 +185,25 @@ pub async fn wkpoppages(props: super::super::ListProps) -> Result<(), Box<dyn st
     Ok(())
 }
 
-pub async fn unconvertedinfoboxes(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn unconvertedinfoboxes(
+    props: super::super::ListProps,
+) -> Result<(), Box<dyn std::error::Error>> {
     get_infobox_lists(props, "unconvertedinfoboxes").await?;
     Ok(())
 }
 
-pub async fn allinfoboxes(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn allinfoboxes(
+    props: super::super::ListProps,
+) -> Result<(), Box<dyn std::error::Error>> {
     get_infobox_lists(props, "allinfoboxes").await?;
     Ok(())
 }
 
-async fn get_from_api(props: super::super::ListProps, long: &str, short: &str) -> Result<(), Box<dyn std::error::Error>> {
+async fn get_from_api(
+    props: super::super::ListProps,
+    long: &str,
+    short: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let mut has_next: bool = true;
     let mut continue_from = String::new();
@@ -146,9 +214,8 @@ async fn get_from_api(props: super::super::ListProps, long: &str, short: &str) -
     };
     let from = match short {
         "eu" => "offset",
-        _ => "from"
+        _ => "from",
     };
-
 
     crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
@@ -170,23 +237,40 @@ async fn get_from_api(props: super::super::ListProps, long: &str, short: &str) -
             Some(_) => {
                 temp = match json["query-continue"][long][format!("{}{}", short, from)].as_str() {
                     Some(x) => x.to_owned(),
-                    None => json["query-continue"][long][format!("{}{}", short, from)].as_i64().expect("as_i64(query-continue)").to_string()
+                    None => json["query-continue"][long][format!("{}{}", short, from)]
+                        .as_i64()
+                        .expect("as_i64(query-continue)")
+                        .to_string(),
                 };
                 continue_from = format!("&{}{}=", short, from).to_string() + &temp
-                }
             }
         }
+    }
     ::serde_json::to_writer(&std::fs::File::create(props.output)?, &results)?;
     Ok(())
 }
 
-async fn get_infobox_lists(props: super::super::ListProps, typ: &str) -> Result<(), Box<dyn std::error::Error>> {
+async fn get_infobox_lists(
+    props: super::super::ListProps,
+    typ: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let mut results: Vec<String> = Vec::new();
 
     crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
-    let res = client.get(&(format!("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}", typ).to_string())).send().await?.text().await?;
+    let res = client
+        .get(
+            &(format!(
+                "https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}",
+                typ
+            )
+            .to_string()),
+        )
+        .send()
+        .await?
+        .text()
+        .await?;
     let json: Value = serde_json::from_str(&res)?;
     for x in json["query"][typ].as_array().unwrap().iter() {
         results.push(x["title"].as_str().unwrap().to_string())
