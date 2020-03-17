@@ -6,7 +6,10 @@ pub async fn move_pages(props: super::super::MoveProps) -> Result<(), Box<dyn st
 
     let mut pages = "".to_owned();
     for line in props.input.lines() {
-        pages.push_str(line);
+        if line.starts_with("replace:") {
+            continue;
+        }
+        pages.push_str(line.split(";").nth(0).unwrap());
         pages.push_str("|");
     }
     pages.pop();
@@ -36,19 +39,62 @@ pub async fn move_pages(props: super::super::MoveProps) -> Result<(), Box<dyn st
         .unwrap();
     let move_token = String::from(o["movetoken"].as_str().unwrap());
 
-    for line in props.input.lines() {
-        // Needs to be edited before use
-        //let dest = line.replace("Vorlage:Data ", "Vorlage:Rune data/");
-        //let dest = dest.replace(" (Rune)", "");
-        let dest = line.replace(" (Rune)", "");
+    let first_line = props.input.lines().nth(0).unwrap().starts_with("replace:");
+    let replace: Vec<String>;
+    let with: Vec<String>;
+    let is_regex: bool;
 
-        println!("{:?}xxx{:?}", line, dest);
+    if first_line {
+        let temp: Vec<String> = props
+            .input
+            .lines()
+            .nth(0)
+            .unwrap()
+            .replace("replace:", "")
+            .split(";")
+            .map(|x| x.to_string())
+            .collect();
+
+        replace = temp[0].split(",").map(|x| x.to_string()).collect();
+        with = temp[1].split(",").map(|x| x.to_string()).collect();
+        if replace.len() != with.len() {
+            panic!("Check replace: line in input file")
+        }
+        is_regex = true;
+    } else {
+        replace = Vec::new();
+        with = Vec::new();
+        is_regex = false;
+    }
+
+    for line in props.input.lines() {
+        if line.starts_with("replace:") {
+            continue;
+        }
+        let from;
+        let mut dest;
+
+        if is_regex {
+            from = line.to_string();
+            dest = line.to_string();
+            for (from, to) in replace.iter().zip(with.iter()) {
+                dest = dest.replace(from, to);
+            }
+        } else if line.contains(";") {
+            let mut temp = line.split(";");
+            from = temp.nth(0).unwrap().to_string();
+            dest = temp.last().unwrap().to_string();
+        } else {
+            panic!("Check input file or --replace array");
+        }
+
+        println!("{} => MOVED TO => {}", &from, &dest);
 
         client
             .post(wiki_api_url)
             .form(&[
                 ("action", "move"),
-                ("from", line),
+                ("from", &from),
                 ("to", &dest),
                 ("format", "json"),
                 ("reason", "automated action"),

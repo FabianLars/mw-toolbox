@@ -144,8 +144,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             Subcommand::Update { update_type, .. } => match update_type {
                 UpdateType::Champs | UpdateType::Champions => commands::update::champs().await?,
-                #[cfg(feature = "riot-api")]
                 UpdateType::Rotation | UpdateType::Rotations => {
+                    #[cfg(not(feature = "riot-api"))]
+                    panic!("Did you forget the riot-api feature flag?");
+                    #[cfg(feature = "riot-api")]
                     commands::update::rotation(UpdateProps::new(Cli::parse())).await?
                 }
             },
