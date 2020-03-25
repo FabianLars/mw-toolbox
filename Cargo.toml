@@ -2,10 +2,14 @@
 name = "wtools"
 version = "0.1.0"
 authors = ["FabianLars"]
+build = "build.rs"
 edition = "2018"
 
 [features]
 riot-api = []
+
+[target.'cfg(windows)'.dependencies]
+winres = "0.1"
 
 [dependencies]
 tokio = { version = "0.2", features = ["macros", "fs", "time"] }
@@ -17,4 +21,4 @@ chrono = "0.4"
 futures = "0.3"
 iced = { git = "https://github.com/hecrj/iced.git", branch = "master", features = ["tokio"] }
 directories ="2.0"
-nfd = { git = "https://github.com/EmbarkStudios/nfd-rs.git" }
+nfd = { git = "https://github.com/EmbarkStudios/nfd-rs.git", branch = "update-submodule" }

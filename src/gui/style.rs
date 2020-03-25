@@ -196,20 +196,22 @@ mod dark {
             }
         }
 
-        fn hovered(&self) -> text_input::Style {
-            text_input::Style {
-                border_width: 1,
-                border_color: Color { a: 0.3, ..ACCENT },
-                ..self.focused()
-            }
-        }
-
         fn placeholder_color(&self) -> Color {
             Color::from_rgb(0.4, 0.4, 0.4)
         }
 
         fn value_color(&self) -> Color {
             Color::WHITE
+        }
+
+        fn selection_color(&self) -> Color { ACTIVE }
+
+        fn hovered(&self) -> text_input::Style {
+            text_input::Style {
+                border_width: 1,
+                border_color: Color { a: 0.3, ..ACCENT },
+                ..self.focused()
+            }
         }
     }
 
