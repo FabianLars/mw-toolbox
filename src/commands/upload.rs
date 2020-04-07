@@ -1,10 +1,11 @@
 use serde_json::Value;
 
-pub async fn from_gui(props: super::super::UploadProps) -> Result<(), crate::gui::iced::ExecuteError> {
+#[cfg(feature = "gui")]
+pub async fn from_gui(props: super::super::UploadProps) -> Result<(), crate::gui::app::ExecuteError> {
     println!("from gui");
     match upload(props).await {
         Ok(()) => Ok(()),
-        Err(_) => Err(crate::gui::iced::ExecuteError::Upload),
+        Err(_) => Err(crate::gui::app::ExecuteError::Upload),
     }
 }
 

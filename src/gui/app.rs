@@ -69,8 +69,9 @@ enum Message {
 impl Application for App {
     type Executor = iced::executor::Default;
     type Message = Message;
+    type Flags = ();
 
-    fn new() -> (App, Command<Message>) {
+    fn new(_flags: ()) -> (App, Command<Message>) {
         (
             App::Loading,
             Command::perform(SavedState::load(), Message::Loaded),

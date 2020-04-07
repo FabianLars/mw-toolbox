@@ -6,9 +6,13 @@ build = "build.rs"
 edition = "2018"
 
 [features]
-riot-api = []
+default = ["gui"]
 
-[target.'cfg(windows)'.dependencies]
+gui = ["iced"]
+riot-api = []
+league = []
+
+[target.'cfg(windows)'.build-dependencies]
 winres = "0.1"
 
 [dependencies]
@@ -19,6 +23,6 @@ serde_json = "1.0"
 clap = { git = "https://github.com/clap-rs/clap/" }
 chrono = "0.4"
 futures = "0.3"
-iced = { git = "https://github.com/hecrj/iced.git", branch = "master", features = ["tokio"] }
+iced = { git = "https://github.com/hecrj/iced.git", branch = "master", features = ["tokio"], optional = true }
 directories ="2.0"
 nfd = { git = "https://github.com/EmbarkStudios/nfd-rs.git", branch = "update-submodule" }

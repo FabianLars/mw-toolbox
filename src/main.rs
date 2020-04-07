@@ -1,6 +1,7 @@
 mod commands;
-mod gui;
 mod helpers;
+#[cfg(feature = "gui")]
+mod gui;
 
 use clap::{arg_enum, Clap};
 
@@ -83,7 +84,10 @@ struct Cli {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     match Cli::parse().command {
-        None => gui::iced::start(),
+        #[cfg(not(feature = "gui"))]
+        None => (),
+        #[cfg(feature = "gui")]
+        None => gui::app::start(),
         Some(x) => match x {
             Subcommand::Delete { .. } => {
                 commands::delete::delete_pages(DeleteProps::new(Cli::parse())).await?
