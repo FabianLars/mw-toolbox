@@ -119,26 +119,8 @@ pub async fn rotation(props: super::super::UpdateProps) -> Result<(), Box<dyn st
         .to_owned()
         + &std::env::var("RIOT_API_KEY")?;
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
-    let curr_date = chrono::Utc::today();
-    let dates = [
-        rename_m(
-            (curr_date - chrono::Duration::days(14))
-                .format("%-d. %B %Y")
-                .to_string(),
-        ),
-        rename_m(
-            (curr_date - chrono::Duration::days(7))
-                .format("%-d. %B %Y")
-                .to_string(),
-        ),
-        rename_m(curr_date.format("%-d. %B %Y").to_string()),
-        rename_m(
-            (curr_date + chrono::Duration::days(7))
-                .format("%-d. %B %Y")
-                .to_string(),
-        ),
-    ];
     let client = reqwest::Client::builder().cookie_store(true).build()?;
+    let curr_date = rename_m(chrono::Utc::today().format("%-d. %B %Y").to_string());
 
     crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
@@ -164,13 +146,8 @@ pub async fn rotation(props: super::super::UpdateProps) -> Result<(), Box<dyn st
         .collect();
     rotation.sort();
     new_players.sort();
+    let rotation: String = rotation.iter().map(|x| "|".to_owned() + x).collect();
     let new_players: String = new_players.iter().map(|x| "|".to_owned() + x).collect();
-
-    let mut history: Vec<String> = serde_json::from_reader(&std::fs::File::open("history.json")?)?;
-    history.pop();
-    history.insert(0, rotation.iter().map(|x| "|".to_owned() + x).collect());
-
-    serde_json::to_writer(&std::fs::File::create("history.json")?, &history)?;
 
     let res = client
         .get(reqwest::Url::parse_with_params(
@@ -197,8 +174,7 @@ pub async fn rotation(props: super::super::UpdateProps) -> Result<(), Box<dyn st
     let edit_token = String::from(o["edittoken"].as_str().unwrap());
 
     let template = format!(
-        r#"
-<div style="text-align:center; font-size: 125%; font-weight:bold; margin: 2px 0 0;">[[Kostenlose Championrotation]]</div><div style="text-align:left; font-size: 80%; font-weight:bold; margin: 2px 0 0;">[[Vorlage:Aktuelle Championrotation|Bearbeiten]]</div>
+        r#"<div style="text-align:center; font-size: 125%; font-weight:bold; margin: 2px 0 0;">[[Kostenlose Championrotation]]</div><div style="text-align:left; font-size: 80%; font-weight:bold; margin: 2px 0 0;">[[Vorlage:Aktuelle Championrotation|Bearbeiten]]</div>
 <tabber>Klassisch=
 {{{{#ifeq:{{{{FULLPAGENAME}}}}|Vorlage:Aktuelle Championrotation|{{{{#ifeq:{{{{#time:N|{{{{CURRENTTIMESTAMP}}}}}}}}|2|{{{{#ifexpr:{{{{#expr:{{{{#time:U|{{{{REVISIONTIMESTAMP}}}}}}}}+100000}}}}<{{{{#time:U|{{{{CURRENTTIMESTAMP}}}}}}}}|[[Kategorie:Datumskategorie Championrotation]]}}}}}}}}}}}}{{{{Aktuelle Championrotation/var
 |specialweek      = <!-- Nur für Sonderfälle, sonst leer lassen! -->
@@ -211,34 +187,15 @@ pub async fn rotation(props: super::super::UpdateProps) -> Result<(), Box<dyn st
 
 
 |-|ARAM=
-<p style="text-align: center; margin: 0 15%;">''Alle Zufällig''-Spiele erlauben es Spielern, Champions aus den letzten beiden Championrotationen sowie aus der aktuellen zu rollen. Dopplungen erhohen hierbei nicht die Wahrscheinlichkeit, den Champion zu ziehen.</p>
+<p style="text-align: center; margin: 0 15%;">In ''Alle Zufällig''-Spielen sind zusätzlich zur normalen Rotation folgende 65 Champions immer möglich:</p>
 {{{{Aktuelle Championrotation/var
 |specialweek      = <!-- Nur für Sonderfälle, sonst leer lassen! -->
 |specialstartdate = <!-- Nur für Sonderfälle, sonst leer lassen! -->
 |specialenddate   = <!-- Nur für Sonderfälle, sonst leer lassen! -->
-|datefrom         = {}
-|dateto           = {}
-|lastchecked      = <!-- Nur für die Rotation neuer Accounts, sonst leer lassen! -->
-{}}}}}
-
-{{{{Aktuelle Championrotation/var
-|specialweek      = <!-- Nur für Sonderfälle, sonst leer lassen! -->
-|specialstartdate = <!-- Nur für Sonderfälle, sonst leer lassen! -->
-|specialenddate   = <!-- Nur für Sonderfälle, sonst leer lassen! -->
-|datefrom         = {}
-|dateto           = {}
-|lastchecked      = <!-- Nur für die Rotation neuer Accounts, sonst leer lassen!-->
-{}}}}}
-
-{{{{Aktuelle Championrotation/var
-|specialweek      = <!-- Nur für Sonderfälle, sonst leer lassen! -->
-|specialstartdate = <!-- Nur für Sonderfälle, sonst leer lassen! -->
-|specialenddate   = <!-- Nur für Sonderfälle, sonst leer lassen! -->
-|datefrom         = {}
-|dateto           = {}
-|lastchecked      = <!-- Nur für die Rotation neuer Accounts, sonst leer lassen! -->
-{}}}}}
-
+|datefrom         = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|dateto           = <!-- Nur für Sonderfälle, sonst leer lassen! -->
+|lastchecked      = {}
+|Aatrox|Ahri|Akali|Amumu|Annie|Ashe|Brand|Braum|Caitlyn|Cho'Gath|Darius|Draven|Ekko|Ezreal|Fiora|Fizz|Garen|Graves|Irelia|Janna|Jarvan IV|Jax|Jhin|Jinx|Karma|Karthus|Katarina|Kayle|Kha'Zix|LeBlanc|Lee Sin|Leona|Lucian|Lulu|Lux|Malphite|Maokai|Master Yi|Miss Fortune|Mordekaiser|Morgana|Nautilus|Nidalee|Pantheon|Pyke|Quinn|Renekton|Riven|Ryze|Sivir|Sona|Soraka|Thresh|Tristana|Tryndamere|Twisted Fate|Twitch|Varus|Vayne|Veigar|Vel'Koz|Vladimir|Wukong|Xayah|Zed}}}}
 
 |-|Neue Accounts=
 <p style="text-align: center; margin: 0 15%;">Vor [[Erfahrung (Beschwörer)|Stufe 11]] haben Spieler Zugriff auf eine andere Championrotation. Diese wird seltener aktualisiert, deshalb könnte es sein, dass die folgende Liste nicht mehr korrekt ist.</p>
@@ -250,21 +207,14 @@ pub async fn rotation(props: super::super::UpdateProps) -> Result<(), Box<dyn st
 |dateto           = <!-- Nur für die ARAM-Rotation verwendet, sonst leer lassen! -->
 |lastchecked      = {}
 {}}}}}
-</tabber><noinclude>{{Dokumentation}}<noinclude>
-    "#,
-        history[0],
-        dates[0],
-        dates[1],
-        history[2],
-        dates[1],
-        dates[2],
-        history[1],
-        dates[2],
-        dates[3],
-        history[0],
-        dates[2],
+</tabber><noinclude>{{Dokumentation}}<noinclude>"#,
+        rotation,
+        curr_date,
+        curr_date,
         new_players
     );
+
+    println!("{:?}", &template);
 
     client
         .post(wiki_api_url)
