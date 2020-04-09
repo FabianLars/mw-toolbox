@@ -26,3 +26,4 @@ futures = "0.3"
 iced = { git = "https://github.com/hecrj/iced.git", branch = "master", features = ["tokio"], optional = true }
 directories = "2.0"
 nfd = { git = "https://github.com/EmbarkStudios/nfd-rs.git", branch = "update-submodule", optional = true }
+base64 = "0.12"

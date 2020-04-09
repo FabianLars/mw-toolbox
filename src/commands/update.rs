@@ -1,8 +1,9 @@
+use crate::helpers::props::*;
 use futures::{future::TryFutureExt, try_join};
+use reqwest::header::{HeaderMap, ACCEPT, AUTHORIZATION};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
-use std::fs::File;
+use std::{collections::HashMap, error::Error, fs::File};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -62,7 +63,56 @@ struct Rotations {
     max_new_player_level: i32,
 }
 
-pub async fn champs() -> Result<(), Box<dyn std::error::Error>> {
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct StoreChamp {
+    //pub active: bool,
+    //pub bundled: Value,
+    //pub icon_url: String,
+    pub inventory_type: String,
+    pub item_id: i32,
+    //pub item_instance_id: String,
+    pub item_requirements: Option<Vec<ItemReq>>,
+    //pub localizations: Value,
+    //pub max_quantity: i8,
+    //pub prices: Vec<Price>,
+    //pub release_date: String,
+    pub sale: Option<Sale>,
+    //pub sub_inventory_type: Value,
+    //pub tags: Value,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ItemReq {
+    pub inventory_type: String,
+    pub item_id: i32,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Sale {
+    pub end_date: String,
+    pub prices: Vec<Price>,
+    pub start_date: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Price {
+    pub cost: i32,
+    pub currency: String,
+    pub discount: f32,
+}
+
+#[derive(Debug, Eq, PartialEq)]
+struct Angebot {
+    champ: String,
+    skin: Option<String>,
+    discount: String,
+}
+
+pub async fn champs() -> Result<(), Box<dyn Error>> {
     let client = reqwest::Client::new();
 
     let fut1 = async {
@@ -113,13 +163,210 @@ pub async fn champs() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-pub async fn discounts(props: crate::helpers::props::Props) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn discounts(props: Props) -> Result<(), Box<dyn Error>> {
+    let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
+    let lockfile = std::fs::read_to_string(props.path.file_path()).unwrap();
+    // 0: "LeagueClient", 1: PID, 2: Port, 3: Auth, 4: Protokoll
+    let contents = lockfile.split(':').collect::<Vec<_>>();
+    let port = contents[2];
+    let auth = base64::encode(format!("riot:{}", contents[3]).as_bytes());
+    let mut headers = HeaderMap::new();
+    headers.insert(ACCEPT, "application/json".parse().unwrap());
+    headers.insert(AUTHORIZATION, format!("Basic {}", auth).parse().unwrap());
+    let client = reqwest::Client::builder()
+        .danger_accept_invalid_certs(true)
+        .default_headers(headers)
+        .cookie_store(true)
+        .build()?;
+    let res = client
+        .get(&format!(
+            "https://127.0.0.1:{}/lol-store/v1/catalog?inventoryType=[\"CHAMPION\",\"CHAMPION_SKIN\"]",
+            port
+        ))
+        .send()
+        .await?
+        .text()
+        .await?;
+    let json: Vec<StoreChamp> = serde_json::from_str(&res).unwrap();
+
+    let champions_wapi: HashMap<i32, Champ> = client
+        .get("https://fabianlars.de/wapi/champs")
+        .send()
+        .await?
+        .json()
+        .await?;
+
+    let mut champs: Vec<Angebot> = Vec::new();
+    let mut skins: Vec<Angebot> = Vec::new();
+    let mut start_date = String::new();
+    let mut end_date = String::new();
+
+    for entry in &json {
+        if entry.sale.is_none() {
+            continue;
+        }
+
+        match entry.inventory_type.as_str() {
+            "CHAMPION" => {
+                let mut discount = "discount_error".to_string();
+                for p in &entry.sale.as_ref().unwrap().prices {
+                    if p.currency == "RP" {
+                        discount = format!("{:.2}", p.discount)
+                            .split('.')
+                            .last()
+                            .unwrap()
+                            .to_string();
+                    }
+                }
+
+                start_date = entry.sale.as_ref().unwrap().start_date.clone();
+                end_date = entry.sale.as_ref().unwrap().end_date.clone();
+
+                champs.push(Angebot {
+                    champ: champions_wapi[&entry.item_id].name.clone(),
+                    skin: None,
+                    discount,
+                });
+            }
+            "CHAMPION_SKIN" => {
+                let champ_id: i32 = entry.item_requirements.as_ref().unwrap()[0].item_id;
+
+                let mut skin = "skin_error".to_string();
+                let mut discount = "discount_error".to_string();
+
+                for s in &champions_wapi[&champ_id].skins {
+                    if s.id_long == entry.item_id {
+                        skin = s.name.to_string();
+                    }
+                }
+
+                for p in &entry.sale.as_ref().unwrap().prices {
+                    if p.currency == "RP" {
+                        discount = format!("{:.2}", p.discount)
+                            .split('.')
+                            .last()
+                            .unwrap()
+                            .to_string();
+                    }
+                }
+
+                skins.push(Angebot {
+                    champ: champions_wapi[&champ_id].name.clone(),
+                    skin: Some(skin),
+                    discount,
+                })
+            }
+            _ => {
+                continue;
+            }
+        }
+    }
+
+    champs.sort_by(|a, b| a.champ.cmp(&b.champ));
+    skins.sort_by(|a, b| a.champ.cmp(&b.champ));
+
+    let mut angebote: String = "".to_string();
+
+    let start_date_vec: Vec<_> = start_date.split('T').next().unwrap().split('-').collect();
+    let end_date_vec: Vec<_> = end_date.split('T').next().unwrap().split('-').collect();
+
+    start_date = format!(
+        "{}.{}.{}",
+        start_date_vec[2], start_date_vec[1], start_date_vec[0]
+    );
+    end_date = format!(
+        "{}.{}.{}",
+        end_date_vec[2], end_date_vec[1], end_date_vec[0]
+    );
+
+    for c in &champs {
+        angebote.push_str(&format!(
+            r#"
+{{{{Angebot
+|champ        = {}
+|skin         =
+|display      =
+|specialprice =
+|discount     = {}
+}}}}"#,
+            c.champ, c.discount
+        ))
+    }
+
+    for s in &skins {
+        angebote.push_str(&format!(
+            r#"
+{{{{Angebot
+|champ        = {}
+|skin         = {}
+|display      =
+|specialprice =
+|discount     = {}
+}}}}"#,
+            s.champ,
+            s.skin.as_ref().unwrap(),
+            s.discount
+        ))
+    }
+
+    let full_template = format!(
+        r#"<div style="text-align:left; font-size: 80%; font-weight:bold; margin: 2px 0 0;">[[Vorlage:Aktuelle Angebote|Bearbeiten]]</div><div class="center">
+<!-- Erst ab hier bearbeiten! -->
+{{{{Angebotskasten
+
+|startdate     = {}
+|enddate       = {}
+<!-- nicht löschen: -->|<!--
+-->{}
+<!-- nicht löschen: -->}}}}
+</div><noinclude>{{{{Dokumentation}}}}</noinclude>"#,
+        start_date, end_date, angebote
+    );
+
+    crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+
+    let res = client
+        .get(reqwest::Url::parse_with_params(
+            wiki_api_url,
+            &[
+                ("action", "query"),
+                ("format", "json"),
+                ("prop", "info"),
+                ("intoken", "edit"),
+                ("titles", "Vorlage:Aktuelle_Angebote"),
+            ],
+        )?)
+        .send()
+        .await?
+        .text()
+        .await?;
+    let json: serde_json::Value = serde_json::from_str(&res)?;
+    let (_i, o) = json["query"]["pages"]
+        .as_object()
+        .unwrap()
+        .into_iter()
+        .next()
+        .unwrap();
+    let edit_token = String::from(o["edittoken"].as_str().unwrap());
+
+    client
+        .post(wiki_api_url)
+        .form(&[
+            ("action", "edit"),
+            ("reason", "Nicht ganz so automatische Aktion"),
+            ("bot", "1"),
+            ("title", "Vorlage:Aktuelle_Angebote"),
+            ("text", &full_template),
+            ("token", &edit_token),
+        ])
+        .send()
+        .await?;
 
     Ok(())
 }
 
 #[cfg(feature = "riot-api")]
-pub async fn rotation(props: crate::helpers::props::Props) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn rotation(props: Props) -> Result<(), Box<dyn Error>> {
     let riot_api_url = "https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key="
         .to_owned()
         + &std::env::var("RIOT_API_KEY")?;
@@ -213,10 +460,7 @@ pub async fn rotation(props: crate::helpers::props::Props) -> Result<(), Box<dyn
 |lastchecked      = {}
 {}}}}}
 </tabber><noinclude>{{{{Dokumentation}}}}<noinclude>"#,
-        rotation,
-        curr_date,
-        curr_date,
-        new_players
+        rotation, curr_date, curr_date, new_players
     );
 
     client
