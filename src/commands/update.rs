@@ -113,8 +113,13 @@ pub async fn champs() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+pub async fn discounts(props: crate::helpers::props::Props) -> Result<(), Box<dyn std::error::Error>> {
+
+    Ok(())
+}
+
 #[cfg(feature = "riot-api")]
-pub async fn rotation(props: super::super::UpdateProps) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn rotation(props: crate::helpers::props::Props) -> Result<(), Box<dyn std::error::Error>> {
     let riot_api_url = "https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key="
         .to_owned()
         + &std::env::var("RIOT_API_KEY")?;
@@ -207,14 +212,12 @@ pub async fn rotation(props: super::super::UpdateProps) -> Result<(), Box<dyn st
 |dateto           = <!-- Nur für die ARAM-Rotation verwendet, sonst leer lassen! -->
 |lastchecked      = {}
 {}}}}}
-</tabber><noinclude>{{Dokumentation}}<noinclude>"#,
+</tabber><noinclude>{{{{Dokumentation}}}}<noinclude>"#,
         rotation,
         curr_date,
         curr_date,
         new_players
     );
-
-    println!("{:?}", &template);
 
     client
         .post(wiki_api_url)

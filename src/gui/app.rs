@@ -20,11 +20,12 @@ struct State {
     ln_input_value: String,
     lp_input: text_input::State,
     lp_input_value: String,
+    lockfile: String,
     chosen_command: ChosenCommand,
     file_button: button::State,
     folder_button: button::State,
     execute_button: button::State,
-    selected_files: super::super::UploadInput,
+    selected_files: crate::helpers::props::PathType,
     upload_scrollable: scrollable::State,
     dirty: bool,
     saving: bool,
@@ -97,6 +98,7 @@ impl Application for App {
                     Message::Loaded(Ok(state)) => {
                         *self = App::Loaded(State {
                             ln_input_value: state.ln_input_value,
+                            lockfile: state.lockfile,
                             ..State::default()
                         });
                     }
@@ -128,17 +130,25 @@ impl Application for App {
                             });
 
                         match result {
-                            nfd::Response::Okay(file_path) => {
-                                state.selected_files = super::super::UploadInput::File(
+                            nfd::Response::Okay(file_path) => match state.chosen_command {
+                                ChosenCommand::Upload => state.selected_files = crate::helpers::props::PathType::File(
                                     std::path::PathBuf::from(file_path),
-                                )
+                                ),
+                                ChosenCommand::Update => state.lockfile = file_path,
+                                _ => (),
                             }
                             nfd::Response::OkayMultiple(files) => {
-                                let mut temp: Vec<std::path::PathBuf> = Vec::new();
-                                for f in files {
-                                    temp.push(std::path::PathBuf::from(f));
+                                match state.chosen_command {
+                                    ChosenCommand::Upload => {
+                                        let mut temp: Vec<std::path::PathBuf> = Vec::new();
+                                        for f in files {
+                                            temp.push(std::path::PathBuf::from(f));
+                                        }
+                                        state.selected_files = crate::helpers::props::PathType::Files(temp)
+                                    },
+                                    ChosenCommand::Update => state.lockfile = files[0].clone(),
+                                    _ => ()
                                 }
-                                state.selected_files = super::super::UploadInput::Files(temp)
                             }
                             nfd::Response::Cancel => println!("User canceled"),
                         }
@@ -150,7 +160,7 @@ impl Application for App {
 
                         match result {
                             nfd::Response::Okay(folder_path) => {
-                                state.selected_files = super::super::UploadInput::Folder(
+                                state.selected_files = super::super::PathType::Folder(
                                     std::path::PathBuf::from(folder_path),
                                 )
                             }
@@ -159,15 +169,18 @@ impl Application for App {
                         }
                     }
                     Message::ExecuteButtonPressed => {
-                        if state.chosen_command == ChosenCommand::Upload {
-                            return Command::perform(
-                                crate::commands::upload::from_gui(super::super::UploadProps {
-                                    input: state.selected_files.clone(),
+                        match state.chosen_command {
+                            ChosenCommand::Update => println!("{}", state.lockfile),
+                            ChosenCommand::Upload => return Command::perform(
+                                crate::commands::upload::from_gui(crate::helpers::props::Props {
+                                    path: state.selected_files.clone(),
+                                    parameter: None,
                                     loginname: state.ln_input_value.clone(),
                                     loginpassword: state.lp_input_value.clone(),
                                 }),
                                 Message::Executed,
-                            );
+                            ),
+                            _ => (),
                         }
                     }
                     Message::Saved(_) => {
@@ -188,6 +201,7 @@ impl Application for App {
                     Command::perform(
                         SavedState {
                             ln_input_value: state.ln_input_value.clone(),
+                            lockfile: state.lockfile.clone(),
                         }
                         .save(),
                         Message::Saved,
@@ -256,13 +270,13 @@ impl Application for App {
 
                 let mut text_files = String::new();
                 match selected_files {
-                    super::super::UploadInput::File(x) => text_files.push_str(
+                    super::super::PathType::File(x) => text_files.push_str(
                         x.file_name()
                             .unwrap_or(std::ffi::OsStr::new(""))
                             .to_str()
                             .expect("file to gui text"),
                     ),
-                    super::super::UploadInput::Files(x) => {
+                    super::super::PathType::Files(x) => {
                         for f in x {
                             text_files.push_str(
                                 f.file_name().unwrap().to_str().expect("files to gui text"),
@@ -270,7 +284,7 @@ impl Application for App {
                             text_files.push_str("\n");
                         }
                     }
-                    super::super::UploadInput::Folder(x) => {
+                    super::super::PathType::Folder(x) => {
                         for f in std::fs::read_dir(x).expect("read folder for gui text") {
                             text_files.push_str(
                                 f.unwrap()
@@ -315,6 +329,13 @@ impl Application for App {
                             .height(Length::Shrink)
                             .align_x(Align::Center),
                         ),
+
+                    ChosenCommand::Update => Column::new().push(Container::new(
+                        Button::new(file_button, Text::new("Select lockfile")).on_press(Message::FileButtonPressed)
+                    ).width(Length::Fill).height(Length::Fill).align_x(Align::Center)).push(Container::new(
+                        Button::new(execute_button, Text::new("Update Wiki-template")).on_press(Message::ExecuteButtonPressed)
+                    ).width(Length::Fill).height(Length::Fill).align_x(Align::Center)),
+
                     _ => Column::new(),
                 });
 
@@ -356,6 +377,7 @@ fn loading_message() -> Element<'static, Message> {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct SavedState {
     ln_input_value: String,
+    lockfile: String,
 }
 
 #[derive(Debug, Clone)]

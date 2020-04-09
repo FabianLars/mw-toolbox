@@ -1,123 +1,147 @@
+use crate::helpers::{error::WtoolsError, props::*};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::{collections::HashMap, error::Error};
 
-pub async fn allimages(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn allimages(props: Props) -> Result<(), Box<dyn Error>> {
     get_from_api(props, "allimages", "ai").await?;
     Ok(())
 }
 
-pub async fn allpages(
-    mut props: super::super::ListProps,
-) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "all".to_string() {
-        let namespaces = vec![
-            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-            "110", "111", "1200", "1201", "1202", "2000", "2001", "2002", "500", "501", "502",
-            "503", "828", "829",
-        ];
-        for ns in namespaces {
-            props.output = format!("wtools_output{}.json", ns).parse().unwrap();
-            props.parameter = format!("&apnamespace={}", ns);
-            get_from_api(props.clone(), "allpages", "ap").await?;
+pub async fn allpages(mut props: Props) -> Result<(), Box<dyn Error>> {
+    let namespaces = vec![
+        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
+        "110", "111", "1200", "1201", "1202", "2000", "2001", "2002", "500", "501", "502", "503",
+        "828", "829",
+    ];
+
+    match props.parameter.clone() {
+        Some(param) => {
+            if param == "all".to_string() {
+                for ns in namespaces {
+                    props.path =
+                        PathType::File(format!("wtools_output{}.json", ns).parse().unwrap());
+                    props.parameter = Some(format!("&apnamespace={}", ns));
+                }
+            } else {
+                if namespaces.iter().any(|x| *x == param) {
+                    props.parameter = Some(format!("&apnamespace={}", param))
+                } else {
+                    return Err(Box::new(WtoolsError::ListError(
+                        "Unknown namespace given!".to_string(),
+                    )));
+                }
+            }
         }
-    } else {
-        if props.parameter == "".to_string() {
-            props.parameter = "0".to_string();
-        }
-        props.parameter = format!("&apnamespace={}", props.parameter);
-        get_from_api(props, "allpages", "ap").await?;
+        None => props.parameter = Some("0".to_string()),
     }
+    get_from_api(props, "allpages", "ap").await?;
     Ok(())
 }
 
-pub async fn alllinks(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn alllinks(props: Props) -> Result<(), Box<dyn Error>> {
     get_from_api(props, "alllinks", "al").await?;
     Ok(())
 }
 
-pub async fn allcategories(
-    props: super::super::ListProps,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn allcategories(props: Props) -> Result<(), Box<dyn Error>> {
     get_from_api(props, "allcategories", "ac").await?;
     Ok(())
 }
 
-pub async fn backlinks(
-    mut props: super::super::ListProps,
-) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "" {
-        panic!("missing bltitle: Title to search");
+pub async fn backlinks(mut props: Props) -> Result<(), Box<dyn Error>> {
+    match props.parameter {
+        Some(p) => {
+            props.parameter = Some(format!("&btitle={}", p));
+            get_from_api(props, "backlinks", "bl").await?;
+            Ok(())
+        }
+        None => Err(Box::new(WtoolsError::ListError(
+            "Missing btitle (Title to search)".to_string(),
+        ))),
     }
-    props.parameter = format!("&btitle={}", props.parameter);
-    get_from_api(props, "backlinks", "bl").await?;
-    Ok(())
 }
 
-pub async fn categorymembers(
-    mut props: super::super::ListProps,
-) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "" {
-        panic!("missing cmtitle: Which category to enumerate (must include 'Category:' prefix");
+pub async fn categorymembers(mut props: Props) -> Result<(), Box<dyn Error>> {
+    match props.parameter {
+        Some(p) => {
+            props.parameter = Some(format!("&cmtitle={}", p));
+            get_from_api(props, "categorymembers", "cm").await?;
+            Ok(())
+        }
+        None => Err(Box::new(WtoolsError::ListError(
+            "missing cmtitle (Which category to enumerate (must include 'Category:' prefix))"
+                .to_string(),
+        ))),
     }
-    props.parameter = format!("&cmtitle={}", props.parameter);
-    get_from_api(props, "categorymembers", "cm").await?;
-    Ok(())
 }
 
-pub async fn embeddedin(
-    mut props: super::super::ListProps,
-) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "" {
-        panic!("missing eititle: Title to search");
+pub async fn embeddedin(mut props: Props) -> Result<(), Box<dyn Error>> {
+    match props.parameter {
+        Some(p) => {
+            props.parameter = Some(format!("&eititle={}", p));
+            get_from_api(props, "embeddedin", "ei").await?;
+            Ok(())
+        }
+        None => Err(Box::new(WtoolsError::ListError(
+            "missing eititle: Title to search".to_string(),
+        ))),
     }
-    props.parameter = format!("&eititle={}", props.parameter);
-    get_from_api(props, "embeddedin", "ei").await?;
-    Ok(())
 }
 
-pub async fn imageusage(
-    mut props: super::super::ListProps,
-) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "" {
-        panic!("missing iutitle: Title to search");
+pub async fn imageusage(mut props: Props) -> Result<(), Box<dyn Error>> {
+    match props.parameter {
+        Some(p) => {
+            props.parameter = Some(format!("&iutitle={}", p));
+            get_from_api(props, "imageusage", "iu").await?;
+            Ok(())
+        }
+        None => Err(Box::new(WtoolsError::ListError(
+            "missing iutitle: Title to search".to_string(),
+        ))),
     }
-    props.parameter = format!("&iutitle={}", props.parameter);
-    get_from_api(props, "imageusage", "iu").await?;
-    Ok(())
 }
 
-pub async fn iwbacklinks(
-    mut props: super::super::ListProps,
-) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "" {
-        panic!("missing iwblprefix: Prefix for the interwiki");
+pub async fn iwbacklinks(mut props: Props) -> Result<(), Box<dyn Error>> {
+    match props.parameter {
+        Some(p) => {
+            props.parameter = Some(format!("&iwblprefix={}", p));
+            get_from_api(props, "iwbacklinks", "iwbl").await?;
+            Ok(())
+        }
+        None => Err(Box::new(WtoolsError::ListError(
+            "missing iwblprefix: Prefix for the interwiki".to_string(),
+        ))),
     }
-    props.parameter = format!("&iwblprefix={}", props.parameter);
-    get_from_api(props, "iwbacklinks", "iwbl").await?;
-    Ok(())
 }
 
-pub async fn langbacklinks(
-    mut props: super::super::ListProps,
-) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "" {
-        panic!("missing lbllang: Language for the language link");
+pub async fn langbacklinks(mut props: Props) -> Result<(), Box<dyn Error>> {
+    match props.parameter {
+        Some(p) => {
+            props.parameter = Some(format!("&lbllang={}", p));
+            get_from_api(props, "langbacklinks", "lbl").await?;
+            Ok(())
+        }
+        None => Err(Box::new(WtoolsError::ListError(
+            "missing lbllang: Language for the language link".to_string(),
+        ))),
     }
-    props.parameter = format!("&lbllang={}", props.parameter);
-    get_from_api(props, "langbacklinks", "lbl").await?;
-    Ok(())
 }
 
-pub async fn search(mut props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "" {
-        panic!("missing srsearch: Search for all page titles (or content) that has this value");
+pub async fn search(mut props: Props) -> Result<(), Box<dyn Error>> {
+    match props.parameter {
+        Some(p) => {
+            props.parameter = Some(format!("&srsearch={}", p));
+            get_from_api(props, "search", "sr").await?;
+            Ok(())
+        }
+        None => Err(Box::new(WtoolsError::ListError(
+            "missing srsearch: Search for all page titles (or content) that has this value"
+                .to_string(),
+        ))),
     }
-    props.parameter = format!("&srsearch={}", props.parameter);
-    get_from_api(props, "search", "sr").await?;
-    Ok(())
 }
 
-pub async fn exturlusage(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn exturlusage(props: Props) -> Result<(), Box<dyn Error>> {
     /* get_from_api(props, "exturlusage", "eu").await?;
     Ok(()) */
     let client = reqwest::Client::builder().cookie_store(true).build()?;
@@ -157,57 +181,51 @@ pub async fn exturlusage(props: super::super::ListProps) -> Result<(), Box<dyn s
         }
     }
 
-    ::serde_json::to_writer(&std::fs::File::create(props.output)?, &results)?;
+    ::serde_json::to_writer(&std::fs::File::create(props.path.file_path())?, &results)?;
 
     Ok(())
 }
 
-pub async fn protectedtitles(
-    props: super::super::ListProps,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn protectedtitles(props: Props) -> Result<(), Box<dyn Error>> {
     get_from_api(props, "protectedtitles", "pt").await?;
     Ok(())
 }
 
-pub async fn querypage(
-    mut props: super::super::ListProps,
-) -> Result<(), Box<dyn std::error::Error>> {
-    if props.parameter == "" {
-        panic!("missing qppage: The name of the special page. Note, this is case sensitive");
+pub async fn querypage(mut props: Props) -> Result<(), Box<dyn Error>> {
+    match props.parameter {
+        Some(p) => {
+            props.parameter = Some(format!("&qppage={}", p));
+            get_from_api(props, "querypage", "qp").await?;
+            Ok(())
+        }
+        None => Err(Box::new(WtoolsError::ListError(
+            "missing qppage: The name of the special page. Note, this is case sensitive"
+                .to_string(),
+        ))),
     }
-    props.parameter = format!("&qppage={}", props.parameter);
-    get_from_api(props, "querypage", "qp").await?;
-    Ok(())
 }
 
-pub async fn wkpoppages(props: super::super::ListProps) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn wkpoppages(props: Props) -> Result<(), Box<dyn Error>> {
     get_from_api(props, "wkpoppages", "wk").await?;
     Ok(())
 }
 
-pub async fn unconvertedinfoboxes(
-    props: super::super::ListProps,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn unconvertedinfoboxes(props: Props) -> Result<(), Box<dyn Error>> {
     get_infobox_lists(props, "unconvertedinfoboxes").await?;
     Ok(())
 }
 
-pub async fn allinfoboxes(
-    props: super::super::ListProps,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn allinfoboxes(props: Props) -> Result<(), Box<dyn Error>> {
     get_infobox_lists(props, "allinfoboxes").await?;
     Ok(())
 }
 
-async fn get_from_api(
-    props: super::super::ListProps,
-    long: &str,
-    short: &str,
-) -> Result<(), Box<dyn std::error::Error>> {
+async fn get_from_api(props: Props, long: &str, short: &str) -> Result<(), Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let mut has_next: bool = true;
     let mut continue_from = String::new();
     let mut results: Vec<String> = Vec::new();
+    let parameter = props.parameter.unwrap_or("".to_string());
     let getter = match short {
         "ac" => "*",
         _ => "title",
@@ -221,7 +239,7 @@ async fn get_from_api(
 
     while has_next {
         let temp: String;
-        let json: Value = serde_json::from_str(&client.get(&(format!("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}&{}limit=5000{}", long, short, props.parameter).to_string() + &continue_from)).send().await?.text().await?)?;
+        let json: Value = serde_json::from_str(&client.get(&(format!("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}&{}limit=5000{}{}", long, short, &parameter, &continue_from))).send().await?.text().await?)?;
         if json["query"][long].is_object() {
             for (_, x) in json["query"][long].as_object().expect("as_object").iter() {
                 results.push(x[getter].as_str().expect("as_str(object)").to_string())
@@ -246,14 +264,11 @@ async fn get_from_api(
             }
         }
     }
-    ::serde_json::to_writer(&std::fs::File::create(props.output)?, &results)?;
+    ::serde_json::to_writer(&std::fs::File::create(props.path.file_path())?, &results)?;
     Ok(())
 }
 
-async fn get_infobox_lists(
-    props: super::super::ListProps,
-    typ: &str,
-) -> Result<(), Box<dyn std::error::Error>> {
+async fn get_infobox_lists(props: Props, typ: &str) -> Result<(), Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let mut results: Vec<String> = Vec::new();
 
@@ -276,6 +291,6 @@ async fn get_infobox_lists(
         results.push(x["title"].as_str().unwrap().to_string())
     }
 
-    ::serde_json::to_writer(&std::fs::File::create(props.output)?, &results)?;
+    ::serde_json::to_writer(&std::fs::File::create(props.path.file_path())?, &results)?;
     Ok(())
 }

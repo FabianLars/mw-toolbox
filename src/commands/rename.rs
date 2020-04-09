@@ -1,11 +1,12 @@
 use serde_json::Value;
 
-pub async fn move_pages(props: super::super::MoveProps) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn move_pages(props: crate::helpers::props::Props) -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
     let mut pages = "".to_owned();
-    for line in props.input.lines() {
+    let input = std::fs::read_to_string(props.path.file_path()).unwrap();
+    for line in input.lines() {
         if line.starts_with("replace:") {
             continue;
         }
@@ -39,14 +40,13 @@ pub async fn move_pages(props: super::super::MoveProps) -> Result<(), Box<dyn st
         .unwrap();
     let move_token = String::from(o["movetoken"].as_str().unwrap());
 
-    let first_line = props.input.lines().nth(0).unwrap().starts_with("replace:");
+    let first_line = input.lines().nth(0).unwrap().starts_with("replace:");
     let replace: Vec<String>;
     let with: Vec<String>;
     let is_regex: bool;
 
     if first_line {
-        let temp: Vec<String> = props
-            .input
+        let temp: Vec<String> = input
             .lines()
             .nth(0)
             .unwrap()
@@ -67,7 +67,7 @@ pub async fn move_pages(props: super::super::MoveProps) -> Result<(), Box<dyn st
         is_regex = false;
     }
 
-    for line in props.input.lines() {
+    for line in input.lines() {
         if line.starts_with("replace:") {
             continue;
         }

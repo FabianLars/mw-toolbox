@@ -1,7 +1,7 @@
 use serde_json::Value;
 
 #[cfg(feature = "gui")]
-pub async fn from_gui(props: super::super::UploadProps) -> Result<(), crate::gui::app::ExecuteError> {
+pub async fn from_gui(props: crate::helpers::props::Props) -> Result<(), crate::gui::app::ExecuteError> {
     println!("from gui");
     match upload(props).await {
         Ok(()) => Ok(()),
@@ -9,7 +9,7 @@ pub async fn from_gui(props: super::super::UploadProps) -> Result<(), crate::gui
     }
 }
 
-pub async fn upload(props: super::super::UploadProps) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn upload(props: crate::helpers::props::Props) -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
@@ -18,12 +18,12 @@ pub async fn upload(props: super::super::UploadProps) -> Result<(), Box<dyn std:
 
     crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
-    match props.input {
-        super::super::UploadInput::File(x) => {
+    match props.path {
+        super::super::PathType::File(x) => {
             files.push(x.clone());
         },
-        super::super::UploadInput::Files(v) => files = v,
-        super::super::UploadInput::Folder(x) => {
+        super::super::PathType::Files(v) => files = v,
+        super::super::PathType::Folder(x) => {
             let mut entries = tokio::fs::read_dir(x).await?;
             while let Some(entry) = entries.next_entry().await? {
                 files.push(entry.path());
