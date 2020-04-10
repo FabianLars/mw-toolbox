@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-pub async fn move_pages(props: crate::helpers::props::Props) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn move_pages(props: crate::util::props::Props) -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
@@ -15,7 +15,7 @@ pub async fn move_pages(props: crate::helpers::props::Props) -> Result<(), Box<d
     }
     pages.pop();
 
-    crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    crate::util::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     let res = client
         .post(wiki_api_url)

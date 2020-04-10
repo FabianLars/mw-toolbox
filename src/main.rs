@@ -1,10 +1,10 @@
 mod commands;
-mod helpers;
+mod util;
 #[cfg(feature = "gui")]
 mod gui;
 
 use clap::{arg_enum, Clap};
-use crate::helpers::props::*;
+use crate::util::props::*;
 
 #[derive(Clap, Debug)]
 enum Subcommand {

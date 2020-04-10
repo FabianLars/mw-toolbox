@@ -1,4 +1,4 @@
-use crate::helpers::props::*;
+use crate::util::props::*;
 use futures::{future::TryFutureExt, try_join};
 use reqwest::header::{HeaderMap, ACCEPT, AUTHORIZATION};
 use serde::{Deserialize, Serialize};
@@ -323,7 +323,7 @@ pub async fn discounts(props: Props) -> Result<(), Box<dyn Error>> {
         start_date, end_date, angebote
     );
 
-    crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    crate::util::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     let res = client
         .get(reqwest::Url::parse_with_params(
@@ -374,7 +374,7 @@ pub async fn rotation(props: Props) -> Result<(), Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let curr_date = rename_m(chrono::Utc::today().format("%-d. %B %Y").to_string());
 
-    crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    crate::util::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     let champions: HashMap<i32, Champ> = client
         .get("https://fabianlars.de/wapi/champs")

@@ -1,4 +1,4 @@
-use crate::helpers::{error::WtoolsError, props::*};
+use crate::util::{error::WtoolsError, props::*};
 use serde_json::Value;
 use std::{collections::HashMap, error::Error};
 
@@ -149,7 +149,7 @@ pub async fn exturlusage(props: Props) -> Result<(), Box<dyn Error>> {
     let mut continue_from = String::new();
     let mut results: HashMap<String, Vec<String>> = HashMap::new();
 
-    crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    crate::util::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     while has_next {
         let json: Value = serde_json::from_str(&client.get(&("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list=exturlusage&eulimit=5000".to_string() + &continue_from)).send().await?.text().await?)?;
@@ -235,7 +235,7 @@ async fn get_from_api(props: Props, long: &str, short: &str) -> Result<(), Box<d
         _ => "from",
     };
 
-    crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    crate::util::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     while has_next {
         let temp: String;
@@ -272,7 +272,7 @@ async fn get_infobox_lists(props: Props, typ: &str) -> Result<(), Box<dyn Error>
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let mut results: Vec<String> = Vec::new();
 
-    crate::helpers::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    crate::util::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     let res = client
         .get(

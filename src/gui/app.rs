@@ -25,7 +25,7 @@ struct State {
     file_button: button::State,
     folder_button: button::State,
     execute_button: button::State,
-    selected_files: crate::helpers::props::PathType,
+    selected_files: crate::util::props::PathType,
     upload_scrollable: scrollable::State,
     dirty: bool,
     saving: bool,
@@ -131,7 +131,7 @@ impl Application for App {
 
                         match result {
                             nfd::Response::Okay(file_path) => match state.chosen_command {
-                                ChosenCommand::Upload => state.selected_files = crate::helpers::props::PathType::File(
+                                ChosenCommand::Upload => state.selected_files = crate::util::props::PathType::File(
                                     std::path::PathBuf::from(file_path),
                                 ),
                                 ChosenCommand::Update => state.lockfile = file_path,
@@ -144,7 +144,7 @@ impl Application for App {
                                         for f in files {
                                             temp.push(std::path::PathBuf::from(f));
                                         }
-                                        state.selected_files = crate::helpers::props::PathType::Files(temp)
+                                        state.selected_files = crate::util::props::PathType::Files(temp)
                                     },
                                     ChosenCommand::Update => state.lockfile = files[0].clone(),
                                     _ => ()
@@ -172,7 +172,7 @@ impl Application for App {
                         match state.chosen_command {
                             ChosenCommand::Update => println!("{}", state.lockfile),
                             ChosenCommand::Upload => return Command::perform(
-                                crate::commands::upload::from_gui(crate::helpers::props::Props {
+                                crate::commands::upload::from_gui(crate::util::props::Props {
                                     path: state.selected_files.clone(),
                                     parameter: None,
                                     loginname: state.ln_input_value.clone(),
