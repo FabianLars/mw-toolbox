@@ -1,16 +1,20 @@
 use std::{error::Error, fmt};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum WtoolsError {
+    DeleteError(String),
     ListError(String),
-    Other,
+    RenameError(String),
+    UpdateError(String),
+    UploadError(String),
+    Unspecified,
 }
 
 impl fmt::Display for WtoolsError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             WtoolsError::ListError(reason) => write!(f, "{}", reason),
-            _ => write!(f, "Random custom error from wtools occured!"),
+            _ => write!(f, "Unspecified custom error from wtools occured!"),
         }
     }
 }

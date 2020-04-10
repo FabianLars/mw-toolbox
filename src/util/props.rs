@@ -9,6 +9,8 @@ pub struct Props {
     pub(crate) loginpassword: String,
 }
 
+// TODO: Consider Builder Pattern
+
 impl Props {
     pub(crate) fn from_delete(args: Cli) -> Self {
         let path = match args.command.unwrap() {

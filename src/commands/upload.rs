@@ -1,11 +1,12 @@
 use serde_json::Value;
+use crate::util::error::WtoolsError;
 
 #[cfg(feature = "gui")]
-pub async fn from_gui(props: crate::util::props::Props) -> Result<(), crate::gui::app::ExecuteError> {
+pub async fn from_gui(props: crate::util::props::Props) -> Result<(), WtoolsError> {
     println!("from gui");
     match upload(props).await {
         Ok(()) => Ok(()),
-        Err(_) => Err(crate::gui::app::ExecuteError::Upload),
+        Err(_) => Err(WtoolsError::UploadError("Upload Error: fn from_gui()".to_string())),
     }
 }
 

@@ -4,7 +4,7 @@ mod util;
 mod gui;
 
 use clap::{arg_enum, Clap};
-use crate::util::props::*;
+use crate::{util::props::*, commands::{delete::*, list::*, rename::*, update::*, upload::*}};
 
 #[derive(Clap, Debug)]
 enum Subcommand {
@@ -90,77 +90,77 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         #[cfg(not(feature = "gui"))]
         None => (),
         #[cfg(feature = "gui")]
-        None => gui::app::start(),
+        None => gui::start(),
         Some(x) => match x {
             Subcommand::Delete { .. } => {
-                commands::delete::delete_pages(Props::from_delete(Cli::parse())).await?
+                delete_pages(Props::from_delete(Cli::parse())).await?
             }
             Subcommand::List { list_type, .. } => match list_type {
                 ListType::Allimages => {
-                    commands::list::allimages(Props::from_list(Cli::parse())).await?
+                    allimages(Props::from_list(Cli::parse())).await?
                 }
                 ListType::Allpages => {
-                    commands::list::allpages(Props::from_list(Cli::parse())).await?
+                    allpages(Props::from_list(Cli::parse())).await?
                 }
                 ListType::Alllinks => {
-                    commands::list::alllinks(Props::from_list(Cli::parse())).await?
+                    alllinks(Props::from_list(Cli::parse())).await?
                 }
                 ListType::Allcategories => {
-                    commands::list::allcategories(Props::from_list(Cli::parse())).await?
+                    allcategories(Props::from_list(Cli::parse())).await?
                 }
                 ListType::Backlinks => {
-                    commands::list::backlinks(Props::from_list(Cli::parse())).await?
+                    backlinks(Props::from_list(Cli::parse())).await?
                 }
                 ListType::Categorymembers => {
-                    commands::list::categorymembers(Props::from_list(Cli::parse())).await?
+                    categorymembers(Props::from_list(Cli::parse())).await?
                 }
                 ListType::Embeddedin => {
-                    commands::list::embeddedin(Props::from_list(Cli::parse())).await?
+                    embeddedin(Props::from_list(Cli::parse())).await?
                 }
                 ListType::Imageusage => {
-                    commands::list::imageusage(Props::from_list(Cli::parse())).await?
+                    imageusage(Props::from_list(Cli::parse())).await?
                 }
                 ListType::Iwbacklinks => {
-                    commands::list::iwbacklinks(Props::from_list(Cli::parse())).await?
+                    iwbacklinks(Props::from_list(Cli::parse())).await?
                 }
                 ListType::Langbacklinks => {
-                    commands::list::langbacklinks(Props::from_list(Cli::parse())).await?
+                    langbacklinks(Props::from_list(Cli::parse())).await?
                 }
                 ListType::Search => commands::list::search(Props::from_list(Cli::parse())).await?,
                 ListType::Exturlusage => {
-                    commands::list::exturlusage(Props::from_list(Cli::parse())).await?
+                    exturlusage(Props::from_list(Cli::parse())).await?
                 }
                 ListType::Protectedtitles => {
-                    commands::list::protectedtitles(Props::from_list(Cli::parse())).await?
+                    protectedtitles(Props::from_list(Cli::parse())).await?
                 }
                 ListType::Querypage => {
-                    commands::list::querypage(Props::from_list(Cli::parse())).await?
+                    querypage(Props::from_list(Cli::parse())).await?
                 }
                 ListType::Wkpoppages => {
-                    commands::list::wkpoppages(Props::from_list(Cli::parse())).await?
+                    wkpoppages(Props::from_list(Cli::parse())).await?
                 }
                 ListType::Unconvertedinfoboxes => {
-                    commands::list::unconvertedinfoboxes(Props::from_list(Cli::parse())).await?
+                    unconvertedinfoboxes(Props::from_list(Cli::parse())).await?
                 }
                 ListType::Allinfoboxes => {
-                    commands::list::allinfoboxes(Props::from_list(Cli::parse())).await?
+                    allinfoboxes(Props::from_list(Cli::parse())).await?
                 }
             },
             Subcommand::Move { .. } => {
-                commands::rename::move_pages(Props::from_move(Cli::parse())).await?
+                move_pages(Props::from_move(Cli::parse())).await?
             }
             Subcommand::Update { update_type, .. } => match update_type {
-                UpdateType::Champs | UpdateType::Champions => commands::update::champs().await?,
-                UpdateType::Discount | UpdateType::Discounts => commands::update::discounts(Props::from_update(Cli::parse())).await?,
+                UpdateType::Champs | UpdateType::Champions => champs().await?,
+                UpdateType::Discount | UpdateType::Discounts => discounts(Props::from_update(Cli::parse())).await?,
                 UpdateType::Rotation | UpdateType::Rotations => {
                     #[cfg(not(feature = "riot-api"))]
                     panic!("Did you forget the riot-api feature flag?");
                     #[cfg(feature = "riot-api")]
-                    commands::update::rotation(Props::from_update(Cli::parse())).await?
+                    rotation(Props::from_update(Cli::parse())).await?
                 }
             },
             Subcommand::Upload { .. } => {
-                commands::upload::upload(Props::from_upload(Cli::parse())).await?
+                upload(Props::from_upload(Cli::parse())).await?
             }
         },
     }
