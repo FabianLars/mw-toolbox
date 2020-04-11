@@ -1,5 +1,6 @@
 use std::{error::Error, fmt};
 
+// TODO: Actually use these
 #[derive(Debug, Clone)]
 pub enum WtoolsError {
     DeleteError(String),
