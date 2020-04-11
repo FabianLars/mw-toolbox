@@ -453,7 +453,7 @@ impl SavedState {
         }
 
         // This is a simple way to save at most once every couple seconds
-        tokio::time::delay_for(std::time::Duration::from_secs(1)).await;
+        tokio::time::delay_for(tokio::time::Duration::from_secs(1)).await;
 
         Ok(())
     }

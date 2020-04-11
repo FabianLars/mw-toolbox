@@ -1,8 +1,10 @@
+use reqwest::multipart::{Form, Part};
 use serde_json::Value;
-use crate::util::error::WtoolsError;
+
+use crate::util::{error::WtoolsError, props::*, wiki};
 
 #[cfg(feature = "gui")]
-pub async fn from_gui(props: crate::util::props::Props) -> Result<(), WtoolsError> {
+pub async fn from_gui(props: Props) -> Result<(), WtoolsError> {
     println!("from gui");
     match upload(props).await {
         Ok(()) => Ok(()),
@@ -10,21 +12,21 @@ pub async fn from_gui(props: crate::util::props::Props) -> Result<(), WtoolsErro
     }
 }
 
-pub async fn upload(props: crate::util::props::Props) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn upload(props: Props) -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
     let mut pages = "".to_owned();
     let mut files: Vec<std::path::PathBuf> = Vec::new();
 
-    crate::util::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     match props.path {
-        super::super::PathType::File(x) => {
+        PathType::File(x) => {
             files.push(x.clone());
         },
-        super::super::PathType::Files(v) => files = v,
-        super::super::PathType::Folder(x) => {
+        PathType::Files(v) => files = v,
+        PathType::Folder(x) => {
             let mut entries = tokio::fs::read_dir(x).await?;
             while let Some(entry) = entries.next_entry().await? {
                 files.push(entry.path());
@@ -63,9 +65,8 @@ pub async fn upload(props: crate::util::props::Props) -> Result<(), Box<dyn std:
     for f in files {
         let file_name = f.file_name().expect("file_name()").to_os_string().to_str().expect("path->os_string->str").to_string();
         let contents = tokio::fs::read(f).await?;
-        let part = reqwest::multipart::Part::bytes(contents).file_name(file_name.clone()).mime_str("multipart/form-data")?;
-        let form = reqwest::multipart::Form::new()
-            .part("file", part);
+        let part = Part::bytes(contents).file_name(file_name.clone()).mime_str("multipart/form-data")?;
+        let form = Form::new().part("file", part);
 
         println!("{:?}", client.post(wiki_api_url)
         .query(&[

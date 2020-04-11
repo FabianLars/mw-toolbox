@@ -1,6 +1,10 @@
+use std::error::Error;
+
 use serde_json::Value;
 
-pub async fn move_pages(props: crate::util::props::Props) -> Result<(), Box<dyn std::error::Error>> {
+use crate::util::{props::Props, wiki};
+
+pub async fn move_pages(props: Props) -> Result<(), Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
@@ -15,7 +19,7 @@ pub async fn move_pages(props: crate::util::props::Props) -> Result<(), Box<dyn 
     }
     pages.pop();
 
-    crate::util::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     let res = client
         .post(wiki_api_url)
@@ -99,11 +103,13 @@ pub async fn move_pages(props: crate::util::props::Props) -> Result<(), Box<dyn 
                 ("format", "json"),
                 ("reason", "automated action"),
                 ("movetalk", "1"),
+                //("ignorewarnings", ""),
                 ("token", &move_token),
             ])
             .send()
             .await
             .expect(&format!("Can't move Page: {}", line));
+        // Wenn fandom ausnahmsweise mal nen guten Tag haben sollte, wären die Abfragen zu schnell, deswegen warten wir hier vorsichtshalber eine halbe Sekunde
         std::thread::sleep(std::time::Duration::from_millis(500))
     }
 

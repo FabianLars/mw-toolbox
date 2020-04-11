@@ -1,6 +1,8 @@
-use crate::util::{error::WtoolsError, props::*};
-use serde_json::Value;
 use std::{collections::HashMap, error::Error};
+
+use serde_json::Value;
+
+use crate::util::{error::WtoolsError, props::*, wiki};
 
 pub async fn allimages(props: Props) -> Result<(), Box<dyn Error>> {
     get_from_api(props, "allimages", "ai").await?;
@@ -149,7 +151,7 @@ pub async fn exturlusage(props: Props) -> Result<(), Box<dyn Error>> {
     let mut continue_from = String::new();
     let mut results: HashMap<String, Vec<String>> = HashMap::new();
 
-    crate::util::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     while has_next {
         let json: Value = serde_json::from_str(&client.get(&("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list=exturlusage&eulimit=5000".to_string() + &continue_from)).send().await?.text().await?)?;

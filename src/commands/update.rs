@@ -1,9 +1,11 @@
-use crate::util::props::*;
+use std::{collections::HashMap, error::Error, fs::File};
+
 use futures::{future::TryFutureExt, try_join};
-use reqwest::header::{HeaderMap, ACCEPT, AUTHORIZATION};
+use reqwest::header::{ACCEPT, AUTHORIZATION, HeaderMap};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::{collections::HashMap, error::Error, fs::File};
+
+use crate::util::{props::*, wiki};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -166,7 +168,7 @@ pub async fn champs() -> Result<(), Box<dyn Error>> {
 pub async fn discounts(props: Props) -> Result<(), Box<dyn Error>> {
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
     let lockfile = std::fs::read_to_string(props.path.file_path()).unwrap();
-    // 0: "LeagueClient", 1: PID, 2: Port, 3: Auth, 4: Protokoll
+    // 0: "LeagueClient", 1: PID, 2: Port, 3: Auth, 4: Protocol
     let contents = lockfile.split(':').collect::<Vec<_>>();
     let port = contents[2];
     let auth = base64::encode(format!("riot:{}", contents[3]).as_bytes());
@@ -323,7 +325,7 @@ pub async fn discounts(props: Props) -> Result<(), Box<dyn Error>> {
         start_date, end_date, angebote
     );
 
-    crate::util::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     let res = client
         .get(reqwest::Url::parse_with_params(
@@ -340,7 +342,7 @@ pub async fn discounts(props: Props) -> Result<(), Box<dyn Error>> {
         .await?
         .text()
         .await?;
-    let json: serde_json::Value = serde_json::from_str(&res)?;
+    let json: Value = serde_json::from_str(&res)?;
     let (_i, o) = json["query"]["pages"]
         .as_object()
         .unwrap()
@@ -374,7 +376,7 @@ pub async fn rotation(props: Props) -> Result<(), Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let curr_date = rename_m(chrono::Utc::today().format("%-d. %B %Y").to_string());
 
-    crate::util::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     let champions: HashMap<i32, Champ> = client
         .get("https://fabianlars.de/wapi/champs")
@@ -416,7 +418,7 @@ pub async fn rotation(props: Props) -> Result<(), Box<dyn Error>> {
         .await?
         .text()
         .await?;
-    let json: serde_json::Value = serde_json::from_str(&res)?;
+    let json: Value = serde_json::from_str(&res)?;
     let (_i, o) = json["query"]["pages"]
         .as_object()
         .unwrap()

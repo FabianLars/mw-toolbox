@@ -1,10 +1,11 @@
+use clap::{arg_enum, Clap};
+
+use crate::{commands::{delete::*, list::*, rename::*, update::*, upload::*}, util::props::*};
+
 mod commands;
 mod util;
 #[cfg(feature = "gui")]
 mod gui;
-
-use clap::{arg_enum, Clap};
-use crate::{util::props::*, commands::{delete::*, list::*, rename::*, update::*, upload::*}};
 
 #[derive(Clap, Debug)]
 enum Subcommand {

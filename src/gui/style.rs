@@ -89,7 +89,7 @@ impl From<Theme> for Box<dyn checkbox::StyleSheet> {
 }
 
 mod light {
-    use iced::{button, Background, Color, Vector};
+    use iced::{Background, button, Color, Vector};
 
     pub struct Button;
 
@@ -116,8 +116,8 @@ mod light {
 
 mod dark {
     use iced::{
-        button, checkbox, container, progress_bar, radio, scrollable, slider, text_input,
-        Background, Color,
+        Background, button, checkbox, Color, container, progress_bar, radio, scrollable,
+        slider, text_input,
     };
 
     const SURFACE: Color = Color::from_rgb(

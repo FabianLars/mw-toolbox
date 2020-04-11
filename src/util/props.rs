@@ -1,5 +1,6 @@
-use crate::{Cli, Subcommand};
 use std::path::PathBuf;
+
+use crate::{Cli, Subcommand};
 
 #[derive(Debug, Clone)]
 pub struct Props {
