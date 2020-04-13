@@ -3,6 +3,7 @@ use std::error::Error;
 use serde_json::Value;
 
 use crate::util::{props::Props, wiki};
+use crate::util::error::WtoolsError;
 
 pub async fn move_pages(props: Props) -> Result<(), Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
@@ -62,7 +63,7 @@ pub async fn move_pages(props: Props) -> Result<(), Box<dyn Error>> {
         replace = temp[0].split(",").map(|x| x.to_string()).collect();
         with = temp[1].split(",").map(|x| x.to_string()).collect();
         if replace.len() != with.len() {
-            panic!("Check replace: line in input file")
+            return Err(Box::new(WtoolsError::RenameError("Check 'replace:' line in input file".to_string())));
         }
         is_regex = true;
     } else {
@@ -89,7 +90,7 @@ pub async fn move_pages(props: Props) -> Result<(), Box<dyn Error>> {
             from = temp.nth(0).unwrap().to_string();
             dest = temp.last().unwrap().to_string();
         } else {
-            panic!("Check input file or --replace array");
+            return Err(Box::new(WtoolsError::RenameError("Check input file or --replace array".to_string())));
         }
 
         println!("{} => MOVED TO => {}", &from, &dest);

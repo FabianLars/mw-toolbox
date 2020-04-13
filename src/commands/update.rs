@@ -428,7 +428,7 @@ pub async fn rotation(props: Props) -> Result<(), Box<dyn Error>> {
     let edit_token = String::from(o["edittoken"].as_str().unwrap());
 
     let template = format!(
-        r#"<div style="text-align:center; font-size: 125%; font-weight:bold; margin: 2px 0 0;">[[Kostenlose Championrotation]]</div><div style="text-align:left; font-size: 80%; font-weight:bold; margin: 2px 0 0;">[[Vorlage:Aktuelle Championrotation|Bearbeiten]]</div>
+        r#"<div style="text-align:left; font-size: 80%; font-weight:bold; margin: 2px 0 0;">[[Vorlage:Aktuelle Championrotation|Bearbeiten]]</div><div style="text-align:center; font-size: 125%; font-weight:bold; margin: 2px 0 0;">[[Kostenlose Championrotation]]</div>
 <tabber>Klassisch=
 {{{{#ifeq:{{{{FULLPAGENAME}}}}|Vorlage:Aktuelle Championrotation|{{{{#ifeq:{{{{#time:N|{{{{CURRENTTIMESTAMP}}}}}}}}|2|{{{{#ifexpr:{{{{#expr:{{{{#time:U|{{{{REVISIONTIMESTAMP}}}}}}}}+100000}}}}<{{{{#time:U|{{{{CURRENTTIMESTAMP}}}}}}}}|[[Kategorie:Datumskategorie Championrotation]]}}}}}}}}}}}}{{{{Aktuelle Championrotation/var
 |specialweek      = <!-- Nur für Sonderfälle, sonst leer lassen! -->
