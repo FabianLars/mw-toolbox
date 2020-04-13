@@ -312,8 +312,7 @@ pub async fn discounts(props: Props) -> Result<(), Box<dyn Error>> {
     }
 
     let full_template = format!(
-        r#"<div style="text-align:left; font-size: 80%; font-weight:bold; margin: 2px 0 0;">[[Vorlage:Aktuelle Angebote|Bearbeiten]]</div><div class="center">
-<!-- Erst ab hier bearbeiten! -->
+        r#"<div class="center">
 {{{{Angebotskasten
 
 |startdate     = {}
@@ -428,7 +427,7 @@ pub async fn rotation(props: Props) -> Result<(), Box<dyn Error>> {
     let edit_token = String::from(o["edittoken"].as_str().unwrap());
 
     let template = format!(
-        r#"<div style="text-align:left; font-size: 80%; font-weight:bold; margin: 2px 0 0;">[[Vorlage:Aktuelle Championrotation|Bearbeiten]]</div><div style="text-align:center; font-size: 125%; font-weight:bold; margin: 2px 0 0;">[[Kostenlose Championrotation]]</div>
+        r#"{{{{Kopfzeile|[[Kostenlose Championrotation]]}}}}
 <tabber>Klassisch=
 {{{{#ifeq:{{{{FULLPAGENAME}}}}|Vorlage:Aktuelle Championrotation|{{{{#ifeq:{{{{#time:N|{{{{CURRENTTIMESTAMP}}}}}}}}|2|{{{{#ifexpr:{{{{#expr:{{{{#time:U|{{{{REVISIONTIMESTAMP}}}}}}}}+100000}}}}<{{{{#time:U|{{{{CURRENTTIMESTAMP}}}}}}}}|[[Kategorie:Datumskategorie Championrotation]]}}}}}}}}}}}}{{{{Aktuelle Championrotation/var
 |specialweek      = <!-- Nur für Sonderfälle, sonst leer lassen! -->
@@ -438,8 +437,6 @@ pub async fn rotation(props: Props) -> Result<(), Box<dyn Error>> {
 |dateto           = <!-- Nur für die ARAM-Rotation verwendet, sonst leer lassen! -->
 |lastchecked      = <!-- Nur für die Rotation neuer Accounts, sonst leer lassen! -->
 {}}}}}
-
-
 |-|ARAM=
 <p style="text-align: center; margin: 0 15%;">In ''Alle Zufällig''-Spielen sind zusätzlich zur normalen Rotation folgende 65 Champions immer möglich:</p>
 {{{{Aktuelle Championrotation/var
@@ -450,7 +447,6 @@ pub async fn rotation(props: Props) -> Result<(), Box<dyn Error>> {
 |dateto           = <!-- Nur für Sonderfälle, sonst leer lassen! -->
 |lastchecked      = {}
 |Aatrox|Ahri|Akali|Amumu|Annie|Ashe|Brand|Braum|Caitlyn|Cho'Gath|Darius|Draven|Ekko|Ezreal|Fiora|Fizz|Garen|Graves|Irelia|Janna|Jarvan IV|Jax|Jhin|Jinx|Karma|Karthus|Katarina|Kayle|Kha'Zix|LeBlanc|Lee Sin|Leona|Lucian|Lulu|Lux|Malphite|Maokai|Master Yi|Miss Fortune|Mordekaiser|Morgana|Nautilus|Nidalee|Pantheon|Pyke|Quinn|Renekton|Riven|Ryze|Sivir|Sona|Soraka|Thresh|Tristana|Tryndamere|Twisted Fate|Twitch|Varus|Vayne|Veigar|Vel'Koz|Vladimir|Wukong|Xayah|Zed}}}}
-
 |-|Neue Accounts=
 <p style="text-align: center; margin: 0 15%;">Vor [[Erfahrung (Beschwörer)|Stufe 11]] haben Spieler Zugriff auf eine andere Championrotation. Diese wird seltener aktualisiert, deshalb könnte es sein, dass die folgende Liste nicht mehr korrekt ist.</p>
 {{{{Aktuelle Championrotation/var
