@@ -49,7 +49,7 @@ pub async fn allcategories(props: Props) -> Result<(), Box<dyn Error>> {
 }
 
 pub async fn backlinks(mut props: Props) -> Result<(), Box<dyn Error>> {
-    match props.parameter {
+    match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&btitle={}", p));
             get_from_api(props, "backlinks", "bl").await?;
@@ -60,7 +60,7 @@ pub async fn backlinks(mut props: Props) -> Result<(), Box<dyn Error>> {
 }
 
 pub async fn categorymembers(mut props: Props) -> Result<(), Box<dyn Error>> {
-    match props.parameter {
+    match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&cmtitle={}", p));
             get_from_api(props, "categorymembers", "cm").await?;
@@ -71,7 +71,7 @@ pub async fn categorymembers(mut props: Props) -> Result<(), Box<dyn Error>> {
 }
 
 pub async fn embeddedin(mut props: Props) -> Result<(), Box<dyn Error>> {
-    match props.parameter {
+    match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&eititle={}", p));
             get_from_api(props, "embeddedin", "ei").await?;
@@ -82,7 +82,7 @@ pub async fn embeddedin(mut props: Props) -> Result<(), Box<dyn Error>> {
 }
 
 pub async fn imageusage(mut props: Props) -> Result<(), Box<dyn Error>> {
-    match props.parameter {
+    match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&iutitle={}", p));
             get_from_api(props, "imageusage", "iu").await?;
@@ -93,7 +93,7 @@ pub async fn imageusage(mut props: Props) -> Result<(), Box<dyn Error>> {
 }
 
 pub async fn iwbacklinks(mut props: Props) -> Result<(), Box<dyn Error>> {
-    match props.parameter {
+    match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&iwblprefix={}", p));
             get_from_api(props, "iwbacklinks", "iwbl").await?;
@@ -104,7 +104,7 @@ pub async fn iwbacklinks(mut props: Props) -> Result<(), Box<dyn Error>> {
 }
 
 pub async fn langbacklinks(mut props: Props) -> Result<(), Box<dyn Error>> {
-    match props.parameter {
+    match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&lbllang={}", p));
             get_from_api(props, "langbacklinks", "lbl").await?;
@@ -115,7 +115,7 @@ pub async fn langbacklinks(mut props: Props) -> Result<(), Box<dyn Error>> {
 }
 
 pub async fn search(mut props: Props) -> Result<(), Box<dyn Error>> {
-    match props.parameter {
+    match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&srsearch={}", p));
             get_from_api(props, "search", "sr").await?;
@@ -173,7 +173,7 @@ pub async fn protectedtitles(props: Props) -> Result<(), Box<dyn Error>> {
 }
 
 pub async fn querypage(mut props: Props) -> Result<(), Box<dyn Error>> {
-    match props.parameter {
+    match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&qppage={}", p));
             get_from_api(props, "querypage", "qp").await?;
