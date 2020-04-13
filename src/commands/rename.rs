@@ -3,14 +3,13 @@ use std::error::Error;
 use serde_json::Value;
 
 use crate::util::{props::Props, wiki};
-use crate::util::error::WtoolsError;
 
 pub async fn move_pages(props: Props) -> Result<(), Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
     let mut pages = "".to_owned();
-    let input = std::fs::read_to_string(props.path.file_path()).unwrap();
+    let input = std::fs::read_to_string(props.path.file_path())?;
     for line in input.lines() {
         if line.starts_with("replace:") {
             continue;
@@ -63,7 +62,7 @@ pub async fn move_pages(props: Props) -> Result<(), Box<dyn Error>> {
         replace = temp[0].split(",").map(|x| x.to_string()).collect();
         with = temp[1].split(",").map(|x| x.to_string()).collect();
         if replace.len() != with.len() {
-            return Err(Box::new(WtoolsError::RenameError("Check 'replace:' line in input file".to_string())));
+            panic!("Check 'replace:' line in input file");
         }
         is_regex = true;
     } else {
@@ -90,7 +89,7 @@ pub async fn move_pages(props: Props) -> Result<(), Box<dyn Error>> {
             from = temp.nth(0).unwrap().to_string();
             dest = temp.last().unwrap().to_string();
         } else {
-            return Err(Box::new(WtoolsError::RenameError("Check input file or --replace array".to_string())));
+            panic!("Check input file or --replace array");
         }
 
         println!("{} => MOVED TO => {}", &from, &dest);
@@ -108,8 +107,7 @@ pub async fn move_pages(props: Props) -> Result<(), Box<dyn Error>> {
                 ("token", &move_token),
             ])
             .send()
-            .await
-            .expect(&format!("Can't move Page: {}", line));
+            .await?;
         // Wenn fandom ausnahmsweise mal nen guten Tag haben sollte, wären die Abfragen zu schnell, deswegen warten wir hier vorsichtshalber eine halbe Sekunde
         std::thread::sleep(std::time::Duration::from_millis(500))
     }

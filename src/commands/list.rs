@@ -2,7 +2,7 @@ use std::{collections::HashMap, error::Error};
 
 use serde_json::Value;
 
-use crate::util::{error::WtoolsError, props::*, wiki};
+use crate::util::{props::*, wiki};
 
 pub async fn allimages(props: Props) -> Result<(), Box<dyn Error>> {
     get_from_api(props, "allimages", "ai").await?;
@@ -28,9 +28,7 @@ pub async fn allpages(mut props: Props) -> Result<(), Box<dyn Error>> {
                 if namespaces.iter().any(|x| *x == param) {
                     props.parameter = Some(format!("&apnamespace={}", param))
                 } else {
-                    return Err(Box::new(WtoolsError::ListError(
-                        "Unknown namespace given!".to_string(),
-                    )));
+                    panic!("Unknown namespace given!".to_string());
                 }
             }
         }
@@ -57,9 +55,7 @@ pub async fn backlinks(mut props: Props) -> Result<(), Box<dyn Error>> {
             get_from_api(props, "backlinks", "bl").await?;
             Ok(())
         }
-        None => Err(Box::new(WtoolsError::ListError(
-            "Missing btitle (Title to search)".to_string(),
-        ))),
+        None => panic!("Missing btitle (Title to search)"),
     }
 }
 
@@ -70,10 +66,7 @@ pub async fn categorymembers(mut props: Props) -> Result<(), Box<dyn Error>> {
             get_from_api(props, "categorymembers", "cm").await?;
             Ok(())
         }
-        None => Err(Box::new(WtoolsError::ListError(
-            "missing cmtitle (Which category to enumerate (must include 'Category:' prefix))"
-                .to_string(),
-        ))),
+        None => panic!("missing cmtitle (Which category to enumerate (must include 'Category:' prefix))"),
     }
 }
 
@@ -84,9 +77,7 @@ pub async fn embeddedin(mut props: Props) -> Result<(), Box<dyn Error>> {
             get_from_api(props, "embeddedin", "ei").await?;
             Ok(())
         }
-        None => Err(Box::new(WtoolsError::ListError(
-            "missing eititle: Title to search".to_string(),
-        ))),
+        None => panic!("missing eititle: Title to search"),
     }
 }
 
@@ -97,9 +88,7 @@ pub async fn imageusage(mut props: Props) -> Result<(), Box<dyn Error>> {
             get_from_api(props, "imageusage", "iu").await?;
             Ok(())
         }
-        None => Err(Box::new(WtoolsError::ListError(
-            "missing iutitle: Title to search".to_string(),
-        ))),
+        None => panic!("missing iutitle: Title to search"),
     }
 }
 
@@ -110,9 +99,7 @@ pub async fn iwbacklinks(mut props: Props) -> Result<(), Box<dyn Error>> {
             get_from_api(props, "iwbacklinks", "iwbl").await?;
             Ok(())
         }
-        None => Err(Box::new(WtoolsError::ListError(
-            "missing iwblprefix: Prefix for the interwiki".to_string(),
-        ))),
+        None => panic!("missing iwblprefix: Prefix for the interwiki"),
     }
 }
 
@@ -123,9 +110,7 @@ pub async fn langbacklinks(mut props: Props) -> Result<(), Box<dyn Error>> {
             get_from_api(props, "langbacklinks", "lbl").await?;
             Ok(())
         }
-        None => Err(Box::new(WtoolsError::ListError(
-            "missing lbllang: Language for the language link".to_string(),
-        ))),
+        None => panic!("missing lbllang: Language for the language link"),
     }
 }
 
@@ -136,16 +121,11 @@ pub async fn search(mut props: Props) -> Result<(), Box<dyn Error>> {
             get_from_api(props, "search", "sr").await?;
             Ok(())
         }
-        None => Err(Box::new(WtoolsError::ListError(
-            "missing srsearch: Search for all page titles (or content) that has this value"
-                .to_string(),
-        ))),
+        None => panic!("missing srsearch: Search for all page titles (or content) that has this value"),
     }
 }
 
 pub async fn exturlusage(props: Props) -> Result<(), Box<dyn Error>> {
-    /* get_from_api(props, "exturlusage", "eu").await?;
-    Ok(()) */
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let mut has_next: bool = true;
     let mut continue_from = String::new();
@@ -157,12 +137,11 @@ pub async fn exturlusage(props: Props) -> Result<(), Box<dyn Error>> {
         let json: Value = serde_json::from_str(&client.get(&("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list=exturlusage&eulimit=5000".to_string() + &continue_from)).send().await?.text().await?)?;
 
         for x in json["query"]["exturlusage"]
-            .as_array()
-            .expect("as_array")
+            .as_array().unwrap()
             .iter()
         {
-            let title = x["title"].as_str().unwrap_or("unwrap error").to_string();
-            let url = x["url"].as_str().unwrap_or("unwrap error").to_string();
+            let title = x["title"].as_str().unwrap().to_string();
+            let url = x["url"].as_str().unwrap().to_string();
 
             if results.contains_key(&title) {
                 results.get_mut(&title).unwrap().push(url);
@@ -177,7 +156,7 @@ pub async fn exturlusage(props: Props) -> Result<(), Box<dyn Error>> {
                 continue_from = "&euoffset=".to_string()
                     + &json["query-continue"]["exturlusage"]["euoffset"]
                         .as_i64()
-                        .expect("as_str")
+                        .unwrap()
                         .to_string()
             }
         }
@@ -200,10 +179,7 @@ pub async fn querypage(mut props: Props) -> Result<(), Box<dyn Error>> {
             get_from_api(props, "querypage", "qp").await?;
             Ok(())
         }
-        None => Err(Box::new(WtoolsError::ListError(
-            "missing qppage: The name of the special page. Note, this is case sensitive"
-                .to_string(),
-        ))),
+        None => panic!("missing qppage: The name of the special page. Note, this is case sensitive"),
     }
 }
 
@@ -243,12 +219,12 @@ async fn get_from_api(props: Props, long: &str, short: &str) -> Result<(), Box<d
         let temp: String;
         let json: Value = serde_json::from_str(&client.get(&(format!("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}&{}limit=5000{}{}", long, short, &parameter, &continue_from))).send().await?.text().await?)?;
         if json["query"][long].is_object() {
-            for (_, x) in json["query"][long].as_object().expect("as_object").iter() {
-                results.push(x[getter].as_str().expect("as_str(object)").to_string())
+            for (_, x) in json["query"][long].as_object().unwrap().iter() {
+                results.push(x[getter].as_str().unwrap().to_string())
             }
         } else if json["query"][long].is_array() {
-            for x in json["query"][long].as_array().expect("as_array").iter() {
-                results.push(x[getter].as_str().expect("as_str(array)").to_string())
+            for x in json["query"][long].as_array().unwrap().iter() {
+                results.push(x[getter].as_str().unwrap().to_string())
             }
         }
 
@@ -259,7 +235,7 @@ async fn get_from_api(props: Props, long: &str, short: &str) -> Result<(), Box<d
                     Some(x) => x.to_owned(),
                     None => json["query-continue"][long][format!("{}{}", short, from)]
                         .as_i64()
-                        .expect("as_i64(query-continue)")
+                        .unwrap()
                         .to_string(),
                 };
                 continue_from = format!("&{}{}=", short, from).to_string() + &temp

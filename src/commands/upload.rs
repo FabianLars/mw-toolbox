@@ -1,15 +1,11 @@
 use reqwest::multipart::{Form, Part};
 use serde_json::Value;
 
-use crate::util::{error::WtoolsError, props::*, wiki};
+use crate::util::{props::*, wiki};
 
 #[cfg(feature = "gui")]
-pub async fn from_gui(props: Props) -> Result<(), WtoolsError> {
-    println!("from gui");
-    match upload(props).await {
-        Ok(()) => Ok(()),
-        Err(_) => Err(WtoolsError::UploadError("Upload Error: fn from_gui()".to_string())),
-    }
+pub async fn from_gui(props: Props) -> Result<(), ()> {
+    Ok(upload(props).await.unwrap())
 }
 
 pub async fn upload(props: Props) -> Result<(), Box<dyn std::error::Error>> {
@@ -35,7 +31,7 @@ pub async fn upload(props: Props) -> Result<(), Box<dyn std::error::Error>> {
     }
 
     for f in &files {
-        pages.push_str(&format!("Datei:{}|", f.file_name().expect("file_name()").to_os_string().to_str().expect("path->os_string->str")))
+        pages.push_str(&format!("Datei:{}|", f.file_name().unwrap().to_os_string().to_str().unwrap()))
     }
     pages.pop();
 
@@ -63,7 +59,7 @@ pub async fn upload(props: Props) -> Result<(), Box<dyn std::error::Error>> {
     let edit_token = String::from(o["edittoken"].as_str().unwrap());
 
     for f in files {
-        let file_name = f.file_name().expect("file_name()").to_os_string().to_str().expect("path->os_string->str").to_string();
+        let file_name = f.file_name().unwrap().to_os_string().to_str().unwrap().to_string();
         let contents = tokio::fs::read(f).await?;
         let part = Part::bytes(contents).file_name(file_name.clone()).mime_str("multipart/form-data")?;
         let form = Form::new().part("file", part);

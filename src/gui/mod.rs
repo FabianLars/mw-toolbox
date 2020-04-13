@@ -4,7 +4,8 @@ use iced::{
 };
 use serde::{Deserialize, Serialize};
 
-use crate::util::{error::WtoolsError, props::PathType};
+use crate::util::props::*;
+use crate::commands::upload;
 
 pub mod style;
 
@@ -68,7 +69,7 @@ enum Message {
     FileButtonPressed,
     FolderButtonPressed,
     ExecuteButtonPressed,
-    Executed(Result<(), WtoolsError>),
+    Executed(Result<(), ()>),
 }
 
 impl Application for App {
@@ -129,9 +130,7 @@ impl Application for App {
                     }
                     Message::FileButtonPressed => {
                         let result =
-                            nfd::open_file_multiple_dialog(None, None).unwrap_or_else(|e| {
-                                panic!(e);
-                            });
+                            nfd::open_file_multiple_dialog(None, None).unwrap();
 
                         match result {
                             nfd::Response::Okay(file_path) => match state.chosen_command {
@@ -158,9 +157,7 @@ impl Application for App {
                         }
                     }
                     Message::FolderButtonPressed => {
-                        let result = nfd::open_pick_folder(None).unwrap_or_else(|e| {
-                            panic!(e);
-                        });
+                        let result = nfd::open_pick_folder(None).unwrap();
 
                         match result {
                             nfd::Response::Okay(folder_path) => {
@@ -176,7 +173,7 @@ impl Application for App {
                         match state.chosen_command {
                             ChosenCommand::Update => println!("{}", state.lockfile),
                             ChosenCommand::Upload => return Command::perform(
-                                crate::commands::upload::from_gui(crate::util::props::Props {
+                                upload::from_gui(Props {
                                     path: state.selected_files.clone(),
                                     parameter: None,
                                     loginname: state.ln_input_value.clone(),
@@ -276,25 +273,25 @@ impl Application for App {
                 match selected_files {
                     PathType::File(x) => text_files.push_str(
                         x.file_name()
-                            .unwrap_or(std::ffi::OsStr::new(""))
+                            .unwrap()
                             .to_str()
-                            .expect("file to gui text"),
+                            .unwrap(),
                     ),
                     PathType::Files(x) => {
                         for f in x {
                             text_files.push_str(
-                                f.file_name().unwrap().to_str().expect("files to gui text"),
+                                f.file_name().unwrap().to_str().unwrap(),
                             );
                             text_files.push_str("\n");
                         }
                     }
                     PathType::Folder(x) => {
-                        for f in std::fs::read_dir(x).expect("read folder for gui text") {
+                        for f in std::fs::read_dir(x).unwrap() {
                             text_files.push_str(
                                 f.unwrap()
                                     .file_name()
                                     .to_str()
-                                    .expect("folder -> file name to str (gui)"),
+                                    .unwrap(),
                             );
                             text_files.push_str("\n");
                         }
@@ -405,7 +402,7 @@ impl SavedState {
         {
             project_dirs.data_dir().into()
         } else {
-            std::env::current_dir().unwrap_or(std::path::PathBuf::new())
+            std::env::current_dir().unwrap()
         };
 
         path.push("wtools.json");

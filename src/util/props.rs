@@ -31,7 +31,7 @@ impl Props {
         let path: PathType;
         let param;
 
-        match args.command.expect("args.command") {
+        match args.command.unwrap() {
             Subcommand::List {
                 output, parameter, ..
             } => {
@@ -87,15 +87,9 @@ impl Props {
     pub(crate) fn from_upload(args: Cli) -> Self {
         let path = match args.command.unwrap() {
             Subcommand::Upload { input, .. } => {
-                if std::fs::metadata(&input)
-                    .expect("get metadata for given path")
-                    .is_dir()
-                {
+                if std::fs::metadata(&input).unwrap().is_dir() {
                     PathType::Folder(input)
-                } else if std::fs::metadata(&input)
-                    .expect("get metadata for given path")
-                    .is_file()
-                {
+                } else if std::fs::metadata(&input).unwrap().is_file() {
                     PathType::File(input)
                 } else {
                     panic!("weird error");

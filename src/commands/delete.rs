@@ -7,7 +7,7 @@ pub async fn delete_pages(props: Props) -> Result<(), Box<dyn std::error::Error>
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
     let mut pages = "".to_owned();
-    let input = std::fs::read_to_string(props.path.file_path()).unwrap();
+    let input = std::fs::read_to_string(props.path.file_path())?;
     for line in input.lines() {
         pages.push_str(line);
         pages.push_str("|");
@@ -49,8 +49,7 @@ pub async fn delete_pages(props: Props) -> Result<(), Box<dyn std::error::Error>
                 ("token", &delete_token),
             ])
             .send()
-            .await
-            .expect(&format!("Can't delete Page: {}", line));
+            .await?;
         std::thread::sleep(std::time::Duration::from_millis(500))
     }
 
