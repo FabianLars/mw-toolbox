@@ -180,16 +180,15 @@ pub async fn discounts(props: Props) -> Result<(), Box<dyn Error>> {
         .default_headers(headers)
         .cookie_store(true)
         .build()?;
-    let res = client
+    let json: Vec<StoreChamp> = client
         .get(&format!(
             "https://127.0.0.1:{}/lol-store/v1/catalog?inventoryType=[\"CHAMPION\",\"CHAMPION_SKIN\"]",
             port
         ))
         .send()
         .await?
-        .text()
+        .json()
         .await?;
-    let json: Vec<StoreChamp> = serde_json::from_str(&res).unwrap();
 
     let champions_wapi: HashMap<i32, Champ> = client
         .get("https://fabianlars.de/wapi/champs")
@@ -326,7 +325,7 @@ pub async fn discounts(props: Props) -> Result<(), Box<dyn Error>> {
 
     wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
-    let res = client
+    let json: Value = client
         .get(reqwest::Url::parse_with_params(
             wiki_api_url,
             &[
@@ -339,9 +338,9 @@ pub async fn discounts(props: Props) -> Result<(), Box<dyn Error>> {
         )?)
         .send()
         .await?
-        .text()
+        .json()
         .await?;
-    let json: Value = serde_json::from_str(&res)?;
+
     let (_i, o) = json["query"]["pages"]
         .as_object()
         .unwrap()
@@ -402,7 +401,7 @@ pub async fn rotation(props: Props) -> Result<(), Box<dyn Error>> {
     let rotation: String = rotation.iter().map(|x| "|".to_owned() + x).collect();
     let new_players: String = new_players.iter().map(|x| "|".to_owned() + x).collect();
 
-    let res = client
+    let json: Value = client
         .get(reqwest::Url::parse_with_params(
             wiki_api_url,
             &[
@@ -415,9 +414,9 @@ pub async fn rotation(props: Props) -> Result<(), Box<dyn Error>> {
         )?)
         .send()
         .await?
-        .text()
+        .json()
         .await?;
-    let json: Value = serde_json::from_str(&res)?;
+
     let (_i, o) = json["query"]["pages"]
         .as_object()
         .unwrap()

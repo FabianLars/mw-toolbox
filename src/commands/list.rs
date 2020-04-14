@@ -134,7 +134,7 @@ pub async fn exturlusage(props: Props) -> Result<(), Box<dyn Error>> {
     wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     while has_next {
-        let json: Value = serde_json::from_str(&client.get(&("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list=exturlusage&eulimit=5000".to_string() + &continue_from)).send().await?.text().await?)?;
+        let json: Value = client.get(&("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list=exturlusage&eulimit=5000".to_string() + &continue_from)).send().await?.json().await?;
 
         for x in json["query"]["exturlusage"]
             .as_array().unwrap()
@@ -217,7 +217,7 @@ async fn get_from_api(props: Props, long: &str, short: &str) -> Result<(), Box<d
 
     while has_next {
         let temp: String;
-        let json: Value = serde_json::from_str(&client.get(&(format!("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}&{}limit=5000{}{}", long, short, &parameter, &continue_from))).send().await?.text().await?)?;
+        let json: Value = client.get(&(format!("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}&{}limit=5000{}{}", long, short, &parameter, &continue_from))).send().await?.json().await?;
         if json["query"][long].is_object() {
             for (_, x) in json["query"][long].as_object().unwrap().iter() {
                 results.push(x[getter].as_str().unwrap().to_string())
@@ -252,7 +252,7 @@ async fn get_infobox_lists(props: Props, typ: &str) -> Result<(), Box<dyn Error>
 
     crate::util::wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
-    let res = client
+    let json: Value = client
         .get(
             &(format!(
                 "https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}",
@@ -262,9 +262,9 @@ async fn get_infobox_lists(props: Props, typ: &str) -> Result<(), Box<dyn Error>
         )
         .send()
         .await?
-        .text()
+        .json()
         .await?;
-    let json: Value = serde_json::from_str(&res)?;
+
     for x in json["query"][typ].as_array().unwrap().iter() {
         results.push(x["title"].as_str().unwrap().to_string())
     }

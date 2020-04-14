@@ -21,7 +21,7 @@ pub async fn move_pages(props: Props) -> Result<(), Box<dyn Error>> {
 
     wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
-    let res = client
+    let json: Value = client
         .post(wiki_api_url)
         .form(&[
             ("action", "query"),
@@ -32,10 +32,9 @@ pub async fn move_pages(props: Props) -> Result<(), Box<dyn Error>> {
         ])
         .send()
         .await?
-        .text()
+        .json()
         .await?;
 
-    let json: Value = serde_json::from_str(&res)?;
     let (_i, o) = json["query"]["pages"]
         .as_object()
         .unwrap()

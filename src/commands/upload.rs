@@ -35,7 +35,7 @@ pub async fn upload(props: Props) -> Result<(), Box<dyn std::error::Error>> {
     }
     pages.pop();
 
-    let res = client
+    let json: Value = client
         .post(wiki_api_url)
         .form(&[
             ("action", "query"),
@@ -46,10 +46,9 @@ pub async fn upload(props: Props) -> Result<(), Box<dyn std::error::Error>> {
         ])
         .send()
         .await?
-        .text()
+        .json()
         .await?;
 
-    let json: Value = serde_json::from_str(&res)?;
     let (_i, o) = json["query"]["pages"]
         .as_object()
         .unwrap()

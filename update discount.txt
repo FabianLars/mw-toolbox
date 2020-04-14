@@ -1,0 +1,1 @@
+cargo run update discount -p "E:\Spiele\Riot Games\League of Legends\lockfile"
