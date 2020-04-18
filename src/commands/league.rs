@@ -11,23 +11,7 @@ use crate::util::{props::*, wiki};
 #[serde(rename_all = "camelCase")]
 pub struct ChampSrc {
     pub id: i32,
-    pub is_base: bool,
     pub name: String,
-    pub splash_path: String,
-    pub uncentered_splash_path: String,
-    pub tile_path: String,
-    pub load_screen_path: String,
-    pub skin_type: String,
-    pub rarity: String,
-    pub is_legacy: bool,
-    pub splash_video_path: Value,
-    pub features_text: Value,
-    pub chroma_path: Value,
-    pub emblems: Value,
-    pub region_rarity_id: i64,
-    pub rarity_gem_path: Value,
-    pub skin_lines: Value,
-    pub description: Value,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -68,20 +52,10 @@ struct Rotations {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct StoreChamp {
-    //pub active: bool,
-    //pub bundled: Value,
-    //pub icon_url: String,
     pub inventory_type: String,
     pub item_id: i32,
-    //pub item_instance_id: String,
     pub item_requirements: Option<Vec<ItemReq>>,
-    //pub localizations: Value,
-    //pub max_quantity: i8,
-    //pub prices: Vec<Price>,
-    //pub release_date: String,
     pub sale: Option<Sale>,
-    //pub sub_inventory_type: Value,
-    //pub tags: Value,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
