@@ -474,5 +474,188 @@ fn rename_m(d: String) -> String {
 }
 
 pub(crate) async fn set(props: Props) -> Result<(), Box<dyn Error>> {
+    let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
+
+    let client = reqwest::Client::builder().cookie_store(true).build()?;
+
+    let mut edit_token = String::new();
+    let mut skin: String = String::new();
+    let mut set: String = String::new();
+    let mut universe: String = String::new();
+    let mut icons: String = String::new();
+    let mut iconsets: String = String::new();
+    let mut champion: String = String::new();
+    let mut tft: String = String::new();
+
+    wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+
+    let fut_token = async {
+        let json: Value = client
+            .get(reqwest::Url::parse_with_params(
+                wiki_api_url,
+                &[
+                    ("action", "query"),
+                    ("format", "json"),
+                    ("prop", "info"),
+                    ("intoken", "edit"),
+                    ("titles", "Vorlage:Set/skins.json|Vorlage:Set/sets.json|Vorlage:Set/universes.json|Vorlage:Set/icons.json|Vorlage:Set/iconsets.json|Vorlage:Set/champion.json|Vorlage:Set/TFT.json"),
+                ],
+            ).unwrap())
+            .send()
+            .await?
+            .json()
+            .await?;
+
+        let (_i, o) = json["query"]["pages"]
+            .as_object()
+            .unwrap()
+            .into_iter()
+            .next()
+            .unwrap();
+        edit_token = String::from(o["edittoken"].as_str().unwrap());
+        Ok::<(), reqwest::Error>(())
+    }.map_err(|_e| "Can't get skins.json".to_string());
+    let fut_skin = async {
+        skin = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").send().await?.text().await?;
+        Ok::<(), reqwest::Error>(())
+    }.map_err(|_e| "Can't get skins.json".to_string());
+    let fut_set = async {
+        set = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skinlines.json").send().await?.text().await?;
+        Ok::<(), reqwest::Error>(())
+    }.map_err(|_e| "Can't get skinlines.json".to_string());
+    let fut_universe = async {
+        universe = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/universes.json").send().await?.text().await?;
+        Ok::<(), reqwest::Error>(())
+    }.map_err(|_e| "Can't get universes.json".to_string());
+    let fut_icons = async {
+        icons = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icons.json").send().await?.text().await?;
+        Ok::<(), reqwest::Error>(())
+    }.map_err(|_e| "Can't get universes.json".to_string());
+    let fut_iconsets = async {
+        iconsets = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icon-sets.json").send().await?.text().await?;
+        Ok::<(), reqwest::Error>(())
+    }.map_err(|_e| "Can't get universes.json".to_string());
+    let fut_champion = async {
+        let res: Value = client.get("https://ddragon.leagueoflegends.com/api/versions.json").send().await?.json().await?;
+        let patch_id = res.get(0).unwrap().as_str().unwrap();
+        champion = client.get(&format!("http://ddragon.leagueoflegends.com/cdn/{}/data/de_DE/champion.json", patch_id)).send().await?.text().await?;
+        Ok::<(), reqwest::Error>(())
+    }.map_err(|_e| "Can't get universes.json".to_string());
+    let fut_tft = async {
+        tft = client.get("http://raw.communitydragon.org/latest/cdragon/tft/de_de.json").send().await?.text().await?;
+        Ok::<(), reqwest::Error>(())
+    }.map_err(|_e| "Can't get universes.json".to_string());
+
+    try_join!(fut_token, fut_skin, fut_set, fut_universe, fut_icons, fut_iconsets, fut_champion, fut_tft)?;
+
+
+    let fut_skin = async {
+        client
+            .post(wiki_api_url)
+            .form(&[
+                ("action", "edit"),
+                ("reason", "automated update"),
+                ("bot", "1"),
+                ("title", "Vorlage:Set/skins.json"),
+                ("text", &skin),
+                ("token", &edit_token),
+            ])
+            .send()
+            .await?;
+        Ok::<(), reqwest::Error>(())
+    }.map_err(|_e| "Can't get skins.json".to_string());
+    let fut_set = async {
+        client
+            .post(wiki_api_url)
+            .form(&[
+                ("action", "edit"),
+                ("reason", "automated update"),
+                ("bot", "1"),
+                ("title", "Vorlage:Set/sets.json"),
+                ("text", &set),
+                ("token", &edit_token),
+            ])
+            .send()
+            .await?;
+        Ok::<(), reqwest::Error>(())
+    }.map_err(|_e| "Can't get skinlines.json".to_string());
+    let fut_universe = async {
+        client
+            .post(wiki_api_url)
+            .form(&[
+                ("action", "edit"),
+                ("reason", "automated update"),
+                ("bot", "1"),
+                ("title", "Vorlage:Set/universes.json"),
+                ("text", &universe),
+                ("token", &edit_token),
+            ])
+            .send()
+            .await?;
+        Ok::<(), reqwest::Error>(())
+    }.map_err(|_e| "Can't get universes.json".to_string());
+    let fut_icons = async {
+        client
+            .post(wiki_api_url)
+            .form(&[
+                ("action", "edit"),
+                ("reason", "automated update"),
+                ("bot", "1"),
+                ("title", "Vorlage:Set/icons.json"),
+                ("text", &icons),
+                ("token", &edit_token),
+            ])
+            .send()
+            .await?;
+        Ok::<(), reqwest::Error>(())
+    }.map_err(|_e| "Can't get universes.json".to_string());
+    let fut_iconsets = async {
+        client
+            .post(wiki_api_url)
+            .form(&[
+                ("action", "edit"),
+                ("reason", "automated update"),
+                ("bot", "1"),
+                ("title", "Vorlage:Set/iconsets.json"),
+                ("text", &iconsets),
+                ("token", &edit_token),
+            ])
+            .send()
+            .await?;
+        Ok::<(), reqwest::Error>(())
+    }.map_err(|_e| "Can't get universes.json".to_string());
+    let fut_champion = async {
+        client
+            .post(wiki_api_url)
+            .form(&[
+                ("action", "edit"),
+                ("reason", "automated update"),
+                ("bot", "1"),
+                ("title", "Vorlage:Set/champion.json"),
+                ("text", &champion),
+                ("token", &edit_token),
+            ])
+            .send()
+            .await?;
+        Ok::<(), reqwest::Error>(())
+    }.map_err(|_e| "Can't get universes.json".to_string());
+    let fut_tft = async {
+        client
+            .post(wiki_api_url)
+            .form(&[
+                ("action", "edit"),
+                ("reason", "automated update"),
+                ("bot", "1"),
+                ("title", "Vorlage:Set/TFT.json"),
+                ("text", &tft),
+                ("token", &edit_token),
+            ])
+            .send()
+            .await?;
+        Ok::<(), reqwest::Error>(())
+    }.map_err(|_e| "Can't get universes.json".to_string());
+
+    try_join!(fut_skin, fut_set, fut_universe, fut_icons, fut_iconsets, fut_champion, fut_tft)?;
+
     Ok(())
 }
