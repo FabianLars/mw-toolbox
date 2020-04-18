@@ -2,7 +2,9 @@
 // TODO: (global) Refactoring/Cleanup
 use clap::{arg_enum, Clap};
 
-use crate::{commands::{delete::*, list::*, rename::*, league::*, upload::*}, util::props::*};
+use crate::{ commands::{ delete::*, list::*, rename::*, upload::* }, util::props::* };
+#[cfg(feature = "league")]
+use crate::commands::league::*;
 
 mod commands;
 mod util;
@@ -153,12 +155,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             Subcommand::Move { .. } => {
                 move_pages(Props::from_move(Cli::parse())).await?
             }
+            #[cfg(not(feature = "league"))]
+            Subcommand::League { .. } => panic!("Did you forget to set the league feature flag?"),
+            #[cfg(feature = "league")]
             Subcommand::League { league_type, .. } => match league_type {
                 LeagueType::Champs | LeagueType::Champions => champs().await?,
                 LeagueType::Discount | LeagueType::Discounts => discounts(Props::from_league(Cli::parse())).await?,
                 LeagueType::Rotation | LeagueType::Rotations => {
                     #[cfg(not(feature = "riot-api"))]
-                    panic!("Did you forget the riot-api feature flag?");
+                    panic!("Did you forget to set the riot-api feature flag?");
                     #[cfg(feature = "riot-api")]
                     rotation(Props::from_league(Cli::parse())).await?
                 },

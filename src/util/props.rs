@@ -67,6 +67,7 @@ impl Props {
         }
     }
 
+    #[cfg(feature = "league")]
     pub(crate) fn from_league(args: Cli) -> Self {
         let p = match args.command.unwrap() {
             Subcommand::League { path, .. } => match path {
