@@ -67,9 +67,9 @@ impl Props {
         }
     }
 
-    pub(crate) fn from_update(args: Cli) -> Self {
+    pub(crate) fn from_league(args: Cli) -> Self {
         let p = match args.command.unwrap() {
-            Subcommand::Update { path, .. } => match path {
+            Subcommand::League { path, .. } => match path {
                 Some(x) => x,
                 None => PathBuf::from("./wtools_output.json"),
             },

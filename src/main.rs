@@ -2,7 +2,7 @@
 // TODO: (global) Refactoring/Cleanup
 use clap::{arg_enum, Clap};
 
-use crate::{commands::{delete::*, list::*, rename::*, update::*, upload::*}, util::props::*};
+use crate::{commands::{delete::*, list::*, rename::*, league::*, upload::*}, util::props::*};
 
 mod commands;
 mod util;
@@ -29,8 +29,8 @@ enum Subcommand {
         #[clap(parse(from_os_str))]
         input: std::path::PathBuf,
     },
-    Update {
-        update_type: UpdateType,
+    League {
+        league_type: LeagueType,
 
         #[clap(short, long, parse(from_os_str))]
         path: Option<std::path::PathBuf>,
@@ -43,13 +43,14 @@ enum Subcommand {
 
 arg_enum! {
     #[derive(Debug)]
-    enum UpdateType {
+    enum LeagueType {
         Champs,
         Champions,
         Discount,
         Discounts,
         Rotation,
-        Rotations
+        Rotations,
+        Set
     }
 }
 
@@ -152,15 +153,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             Subcommand::Move { .. } => {
                 move_pages(Props::from_move(Cli::parse())).await?
             }
-            Subcommand::Update { update_type, .. } => match update_type {
-                UpdateType::Champs | UpdateType::Champions => champs().await?,
-                UpdateType::Discount | UpdateType::Discounts => discounts(Props::from_update(Cli::parse())).await?,
-                UpdateType::Rotation | UpdateType::Rotations => {
+            Subcommand::League { league_type, .. } => match league_type {
+                LeagueType::Champs | LeagueType::Champions => champs().await?,
+                LeagueType::Discount | LeagueType::Discounts => discounts(Props::from_league(Cli::parse())).await?,
+                LeagueType::Rotation | LeagueType::Rotations => {
                     #[cfg(not(feature = "riot-api"))]
                     panic!("Did you forget the riot-api feature flag?");
                     #[cfg(feature = "riot-api")]
-                    rotation(Props::from_update(Cli::parse())).await?
-                }
+                    rotation(Props::from_league(Cli::parse())).await?
+                },
+                LeagueType::Set => set(Props::from_league(Cli::parse())).await?,
             },
             Subcommand::Upload { .. } => {
                 upload(Props::from_upload(Cli::parse())).await?
