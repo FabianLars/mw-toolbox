@@ -67,13 +67,7 @@ arg_enum! {
 arg_enum! {
     #[derive(Debug)]
     enum SkylordsType {
-        Champs,
-        Champions,
-        Discount,
-        Discounts,
-        Rotation,
-        Rotations,
-        Set
+        Carddata,
     }
 }
 
@@ -175,7 +169,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             },
             Subcommand::Move { .. } => {
                 move_pages(Props::from_move(Cli::parse())).await?
-            }
+            },
+            Subcommand::Upload { .. } => {
+                upload(Props::from_upload(Cli::parse())).await?
+            },
             #[cfg(not(feature = "league"))]
             Subcommand::League { .. } => panic!("Did you forget to set the league feature flag?"),
             #[cfg(feature = "league")]
@@ -190,9 +187,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 },
                 LeagueType::Set => set(Props::from_league(Cli::parse())).await?,
             },
-            Subcommand::Upload { .. } => {
-                upload(Props::from_upload(Cli::parse())).await?
-            }
+            #[cfg(not(feature = "skylords"))]
+            Subcommand::League { .. } => panic!("Did you forget to set the skylords feature flag?"),
+            #[cfg(feature = "league")]
+            Subcommand::Skylords { skylords_type, .. } => match skylords_type {
+                SkylordsType::Carddata => carddata(Props::from_skylords(Cli::parse())).await?,
+            },
         },
     }
     Ok(())
