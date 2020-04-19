@@ -188,7 +188,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 LeagueType::Set => set(Props::from_league(Cli::parse())).await?,
             },
             #[cfg(not(feature = "skylords"))]
-            Subcommand::League { .. } => panic!("Did you forget to set the skylords feature flag?"),
+            Subcommand::Skylords { .. } => panic!("Did you forget to set the skylords feature flag?"),
             #[cfg(feature = "skylords")]
             Subcommand::Skylords { skylords_type, .. } => match skylords_type {
                 SkylordsType::Carddata => carddata(Props::from_skylords(Cli::parse())).await?,
