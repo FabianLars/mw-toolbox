@@ -6,7 +6,7 @@ build = "build.rs"
 edition = "2018"
 
 [features]
-default = ["gui", "riot-api", "league"]
+default = ["gui", "riot-api", "league", "skylords"]
 
 gui = ["iced", "nfd"]
 riot-api = []
