@@ -20,7 +20,7 @@ winres = "0.1"
 tokio = { version = "0.2", features = ["macros", "fs", "time"] }
 reqwest = { version = "0.10", features = ["json", "cookies"] }
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
+serde_json = { version = "1.0", features = ["preserve_order"] }
 clap = { git = "https://github.com/clap-rs/clap/" }
 chrono = "0.4"
 futures = "0.3"
@@ -28,3 +28,4 @@ iced = { git = "https://github.com/hecrj/iced.git", branch = "master", features 
 directories = "2.0"
 nfd = { git = "https://github.com/EmbarkStudios/nfd-rs.git", branch = "update-submodule", optional = true }
 base64 = "0.12"
+indexmap = "1.3"
