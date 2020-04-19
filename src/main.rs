@@ -5,6 +5,8 @@ use clap::{arg_enum, Clap};
 use crate::{ commands::{ delete::*, list::*, rename::*, upload::* }, util::props::* };
 #[cfg(feature = "league")]
 use crate::commands::league::*;
+#[cfg(feature = "skylords")]
+use crate::commands::skylords::*;
 
 mod commands;
 mod util;
@@ -37,6 +39,12 @@ enum Subcommand {
         #[clap(short, long, parse(from_os_str))]
         path: Option<std::path::PathBuf>,
     },
+    Skylords {
+        skylords_type: SkylordsType,
+
+        #[clap(short, long, parse(from_os_str))]
+        path: Option<std::path::PathBuf>,
+    },
     Upload {
         #[clap(parse(from_os_str))]
         input: std::path::PathBuf,
@@ -46,6 +54,19 @@ enum Subcommand {
 arg_enum! {
     #[derive(Debug)]
     enum LeagueType {
+        Champs,
+        Champions,
+        Discount,
+        Discounts,
+        Rotation,
+        Rotations,
+        Set
+    }
+}
+
+arg_enum! {
+    #[derive(Debug)]
+    enum SkylordsType {
         Champs,
         Champions,
         Discount,

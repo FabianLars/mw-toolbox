@@ -11,6 +11,7 @@ default = ["gui", "riot-api", "league"]
 gui = ["iced", "nfd"]
 riot-api = []
 league = []
+skylords = []
 
 [target.'cfg(windows)'.build-dependencies]
 winres = "0.1"

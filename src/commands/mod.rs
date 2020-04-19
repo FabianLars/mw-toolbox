@@ -1,6 +1,10 @@
 pub mod delete;
 pub mod list;
 pub mod rename;
+pub mod upload;
+
 #[cfg(feature = "league")]
 pub mod league;
-pub mod upload;
+
+#[cfg(feature = "skylords")]
+pub mod skylords;

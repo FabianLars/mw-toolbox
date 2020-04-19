@@ -67,6 +67,28 @@ impl Props {
         }
     }
 
+    pub(crate) fn from_upload(args: Cli) -> Self {
+        let path = match args.command.unwrap() {
+            Subcommand::Upload { input, .. } => {
+                if std::fs::metadata(&input).unwrap().is_dir() {
+                    PathType::Folder(input)
+                } else if std::fs::metadata(&input).unwrap().is_file() {
+                    PathType::File(input)
+                } else {
+                    panic!("weird error");
+                }
+            }
+            _ => panic!("weird error"),
+        };
+
+        Self {
+            path,
+            parameter: None,
+            loginname: args.loginname,
+            loginpassword: args.loginpassword,
+        }
+    }
+
     #[cfg(feature = "league")]
     pub(crate) fn from_league(args: Cli) -> Self {
         let p = match args.command.unwrap() {
@@ -85,22 +107,18 @@ impl Props {
         }
     }
 
-    pub(crate) fn from_upload(args: Cli) -> Self {
-        let path = match args.command.unwrap() {
-            Subcommand::Upload { input, .. } => {
-                if std::fs::metadata(&input).unwrap().is_dir() {
-                    PathType::Folder(input)
-                } else if std::fs::metadata(&input).unwrap().is_file() {
-                    PathType::File(input)
-                } else {
-                    panic!("weird error");
-                }
-            }
+    #[cfg(feature = "skylords")]
+    pub(crate) fn from_skylords(args: Cli) -> Self {
+        let p = match args.command.unwrap() {
+            Subcommand::Skylords { path, .. } => match path {
+                Some(x) => x,
+                None => PathBuf::from("./wtools_output.json"),
+            },
             _ => panic!("weird error"),
         };
 
         Self {
-            path,
+            path: PathType::File(p),
             parameter: None,
             loginname: args.loginname,
             loginpassword: args.loginpassword,
