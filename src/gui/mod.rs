@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::util::props::*;
 use crate::commands::upload;
+use std::ffi::OsStr;
 
 pub mod style;
 
@@ -40,7 +41,6 @@ struct State {
 enum ChosenCommand {
     Delete,
     List,
-    Update,
     Upload,
 }
 
@@ -51,10 +51,9 @@ impl Default for ChosenCommand {
 }
 
 impl ChosenCommand {
-    pub const ALL: [ChosenCommand; 4] = [
+    pub const ALL: [ChosenCommand; 3] = [
         ChosenCommand::Delete,
         ChosenCommand::List,
-        ChosenCommand::Update,
         ChosenCommand::Upload,
     ];
 }
@@ -137,7 +136,6 @@ impl Application for App {
                                 ChosenCommand::Upload => state.selected_files = crate::util::props::PathType::File(
                                     std::path::PathBuf::from(file_path),
                                 ),
-                                ChosenCommand::Update => state.lockfile = file_path,
                                 _ => (),
                             }
                             nfd::Response::OkayMultiple(files) => {
@@ -149,7 +147,6 @@ impl Application for App {
                                         }
                                         state.selected_files = crate::util::props::PathType::Files(temp)
                                     },
-                                    ChosenCommand::Update => state.lockfile = files[0].clone(),
                                     _ => ()
                                 }
                             }
@@ -171,7 +168,6 @@ impl Application for App {
                     }
                     Message::ExecuteButtonPressed => {
                         match state.chosen_command {
-                            ChosenCommand::Update => println!("{}", state.lockfile),
                             ChosenCommand::Upload => return Command::perform(
                                 upload::from_gui(Props {
                                     path: state.selected_files.clone(),
@@ -204,7 +200,7 @@ impl Application for App {
                             ln_input_value: state.ln_input_value.clone(),
                             lockfile: state.lockfile.clone(),
                         }
-                        .save(),
+                            .save(),
                         Message::Saved,
                     )
                 } else {
@@ -218,18 +214,18 @@ impl Application for App {
         match self {
             App::Loading => loading_message(),
             App::Loaded(State {
-                ln_input,
-                ln_input_value,
-                lp_input,
-                lp_input_value,
-                chosen_command,
-                file_button,
-                folder_button,
-                execute_button,
-                selected_files,
-                upload_scrollable,
-                ..
-            }) => {
+                            ln_input,
+                            ln_input_value,
+                            lp_input,
+                            lp_input_value,
+                            chosen_command,
+                            file_button,
+                            folder_button,
+                            execute_button,
+                            selected_files,
+                            upload_scrollable,
+                            ..
+                        }) => {
                 let navbar = Container::new(
                     Column::new()
                         .push(
@@ -243,7 +239,7 @@ impl Application for App {
                                         ln_input_value,
                                         Message::LoginNameChanged,
                                     )
-                                    .size(40),
+                                        .size(40),
                                 )
                                 .push(
                                     TextInput::new(
@@ -252,8 +248,8 @@ impl Application for App {
                                         lp_input_value,
                                         Message::LoginPasswordChanged,
                                     )
-                                    .size(40)
-                                    .password(),
+                                        .size(40)
+                                        .password(),
                                 ),
                         )
                         .push(ChosenCommand::ALL.iter().cloned().fold(
@@ -272,10 +268,10 @@ impl Application for App {
                 let mut text_files = String::new();
                 match selected_files {
                     PathType::File(x) => text_files.push_str(
-                        x.file_name()
-                            .unwrap()
-                            .to_str()
-                            .unwrap(),
+                        match x.file_name() {
+                            Some(s) => s.to_str().unwrap(),
+                            None => "",
+                        }
                     ),
                     PathType::Files(x) => {
                         for f in x {
@@ -304,9 +300,9 @@ impl Application for App {
                             Container::new(
                                 Scrollable::new(upload_scrollable).push(Text::new(text_files)),
                             )
-                            .width(Length::Fill)
-                            .height(Length::Fill)
-                            .align_x(Align::Center),
+                                .width(Length::Fill)
+                                .height(Length::Fill)
+                                .align_x(Align::Center),
                         )
                         .push(
                             Container::new(
@@ -326,16 +322,10 @@ impl Application for App {
                                             .on_press(Message::ExecuteButtonPressed),
                                     ),
                             )
-                            .width(Length::Fill)
-                            .height(Length::Shrink)
-                            .align_x(Align::Center),
+                                .width(Length::Fill)
+                                .height(Length::Shrink)
+                                .align_x(Align::Center),
                         ),
-
-                    ChosenCommand::Update => Column::new().push(Container::new(
-                        Button::new(file_button, Text::new("Select lockfile")).on_press(Message::FileButtonPressed)
-                    ).width(Length::Fill).height(Length::Fill).align_x(Align::Center)).push(Container::new(
-                        Button::new(execute_button, Text::new("Update Wiki-template")).on_press(Message::ExecuteButtonPressed)
-                    ).width(Length::Fill).height(Length::Fill).align_x(Align::Center)),
 
                     _ => Column::new(),
                 });
@@ -369,10 +359,10 @@ fn loading_message() -> Element<'static, Message> {
             .horizontal_alignment(HorizontalAlignment::Center)
             .size(50),
     )
-    .width(Length::Fill)
-    .height(Length::Fill)
-    .center_y()
-    .into()
+        .width(Length::Fill)
+        .height(Length::Fill)
+        .center_y()
+        .into()
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -398,7 +388,7 @@ enum SaveError {
 impl SavedState {
     fn path() -> std::path::PathBuf {
         let mut path = if let Some(project_dirs) =
-            directories::ProjectDirs::from("de", "FabianLars", "wtools")
+        directories::ProjectDirs::from("de", "FabianLars", "wtools")
         {
             project_dirs.data_dir().into()
         } else {
