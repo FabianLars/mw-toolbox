@@ -183,6 +183,11 @@ pub async fn carddata(props: Props) -> Result<(), Box<dyn Error>> {
                 card.orbs.push(String::from("Fire"));
             }
         }
+        if orb_src.get("Neutral").unwrap().as_i64().unwrap() != 0 {
+            for i in 0..orb_src.get("Neutral").unwrap().as_i64().unwrap() {
+                card.orbs.push(String::from("Neutral"));
+            }
+        }
 
         for a in v.get("Abilities").unwrap().as_array().unwrap() {
             let mut ability = Ability::default();
