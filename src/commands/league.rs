@@ -713,6 +713,10 @@ pub(crate) async fn random(props: Props) -> Result<(), Box<dyn Error>> {
             ])
             .send()
             .await?;
+
+        println!("{}", v.name);
+
+        tokio::time::delay_for(tokio::time::Duration::from_millis(500)).await;
     }
 
     Ok(())
