@@ -659,3 +659,61 @@ pub(crate) async fn set(props: Props) -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+// programmed on demand
+pub(crate) async fn random(props: Props) -> Result<(), Box<dyn Error>> {
+    let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
+
+    let client = reqwest::Client::builder().cookie_store(true).build()?;
+
+    wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+
+    let champions: HashMap<i32, Champ> = client
+        .get("https://fabianlars.de/wapi/champion")
+        .send()
+        .await?
+        .json()
+        .await?;
+
+    let json: Value = client
+        .get(reqwest::Url::parse_with_params(
+            wiki_api_url,
+            &[
+                ("action", "query"),
+                ("format", "json"),
+                ("prop", "info"),
+                ("intoken", "edit"),
+                ("titles", "Kategorie:Ahri Fähigkeitenvideos|Kategorie:Akali Fähigkeitenvideos|Kategorie:Alistar Fähigkeitenvideos|Kategorie:Amumu Fähigkeitenvideos|Kategorie:Anivia Fähigkeitenvideos|Kategorie:Annie Fähigkeitenvideos|Kategorie:Aphelios Fähigkeitenvideos|Kategorie:Ashe Fähigkeitenvideos|Kategorie:Aurelion Sol Fähigkeitenvideos|Kategorie:Azir Fähigkeitenvideos|Kategorie:Bard Fähigkeitenvideos|Kategorie:Blitzcrank Fähigkeitenvideos|Kategorie:Brand Fähigkeitenvideos|Kategorie:Braum Fähigkeitenvideos|Kategorie:Caitlyn Fähigkeitenvideos|Kategorie:Camille Fähigkeitenvideos|Kategorie:Cassiopeia Fähigkeitenvideos|Kategorie:Cho'Gath Fähigkeitenvideos|Kategorie:Corki Fähigkeitenvideos|Kategorie:Darius Fähigkeitenvideos|Kategorie:Diana Fähigkeitenvideos|Kategorie:Dr. Mundo Fähigkeitenvideos|Kategorie:Draven Fähigkeitenvideos|Kategorie:Ekko Fähigkeitenvideos|Kategorie:Elise Fähigkeitenvideos|Kategorie:Evelynn Fähigkeitenvideos|Kategorie:Ezreal Fähigkeitenvideos|Kategorie:Fiddlesticks Fähigkeitenvideos|Kategorie:Fiora Fähigkeitenvideos|Kategorie:Fizz Fähigkeitenvideos|Kategorie:Galio Fähigkeitenvideos|Kategorie:Gangplank Fähigkeitenvideos|Kategorie:Garen Fähigkeitenvideos|Kategorie:Gnar Fähigkeitenvideos|Kategorie:Gragas Fähigkeitenvideos|Kategorie:Graves Fähigkeitenvideos|Kategorie:Hecarim Fähigkeitenvideos|Kategorie:Heimerdinger Fähigkeitenvideos|Kategorie:Illaoi Fähigkeitenvideos|Kategorie:Irelia Fähigkeitenvideos|Kategorie:Ivern Fähigkeitenvideos|Kategorie:Janna Fähigkeitenvideos|Kategorie:Jarvan IV. Fähigkeitenvideos|Kategorie:Jax Fähigkeitenvideos|Kategorie:Jayce Fähigkeitenvideos|Kategorie:Jhin Fähigkeitenvideos|Kategorie:Jinx Fähigkeitenvideos|Kategorie:Kai'Sa Fähigkeitenvideos|Kategorie:Kalista Fähigkeitenvideos|Kategorie:Karma Fähigkeitenvideos|Kategorie:Karthus Fähigkeitenvideos|Kategorie:Kassadin Fähigkeitenvideos|Kategorie:Katarina Fähigkeitenvideos|Kategorie:Kayle Fähigkeitenvideos|Kategorie:Kayn Fähigkeitenvideos|Kategorie:Kennen Fähigkeitenvideos|Kategorie:Kha'Zix Fähigkeitenvideos|Kategorie:Kindred Fähigkeitenvideos|Kategorie:Kled Fähigkeitenvideos|Kategorie:Kog'Maw Fähigkeitenvideos|Kategorie:LeBlanc Fähigkeitenvideos|Kategorie:Lee Sin Fähigkeitenvideos|Kategorie:Leona Fähigkeitenvideos|Kategorie:Lissandra Fähigkeitenvideos|Kategorie:Lucian Fähigkeitenvideos|Kategorie:Lulu Fähigkeitenvideos|Kategorie:Lux Fähigkeitenvideos|Kategorie:Malphite Fähigkeitenvideos|Kategorie:Malzahar Fähigkeitenvideos|Kategorie:Maokai Fähigkeitenvideos|Kategorie:Master Yi Fähigkeitenvideos|Kategorie:Miss Fortune Fähigkeitenvideos|Kategorie:Mordekaiser Fähigkeitenvideos|Kategorie:Morgana Fähigkeitenvideos|Kategorie:Nami Fähigkeitenvideos|Kategorie:Nasus Fähigkeitenvideos|Kategorie:Nautilus Fähigkeitenvideos|Kategorie:Neeko Fähigkeitenvideos|Kategorie:Nidalee Fähigkeitenvideos|Kategorie:Nocturne Fähigkeitenvideos|Kategorie:Nunu & Willump Fähigkeitenvideos|Kategorie:Olaf Fähigkeitenvideos|Kategorie:Orianna Fähigkeitenvideos|Kategorie:Ornn Fähigkeitenvideos|Kategorie:Pantheon Fähigkeitenvideos|Kategorie:Poppy Fähigkeitenvideos|Kategorie:Pyke Fähigkeitenvideos|Kategorie:Qiyana Fähigkeitenvideos|Kategorie:Quinn Fähigkeitenvideos|Kategorie:Rakan Fähigkeitenvideos|Kategorie:Rammus Fähigkeitenvideos|Kategorie:Rek'Sai Fähigkeitenvideos|Kategorie:Renekton Fähigkeitenvideos|Kategorie:Rengar Fähigkeitenvideos|Kategorie:Riven Fähigkeitenvideos|Kategorie:Rumble Fähigkeitenvideos|Kategorie:Ryze Fähigkeitenvideos|Kategorie:Sejuani Fähigkeitenvideos|Kategorie:Senna Fähigkeitenvideos|Kategorie:Sett Fähigkeitenvideos|Kategorie:Shaco Fähigkeitenvideos|Kategorie:Shen Fähigkeitenvideos|Kategorie:Shyvana Fähigkeitenvideos|Kategorie:Singed Fähigkeitenvideos|Kategorie:Sion Fähigkeitenvideos|Kategorie:Sivir Fähigkeitenvideos|Kategorie:Skarner Fähigkeitenvideos|Kategorie:Sona Fähigkeitenvideos|Kategorie:Soraka Fähigkeitenvideos|Kategorie:Swain Fähigkeitenvideos|Kategorie:Sylas Fähigkeitenvideos|Kategorie:Syndra Fähigkeitenvideos|Kategorie:Tahm Kench Fähigkeitenvideos|Kategorie:Taliyah Fähigkeitenvideos|Kategorie:Talon Fähigkeitenvideos|Kategorie:Taric Fähigkeitenvideos|Kategorie:Teemo Fähigkeitenvideos|Kategorie:Thresh Fähigkeitenvideos|Kategorie:Tristana Fähigkeitenvideos|Kategorie:Trundle Fähigkeitenvideos|Kategorie:Tryndamere Fähigkeitenvideos|Kategorie:Twisted Fate Fähigkeitenvideos|Kategorie:Twitch Fähigkeitenvideos|Kategorie:Udyr Fähigkeitenvideos|Kategorie:Urgot Fähigkeitenvideos|Kategorie:Varus Fähigkeitenvideos|Kategorie:Vayne Fähigkeitenvideos|Kategorie:Veigar Fähigkeitenvideos|Kategorie:Vel'Koz Fähigkeitenvideos|Kategorie:Vi Fähigkeitenvideos|Kategorie:Viktor Fähigkeitenvideos|Kategorie:Vladimir Fähigkeitenvideos|Kategorie:Volibear Fähigkeitenvideos|Kategorie:Warwick Fähigkeitenvideos|Kategorie:Wukong Fähigkeitenvideos|Kategorie:Xayah Fähigkeitenvideos|Kategorie:Xerath Fähigkeitenvideos|Kategorie:Xin Zhao Fähigkeitenvideos|Kategorie:Yasuo Fähigkeitenvideos|Kategorie:Yorick Fähigkeitenvideos|Kategorie:Yuumi Fähigkeitenvideos|Kategorie:Zac Fähigkeitenvideos|Kategorie:Zed Fähigkeitenvideos|Kategorie:Ziggs Fähigkeitenvideos|Kategorie:Zilean Fähigkeitenvideos|Kategorie:Zoe Fähigkeitenvideos|Kategorie:Zyra Fähigkeitenvideos"),
+            ],
+        ).unwrap())
+        .send()
+        .await?
+        .json()
+        .await?;
+
+    let (_i, o) = json["query"]["pages"]
+        .as_object()
+        .unwrap()
+        .into_iter()
+        .next()
+        .unwrap();
+    let edit_token = String::from(o["edittoken"].as_str().unwrap());
+
+    for (_k,v) in champions {
+        client
+            .post(wiki_api_url)
+            .form(&[
+                ("action", "edit"),
+                ("reason", "automated action"),
+                ("bot", "1"),
+                ("title", &format!("Kategorie:{} Fähigkeitenvideos", v.name)),
+                ("text", &format!("Diese Kategorie beinhaltet Fähigkeitsvideos von {{{{ci|{}}}}}.
+[[Kategorie:{}]][[Kategorie:Champion Fähigkeitsvideos]][[en:Category:{} ability videos]]", v.name, v.name, v.name)),
+                ("token", &edit_token),
+            ])
+            .send()
+            .await?;
+    }
+
+    Ok(())
+}
