@@ -165,7 +165,7 @@ pub async fn discounts(props: Props) -> Result<(), Box<dyn Error>> {
         .await?;
 
     let champions_wapi: HashMap<i32, Champ> = client
-        .get("https://fabianlars.de/wapi/champs")
+        .get("https://fabianlars.de/wapi/champion")
         .send()
         .await?
         .json()
@@ -351,7 +351,7 @@ pub async fn rotation(props: Props) -> Result<(), Box<dyn Error>> {
     wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
 
     let champions: HashMap<i32, Champ> = client
-        .get("https://fabianlars.de/wapi/champs")
+        .get("https://fabianlars.de/wapi/champion")
         .send()
         .await?
         .json()
