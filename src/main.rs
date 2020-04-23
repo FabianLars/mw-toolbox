@@ -1,6 +1,6 @@
 // TODO: (global) Consider Tokio file writing/reading
 // TODO: (global) Refactoring/Cleanup
-use clap::{arg_enum, Clap};
+use clap::Clap;
 
 use crate::{ commands::{ delete::*, list::*, rename::*, upload::* }, util::props::* };
 #[cfg(feature = "league")]
@@ -13,7 +13,7 @@ mod util;
 #[cfg(feature = "gui")]
 mod gui;
 
-#[derive(Clap, Debug)]
+#[derive(Clap, Debug, PartialEq)]
 enum Subcommand {
     Delete {
         /// uses newline seperation
@@ -21,6 +21,7 @@ enum Subcommand {
         input: std::path::PathBuf,
     },
     List {
+        #[clap(arg_enum)]
         list_type: ListType,
 
         parameter: Option<String>,
@@ -34,12 +35,14 @@ enum Subcommand {
         input: std::path::PathBuf,
     },
     League {
+        #[clap(arg_enum)]
         league_type: LeagueType,
 
         #[clap(short, long, parse(from_os_str))]
         path: Option<std::path::PathBuf>,
     },
     Skylords {
+        #[clap(arg_enum)]
         skylords_type: SkylordsType,
 
         #[clap(short, long, parse(from_os_str))]
@@ -51,50 +54,44 @@ enum Subcommand {
     },
 }
 
-arg_enum! {
-    #[derive(Debug)]
-    enum LeagueType {
-        Champs,
-        Champions,
-        Discount,
-        Discounts,
-        Rotation,
-        Rotations,
-        Set
-    }
+#[derive(Clap, Debug, PartialEq)]
+enum LeagueType {
+    Champs,
+    Champions,
+    Discount,
+    Discounts,
+    Rotation,
+    Rotations,
+    Set
 }
 
-arg_enum! {
-    #[derive(Debug)]
-    enum SkylordsType {
-        Carddata,
-    }
+#[derive(Clap, Debug, PartialEq)]
+enum SkylordsType {
+    Carddata,
 }
 
-arg_enum! {
-    #[derive(Debug)]
-    enum ListType {
-        Allimages,
-        Allpages,
-        Alllinks,
-        Allcategories,
-        Backlinks,
-        Categorymembers,
-        Embeddedin,
-        Imageusage,
-        Iwbacklinks,
-        Langbacklinks,
-        Search,
-        Exturlusage,
-        Protectedtitles,
-        Querypage,
-        Wkpoppages,
-        Unconvertedinfoboxes,
-        Allinfoboxes
-    }
+#[derive(Clap, Debug, PartialEq)]
+enum ListType {
+    Allimages,
+    Allpages,
+    Alllinks,
+    Allcategories,
+    Backlinks,
+    Categorymembers,
+    Embeddedin,
+    Imageusage,
+    Iwbacklinks,
+    Langbacklinks,
+    Search,
+    Exturlusage,
+    Protectedtitles,
+    Querypage,
+    Wkpoppages,
+    Unconvertedinfoboxes,
+    Allinfoboxes
 }
 
-#[derive(Clap, Debug)]
+#[derive(Clap, Debug, PartialEq)]
 struct Cli {
     #[clap(subcommand)]
     command: Option<Subcommand>,
