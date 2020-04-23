@@ -43,7 +43,7 @@ pub async fn delete_pages(props: Props) -> Result<(), Box<dyn std::error::Error>
             .post(wiki_api_url)
             .form(&[
                 ("action", "delete"),
-                ("reason", "semi-automated action"),
+                ("reason", "automated action"),
                 ("title", line),
                 ("token", &delete_token),
             ])
