@@ -3,7 +3,7 @@ use std::error::Error;
 use std::fs::File;
 
 // TODO: Convert from using Values to auto Struct conversion (=> CardSrc)
-use serde::{Deserialize, Serialize};
+use serde::{ Deserialize, Serialize };
 use serde_json::Value;
 
 use crate::util::props::Props;
@@ -165,27 +165,27 @@ pub async fn carddata(props: Props) -> Result<(), Box<dyn Error>> {
 
         let orb_src = v.get("OrbInfo").unwrap().as_object().unwrap();
         if orb_src.get("Frost").unwrap().as_i64().unwrap() != 0 {
-            for i in 0..orb_src.get("Frost").unwrap().as_i64().unwrap() {
+            for _ in 0..orb_src.get("Frost").unwrap().as_i64().unwrap() {
                 card.orbs.push(String::from("Frost"));
             }
         }
         if orb_src.get("Nature").unwrap().as_i64().unwrap() != 0 {
-            for i in 0..orb_src.get("Nature").unwrap().as_i64().unwrap() {
+            for _ in 0..orb_src.get("Nature").unwrap().as_i64().unwrap() {
                 card.orbs.push(String::from("Nature"));
             }
         }
         if orb_src.get("Shadow").unwrap().as_i64().unwrap() != 0 {
-            for i in 0..orb_src.get("Shadow").unwrap().as_i64().unwrap() {
+            for _ in 0..orb_src.get("Shadow").unwrap().as_i64().unwrap() {
                 card.orbs.push(String::from("Shadow"));
             }
         }
         if orb_src.get("Fire").unwrap().as_i64().unwrap() != 0 {
-            for i in 0..orb_src.get("Fire").unwrap().as_i64().unwrap() {
+            for _ in 0..orb_src.get("Fire").unwrap().as_i64().unwrap() {
                 card.orbs.push(String::from("Fire"));
             }
         }
         if orb_src.get("Neutral").unwrap().as_i64().unwrap() != 0 {
-            for i in 0..orb_src.get("Neutral").unwrap().as_i64().unwrap() {
+            for _ in 0..orb_src.get("Neutral").unwrap().as_i64().unwrap() {
                 card.orbs.push(String::from("Neutral"));
             }
         }
@@ -203,7 +203,7 @@ pub async fn carddata(props: Props) -> Result<(), Box<dyn Error>> {
         result.insert(v.get("Name").unwrap().as_str().unwrap().to_string(), card);
     }
 
-    ::serde_json::to_writer(&File::create("carddata.json")?, &result)?;
+    ::serde_json::to_writer(&File::create(props.path.file_path())?, &result)?;
 
     Ok(())
 }

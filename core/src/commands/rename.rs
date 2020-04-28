@@ -2,7 +2,7 @@ use std::error::Error;
 
 use serde_json::Value;
 
-use crate::util::{props::Props, wiki};
+use crate::util::{ props::Props, wiki };
 
 pub async fn move_pages(props: Props) -> Result<(), Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;

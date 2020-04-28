@@ -1,11 +1,11 @@
-use std::{collections::HashMap, error::Error, fs::File};
+use std::{ collections::HashMap, error::Error, fs::File };
 
-use futures::{future::TryFutureExt, try_join};
-use reqwest::header::{ACCEPT, AUTHORIZATION, HeaderMap};
-use serde::{Deserialize, Serialize};
+use futures::{ future::TryFutureExt, try_join };
+use reqwest::header::{ ACCEPT, AUTHORIZATION, HeaderMap };
+use serde::{ Deserialize, Serialize };
 use serde_json::Value;
 
-use crate::util::{props::*, wiki};
+use crate::util::{ props::*, wiki };
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

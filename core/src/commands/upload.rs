@@ -1,7 +1,7 @@
-use reqwest::multipart::{Form, Part};
+use reqwest::multipart::{ Form, Part };
 use serde_json::Value;
 
-use crate::util::{props::*, wiki};
+use crate::util::{ props::*, wiki };
 
 pub async fn from_gui(props: Props) -> Result<(), ()> {
     Ok(upload(props).await.unwrap())

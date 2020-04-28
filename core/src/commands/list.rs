@@ -1,8 +1,8 @@
-use std::{collections::HashMap, error::Error};
+use std::{ collections::HashMap, error::Error };
 
 use serde_json::Value;
 
-use crate::util::{props::*, wiki};
+use crate::util::{ props::*, wiki };
 
 pub async fn allimages(props: Props) -> Result<(), Box<dyn Error>> {
     get_from_api(props, "allimages", "ai").await?;

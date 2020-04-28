@@ -1,6 +1,6 @@
 use clap::Clap;
 
-use core::{commands::{delete::*, list::*, rename::*, upload::*}, util::props::*};
+use core::{ commands::{ delete::*, list::*, rename::*, upload::* }, util::props::* };
 #[cfg(feature = "league")]
 use core::commands::league::*;
 #[cfg(feature = "skylords")]
@@ -140,7 +140,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     unconvertedinfoboxes(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
                 ListType::Allinfoboxes =>
                     allinfoboxes(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-            },
+            }
             Subcommand::Move { input } => {
                 move_pages(Props::new(Some(input), None, cli.loginname, cli.loginpassword)).await?
             }
@@ -161,13 +161,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         rotation(Props::new(path, None, cli.loginname, cli.loginpassword)).await?
                 }
                 LeagueType::Set => set(Props::new(path, None, cli.loginname, cli.loginpassword)).await?
-            },
+            }
             #[cfg(not(feature = "skylords"))]
             Subcommand::Skylords { .. } => panic!("Did you forget to set the skylords feature flag?"),
             #[cfg(feature = "skylords")]
             Subcommand::Skylords { skylords_type, path } => match skylords_type {
                 SkylordsType::Carddata => carddata(Props::new(path, None, cli.loginname, cli.loginpassword)).await?
-            },
+            }
         },
     }
     Ok(())

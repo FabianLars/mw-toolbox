@@ -1,4 +1,4 @@
-use iced::{button, checkbox, container, progress_bar, radio, scrollable, slider, text_input};
+use iced::{ button, checkbox, container, progress_bar, radio, scrollable, slider, text_input };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Theme {

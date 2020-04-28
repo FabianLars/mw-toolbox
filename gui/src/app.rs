@@ -1,12 +1,10 @@
-use std::ffi::OsStr;
-
 use iced::{
     Align, Application, button, Button, Column, Command, Container, Element, HorizontalAlignment,
     Length, Radio, Row, scrollable, Scrollable, Settings, Text, text_input, TextInput,
 };
-use serde::{Deserialize, Serialize};
+use serde::{ Deserialize, Serialize };
 
-use core::{commands::upload, util::props::*};
+use core::{ commands::upload, util::props::* };
 
 use crate::style;
 
