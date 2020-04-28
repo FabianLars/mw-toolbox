@@ -4,11 +4,9 @@ use iced::{
 };
 use serde::{Deserialize, Serialize};
 
-use crate::util::props::*;
-use crate::commands::upload;
+use core::{util::props::*, commands::upload};
+use crate::style;
 use std::ffi::OsStr;
-
-pub mod style;
 
 pub fn start() {
     App::run(Settings::default())
@@ -133,7 +131,7 @@ impl Application for App {
 
                         match result {
                             nfd::Response::Okay(file_path) => match state.chosen_command {
-                                ChosenCommand::Upload => state.selected_files = crate::util::props::PathType::File(
+                                ChosenCommand::Upload => state.selected_files = core::util::props::PathType::File(
                                     std::path::PathBuf::from(file_path),
                                 ),
                                 _ => (),
@@ -145,7 +143,7 @@ impl Application for App {
                                         for f in files {
                                             temp.push(std::path::PathBuf::from(f));
                                         }
-                                        state.selected_files = crate::util::props::PathType::Files(temp)
+                                        state.selected_files = core::util::props::PathType::Files(temp)
                                     },
                                     _ => ()
                                 }
@@ -169,12 +167,12 @@ impl Application for App {
                     Message::ExecuteButtonPressed => {
                         match state.chosen_command {
                             ChosenCommand::Upload => return Command::perform(
-                                upload::from_gui(Props {
-                                    path: state.selected_files.clone(),
-                                    parameter: None,
-                                    loginname: state.ln_input_value.clone(),
-                                    loginpassword: state.lp_input_value.clone(),
-                                }),
+                                upload::from_gui(Props::from_pathtype(
+                                    state.selected_files.clone(),
+                                    None,
+                                    state.ln_input_value.clone(),
+                                    state.lp_input_value.clone(),
+                                )),
                                 Message::Executed,
                             ),
                             _ => (),

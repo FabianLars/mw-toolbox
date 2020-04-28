@@ -3,7 +3,6 @@ use serde_json::Value;
 
 use crate::util::{props::*, wiki};
 
-#[cfg(feature = "gui")]
 pub async fn from_gui(props: Props) -> Result<(), ()> {
     Ok(upload(props).await.unwrap())
 }

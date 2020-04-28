@@ -1,32 +1,9 @@
-[package]
-name = "wtools"
-version = "0.1.0"
-authors = ["FabianLars"]
-build = "build.rs"
-edition = "2018"
+# cargo-features = ["resolver"]
 
-[features]
-default = ["gui", "riot-api", "league", "skylords"]
-server = ["riot-api", "league"]
-
-gui = ["iced", "nfd", "directories"]
-riot-api = []
-league = []
-skylords = ["indexmap"]
-
-[target.'cfg(windows)'.build-dependencies]
-winres = "0.1"
-
-[dependencies]
-tokio = { version = "0.2", features = ["macros", "fs", "time"] }
-reqwest = { version = "0.10", features = ["json", "cookies"] }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = { version = "1.0", features = ["preserve_order"] }
-clap = { git = "https://github.com/clap-rs/clap/" }
-chrono = "0.4"
-futures = "0.3"
-iced = { git = "https://github.com/hecrj/iced.git", branch = "master", features = ["tokio"], optional = true }
-directories = { version = "2", optional = true }
-nfd = { git = "https://github.com/EmbarkStudios/nfd-rs.git", branch = "update-submodule", optional = true }
-base64 = "0.12"
-indexmap = { version = "1.3", optional = true }
+[workspace]
+members = [
+    "cli",
+    "core",
+    "gui"
+]
+# resolver = "2"

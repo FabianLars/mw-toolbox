@@ -1,0 +1,20 @@
+[package]
+name = "cli"
+version = "0.1.0"
+authors = ["FabianLars <fabianlars@fabianlars.de>"]
+edition = "2018"
+default-run = "cli"
+
+[features]
+
+server = ["riot-api", "league"]
+
+riot-api = ["core/riot-api"]
+league = ["core/league"]
+skylords = ["core/skylords"]
+
+[dependencies]
+core = { path = "../core" }
+
+tokio = { version = "0.2", features = ["macros"] }
+clap = { git = "https://github.com/clap-rs/clap/" }
