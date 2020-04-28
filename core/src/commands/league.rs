@@ -419,7 +419,7 @@ pub async fn rotation(props: Props) -> Result<(), Box<dyn Error>> {
 |datefrom         = <!-- Nur für Sonderfälle, sonst leer lassen! -->
 |dateto           = <!-- Nur für Sonderfälle, sonst leer lassen! -->
 |lastchecked      = {}
-|Aatrox|Ahri|Akali|Amumu|Annie|Ashe|Brand|Braum|Caitlyn|Cho'Gath|Darius|Draven|Ekko|Ezreal|Fiora|Fizz|Garen|Graves|Irelia|Janna|Jarvan IV|Jax|Jhin|Jinx|Karma|Karthus|Katarina|Kayle|Kha'Zix|LeBlanc|Lee Sin|Leona|Lucian|Lulu|Lux|Malphite|Maokai|Master Yi|Miss Fortune|Mordekaiser|Morgana|Nautilus|Nidalee|Pantheon|Pyke|Quinn|Renekton|Riven|Ryze|Sivir|Sona|Soraka|Thresh|Tristana|Tryndamere|Twisted Fate|Twitch|Varus|Vayne|Veigar|Vel'Koz|Vladimir|Wukong|Xayah|Zed}}}}
+|Aatrox|Ahri|Akali|Amumu|Annie|Ashe|Brand|Braum|Caitlyn|Cho'Gath|Darius|Draven|Ekko|Ezreal|Fiora|Fizz|Garen|Graves|Irelia|Janna|Jarvan IV.|Jax|Jhin|Jinx|Karma|Karthus|Katarina|Kayle|Kha'Zix|LeBlanc|Lee Sin|Leona|Lucian|Lulu|Lux|Malphite|Maokai|Master Yi|Miss Fortune|Mordekaiser|Morgana|Nautilus|Nidalee|Pantheon|Pyke|Quinn|Renekton|Riven|Ryze|Sivir|Sona|Soraka|Thresh|Tristana|Tryndamere|Twisted Fate|Twitch|Varus|Vayne|Veigar|Vel'Koz|Vladimir|Wukong|Xayah|Zed}}}}
 |-|Neue Accounts=
 <p style="text-align: center; margin: 0 15%;">Vor [[Erfahrung (Beschwörer)|Stufe 11]] haben Spieler Zugriff auf eine andere Championrotation. Diese wird seltener aktualisiert, deshalb könnte es sein, dass die folgende Liste nicht mehr korrekt ist.</p>
 {{{{Aktuelle Championrotation/var
@@ -473,7 +473,7 @@ fn rename_m(d: String) -> String {
     }
 }
 
-pub(crate) async fn set(props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn set(props: Props) -> Result<(), Box<dyn Error>> {
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
     let client = reqwest::Client::builder().cookie_store(true).build()?;
@@ -661,7 +661,7 @@ pub(crate) async fn set(props: Props) -> Result<(), Box<dyn Error>> {
 }
 
 // programmed on demand
-pub(crate) async fn random(props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn random(props: Props) -> Result<(), Box<dyn Error>> {
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
     let client = reqwest::Client::builder().cookie_store(true).build()?;
