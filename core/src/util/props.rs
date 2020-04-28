@@ -12,7 +12,7 @@ impl Props {
     pub fn new(path: Option<PathBuf>, parameter: Option<String>, loginname: String, loginpassword: String) -> Self {
         let p = match path {
             None => PathType::default(),
-            Some(x) => PathType::from_pathbuf(x),
+            Some(x) => PathType::new(x),
         };
         Self {
             path: p,
@@ -46,7 +46,7 @@ impl Default for PathType {
 }
 
 impl PathType {
-    pub fn from_pathbuf(pathbuf: PathBuf) -> Self {
+    pub fn new(pathbuf: PathBuf) -> Self {
         if std::fs::metadata(&pathbuf).unwrap().is_dir() {
             PathType::Folder(pathbuf)
         } else if std::fs::metadata(&pathbuf).unwrap().is_file() {
