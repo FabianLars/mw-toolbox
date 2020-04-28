@@ -2,10 +2,10 @@ use std::path::PathBuf;
 
 #[derive(Debug, Clone)]
 pub struct Props {
-    pub(crate) path: PathType,
-    pub(crate) parameter: Option<String>,
-    pub(crate) loginname: String,
-    pub(crate) loginpassword: String,
+    pub path: PathType,
+    pub parameter: Option<String>,
+    pub loginname: String,
+    pub loginpassword: String,
 }
 
 impl Props {

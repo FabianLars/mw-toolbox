@@ -105,41 +105,47 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             Subcommand::Delete { input } => {
                 delete_pages(Props::new(Some(input), None, cli.loginname, cli.loginpassword)).await?
             }
-            Subcommand::List { list_type, parameter, output } => match list_type {
-                ListType::Allimages =>
-                    allimages(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-                ListType::Allpages =>
-                    allpages(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-                ListType::Alllinks =>
-                    alllinks(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-                ListType::Allcategories =>
-                    allcategories(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-                ListType::Backlinks =>
-                    backlinks(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-                ListType::Categorymembers =>
-                    categorymembers(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-                ListType::Embeddedin =>
-                    embeddedin(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-                ListType::Imageusage =>
-                    imageusage(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-                ListType::Iwbacklinks =>
-                    iwbacklinks(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-                ListType::Langbacklinks =>
-                    langbacklinks(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-                ListType::Search =>
-                    search(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-                ListType::Exturlusage =>
-                    exturlusage(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-                ListType::Protectedtitles =>
-                    protectedtitles(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-                ListType::Querypage =>
-                    querypage(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-                ListType::Wkpoppages =>
-                    wkpoppages(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-                ListType::Unconvertedinfoboxes =>
-                    unconvertedinfoboxes(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
-                ListType::Allinfoboxes =>
-                    allinfoboxes(Props::new(output, parameter, cli.loginname, cli.loginpassword)).await?,
+            Subcommand::List { list_type, parameter, output } => {
+                let props = Props::new(output, parameter, cli.loginname, cli.loginpassword);
+                if list_type == ListType::Exturlusage {
+                    ::serde_json::to_writer_pretty(&std::fs::File::create(props.path.clone().file_path())?, &exturlusage(props).await?)?;
+                } else {
+                    ::serde_json::to_writer_pretty(&std::fs::File::create(props.path.clone().file_path())?, &match list_type {
+                        ListType::Allimages =>
+                            allimages(props).await?,
+                        ListType::Allpages =>
+                            allpages(props).await?,
+                        ListType::Alllinks =>
+                            alllinks(props).await?,
+                        ListType::Allcategories =>
+                            allcategories(props).await?,
+                        ListType::Backlinks =>
+                            backlinks(props).await?,
+                        ListType::Categorymembers =>
+                            categorymembers(props).await?,
+                        ListType::Embeddedin =>
+                            embeddedin(props).await?,
+                        ListType::Imageusage =>
+                            imageusage(props).await?,
+                        ListType::Iwbacklinks =>
+                            iwbacklinks(props).await?,
+                        ListType::Langbacklinks =>
+                            langbacklinks(props).await?,
+                        ListType::Search =>
+                            search(props).await?,
+                        ListType::Protectedtitles =>
+                            protectedtitles(props).await?,
+                        ListType::Querypage =>
+                            querypage(props).await?,
+                        ListType::Wkpoppages =>
+                            wkpoppages(props).await?,
+                        ListType::Unconvertedinfoboxes =>
+                            unconvertedinfoboxes(props).await?,
+                        ListType::Allinfoboxes =>
+                            allinfoboxes(props).await?,
+                        _ => vec![String::new()],
+                    })?;
+                }
             }
             Subcommand::Move { input } => {
                 move_pages(Props::new(Some(input), None, cli.loginname, cli.loginpassword)).await?

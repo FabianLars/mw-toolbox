@@ -4,12 +4,11 @@ use serde_json::Value;
 
 use crate::util::{ props::*, wiki };
 
-pub async fn allimages(props: Props) -> Result<(), Box<dyn Error>> {
-    get_from_api(props, "allimages", "ai").await?;
-    Ok(())
+pub async fn allimages(props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+    get_from_api(props, "allimages", "ai").await
 }
 
-pub async fn allpages(mut props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn allpages(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
     let namespaces = vec![
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
         "110", "111", "1200", "1201", "1202", "2000", "2001", "2002", "500", "501", "502", "503",
@@ -34,98 +33,88 @@ pub async fn allpages(mut props: Props) -> Result<(), Box<dyn Error>> {
         }
         None => props.parameter = Some("0".to_string()),
     }
-    get_from_api(props, "allpages", "ap").await?;
-    Ok(())
+    get_from_api(props, "allpages", "ap").await
 }
 
-pub async fn alllinks(props: Props) -> Result<(), Box<dyn Error>> {
-    get_from_api(props, "alllinks", "al").await?;
-    Ok(())
+pub async fn alllinks(props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+    get_from_api(props, "alllinks", "al").await
 }
 
-pub async fn allcategories(props: Props) -> Result<(), Box<dyn Error>> {
-    get_from_api(props, "allcategories", "ac").await?;
-    Ok(())
+pub async fn allcategories(props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+    get_from_api(props, "allcategories", "ac").await
 }
 
-pub async fn backlinks(mut props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn backlinks(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
     match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&btitle={}", p));
-            get_from_api(props, "backlinks", "bl").await?;
-            Ok(())
+            get_from_api(props, "backlinks", "bl").await
         }
         None => panic!("Missing btitle (Title to search)"),
     }
 }
 
-pub async fn categorymembers(mut props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn categorymembers(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
     match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&cmtitle={}", p));
-            get_from_api(props, "categorymembers", "cm").await?;
-            Ok(())
+            get_from_api(props, "categorymembers", "cm").await
         }
         None => panic!("missing cmtitle (Which category to enumerate (must include 'Category:' prefix))"),
     }
 }
 
-pub async fn embeddedin(mut props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn embeddedin(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
     match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&eititle={}", p));
-            get_from_api(props, "embeddedin", "ei").await?;
-            Ok(())
+            get_from_api(props, "embeddedin", "ei").await
         }
         None => panic!("missing eititle: Title to search"),
     }
 }
 
-pub async fn imageusage(mut props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn imageusage(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
     match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&iutitle={}", p));
-            get_from_api(props, "imageusage", "iu").await?;
-            Ok(())
+            get_from_api(props, "imageusage", "iu").await
         }
         None => panic!("missing iutitle: Title to search"),
     }
 }
 
-pub async fn iwbacklinks(mut props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn iwbacklinks(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
     match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&iwblprefix={}", p));
-            get_from_api(props, "iwbacklinks", "iwbl").await?;
-            Ok(())
+            get_from_api(props, "iwbacklinks", "iwbl").await
         }
         None => panic!("missing iwblprefix: Prefix for the interwiki"),
     }
 }
 
-pub async fn langbacklinks(mut props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn langbacklinks(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
     match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&lbllang={}", p));
-            get_from_api(props, "langbacklinks", "lbl").await?;
-            Ok(())
+            get_from_api(props, "langbacklinks", "lbl").await
         }
         None => panic!("missing lbllang: Language for the language link"),
     }
 }
 
-pub async fn search(mut props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn search(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
     match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&srsearch={}", p));
-            get_from_api(props, "search", "sr").await?;
-            Ok(())
+            get_from_api(props, "search", "sr").await
         }
         None => panic!("missing srsearch: Search for all page titles (or content) that has this value"),
     }
 }
 
-pub async fn exturlusage(props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn exturlusage(props: Props) -> Result<HashMap<String, Vec<String>>, Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let mut has_next: bool = true;
     let mut continue_from = String::new();
@@ -162,43 +151,36 @@ pub async fn exturlusage(props: Props) -> Result<(), Box<dyn Error>> {
         }
     }
 
-    ::serde_json::to_writer(&std::fs::File::create(props.path.file_path())?, &results)?;
-
-    Ok(())
+    Ok(results)
 }
 
-pub async fn protectedtitles(props: Props) -> Result<(), Box<dyn Error>> {
-    get_from_api(props, "protectedtitles", "pt").await?;
-    Ok(())
+pub async fn protectedtitles(props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+    get_from_api(props, "protectedtitles", "pt").await
 }
 
-pub async fn querypage(mut props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn querypage(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
     match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&qppage={}", p));
-            get_from_api(props, "querypage", "qp").await?;
-            Ok(())
+            get_from_api(props, "querypage", "qp").await
         }
         None => panic!("missing qppage: The name of the special page. Note, this is case sensitive"),
     }
 }
 
-pub async fn wkpoppages(props: Props) -> Result<(), Box<dyn Error>> {
-    get_from_api(props, "wkpoppages", "wk").await?;
-    Ok(())
+pub async fn wkpoppages(props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+    get_from_api(props, "wkpoppages", "wk").await
 }
 
-pub async fn unconvertedinfoboxes(props: Props) -> Result<(), Box<dyn Error>> {
-    get_infobox_lists(props, "unconvertedinfoboxes").await?;
-    Ok(())
+pub async fn unconvertedinfoboxes(props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+    get_infobox_lists(props, "unconvertedinfoboxes").await
 }
 
-pub async fn allinfoboxes(props: Props) -> Result<(), Box<dyn Error>> {
-    get_infobox_lists(props, "allinfoboxes").await?;
-    Ok(())
+pub async fn allinfoboxes(props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+    get_infobox_lists(props, "allinfoboxes").await
 }
 
-async fn get_from_api(props: Props, long: &str, short: &str) -> Result<(), Box<dyn Error>> {
+async fn get_from_api(props: Props, long: &str, short: &str) -> Result<Vec<String>, Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let mut has_next: bool = true;
     let mut continue_from = String::new();
@@ -242,11 +224,11 @@ async fn get_from_api(props: Props, long: &str, short: &str) -> Result<(), Box<d
             }
         }
     }
-    ::serde_json::to_writer(&std::fs::File::create(props.path.file_path())?, &results)?;
-    Ok(())
+
+    Ok(results)
 }
 
-async fn get_infobox_lists(props: Props, typ: &str) -> Result<(), Box<dyn Error>> {
+async fn get_infobox_lists(props: Props, typ: &str) -> Result<Vec<String>, Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let mut results: Vec<String> = Vec::new();
 
@@ -269,6 +251,5 @@ async fn get_infobox_lists(props: Props, typ: &str) -> Result<(), Box<dyn Error>
         results.push(x["title"].as_str().unwrap().to_string())
     }
 
-    ::serde_json::to_writer(&std::fs::File::create(props.path.file_path())?, &results)?;
-    Ok(())
+    Ok(results)
 }
