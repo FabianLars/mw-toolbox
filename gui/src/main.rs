@@ -1,4 +1,5 @@
 #![windows_subsystem = "windows"]
+
 mod style;
 mod app;
 

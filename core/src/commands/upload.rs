@@ -19,7 +19,7 @@ pub async fn upload(props: Props) -> Result<(), Box<dyn std::error::Error>> {
     match props.path {
         PathType::File(x) => {
             files.push(x.clone());
-        },
+        }
         PathType::Files(v) => files = v,
         PathType::Folder(x) => {
             let mut entries = tokio::fs::read_dir(x).await?;
@@ -63,7 +63,7 @@ pub async fn upload(props: Props) -> Result<(), Box<dyn std::error::Error>> {
         let form = Form::new().part("file", part);
 
         println!("{:?}", client.post(wiki_api_url)
-        .query(&[
+            .query(&[
                 ("action", "upload"),
                 ("text", "{{Dateienkategorisierung}}"),
                 ("format", "json"),

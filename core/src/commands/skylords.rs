@@ -1,10 +1,12 @@
+use std::collections::BTreeMap;
+use std::error::Error;
+use std::fs::File;
+
 // TODO: Convert from using Values to auto Struct conversion (=> CardSrc)
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::BTreeMap;
+
 use crate::util::props::Props;
-use std::error::Error;
-use std::fs::File;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Card {
@@ -24,7 +26,7 @@ pub struct Card {
     pub damage: Option<Vec<i64>>,
     pub health: Option<Vec<i64>>,
     pub abilities: Vec<Ability>,
-    pub upgrades: Vec<String>
+    pub upgrades: Vec<String>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -39,7 +41,7 @@ pub struct Ability {
 }
 
 pub async fn carddata(props: Props) -> Result<(), Box<dyn Error>> {
-    let json: Value =  reqwest::get("https://cardbase.skylords.eu/Cards/GetCards").await?.json().await?;
+    let json: Value = reqwest::get("https://cardbase.skylords.eu/Cards/GetCards").await?.json().await?;
     let json = json.get("Result").unwrap().as_array().unwrap();
 
     let mut result: BTreeMap<String, Card> = BTreeMap::new();
@@ -92,7 +94,7 @@ pub async fn carddata(props: Props) -> Result<(), Box<dyn Error>> {
 
         card.power_cost = vec![v.get("Cost").unwrap().as_i64().unwrap(); 4];
 
-        card.edition = match v.get("Edition").unwrap().as_i64(){
+        card.edition = match v.get("Edition").unwrap().as_i64() {
             Some(x) if x == 1 => String::from("Twilight"),
             Some(x) if x == 2 => String::from("Renegade"),
             Some(x) if x == 4 => String::from("Lost Souls"),

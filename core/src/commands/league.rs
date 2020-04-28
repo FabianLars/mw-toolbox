@@ -699,7 +699,7 @@ pub async fn random(props: Props) -> Result<(), Box<dyn Error>> {
         .unwrap();
     let edit_token = String::from(o["edittoken"].as_str().unwrap());
 
-    for (_k,v) in champions {
+    for (_k, v) in champions {
         client
             .post(wiki_api_url)
             .form(&[

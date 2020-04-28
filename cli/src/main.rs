@@ -1,6 +1,6 @@
 use clap::Clap;
 
-use core::{ commands::{ delete::*, list::*, rename::*, upload::* }, util::props::* };
+use core::{commands::{delete::*, list::*, rename::*, upload::*}, util::props::*};
 #[cfg(feature = "league")]
 use core::commands::league::*;
 #[cfg(feature = "skylords")]
@@ -56,7 +56,7 @@ enum LeagueType {
     Random,
     Rotation,
     Rotations,
-    Set
+    Set,
 }
 
 #[derive(Clap, Debug, PartialEq)]
@@ -82,7 +82,7 @@ enum ListType {
     Querypage,
     Wkpoppages,
     Unconvertedinfoboxes,
-    Allinfoboxes
+    Allinfoboxes,
 }
 
 #[derive(Clap, Debug, PartialEq)]
@@ -143,10 +143,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             },
             Subcommand::Move { input } => {
                 move_pages(Props::new(Some(input), None, cli.loginname, cli.loginpassword)).await?
-            },
+            }
             Subcommand::Upload { input } => {
                 upload(Props::new(Some(input), None, cli.loginname, cli.loginpassword)).await?
-            },
+            }
             #[cfg(not(feature = "league"))]
             Subcommand::League { .. } => panic!("Did you forget to set the league feature flag?"),
             #[cfg(feature = "league")]
@@ -158,8 +158,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     #[cfg(not(feature = "riot-api"))]
                     panic!("Did you forget to set the riot-api feature flag?");
                     #[cfg(feature = "riot-api")]
-                    rotation(Props::new(path, None, cli.loginname, cli.loginpassword)).await?
-                },
+                        rotation(Props::new(path, None, cli.loginname, cli.loginpassword)).await?
+                }
                 LeagueType::Set => set(Props::new(path, None, cli.loginname, cli.loginpassword)).await?
             },
             #[cfg(not(feature = "skylords"))]

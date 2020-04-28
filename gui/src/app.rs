@@ -1,12 +1,14 @@
+use std::ffi::OsStr;
+
 use iced::{
     Align, Application, button, Button, Column, Command, Container, Element, HorizontalAlignment,
     Length, Radio, Row, scrollable, Scrollable, Settings, Text, text_input, TextInput,
 };
 use serde::{Deserialize, Serialize};
 
-use core::{util::props::*, commands::upload};
+use core::{commands::upload, util::props::*};
+
 use crate::style;
-use std::ffi::OsStr;
 
 pub fn start() {
     App::run(Settings::default())
@@ -144,7 +146,7 @@ impl Application for App {
                                             temp.push(std::path::PathBuf::from(f));
                                         }
                                         state.selected_files = core::util::props::PathType::Files(temp)
-                                    },
+                                    }
                                     _ => ()
                                 }
                             }

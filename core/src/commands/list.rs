@@ -155,9 +155,9 @@ pub async fn exturlusage(props: Props) -> Result<(), Box<dyn Error>> {
             Some(_) => {
                 continue_from = "&euoffset=".to_string()
                     + &json["query-continue"]["exturlusage"]["euoffset"]
-                        .as_i64()
-                        .unwrap()
-                        .to_string()
+                    .as_i64()
+                    .unwrap()
+                    .to_string()
             }
         }
     }
@@ -258,7 +258,7 @@ async fn get_infobox_lists(props: Props, typ: &str) -> Result<(), Box<dyn Error>
                 "https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}",
                 typ
             )
-            .to_string()),
+                .to_string()),
         )
         .send()
         .await?
