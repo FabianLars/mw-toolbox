@@ -5,7 +5,7 @@ use reqwest::header::{ ACCEPT, AUTHORIZATION, HeaderMap };
 use serde::{ Deserialize, Serialize };
 use serde_json::Value;
 
-use crate::util::{ props::*, wiki };
+use crate::util::{config::*, wiki };
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -139,7 +139,7 @@ pub async fn champs() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub async fn discounts(props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn discounts(props: Config) -> Result<(), Box<dyn Error>> {
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
     let lockfile = std::fs::read_to_string(props.path.file_path()).unwrap();
     // 0: "LeagueClient", 1: PID, 2: Port, 3: Auth, 4: Protocol
@@ -340,7 +340,7 @@ pub async fn discounts(props: Props) -> Result<(), Box<dyn Error>> {
 }
 
 #[cfg(feature = "riot-api")]
-pub async fn rotation(props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn rotation(props: Config) -> Result<(), Box<dyn Error>> {
     let riot_api_url = "https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key="
         .to_owned()
         + &std::env::var("RIOT_API_KEY")?;
@@ -473,7 +473,7 @@ fn rename_m(d: String) -> String {
     }
 }
 
-pub async fn set(props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn set(props: Config) -> Result<(), Box<dyn Error>> {
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
     let client = reqwest::Client::builder().cookie_store(true).build()?;
@@ -661,7 +661,7 @@ pub async fn set(props: Props) -> Result<(), Box<dyn Error>> {
 }
 
 // programmed on demand
-pub async fn random(props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn random(props: Config) -> Result<(), Box<dyn Error>> {
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
     let client = reqwest::Client::builder().cookie_store(true).build()?;

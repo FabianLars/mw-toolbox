@@ -1,2 +1,2 @@
-pub mod props;
+pub mod config;
 pub mod wiki;

@@ -1,6 +1,6 @@
 use clap::Clap;
 
-use core::{ commands::{ delete::*, list::*, rename::*, upload::* }, util::props::* };
+use core::{ commands::{ delete::*, list::*, rename::*, upload::* }, util::config::* };
 #[cfg(feature = "league")]
 use core::commands::league::*;
 #[cfg(feature = "skylords")]
@@ -103,10 +103,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         None => (),
         Some(x) => match x {
             Subcommand::Delete { input } => {
-                delete_pages(Props::new(Some(input), None, cli.loginname, cli.loginpassword)).await?
+                delete_pages(Config::new(cli.loginname, cli.loginpassword).with_pathbuf(input)).await?
             }
             Subcommand::List { list_type, parameter, output } => {
-                let props = Props::new(output, parameter, cli.loginname, cli.loginpassword);
+                let props = Config::new(cli.loginname, cli.loginpassword).with_parameter(parameter).with_pathbuf_opt(output);
                 if list_type == ListType::Exturlusage {
                     ::serde_json::to_writer_pretty(&std::fs::File::create(props.path.clone().file_path())?, &exturlusage(props).await?)?;
                 } else {
@@ -148,31 +148,31 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
             Subcommand::Move { input } => {
-                move_pages(Props::new(Some(input), None, cli.loginname, cli.loginpassword)).await?
+                move_pages(Config::new(cli.loginname, cli.loginpassword).with_pathbuf(input)).await?
             }
             Subcommand::Upload { input } => {
-                upload(Props::new(Some(input), None, cli.loginname, cli.loginpassword)).await?
+                upload(Config::new(cli.loginname, cli.loginpassword).with_pathbuf(input)).await?
             }
             #[cfg(not(feature = "league"))]
             Subcommand::League { .. } => panic!("Did you forget to set the league feature flag?"),
             #[cfg(feature = "league")]
             Subcommand::League { league_type, path } => match league_type {
                 LeagueType::Champs | LeagueType::Champions => champs().await?,
-                LeagueType::Discount | LeagueType::Discounts => discounts(Props::new(path, None, cli.loginname, cli.loginpassword)).await?,
-                LeagueType::Random => random(Props::new(path, None, cli.loginname, cli.loginpassword)).await?,
+                LeagueType::Discount | LeagueType::Discounts => discounts(Config::new(cli.loginname, cli.loginpassword).with_pathbuf_opt(path)).await?,
+                LeagueType::Random => random(Config::new(cli.loginname, cli.loginpassword).with_pathbuf_opt(path)).await?,
                 LeagueType::Rotation | LeagueType::Rotations => {
                     #[cfg(not(feature = "riot-api"))]
                     panic!("Did you forget to set the riot-api feature flag?");
                     #[cfg(feature = "riot-api")]
-                        rotation(Props::new(path, None, cli.loginname, cli.loginpassword)).await?
+                        rotation(Config::new(cli.loginname, cli.loginpassword).with_pathbuf_opt(path)).await?
                 }
-                LeagueType::Set => set(Props::new(path, None, cli.loginname, cli.loginpassword)).await?
+                LeagueType::Set => set(Config::new(cli.loginname, cli.loginpassword).with_pathbuf_opt(path)).await?
             }
             #[cfg(not(feature = "skylords"))]
             Subcommand::Skylords { .. } => panic!("Did you forget to set the skylords feature flag?"),
             #[cfg(feature = "skylords")]
             Subcommand::Skylords { skylords_type, path } => match skylords_type {
-                SkylordsType::Carddata => carddata(Props::new(path, None, cli.loginname, cli.loginpassword)).await?
+                SkylordsType::Carddata => carddata(Config::new(cli.loginname, cli.loginpassword).with_pathbuf_opt(path)).await?
             }
         },
     }

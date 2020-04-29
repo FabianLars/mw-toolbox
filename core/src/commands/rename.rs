@@ -2,9 +2,9 @@ use std::error::Error;
 
 use serde_json::Value;
 
-use crate::util::{ props::Props, wiki };
+use crate::util::{config::Config, wiki };
 
-pub async fn move_pages(props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn move_pages(props: Config) -> Result<(), Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 

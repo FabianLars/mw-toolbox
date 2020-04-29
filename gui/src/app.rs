@@ -4,7 +4,7 @@ use iced::{
 };
 use serde::{ Deserialize, Serialize };
 
-use core::{ commands::upload, util::props::* };
+use core::{ commands::upload, util::config::* };
 
 use crate::style;
 
@@ -131,7 +131,7 @@ impl Application for App {
 
                         match result {
                             nfd::Response::Okay(file_path) => match state.chosen_command {
-                                ChosenCommand::Upload => state.selected_files = core::util::props::PathType::File(
+                                ChosenCommand::Upload => state.selected_files = core::util::config::PathType::File(
                                     std::path::PathBuf::from(file_path),
                                 ),
                                 _ => (),
@@ -143,7 +143,7 @@ impl Application for App {
                                         for f in files {
                                             temp.push(std::path::PathBuf::from(f));
                                         }
-                                        state.selected_files = core::util::props::PathType::Files(temp)
+                                        state.selected_files = core::util::config::PathType::Files(temp)
                                     }
                                     _ => ()
                                 }
@@ -167,12 +167,7 @@ impl Application for App {
                     Message::ExecuteButtonPressed => {
                         match state.chosen_command {
                             ChosenCommand::Upload => return Command::perform(
-                                upload::from_gui(Props::from_pathtype(
-                                    state.selected_files.clone(),
-                                    None,
-                                    state.ln_input_value.clone(),
-                                    state.lp_input_value.clone(),
-                                )),
+                                upload::from_gui(Config::new(state.ln_input_value.clone(), state.lp_input_value.clone()).with_pathtype(state.selected_files.clone())),
                                 Message::Executed,
                             ),
                             _ => (),

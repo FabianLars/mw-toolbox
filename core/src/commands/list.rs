@@ -2,13 +2,13 @@ use std::{ collections::HashMap, error::Error };
 
 use serde_json::Value;
 
-use crate::util::{ props::*, wiki };
+use crate::util::{config::*, wiki };
 
-pub async fn allimages(props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn allimages(props: Config) -> Result<Vec<String>, Box<dyn Error>> {
     get_from_api(props, "allimages", "ai").await
 }
 
-pub async fn allpages(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn allpages(mut props: Config) -> Result<Vec<String>, Box<dyn Error>> {
     let namespaces = vec![
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
         "110", "111", "1200", "1201", "1202", "2000", "2001", "2002", "500", "501", "502", "503",
@@ -36,15 +36,15 @@ pub async fn allpages(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
     get_from_api(props, "allpages", "ap").await
 }
 
-pub async fn alllinks(props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn alllinks(props: Config) -> Result<Vec<String>, Box<dyn Error>> {
     get_from_api(props, "alllinks", "al").await
 }
 
-pub async fn allcategories(props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn allcategories(props: Config) -> Result<Vec<String>, Box<dyn Error>> {
     get_from_api(props, "allcategories", "ac").await
 }
 
-pub async fn backlinks(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn backlinks(mut props: Config) -> Result<Vec<String>, Box<dyn Error>> {
     match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&btitle={}", p));
@@ -54,7 +54,7 @@ pub async fn backlinks(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> 
     }
 }
 
-pub async fn categorymembers(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn categorymembers(mut props: Config) -> Result<Vec<String>, Box<dyn Error>> {
     match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&cmtitle={}", p));
@@ -64,7 +64,7 @@ pub async fn categorymembers(mut props: Props) -> Result<Vec<String>, Box<dyn Er
     }
 }
 
-pub async fn embeddedin(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn embeddedin(mut props: Config) -> Result<Vec<String>, Box<dyn Error>> {
     match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&eititle={}", p));
@@ -74,7 +74,7 @@ pub async fn embeddedin(mut props: Props) -> Result<Vec<String>, Box<dyn Error>>
     }
 }
 
-pub async fn imageusage(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn imageusage(mut props: Config) -> Result<Vec<String>, Box<dyn Error>> {
     match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&iutitle={}", p));
@@ -84,7 +84,7 @@ pub async fn imageusage(mut props: Props) -> Result<Vec<String>, Box<dyn Error>>
     }
 }
 
-pub async fn iwbacklinks(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn iwbacklinks(mut props: Config) -> Result<Vec<String>, Box<dyn Error>> {
     match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&iwblprefix={}", p));
@@ -94,7 +94,7 @@ pub async fn iwbacklinks(mut props: Props) -> Result<Vec<String>, Box<dyn Error>
     }
 }
 
-pub async fn langbacklinks(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn langbacklinks(mut props: Config) -> Result<Vec<String>, Box<dyn Error>> {
     match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&lbllang={}", p));
@@ -104,7 +104,7 @@ pub async fn langbacklinks(mut props: Props) -> Result<Vec<String>, Box<dyn Erro
     }
 }
 
-pub async fn search(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn search(mut props: Config) -> Result<Vec<String>, Box<dyn Error>> {
     match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&srsearch={}", p));
@@ -114,7 +114,7 @@ pub async fn search(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
     }
 }
 
-pub async fn exturlusage(props: Props) -> Result<HashMap<String, Vec<String>>, Box<dyn Error>> {
+pub async fn exturlusage(props: Config) -> Result<HashMap<String, Vec<String>>, Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let mut has_next: bool = true;
     let mut continue_from = String::new();
@@ -154,11 +154,11 @@ pub async fn exturlusage(props: Props) -> Result<HashMap<String, Vec<String>>, B
     Ok(results)
 }
 
-pub async fn protectedtitles(props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn protectedtitles(props: Config) -> Result<Vec<String>, Box<dyn Error>> {
     get_from_api(props, "protectedtitles", "pt").await
 }
 
-pub async fn querypage(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn querypage(mut props: Config) -> Result<Vec<String>, Box<dyn Error>> {
     match &props.parameter {
         Some(p) => {
             props.parameter = Some(format!("&qppage={}", p));
@@ -168,19 +168,19 @@ pub async fn querypage(mut props: Props) -> Result<Vec<String>, Box<dyn Error>> 
     }
 }
 
-pub async fn wkpoppages(props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn wkpoppages(props: Config) -> Result<Vec<String>, Box<dyn Error>> {
     get_from_api(props, "wkpoppages", "wk").await
 }
 
-pub async fn unconvertedinfoboxes(props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn unconvertedinfoboxes(props: Config) -> Result<Vec<String>, Box<dyn Error>> {
     get_infobox_lists(props, "unconvertedinfoboxes").await
 }
 
-pub async fn allinfoboxes(props: Props) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn allinfoboxes(props: Config) -> Result<Vec<String>, Box<dyn Error>> {
     get_infobox_lists(props, "allinfoboxes").await
 }
 
-async fn get_from_api(props: Props, long: &str, short: &str) -> Result<Vec<String>, Box<dyn Error>> {
+async fn get_from_api(props: Config, long: &str, short: &str) -> Result<Vec<String>, Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let mut has_next: bool = true;
     let mut continue_from = String::new();
@@ -228,7 +228,7 @@ async fn get_from_api(props: Props, long: &str, short: &str) -> Result<Vec<Strin
     Ok(results)
 }
 
-async fn get_infobox_lists(props: Props, typ: &str) -> Result<Vec<String>, Box<dyn Error>> {
+async fn get_infobox_lists(props: Config, typ: &str) -> Result<Vec<String>, Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let mut results: Vec<String> = Vec::new();
 

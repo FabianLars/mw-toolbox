@@ -6,7 +6,7 @@ use std::fs::File;
 use serde::{ Deserialize, Serialize };
 use serde_json::Value;
 
-use crate::util::props::Props;
+use crate::util::config::Config;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Card {
@@ -40,7 +40,7 @@ pub struct Ability {
     pub values: Option<Vec<Vec<i64>>>,
 }
 
-pub async fn carddata(props: Props) -> Result<(), Box<dyn Error>> {
+pub async fn carddata(props: Config) -> Result<(), Box<dyn Error>> {
     let json: Value = reqwest::get("https://cardbase.skylords.eu/Cards/GetCards").await?.json().await?;
     let json = json.get("Result").unwrap().as_array().unwrap();
 
