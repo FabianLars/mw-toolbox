@@ -1,6 +1,4 @@
-use std::collections::BTreeMap;
-use std::error::Error;
-use std::fs::File;
+use std::{ collections::BTreeMap, error::Error, fs::File };
 
 // TODO: Convert from using Values to auto Struct conversion (=> CardSrc)
 use serde::{ Deserialize, Serialize };

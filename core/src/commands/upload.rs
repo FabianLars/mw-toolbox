@@ -1,7 +1,7 @@
 use reqwest::multipart::{ Form, Part };
 use serde_json::Value;
 
-use crate::util::{config::*, wiki };
+use crate::util::{ config::*, wiki };
 
 pub async fn from_gui(cfg: Config) -> Result<(), ()> {
     Ok(upload(cfg).await.unwrap())

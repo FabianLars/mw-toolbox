@@ -2,7 +2,7 @@ use std::{ collections::HashMap, error::Error };
 
 use serde_json::Value;
 
-use crate::util::{config::*, wiki };
+use crate::util::{ config::*, wiki };
 
 pub async fn allimages(cfg: Config) -> Result<Vec<String>, Box<dyn Error>> {
     get_from_api(cfg, "allimages", "ai").await
