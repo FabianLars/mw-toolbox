@@ -7,3 +7,7 @@ members = [
     "gui"
 ]
 # resolver = "2"
+
+[profile.release]
+#lto=true This actually increases file size on windows
+panic='abort'
