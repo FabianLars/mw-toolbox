@@ -4,12 +4,12 @@ use serde_json::Value;
 
 use crate::util::{config::Config, wiki };
 
-pub async fn move_pages(props: Config) -> Result<(), Box<dyn Error>> {
+pub async fn move_pages(cfg: Config) -> Result<(), Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
     let mut pages = "".to_owned();
-    let input = std::fs::read_to_string(props.path.file_path())?;
+    let input = std::fs::read_to_string(cfg.path.file_path())?;
     for line in input.lines() {
         if line.starts_with("replace:") {
             continue;
@@ -19,7 +19,7 @@ pub async fn move_pages(props: Config) -> Result<(), Box<dyn Error>> {
     }
     pages.pop();
 
-    wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    wiki::wiki_login(&client, cfg.loginname, cfg.loginpassword).await?;
 
     let json: Value = client
         .post(wiki_api_url)

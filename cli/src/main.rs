@@ -106,43 +106,43 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 delete_pages(Config::new(cli.loginname, cli.loginpassword).with_pathbuf(input)).await?
             }
             Subcommand::List { list_type, parameter, output } => {
-                let props = Config::new(cli.loginname, cli.loginpassword).with_parameter(parameter).with_pathbuf_opt(output);
+                let cfg = Config::new(cli.loginname, cli.loginpassword).with_parameter(parameter).with_pathbuf_opt(output);
                 if list_type == ListType::Exturlusage {
-                    ::serde_json::to_writer_pretty(&std::fs::File::create(props.path.clone().file_path())?, &exturlusage(props).await?)?;
+                    ::serde_json::to_writer_pretty(&std::fs::File::create(cfg.path.clone().file_path())?, &exturlusage(cfg).await?)?;
                 } else {
-                    ::serde_json::to_writer_pretty(&std::fs::File::create(props.path.clone().file_path())?, &match list_type {
+                    ::serde_json::to_writer_pretty(&std::fs::File::create(cfg.path.clone().file_path())?, &match list_type {
                         ListType::Allimages =>
-                            allimages(props).await?,
+                            allimages(cfg).await?,
                         ListType::Allpages =>
-                            allpages(props).await?,
+                            allpages(cfg).await?,
                         ListType::Alllinks =>
-                            alllinks(props).await?,
+                            alllinks(cfg).await?,
                         ListType::Allcategories =>
-                            allcategories(props).await?,
+                            allcategories(cfg).await?,
                         ListType::Backlinks =>
-                            backlinks(props).await?,
+                            backlinks(cfg).await?,
                         ListType::Categorymembers =>
-                            categorymembers(props).await?,
+                            categorymembers(cfg).await?,
                         ListType::Embeddedin =>
-                            embeddedin(props).await?,
+                            embeddedin(cfg).await?,
                         ListType::Imageusage =>
-                            imageusage(props).await?,
+                            imageusage(cfg).await?,
                         ListType::Iwbacklinks =>
-                            iwbacklinks(props).await?,
+                            iwbacklinks(cfg).await?,
                         ListType::Langbacklinks =>
-                            langbacklinks(props).await?,
+                            langbacklinks(cfg).await?,
                         ListType::Search =>
-                            search(props).await?,
+                            search(cfg).await?,
                         ListType::Protectedtitles =>
-                            protectedtitles(props).await?,
+                            protectedtitles(cfg).await?,
                         ListType::Querypage =>
-                            querypage(props).await?,
+                            querypage(cfg).await?,
                         ListType::Wkpoppages =>
-                            wkpoppages(props).await?,
+                            wkpoppages(cfg).await?,
                         ListType::Unconvertedinfoboxes =>
-                            unconvertedinfoboxes(props).await?,
+                            unconvertedinfoboxes(cfg).await?,
                         ListType::Allinfoboxes =>
-                            allinfoboxes(props).await?,
+                            allinfoboxes(cfg).await?,
                         _ => vec![String::new()],
                     })?;
                 }

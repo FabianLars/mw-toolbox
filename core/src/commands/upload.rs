@@ -3,20 +3,20 @@ use serde_json::Value;
 
 use crate::util::{config::*, wiki };
 
-pub async fn from_gui(props: Config) -> Result<(), ()> {
-    Ok(upload(props).await.unwrap())
+pub async fn from_gui(cfg: Config) -> Result<(), ()> {
+    Ok(upload(cfg).await.unwrap())
 }
 
-pub async fn upload(props: Config) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn upload(cfg: Config) -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
     let mut pages = "".to_owned();
     let mut files: Vec<std::path::PathBuf> = Vec::new();
 
-    wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    wiki::wiki_login(&client, cfg.loginname, cfg.loginpassword).await?;
 
-    match props.path {
+    match cfg.path {
         PathType::File(x) => {
             files.push(x.clone());
         }

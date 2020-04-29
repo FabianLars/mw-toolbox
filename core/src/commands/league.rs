@@ -139,9 +139,9 @@ pub async fn champs() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub async fn discounts(props: Config) -> Result<(), Box<dyn Error>> {
+pub async fn discounts(cfg: Config) -> Result<(), Box<dyn Error>> {
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
-    let lockfile = std::fs::read_to_string(props.path.file_path()).unwrap();
+    let lockfile = std::fs::read_to_string(cfg.path.file_path()).unwrap();
     // 0: "LeagueClient", 1: PID, 2: Port, 3: Auth, 4: Protocol
     let contents = lockfile.split(':').collect::<Vec<_>>();
     let port = contents[2];
@@ -297,7 +297,7 @@ pub async fn discounts(props: Config) -> Result<(), Box<dyn Error>> {
         start_date, end_date, angebote
     );
 
-    wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    wiki::wiki_login(&client, cfg.loginname, cfg.loginpassword).await?;
 
     let json: Value = client
         .get(reqwest::Url::parse_with_params(
@@ -340,7 +340,7 @@ pub async fn discounts(props: Config) -> Result<(), Box<dyn Error>> {
 }
 
 #[cfg(feature = "riot-api")]
-pub async fn rotation(props: Config) -> Result<(), Box<dyn Error>> {
+pub async fn rotation(cfg: Config) -> Result<(), Box<dyn Error>> {
     let riot_api_url = "https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key="
         .to_owned()
         + &std::env::var("RIOT_API_KEY")?;
@@ -348,7 +348,7 @@ pub async fn rotation(props: Config) -> Result<(), Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let curr_date = rename_m(chrono::Utc::today().format("%-d. %B %Y").to_string());
 
-    wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    wiki::wiki_login(&client, cfg.loginname, cfg.loginpassword).await?;
 
     let champions: HashMap<i32, Champ> = client
         .get("https://fabianlars.de/wapi/champion")
@@ -473,7 +473,7 @@ fn rename_m(d: String) -> String {
     }
 }
 
-pub async fn set(props: Config) -> Result<(), Box<dyn Error>> {
+pub async fn set(cfg: Config) -> Result<(), Box<dyn Error>> {
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
     let client = reqwest::Client::builder().cookie_store(true).build()?;
@@ -487,7 +487,7 @@ pub async fn set(props: Config) -> Result<(), Box<dyn Error>> {
     let mut champion: String = String::new();
     let mut tft: String = String::new();
 
-    wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    wiki::wiki_login(&client, cfg.loginname, cfg.loginpassword).await?;
 
     let fut_token = async {
         let json: Value = client
@@ -661,12 +661,12 @@ pub async fn set(props: Config) -> Result<(), Box<dyn Error>> {
 }
 
 // programmed on demand
-pub async fn random(props: Config) -> Result<(), Box<dyn Error>> {
+pub async fn random(cfg: Config) -> Result<(), Box<dyn Error>> {
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
     let client = reqwest::Client::builder().cookie_store(true).build()?;
 
-    wiki::wiki_login(&client, props.loginname, props.loginpassword).await?;
+    wiki::wiki_login(&client, cfg.loginname, cfg.loginpassword).await?;
 
     let champions: HashMap<i32, Champ> = client
         .get("https://fabianlars.de/wapi/champion")

@@ -40,7 +40,7 @@ pub struct Ability {
     pub values: Option<Vec<Vec<i64>>>,
 }
 
-pub async fn carddata(props: Config) -> Result<(), Box<dyn Error>> {
+pub async fn carddata(cfg: Config) -> Result<(), Box<dyn Error>> {
     let json: Value = reqwest::get("https://cardbase.skylords.eu/Cards/GetCards").await?.json().await?;
     let json = json.get("Result").unwrap().as_array().unwrap();
 
@@ -203,7 +203,7 @@ pub async fn carddata(props: Config) -> Result<(), Box<dyn Error>> {
         result.insert(v.get("Name").unwrap().as_str().unwrap().to_string(), card);
     }
 
-    ::serde_json::to_writer(&File::create(props.path.file_path())?, &result)?;
+    ::serde_json::to_writer(&File::create(cfg.path.file_path())?, &result)?;
 
     Ok(())
 }
