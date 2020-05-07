@@ -9,5 +9,5 @@ members = [
 # resolver = "2"
 
 [profile.release]
-#lto=true This actually increases file size on windows
+lto=true
 panic='abort'
