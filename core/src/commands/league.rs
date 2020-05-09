@@ -165,7 +165,7 @@ pub async fn discounts(cfg: Config) -> Result<(), Box<dyn Error>> {
         .await?;
 
     let champions_wapi: HashMap<i32, Champ> = client
-        .get("https://fabianlars.de/wapi/champion")
+        .get("https://api.fabianlars.de/wiki/champion")
         .send()
         .await?
         .json()
@@ -297,7 +297,7 @@ pub async fn discounts(cfg: Config) -> Result<(), Box<dyn Error>> {
         start_date, end_date, angebote
     );
 
-    wiki::wiki_login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
 
     let json: Value = client
         .get(reqwest::Url::parse_with_params(
@@ -348,10 +348,10 @@ pub async fn rotation(cfg: Config) -> Result<(), Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let curr_date = rename_m(chrono::Utc::today().format("%-d. %B %Y").to_string());
 
-    wiki::wiki_login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
 
     let champions: HashMap<i32, Champ> = client
-        .get("https://fabianlars.de/wapi/champion")
+        .get("https://api.fabianlars.de/wiki/champion")
         .send()
         .await?
         .json()
@@ -487,7 +487,7 @@ pub async fn set(cfg: Config) -> Result<(), Box<dyn Error>> {
     let mut champion: String = String::new();
     let mut tft: String = String::new();
 
-    wiki::wiki_login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
 
     let fut_token = async {
         let json: Value = client
@@ -516,33 +516,33 @@ pub async fn set(cfg: Config) -> Result<(), Box<dyn Error>> {
         Ok::<(), reqwest::Error>(())
     }.map_err(|_e| "Can't get skins.json".to_string());
     let fut_skin = async {
-        skin = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").send().await?.text().await?;
+        skin = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").send().await?.text().await?.replace(" ", " ").replace("Hexerei-Miss Fortune \"", "Hexerei-Miss Fortune\"");
         Ok::<(), reqwest::Error>(())
     }.map_err(|_e| "Can't get skins.json".to_string());
     let fut_set = async {
-        set = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skinlines.json").send().await?.text().await?;
+        set = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skinlines.json").send().await?.text().await?.replace(" ", " ");
         Ok::<(), reqwest::Error>(())
     }.map_err(|_e| "Can't get skinlines.json".to_string());
     let fut_universe = async {
-        universe = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/universes.json").send().await?.text().await?;
+        universe = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/universes.json").send().await?.text().await?.replace(" ", " ");
         Ok::<(), reqwest::Error>(())
     }.map_err(|_e| "Can't get universes.json".to_string());
     let fut_icons = async {
-        icons = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icons.json").send().await?.text().await?;
+        icons = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icons.json").send().await?.text().await?.replace(" ", " ");
         Ok::<(), reqwest::Error>(())
     }.map_err(|_e| "Can't get universes.json".to_string());
     let fut_iconsets = async {
-        iconsets = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icon-sets.json").send().await?.text().await?;
+        iconsets = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icon-sets.json").send().await?.text().await?.replace(" ", " ");
         Ok::<(), reqwest::Error>(())
     }.map_err(|_e| "Can't get universes.json".to_string());
     let fut_champion = async {
         let res: Value = client.get("https://ddragon.leagueoflegends.com/api/versions.json").send().await?.json().await?;
         let patch_id = res.get(0).unwrap().as_str().unwrap();
-        champion = client.get(&format!("http://ddragon.leagueoflegends.com/cdn/{}/data/de_DE/champion.json", patch_id)).send().await?.text().await?;
+        champion = client.get(&format!("http://ddragon.leagueoflegends.com/cdn/{}/data/de_DE/champion.json", patch_id)).send().await?.text().await?.replace(" ", " ");
         Ok::<(), reqwest::Error>(())
     }.map_err(|_e| "Can't get universes.json".to_string());
     let fut_tft = async {
-        tft = client.get("http://raw.communitydragon.org/latest/cdragon/tft/de_de.json").send().await?.text().await?;
+        tft = client.get("http://raw.communitydragon.org/latest/cdragon/tft/de_de.json").send().await?.text().await?.replace(" ", " ");
         Ok::<(), reqwest::Error>(())
     }.map_err(|_e| "Can't get universes.json".to_string());
 
@@ -666,10 +666,10 @@ pub async fn random(cfg: Config) -> Result<(), Box<dyn Error>> {
 
     let client = reqwest::Client::builder().cookie_store(true).build()?;
 
-    wiki::wiki_login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
 
     let champions: HashMap<i32, Champ> = client
-        .get("https://fabianlars.de/wapi/champion")
+        .get("https://api.fabianlars.de/wiki/champion")
         .send()
         .await?
         .json()
@@ -683,8 +683,7 @@ pub async fn random(cfg: Config) -> Result<(), Box<dyn Error>> {
                 ("format", "json"),
                 ("prop", "info"),
                 ("intoken", "edit"),
-                ("titles", "Kategorie:Ahri Fähigkeitsvideos|Kategorie:Akali Fähigkeitsvideos|Kategorie:Alistar Fähigkeitsvideos|Kategorie:Amumu Fähigkeitsvideos|Kategorie:Anivia Fähigkeitsvideos|Kategorie:Annie Fähigkeitsvideos|Kategorie:Aphelios Fähigkeitsvideos|Kategorie:Ashe Fähigkeitsvideos|Kategorie:Aurelion Sol Fähigkeitsvideos|Kategorie:Azir Fähigkeitsvideos|Kategorie:Bard Fähigkeitsvideos|Kategorie:Blitzcrank Fähigkeitsvideos|Kategorie:Brand Fähigkeitsvideos|Kategorie:Braum Fähigkeitsvideos|Kategorie:Caitlyn Fähigkeitsvideos|Kategorie:Camille Fähigkeitsvideos|Kategorie:Cassiopeia Fähigkeitsvideos|Kategorie:Cho'Gath Fähigkeitsvideos|Kategorie:Corki Fähigkeitsvideos|Kategorie:Darius Fähigkeitsvideos|Kategorie:Diana Fähigkeitsvideos|Kategorie:Dr. Mundo Fähigkeitsvideos|Kategorie:Draven Fähigkeitsvideos|Kategorie:Ekko Fähigkeitsvideos|Kategorie:Elise Fähigkeitsvideos|Kategorie:Evelynn Fähigkeitsvideos|Kategorie:Ezreal Fähigkeitsvideos|Kategorie:Fiddlesticks Fähigkeitsvideos|Kategorie:Fiora Fähigkeitsvideos|Kategorie:Fizz Fähigkeitsvideos|Kategorie:Galio Fähigkeitsvideos|Kategorie:Gangplank Fähigkeitsvideos|Kategorie:Garen Fähigkeitsvideos|Kategorie:Gnar Fähigkeitsvideos|Kategorie:Gragas Fähigkeitsvideos|Kategorie:Graves Fähigkeitsvideos|Kategorie:Hecarim Fähigkeitsvideos|Kategorie:Heimerdinger Fähigkeitsvideos|Kategorie:Illaoi Fähigkeitsvideos|Kategorie:Irelia Fähigkeitsvideos|Kategorie:Ivern Fähigkeitsvideos|Kategorie:Janna Fähigkeitsvideos|Kategorie:Jarvan IV. Fähigkeitsvideos|Kategorie:Jax Fähigkeitsvideos|Kategorie:Jayce Fähigkeitsvideos|Kategorie:Jhin Fähigkeitsvideos|Kategorie:Jinx Fähigkeitsvideos|Kategorie:Kai'Sa Fähigkeitsvideos|Kategorie:Kalista Fähigkeitsvideos|Kategorie:Karma Fähigkeitsvideos|Kategorie:Karthus Fähigkeitsvideos|Kategorie:Kassadin Fähigkeitsvideos|Kategorie:Katarina Fähigkeitsvideos|Kategorie:Kayle Fähigkeitsvideos|Kategorie:Kayn Fähigkeitsvideos|Kategorie:Kennen Fähigkeitsvideos|Kategorie:Kha'Zix Fähigkeitsvideos|Kategorie:Kindred Fähigkeitsvideos|Kategorie:Kled Fähigkeitsvideos|Kategorie:Kog'Maw Fähigkeitsvideos|Kategorie:LeBlanc Fähigkeitsvideos|Kategorie:Lee Sin Fähigkeitsvideos|Kategorie:Leona Fähigkeitsvideos|Kategorie:Lissandra Fähigkeitsvideos|Kategorie:Lucian Fähigkeitsvideos|Kategorie:Lulu Fähigkeitsvideos|Kategorie:Lux Fähigkeitsvideos|Kategorie:Malphite Fähigkeitsvideos|Kategorie:Malzahar Fähigkeitsvideos|Kategorie:Maokai Fähigkeitsvideos|Kategorie:Master Yi Fähigkeitsvideos|Kategorie:Miss Fortune Fähigkeitsvideos|Kategorie:Mordekaiser Fähigkeitsvideos|Kategorie:Morgana Fähigkeitsvideos|Kategorie:Nami Fähigkeitsvideos|Kategorie:Nasus Fähigkeitsvideos|Kategorie:Nautilus Fähigkeitsvideos|Kategorie:Neeko Fähigkeitsvideos|Kategorie:Nidalee Fähigkeitsvideos|Kategorie:Nocturne Fähigkeitsvideos|Kategorie:Nunu & Willump Fähigkeitsvideos|Kategorie:Olaf Fähigkeitsvideos|Kategorie:Orianna Fähigkeitsvideos|Kategorie:Ornn Fähigkeitsvideos|Kategorie:Pantheon Fähigkeitsvideos|Kategorie:Poppy Fähigkeitsvideos|Kategorie:Pyke Fähigkeitsvideos|Kategorie:Qiyana Fähigkeitsvideos|Kategorie:Quinn Fähigkeitsvideos|Kategorie:Rakan Fähigkeitsvideos|Kategorie:Rammus Fähigkeitsvideos|Kategorie:Rek'Sai Fähigkeitsvideos|Kategorie:Renekton Fähigkeitsvideos|Kategorie:Rengar Fähigkeitsvideos|Kategorie:Riven Fähigkeitsvideos|Kategorie:Rumble Fähigkeitsvideos|Kategorie:Ryze Fähigkeitsvideos|Kategorie:Sejuani Fähigkeitsvideos|Kategorie:Senna Fähigkeitsvideos|Kategorie:Sett Fähigkeitsvideos|Kategorie:Shaco Fähigkeitsvideos|Kategorie:Shen Fähigkeitsvideos|Kategorie:Shyvana Fähigkeitsvideos|Kategorie:Singed Fähigkeitsvideos|Kategorie:Sion Fähigkeitsvideos|Kategorie:Sivir Fähigkeitsvideos|Kategorie:Skarner Fähigkeitsvideos|Kategorie:Sona Fähigkeitsvideos|Kategorie:Soraka Fähigkeitsvideos|Kategorie:Swain Fähigkeitsvideos|Kategorie:Sylas Fähigkeitsvideos|Kategorie:Syndra Fähigkeitsvideos|Kategorie:Tahm Kench Fähigkeitsvideos|Kategorie:Taliyah Fähigkeitsvideos|Kategorie:Talon Fähigkeitsvideos|Kategorie:Taric Fähigkeitsvideos|Kategorie:Teemo Fähigkeitsvideos|Kategorie:Thresh Fähigkeitsvideos|Kategorie:Tristana Fähigkeitsvideos|Kategorie:Trundle Fähigkeitsvideos|Kategorie:Tryndamere Fähigkeitsvideos|Kategorie:Twisted Fate Fähigkeitsvideos|Kategorie:Twitch Fähigkeitsvideos|Kategorie:Udyr Fähigkeitsvideos|Kategorie:Urgot Fähigkeitsvideos|Kategorie:Varus Fähigkeitsvideos|Kategorie:Vayne Fähigkeitsvideos|Kategorie:Veigar Fähigkeitsvideos|Kategorie:Vel'Koz Fähigkeitsvideos|Kategorie:Vi Fähigkeitsvideos|Kategorie:Viktor Fähigkeitsvideos|Kategorie:Vladimir Fähigkeitsvideos|Kategorie:Volibear Fähigkeitsvideos|Kategorie:Warwick Fähigkeitsvideos|Kategorie:Wukong Fähigkeitsvideos|Kategorie:Xayah Fähigkeitsvideos|Kategorie:Xerath Fähigkeitsvideos|Kategorie:Xin Zhao Fähigkeitsvideos|Kategorie:Yasuo Fähigkeitsvideos|Kategorie:Yorick Fähigkeitsvideos|Kategorie:Yuumi Fähigkeitsvideos|Kategorie:Zac Fähigkeitsvideos|Kategorie:Zed Fähigkeitsvideos|Kategorie:Ziggs Fähigkeitsvideos|Kategorie:Zilean Fähigkeitsvideos|Kategorie:Zoe Fähigkeitsvideos|Kategorie:Zyra Fähigkeitsvideos"),
-            ],
+                ("titles", "Kategorie:Ahri Geschichte|Kategorie:Akali Geschichte|Kategorie:Alistar Geschichte|Kategorie:Amumu Geschichte|Kategorie:Anivia Geschichte|Kategorie:Annie Geschichte|Kategorie:Aphelios Geschichte|Kategorie:Ashe Geschichte|Kategorie:Aurelion Sol Geschichte|Kategorie:Azir Geschichte|Kategorie:Bard Geschichte|Kategorie:Blitzcrank Geschichte|Kategorie:Brand Geschichte|Kategorie:Braum Geschichte|Kategorie:Caitlyn Geschichte|Kategorie:Camille Geschichte|Kategorie:Cassiopeia Geschichte|Kategorie:Cho'Gath Geschichte|Kategorie:Corki Geschichte|Kategorie:Darius Geschichte|Kategorie:Diana Geschichte|Kategorie:Dr. Mundo Geschichte|Kategorie:Draven Geschichte|Kategorie:Ekko Geschichte|Kategorie:Elise Geschichte|Kategorie:Evelynn Geschichte|Kategorie:Ezreal Geschichte|Kategorie:Fiddlesticks Geschichte|Kategorie:Fiora Geschichte|Kategorie:Fizz Geschichte|Kategorie:Galio Geschichte|Kategorie:Gangplank Geschichte|Kategorie:Garen Geschichte|Kategorie:Gnar Geschichte|Kategorie:Gragas Geschichte|Kategorie:Graves Geschichte|Kategorie:Hecarim Geschichte|Kategorie:Heimerdinger Geschichte|Kategorie:Illaoi Geschichte|Kategorie:Irelia Geschichte|Kategorie:Ivern Geschichte|Kategorie:Janna Geschichte|Kategorie:Jarvan IV. Geschichte|Kategorie:Jax Geschichte|Kategorie:Jayce Geschichte|Kategorie:Jhin Geschichte|Kategorie:Jinx Geschichte|Kategorie:Kai'Sa Geschichte|Kategorie:Kalista Geschichte|Kategorie:Karma Geschichte|Kategorie:Karthus Geschichte|Kategorie:Kassadin Geschichte|Kategorie:Katarina Geschichte|Kategorie:Kayle Geschichte|Kategorie:Kayn Geschichte|Kategorie:Kennen Geschichte|Kategorie:Kha'Zix Geschichte|Kategorie:Kindred Geschichte|Kategorie:Kled Geschichte|Kategorie:Kog'Maw Geschichte|Kategorie:LeBlanc Geschichte|Kategorie:Lee Sin Geschichte|Kategorie:Leona Geschichte|Kategorie:Lissandra Geschichte|Kategorie:Lucian Geschichte|Kategorie:Lulu Geschichte|Kategorie:Lux Geschichte|Kategorie:Malphite Geschichte|Kategorie:Malzahar Geschichte|Kategorie:Maokai Geschichte|Kategorie:Master Yi Geschichte|Kategorie:Miss Fortune Geschichte|Kategorie:Mordekaiser Geschichte|Kategorie:Morgana Geschichte|Kategorie:Nami Geschichte|Kategorie:Nasus Geschichte|Kategorie:Nautilus Geschichte|Kategorie:Neeko Geschichte|Kategorie:Nidalee Geschichte|Kategorie:Nocturne Geschichte|Kategorie:Nunu & Willump Geschichte|Kategorie:Olaf Geschichte|Kategorie:Orianna Geschichte|Kategorie:Ornn Geschichte|Kategorie:Pantheon Geschichte|Kategorie:Poppy Geschichte|Kategorie:Pyke Geschichte|Kategorie:Qiyana Geschichte|Kategorie:Quinn Geschichte|Kategorie:Rakan Geschichte|Kategorie:Rammus Geschichte|Kategorie:Rek'Sai Geschichte|Kategorie:Renekton Geschichte|Kategorie:Rengar Geschichte|Kategorie:Riven Geschichte|Kategorie:Rumble Geschichte|Kategorie:Ryze Geschichte|Kategorie:Sejuani Geschichte|Kategorie:Senna Geschichte|Kategorie:Sett Geschichte|Kategorie:Shaco Geschichte|Kategorie:Shen Geschichte|Kategorie:Shyvana Geschichte|Kategorie:Singed Geschichte|Kategorie:Sion Geschichte|Kategorie:Sivir Geschichte|Kategorie:Skarner Geschichte|Kategorie:Sona Geschichte|Kategorie:Soraka Geschichte|Kategorie:Swain Geschichte|Kategorie:Sylas Geschichte|Kategorie:Syndra Geschichte|Kategorie:Tahm Kench Geschichte|Kategorie:Taliyah Geschichte|Kategorie:Talon Geschichte|Kategorie:Taric Geschichte|Kategorie:Teemo Geschichte|Kategorie:Thresh Geschichte|Kategorie:Tristana Geschichte|Kategorie:Trundle Geschichte|Kategorie:Tryndamere Geschichte|Kategorie:Twisted Fate Geschichte|Kategorie:Twitch Geschichte|Kategorie:Udyr Geschichte|Kategorie:Urgot Geschichte|Kategorie:Varus Geschichte|Kategorie:Vayne Geschichte|Kategorie:Veigar Geschichte|Kategorie:Vel'Koz Geschichte|Kategorie:Vi Geschichte|Kategorie:Viktor Geschichte|Kategorie:Vladimir Geschichte|Kategorie:Volibear Geschichte|Kategorie:Warwick Geschichte|Kategorie:Wukong Geschichte|Kategorie:Xayah Geschichte|Kategorie:Xerath Geschichte|Kategorie:Xin Zhao Geschichte|Kategorie:Yasuo Geschichte|Kategorie:Yorick Geschichte|Kategorie:Yuumi Geschichte|Kategorie:Zac Geschichte|Kategorie:Zed Geschichte|Kategorie:Ziggs Geschichte|Kategorie:Zilean Geschichte|Kategorie:Zoe Geschichte|Kategorie:Zyra Geschichte"),            ],
         ).unwrap())
         .send()
         .await?
@@ -706,9 +705,9 @@ pub async fn random(cfg: Config) -> Result<(), Box<dyn Error>> {
                 ("action", "edit"),
                 ("reason", "automated action"),
                 ("bot", "1"),
-                ("title", &format!("Kategorie:{} Fähigkeitsvideos", v.name)),
-                ("text", &format!("Diese Kategorie beinhaltet Fähigkeitsvideos von {{{{ci|{}}}}}.
-[[Kategorie:{}]][[Kategorie:Champion Fähigkeitsvideos]][[en:Category:{} ability videos]]", v.name, v.name, v.name)),
+                ("title", &format!("Kategorie:{} Geschichte", v.name)),
+                ("text", &format!("Diese Kategorie enthält Geschichten von, mit und über {{{{ci|{}}}}}.
+[[Kategorie:{}]][[Kategorie:Geschichte nach Champions]][[en:Category:{} lore]]", v.name, v.name, v.name)),
                 ("token", &edit_token),
             ])
             .send()
