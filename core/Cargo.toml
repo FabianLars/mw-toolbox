@@ -6,14 +6,17 @@ edition = "2018"
 
 [features]
 riot-api = []
-league = ["base64", "chrono", "futures"]
+league = ["chrono", "futures"]
 skylords = []
 
 [dependencies]
 tokio = { version = "0.2", features = ["macros", "fs", "time"] }
 futures = { version = "0.3", optional = true }
-base64 = { version = "0.12", optional = true }
+base64 = "0.12"
 chrono = { version = "0.4", optional = true }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0", features = ["preserve_order"] }
 reqwest = { version = "0.10", features = ["json", "cookies"] }
+ring = "0.16"
+directories = { version = "2" }
+anyhow = "1.0"

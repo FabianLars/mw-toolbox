@@ -1,6 +1,6 @@
 use clap::Clap;
 
-use core::{ commands::{ delete::*, list::*, rename::*, upload::* }, util::config::* };
+use core::{ commands::{ delete::*, list::*, rename::*, upload::*, login::* }, util::config::* };
 #[cfg(feature = "league")]
 use core::commands::league::*;
 #[cfg(feature = "skylords")]
@@ -34,6 +34,7 @@ enum Subcommand {
         #[clap(short, long, parse(from_os_str))]
         path: Option<std::path::PathBuf>,
     },
+    Login,
     Skylords {
         #[clap(arg_enum)]
         skylords_type: SkylordsType,
@@ -146,6 +147,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         _ => vec![String::new()],
                     })?;
                 }
+            }
+            Subcommand::Login => {
+                login(Config::new(cli.loginname, cli.loginpassword)).await?
             }
             Subcommand::Move { input } => {
                 move_pages(Config::new(cli.loginname, cli.loginpassword).with_pathbuf(input)).await?

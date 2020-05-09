@@ -25,3 +25,4 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0", features = ["preserve_order"] }
 directories = { version = "2" }
 nfd = { git = "https://github.com/EmbarkStudios/nfd-rs.git", branch = "update-submodule" }
+base64 = "0.12"
