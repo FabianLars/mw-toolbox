@@ -1,8 +1,8 @@
-use std::{ collections::HashMap, error::Error };
+use std::{collections::HashMap, error::Error};
 
 use serde_json::Value;
 
-use crate::util::{ config::*, wiki };
+use crate::util::{config::*, wiki};
 
 pub async fn allimages(cfg: Config) -> Result<Vec<String>, Box<dyn Error>> {
     get_from_api(cfg, "allimages", "ai").await
@@ -19,8 +19,7 @@ pub async fn allpages(mut cfg: Config) -> Result<Vec<String>, Box<dyn Error>> {
         Some(param) => {
             if param == "all".to_string() {
                 for ns in namespaces {
-                    cfg.path =
-                        PathType::File(format!("wtools_output{}.json", ns).parse().unwrap());
+                    cfg.path = PathType::File(format!("wtools_output{}.json", ns).parse().unwrap());
                     cfg.parameter = Some(format!("&apnamespace={}", ns));
                 }
             } else {
@@ -60,7 +59,9 @@ pub async fn categorymembers(mut cfg: Config) -> Result<Vec<String>, Box<dyn Err
             cfg.parameter = Some(format!("&cmtitle={}", p));
             get_from_api(cfg, "categorymembers", "cm").await
         }
-        None => panic!("missing cmtitle (Which category to enumerate (must include 'Category:' prefix))"),
+        None => panic!(
+            "missing cmtitle (Which category to enumerate (must include 'Category:' prefix))"
+        ),
     }
 }
 
@@ -110,7 +111,9 @@ pub async fn search(mut cfg: Config) -> Result<Vec<String>, Box<dyn Error>> {
             cfg.parameter = Some(format!("&srsearch={}", p));
             get_from_api(cfg, "search", "sr").await
         }
-        None => panic!("missing srsearch: Search for all page titles (or content) that has this value"),
+        None => {
+            panic!("missing srsearch: Search for all page titles (or content) that has this value")
+        }
     }
 }
 
@@ -120,15 +123,12 @@ pub async fn exturlusage(cfg: Config) -> Result<HashMap<String, Vec<String>>, Bo
     let mut continue_from = String::new();
     let mut results: HashMap<String, Vec<String>> = HashMap::new();
 
-    wiki::wiki_login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
 
     while has_next {
         let json: Value = client.get(&("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list=exturlusage&eulimit=5000".to_string() + &continue_from)).send().await?.json().await?;
 
-        for x in json["query"]["exturlusage"]
-            .as_array().unwrap()
-            .iter()
-        {
+        for x in json["query"]["exturlusage"].as_array().unwrap().iter() {
             let title = x["title"].as_str().unwrap().to_string();
             let url = x["url"].as_str().unwrap().to_string();
 
@@ -144,9 +144,9 @@ pub async fn exturlusage(cfg: Config) -> Result<HashMap<String, Vec<String>>, Bo
             Some(_) => {
                 continue_from = "&euoffset=".to_string()
                     + &json["query-continue"]["exturlusage"]["euoffset"]
-                    .as_i64()
-                    .unwrap()
-                    .to_string()
+                        .as_i64()
+                        .unwrap()
+                        .to_string()
             }
         }
     }
@@ -164,7 +164,9 @@ pub async fn querypage(mut cfg: Config) -> Result<Vec<String>, Box<dyn Error>> {
             cfg.parameter = Some(format!("&qppage={}", p));
             get_from_api(cfg, "querypage", "qp").await
         }
-        None => panic!("missing qppage: The name of the special page. Note, this is case sensitive"),
+        None => {
+            panic!("missing qppage: The name of the special page. Note, this is case sensitive")
+        }
     }
 }
 
@@ -195,7 +197,7 @@ async fn get_from_api(cfg: Config, long: &str, short: &str) -> Result<Vec<String
         _ => "from",
     };
 
-    crate::util::wiki::wiki_login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
 
     while has_next {
         let temp: String;
@@ -232,7 +234,7 @@ async fn get_infobox_lists(cfg: Config, typ: &str) -> Result<Vec<String>, Box<dy
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let mut results: Vec<String> = Vec::new();
 
-    crate::util::wiki::wiki_login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
 
     let json: Value = client
         .get(
@@ -240,7 +242,7 @@ async fn get_infobox_lists(cfg: Config, typ: &str) -> Result<Vec<String>, Box<dy
                 "https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list={}",
                 typ
             )
-                .to_string()),
+            .to_string()),
         )
         .send()
         .await?

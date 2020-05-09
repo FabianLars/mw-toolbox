@@ -14,7 +14,7 @@ pub async fn upload(cfg: Config) -> Result<(), Box<dyn std::error::Error>> {
     let mut pages = "".to_owned();
     let mut files: Vec<std::path::PathBuf> = Vec::new();
 
-    wiki::wiki_login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
 
     match cfg.path {
         PathType::File(x) => {

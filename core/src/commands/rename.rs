@@ -19,7 +19,7 @@ pub async fn move_pages(cfg: Config) -> Result<(), Box<dyn Error>> {
     }
     pages.pop();
 
-    wiki::wiki_login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
 
     let json: Value = client
         .post(wiki_api_url)
