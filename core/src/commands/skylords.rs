@@ -1,7 +1,7 @@
-use std::{ collections::BTreeMap, error::Error, fs::File };
+use std::{collections::BTreeMap, error::Error, fs::File};
 
 // TODO: Convert from using Values to auto Struct conversion (=> CardSrc)
-use serde::{ Deserialize, Serialize };
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use crate::util::config::Config;
@@ -39,7 +39,10 @@ pub struct Ability {
 }
 
 pub async fn carddata(cfg: Config) -> Result<(), Box<dyn Error>> {
-    let json: Value = reqwest::get("https://cardbase.skylords.eu/Cards/GetCards").await?.json().await?;
+    let json: Value = reqwest::get("https://cardbase.skylords.eu/Cards/GetCards")
+        .await?
+        .json()
+        .await?;
     let json = json.get("Result").unwrap().as_array().unwrap();
 
     let mut result: BTreeMap<String, Card> = BTreeMap::new();
@@ -48,7 +51,9 @@ pub async fn carddata(cfg: Config) -> Result<(), Box<dyn Error>> {
         if v.get("Name").unwrap().as_str().unwrap().contains("(promo)") {
             continue;
         } else if result.contains_key(v.get("Name").unwrap().as_str().unwrap()) {
-            let mut card = result.get_mut(v.get("Name").unwrap().as_str().unwrap()).unwrap();
+            let card = result
+                .get_mut(v.get("Name").unwrap().as_str().unwrap())
+                .unwrap();
 
             match v.get("Affinity").unwrap().as_i64() {
                 Some(x) if x == 0 => card.affinity_variants.push("Frost".to_string()),
