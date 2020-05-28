@@ -249,6 +249,7 @@ impl Application for App {
                                     .password(),
                                 ),
                         )
+                        // TODO: Tabber instead of RadioButtons
                         .push(ChosenCommand::ALL.iter().cloned().fold(
                             Row::new().padding(10),
                             |row, cmd| {
@@ -257,7 +258,7 @@ impl Application for App {
                                     &format!("{:?}", cmd),
                                     Some(chosen_command.to_owned()),
                                     Message::CommandSelected,
-                                ))
+                                ).width(Length::FillPortion(1)))
                             },
                         )),
                 );
