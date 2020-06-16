@@ -4,7 +4,7 @@ use std::{collections::BTreeMap, error::Error, fs::File};
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 
-use core::util::config::Config;
+use wtools::Config;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Card {

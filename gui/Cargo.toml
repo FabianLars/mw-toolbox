@@ -10,7 +10,7 @@ build = "build.rs"
 winres = "0.1"
 
 [dependencies]
-core = { path = "../core" }
+wtools = { path = "../core" }
 
 tokio = { version = "0.2", features = ["macros", "fs", "time"] }
 iced = { git = "https://github.com/hecrj/iced.git", branch = "master", features = ["tokio"] }

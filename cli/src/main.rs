@@ -1,8 +1,8 @@
 use clap::Clap;
 
-use core::{
+use wtools::{
     commands::{delete::*, list::*, login::*, rename::*, upload::*},
-    util::config::*,
+    Config,
 };
 
 #[cfg(feature = "league-wiki")]

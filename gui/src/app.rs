@@ -4,7 +4,7 @@ use iced::{
 };
 use serde::{Deserialize, Serialize};
 
-use core::{commands::upload, util::config::*};
+use wtools::{commands::upload, storage, Config, PathType};
 
 use crate::style;
 
@@ -131,9 +131,8 @@ impl Application for App {
                         match result {
                             nfd::Response::Okay(file_path) => match state.chosen_command {
                                 ChosenCommand::Upload => {
-                                    state.selected_files = core::util::config::PathType::File(
-                                        std::path::PathBuf::from(file_path),
-                                    )
+                                    state.selected_files =
+                                        PathType::File(std::path::PathBuf::from(file_path))
                                 }
                                 _ => (),
                             },
@@ -143,7 +142,7 @@ impl Application for App {
                                     for f in files {
                                         temp.push(std::path::PathBuf::from(f));
                                     }
-                                    state.selected_files = core::util::config::PathType::Files(temp)
+                                    state.selected_files = PathType::Files(temp)
                                 }
                                 _ => (),
                             },
@@ -253,12 +252,15 @@ impl Application for App {
                         .push(ChosenCommand::ALL.iter().cloned().fold(
                             Row::new().padding(10),
                             |row, cmd| {
-                                row.push(Radio::new(
-                                    cmd,
-                                    &format!("{:?}", cmd),
-                                    Some(chosen_command.to_owned()),
-                                    Message::CommandSelected,
-                                ).width(Length::FillPortion(1)))
+                                row.push(
+                                    Radio::new(
+                                        cmd,
+                                        &format!("{:?}", cmd),
+                                        Some(chosen_command.to_owned()),
+                                        Message::CommandSelected,
+                                    )
+                                    .width(Length::FillPortion(1)),
+                                )
                             },
                         )),
                 );
@@ -362,8 +364,6 @@ struct SavedState {
 
 impl SavedState {
     async fn load() -> Result<SavedState, ()> {
-        use core::util::storage;
-
         Ok(Self {
             ln_input_value: storage::get_secure(&base64::encode("lgname"), "lgnamead")
                 .await
@@ -375,8 +375,6 @@ impl SavedState {
     }
 
     async fn save(self) -> Result<(), ()> {
-        use core::util::storage;
-
         storage::insert_secure(&base64::encode("lgname"), &self.ln_input_value, "lgnamead")
             .await
             .map_err(|_| ())?;

@@ -14,7 +14,7 @@ league-wiki = ["league"]
 skylords-wiki = ["skylords"]
 
 [dependencies]
-core = { path = "../core" }
+wtools = { path = "../core" }
 league = { path = "../league", optional = true }
 skylords = { path = "../skylords", optional = true }
 

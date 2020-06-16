@@ -5,7 +5,7 @@ use reqwest::header::{HeaderMap, ACCEPT, AUTHORIZATION};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use core::util::{config::*, wiki};
+use wtools::{wiki, Config};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

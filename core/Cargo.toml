@@ -1,5 +1,5 @@
 [package]
-name = "core"
+name = "wtools"
 version = "0.1.0"
 authors = ["FabianLars <fabianlars@fabianlars.de>"]
 edition = "2018"

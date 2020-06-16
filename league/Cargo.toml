@@ -9,7 +9,7 @@ publish = false
 riot-api = []
 
 [dependencies]
-core = { path = "../core" }
+wtools = { path = "../core" }
 
 tokio = { version = "0.2", features = ["time"] }
 futures = "0.3"
