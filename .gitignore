@@ -4,3 +4,4 @@ history.json
 movelist.txt
 wtools_output.json
 Cargo.lock
+*.json
