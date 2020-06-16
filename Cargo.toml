@@ -2,9 +2,13 @@
 
 [workspace]
 members = [
-    "cli",
     "core",
-    "gui"
+
+    "cli",
+    "gui",
+
+    "league",
+    "skylords"
 ]
 # resolver = "2"
 

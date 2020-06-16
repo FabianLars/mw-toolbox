@@ -1,13 +1,14 @@
 use clap::Clap;
 
-#[cfg(feature = "league")]
-use core::commands::league::*;
-#[cfg(feature = "skylords")]
-use core::commands::skylords::*;
 use core::{
     commands::{delete::*, list::*, login::*, rename::*, upload::*},
     util::config::*,
 };
+
+#[cfg(feature = "league-wiki")]
+use league::*;
+#[cfg(feature = "skylords-wiki")]
+use skylords::*;
 
 #[derive(Clap, Debug, PartialEq)]
 enum Subcommand {
@@ -30,6 +31,7 @@ enum Subcommand {
         #[clap(parse(from_os_str))]
         input: std::path::PathBuf,
     },
+    #[cfg(feature = "league-wiki")]
     League {
         #[clap(arg_enum)]
         league_type: LeagueType,
@@ -38,6 +40,7 @@ enum Subcommand {
         path: Option<std::path::PathBuf>,
     },
     Login,
+    #[cfg(feature = "skylords-wiki")]
     Skylords {
         #[clap(arg_enum)]
         skylords_type: SkylordsType,
@@ -63,10 +66,11 @@ enum LeagueType {
     Set,
 }
 
+#[cfg(feature = "skylords-wiki")]
 #[derive(Clap, Debug, PartialEq)]
 enum SkylordsType {
     Carddata,
-    Random
+    Random,
 }
 
 #[derive(Clap, Debug, PartialEq)]
@@ -153,9 +157,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Subcommand::Upload { input } => {
             upload(Config::new(cli.name, cli.password).with_pathbuf(input)).await?
         }
-        #[cfg(not(feature = "league"))]
-        Subcommand::League { .. } => panic!("Did you forget to set the league feature flag?"),
-        #[cfg(feature = "league")]
+        #[cfg(feature = "league-wiki")]
         Subcommand::League { league_type, path } => match league_type {
             LeagueType::Champs | LeagueType::Champions => champs().await?,
             LeagueType::Discount | LeagueType::Discounts => {
@@ -174,9 +176,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 set(Config::new(cli.name, cli.password).with_pathbuf_opt(path)).await?
             }
         },
-        #[cfg(not(feature = "skylords"))]
-        Subcommand::Skylords { .. } => panic!("Did you forget to set the skylords feature flag?"),
-        #[cfg(feature = "skylords")]
+        #[cfg(feature = "skylords-wiki")]
         Subcommand::Skylords {
             skylords_type,
             path,

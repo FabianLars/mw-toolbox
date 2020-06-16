@@ -1,0 +1,13 @@
+[package]
+name = "skylords"
+version = "0.1.0"
+authors = ["FabianLars <fabianlars@fabianlars.de>"]
+edition = "2018"
+publish = false
+
+[dependencies]
+core = { path = "../core" }
+
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0", features = ["preserve_order"] }
+reqwest = { version = "0.10", features = ["json", "cookies"] }
