@@ -66,6 +66,7 @@ enum LeagueType {
 #[derive(Clap, Debug, PartialEq)]
 enum SkylordsType {
     Carddata,
+    Random
 }
 
 #[derive(Clap, Debug, PartialEq)]
@@ -182,6 +183,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         } => match skylords_type {
             SkylordsType::Carddata => {
                 carddata(Config::new(cli.name, cli.password).with_pathbuf_opt(path)).await?
+            }
+            SkylordsType::Random => {
+                jsondata(Config::new(cli.name, cli.password).with_pathbuf_opt(path)).await?
             }
         },
     }
