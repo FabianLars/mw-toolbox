@@ -1,4 +1,4 @@
-use iced::{ button, checkbox, container, progress_bar, radio, scrollable, slider, text_input };
+use iced::{button, checkbox, container, progress_bar, radio, scrollable, slider, text_input};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Theme {
@@ -89,7 +89,7 @@ impl From<Theme> for Box<dyn checkbox::StyleSheet> {
 }
 
 mod light {
-    use iced::{Background, button, Color, Vector};
+    use iced::{button, Background, Color, Vector};
 
     pub struct Button;
 
@@ -116,8 +116,8 @@ mod light {
 
 mod dark {
     use iced::{
-        Background, button, checkbox, Color, container, progress_bar, radio, scrollable,
-        slider, text_input,
+        button, checkbox, container, progress_bar, radio, scrollable, slider, text_input,
+        Background, Color,
     };
 
     const SURFACE: Color = Color::from_rgb(
@@ -204,7 +204,9 @@ mod dark {
             Color::WHITE
         }
 
-        fn selection_color(&self) -> Color { ACTIVE }
+        fn selection_color(&self) -> Color {
+            ACTIVE
+        }
 
         fn hovered(&self) -> text_input::Style {
             text_input::Style {

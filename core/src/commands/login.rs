@@ -1,11 +1,15 @@
 pub async fn login(cfg: crate::util::config::Config) -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
 
-    crate::util::wiki::login_persistent(&client, Some(cfg.loginname), Some(cfg.loginpassword)).await.unwrap();
+    crate::util::wiki::login_persistent(&client, Some(cfg.loginname), Some(cfg.loginpassword))
+        .await
+        .unwrap();
 
     let client = reqwest::Client::builder().cookie_store(true).build()?;
 
-    crate::util::wiki::login_persistent(&client, None, None).await.unwrap();
+    crate::util::wiki::login_persistent(&client, None, None)
+        .await
+        .unwrap();
 
     let res = client
         .post("https://leagueoflegends.fandom.com/de/api.php")
@@ -17,7 +21,9 @@ pub async fn login(cfg: crate::util::config::Config) -> Result<(), Box<dyn std::
             ("titles", "Gold"),
         ])
         .send()
-        .await?.text().await?;
+        .await?
+        .text()
+        .await?;
 
     println!("{:?}", res);
 

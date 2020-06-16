@@ -1,7 +1,7 @@
 #![windows_subsystem = "windows"]
 
-mod style;
 mod app;
+mod style;
 
 fn main() {
     crate::app::start();

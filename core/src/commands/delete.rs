@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use crate::util::{config::Config, wiki };
+use crate::util::{config::Config, wiki};
 
 pub async fn delete_pages(cfg: Config) -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
