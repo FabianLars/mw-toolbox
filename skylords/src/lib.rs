@@ -2,9 +2,9 @@ use std::{collections::BTreeMap, error::Error, fs::File};
 
 // TODO: Convert from using Values to auto Struct conversion (=> CardSrc)
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use serde_json::{Map, Value};
 
-use crate::util::config::Config;
+use wtools::Config;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Card {
@@ -207,6 +207,202 @@ pub async fn carddata(cfg: Config) -> Result<(), Box<dyn Error>> {
     }
 
     ::serde_json::to_writer(&File::create(cfg.path.file_path())?, &result)?;
+
+    Ok(())
+}
+
+pub async fn jsondata(cfg: Config) -> Result<(), Box<dyn Error>> {
+    let file = std::fs::File::open("../data.json")?;
+    let reader = std::io::BufReader::new(file);
+    let mut json: Value = serde_json::from_reader(reader)?;
+    let file2 = std::fs::File::open("../maps.json")?;
+    let reader2 = std::io::BufReader::new(file2);
+    let maps: Value = serde_json::from_reader(reader2)?;
+
+    let mut output: Map<String, Value> = Map::new();
+
+    for (k, v) in json.as_object_mut().unwrap() {
+        if k == "Satanael" {
+            continue;
+        } //TODO: SATANAEL
+        let aff = match &v["affinity_variants"] {
+            Value::Array(x) => true,
+            _ => false,
+        };
+
+        let (nameAff1, nameAff2) = match &v["affinity_variants"] {
+            Value::Array(x) => (
+                format!(
+                    "{} ({})",
+                    k,
+                    x.get(0).unwrap().as_str().unwrap().to_string()
+                ),
+                format!(
+                    "{} ({})",
+                    k,
+                    x.get(1).unwrap().as_str().unwrap().to_string()
+                ),
+            ),
+            _ => (k.to_string(), "abcdefgh".to_string()),
+        };
+        v.get("upgrades").take();
+        v["power_cost"][1].take();
+        v["power_cost"][2].take();
+        v["power_cost"][3].take();
+        if !v["damage"].is_null() {
+            v["damage"][1].take();
+            v["damage"][2].take();
+            v["damage"][3].take();
+        }
+
+        if !v["health"].is_null() {
+            v["health"][1].take();
+            v["health"][2].take();
+            v["health"][3].take();
+        }
+
+        if v.get("type").unwrap().as_str().unwrap().to_string() != "Unit".to_string() {
+            v["size"].take();
+            v["counter"].take();
+            v["weapon_type"].take();
+            if v.get("type").unwrap().as_str().unwrap().to_string() == "Spelling".to_string() {
+                v["damage"].take();
+                v["health"].take();
+            }
+        }
+
+        let mut upgrades: Map<String, Value> = Map::new();
+
+        for (map, cards) in maps.get("U1").unwrap().as_object().unwrap() {
+            for card in cards.as_array().unwrap() {
+                let card = card.as_str().unwrap().to_string();
+                if card == nameAff1 {
+                    match aff {
+                        true => upgrades.insert(
+                            v["affinity_variants"][0].as_str().unwrap().to_string(),
+                            serde_json::json!({
+                                "location": map,
+                                "general": null,
+                                "damage": null,
+                                "health": null,
+                                "power_cost": null
+                            }),
+                        ),
+                        false => upgrades.insert(
+                            "normal".to_string(),
+                            serde_json::json!({
+                                "location": map,
+                                "general": null,
+                                "damage": null,
+                                "health": null,
+                                "power_cost": null
+                            }),
+                        ),
+                    };
+                }
+                if card == nameAff2 {
+                    upgrades.insert(
+                        v["affinity_variants"][1].as_str().unwrap().to_string(),
+                        serde_json::json!({
+                            "location": map,
+                            "general": null,
+                            "damage": null,
+                            "health": null,
+                            "power_cost": null
+                        }),
+                    );
+                }
+            }
+        }
+
+        for (map, cards) in maps.get("U2").unwrap().as_object().unwrap() {
+            for card in cards.as_array().unwrap() {
+                let card = card.as_str().unwrap().to_string();
+                if card == nameAff1 {
+                    match aff {
+                        true => upgrades.insert(
+                            v["affinity_variants"][0].as_str().unwrap().to_string(),
+                            serde_json::json!({
+                                "location": map,
+                                "general": null,
+                                "damage": null,
+                                "health": null,
+                                "power_cost": null
+                            }),
+                        ),
+                        false => upgrades.insert(
+                            "normal".to_string(),
+                            serde_json::json!({
+                                "location": map,
+                                "general": null,
+                                "damage": null,
+                                "health": null,
+                                "power_cost": null
+                            }),
+                        ),
+                    };
+                }
+                if card == nameAff2 {
+                    upgrades.insert(
+                        v["affinity_variants"][1].as_str().unwrap().to_string(),
+                        serde_json::json!({
+                            "location": map,
+                            "general": null,
+                            "damage": null,
+                            "health": null,
+                            "power_cost": null
+                        }),
+                    );
+                }
+            }
+        }
+
+        for (map, cards) in maps.get("U3").unwrap().as_object().unwrap() {
+            for card in cards.as_array().unwrap() {
+                let card = card.as_str().unwrap().to_string();
+                if card == nameAff1 {
+                    match aff {
+                        true => upgrades.insert(
+                            v["affinity_variants"][0].as_str().unwrap().to_string(),
+                            serde_json::json!({
+                                "location": map,
+                                "general": null,
+                                "damage": null,
+                                "health": null,
+                                "power_cost": null
+                            }),
+                        ),
+                        false => upgrades.insert(
+                            "normal".to_string(),
+                            serde_json::json!({
+                                "location": map,
+                                "general": null,
+                                "damage": null,
+                                "health": null,
+                                "power_cost": null
+                            }),
+                        ),
+                    };
+                }
+                if card == nameAff2 {
+                    upgrades.insert(
+                        v["affinity_variants"][1].as_str().unwrap().to_string(),
+                        serde_json::json!({
+                            "location": map,
+                            "general": null,
+                            "damage": null,
+                            "health": null,
+                            "power_cost": null
+                        }),
+                    );
+                }
+            }
+        }
+
+        *v.get_mut("upgrades").unwrap() = Value::from(upgrades);
+    }
+
+    ::serde_json::to_writer(&File::create(cfg.path.file_path())?, &json)?;
 
     Ok(())
 }

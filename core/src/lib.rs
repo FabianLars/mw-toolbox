@@ -1,2 +1,6 @@
 pub mod commands;
-pub mod util;
+mod util;
+
+pub use util::config::*;
+pub use util::storage;
+pub use util::{wiki, wiki::*};

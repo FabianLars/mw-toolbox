@@ -3,18 +3,20 @@ name = "cli"
 version = "0.1.0"
 authors = ["FabianLars <fabianlars@fabianlars.de>"]
 edition = "2018"
+publish = false
 default-run = "cli"
 
 [features]
+server = ["riot-api", "league-wiki"]
 
-server = ["riot-api", "league"]
-
-riot-api = ["core/riot-api"]
-league = ["core/league"]
-skylords = ["core/skylords"]
+riot-api = ["league/riot-api"]
+league-wiki = ["league"]
+skylords-wiki = ["skylords"]
 
 [dependencies]
-core = { path = "../core" }
+wtools = { path = "../core" }
+league = { path = "../league", optional = true }
+skylords = { path = "../skylords", optional = true }
 
 tokio = { version = "0.2", features = ["macros"] }
 clap = { git = "https://github.com/clap-rs/clap/" }

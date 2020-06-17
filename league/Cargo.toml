@@ -1,14 +1,20 @@
 [package]
-name = "wtools"
+name = "league"
 version = "0.1.0"
 authors = ["FabianLars <fabianlars@fabianlars.de>"]
 edition = "2018"
+publish = false
+
+[features]
+riot-api = []
 
 [dependencies]
-tokio = { version = "0.2", features = ["macros", "fs", "time"] }
-base64 = "0.12"
+wtools = { path = "../core" }
+
+tokio = { version = "0.2", features = ["time"] }
+futures = "0.3"
+serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0", features = ["preserve_order"] }
 reqwest = { version = "0.10", features = ["json", "cookies"] }
-ring = "0.16"
-directories = { version = "2" }
-anyhow = "1.0"
+base64 = "0.12"
+chrono = "0.4"

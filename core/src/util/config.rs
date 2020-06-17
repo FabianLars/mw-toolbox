@@ -65,7 +65,6 @@ impl Config {
             loginpassword: self.loginpassword,
         }
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -93,6 +92,10 @@ impl PathType {
     }
 
     pub fn file_path(self) -> PathBuf {
-        if let PathType::File(p) = self { p } else { panic!("Not a file") }
+        if let PathType::File(p) = self {
+            p
+        } else {
+            panic!("Not a file")
+        }
     }
 }
