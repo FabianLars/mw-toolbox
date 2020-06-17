@@ -22,12 +22,10 @@ pub async fn allpages(mut cfg: Config) -> Result<Vec<String>, Box<dyn Error>> {
                     cfg.path = PathType::File(format!("wtools_output{}.json", ns).parse().unwrap());
                     cfg.parameter = Some(format!("&apnamespace={}", ns));
                 }
+            } else if namespaces.iter().any(|x| *x == param) {
+                cfg.parameter = Some(format!("&apnamespace={}", param))
             } else {
-                if namespaces.iter().any(|x| *x == param) {
-                    cfg.parameter = Some(format!("&apnamespace={}", param))
-                } else {
-                    panic!("Unknown namespace given!".to_string());
-                }
+                panic!("Unknown namespace given!".to_string());
             }
         }
         None => cfg.parameter = Some("0".to_string()),

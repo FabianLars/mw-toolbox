@@ -129,23 +129,21 @@ impl Application for App {
                         let result = nfd::open_file_multiple_dialog(None, None).unwrap();
 
                         match result {
-                            nfd::Response::Okay(file_path) => match state.chosen_command {
-                                ChosenCommand::Upload => {
+                            nfd::Response::Okay(file_path) => {
+                                if let ChosenCommand::Upload = state.chosen_command {
                                     state.selected_files =
                                         PathType::File(std::path::PathBuf::from(file_path))
                                 }
-                                _ => (),
-                            },
-                            nfd::Response::OkayMultiple(files) => match state.chosen_command {
-                                ChosenCommand::Upload => {
+                            }
+                            nfd::Response::OkayMultiple(files) => {
+                                if let ChosenCommand::Upload = state.chosen_command {
                                     let mut temp: Vec<std::path::PathBuf> = Vec::new();
                                     for f in files {
                                         temp.push(std::path::PathBuf::from(f));
                                     }
                                     state.selected_files = PathType::Files(temp)
                                 }
-                                _ => (),
-                            },
+                            }
                             nfd::Response::Cancel => println!("User canceled"),
                         }
                     }
@@ -161,8 +159,8 @@ impl Application for App {
                             _ => (),
                         }
                     }
-                    Message::ExecuteButtonPressed => match state.chosen_command {
-                        ChosenCommand::Upload => {
+                    Message::ExecuteButtonPressed => {
+                        if let ChosenCommand::Upload = state.chosen_command {
                             return Command::perform(
                                 upload::from_gui(
                                     Config::new(
@@ -172,10 +170,9 @@ impl Application for App {
                                     .with_pathtype(state.selected_files.clone()),
                                 ),
                                 Message::Executed,
-                            )
+                            );
                         }
-                        _ => (),
-                    },
+                    }
                     Message::Saved(_) => {
                         state.saving = false;
                         saved = true;

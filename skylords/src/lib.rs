@@ -226,11 +226,11 @@ pub async fn jsondata(cfg: Config) -> Result<(), Box<dyn Error>> {
             continue;
         } //TODO: SATANAEL
         let aff = match &v["affinity_variants"] {
-            Value::Array(x) => true,
+            Value::Array(_) => true,
             _ => false,
         };
 
-        let (nameAff1, nameAff2) = match &v["affinity_variants"] {
+        let (name_aff1, name_aff2) = match &v["affinity_variants"] {
             Value::Array(x) => (
                 format!(
                     "{} ({})",
@@ -276,7 +276,7 @@ pub async fn jsondata(cfg: Config) -> Result<(), Box<dyn Error>> {
         for (map, cards) in maps.get("U1").unwrap().as_object().unwrap() {
             for card in cards.as_array().unwrap() {
                 let card = card.as_str().unwrap().to_string();
-                if card == nameAff1 {
+                if card == name_aff1 {
                     match aff {
                         true => upgrades.insert(
                             v["affinity_variants"][0].as_str().unwrap().to_string(),
@@ -300,7 +300,7 @@ pub async fn jsondata(cfg: Config) -> Result<(), Box<dyn Error>> {
                         ),
                     };
                 }
-                if card == nameAff2 {
+                if card == name_aff2 {
                     upgrades.insert(
                         v["affinity_variants"][1].as_str().unwrap().to_string(),
                         serde_json::json!({
@@ -318,7 +318,7 @@ pub async fn jsondata(cfg: Config) -> Result<(), Box<dyn Error>> {
         for (map, cards) in maps.get("U2").unwrap().as_object().unwrap() {
             for card in cards.as_array().unwrap() {
                 let card = card.as_str().unwrap().to_string();
-                if card == nameAff1 {
+                if card == name_aff1 {
                     match aff {
                         true => upgrades.insert(
                             v["affinity_variants"][0].as_str().unwrap().to_string(),
@@ -342,7 +342,7 @@ pub async fn jsondata(cfg: Config) -> Result<(), Box<dyn Error>> {
                         ),
                     };
                 }
-                if card == nameAff2 {
+                if card == name_aff2 {
                     upgrades.insert(
                         v["affinity_variants"][1].as_str().unwrap().to_string(),
                         serde_json::json!({
@@ -360,7 +360,7 @@ pub async fn jsondata(cfg: Config) -> Result<(), Box<dyn Error>> {
         for (map, cards) in maps.get("U3").unwrap().as_object().unwrap() {
             for card in cards.as_array().unwrap() {
                 let card = card.as_str().unwrap().to_string();
-                if card == nameAff1 {
+                if card == name_aff1 {
                     match aff {
                         true => upgrades.insert(
                             v["affinity_variants"][0].as_str().unwrap().to_string(),
@@ -384,7 +384,7 @@ pub async fn jsondata(cfg: Config) -> Result<(), Box<dyn Error>> {
                         ),
                     };
                 }
-                if card == nameAff2 {
+                if card == name_aff2 {
                     upgrades.insert(
                         v["affinity_variants"][1].as_str().unwrap().to_string(),
                         serde_json::json!({
