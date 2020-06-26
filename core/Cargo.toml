@@ -10,5 +10,5 @@ base64 = "0.12"
 serde_json = { version = "1.0", features = ["preserve_order"] }
 reqwest = { version = "0.10", features = ["json", "cookies"] }
 ring = "0.16"
-directories = { version = "2" }
+directories = "2"
 anyhow = "1.0"

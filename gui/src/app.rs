@@ -2,6 +2,7 @@ use iced::{
     button, scrollable, text_input, Align, Application, Button, Column, Command, Container,
     Element, HorizontalAlignment, Length, Radio, Row, Scrollable, Settings, Text, TextInput,
 };
+use native_dialog::{Dialog, OpenMultipleFile};
 use serde::{Deserialize, Serialize};
 
 use wtools::{commands::upload, storage, Config, PathType};
@@ -27,7 +28,6 @@ struct State {
     lockfile: String,
     chosen_command: ChosenCommand,
     file_button: button::State,
-    folder_button: button::State,
     execute_button: button::State,
     selected_files: PathType,
     upload_scrollable: scrollable::State,
@@ -64,7 +64,7 @@ enum Message {
     LoginPasswordChanged(String),
     CommandSelected(ChosenCommand),
     FileButtonPressed,
-    FolderButtonPressed,
+    FilesSelected(Result<PathType, ()>),
     ExecuteButtonPressed,
     Executed(Result<(), ()>),
 }
@@ -126,37 +126,16 @@ impl Application for App {
                         state.chosen_command = selected;
                     }
                     Message::FileButtonPressed => {
-                        let result = nfd::open_file_multiple_dialog(None, None).unwrap();
-
-                        match result {
-                            nfd::Response::Okay(file_path) => {
-                                if let ChosenCommand::Upload = state.chosen_command {
-                                    state.selected_files =
-                                        PathType::File(std::path::PathBuf::from(file_path))
-                                }
-                            }
-                            nfd::Response::OkayMultiple(files) => {
-                                if let ChosenCommand::Upload = state.chosen_command {
-                                    let mut temp: Vec<std::path::PathBuf> = Vec::new();
-                                    for f in files {
-                                        temp.push(std::path::PathBuf::from(f));
-                                    }
-                                    state.selected_files = PathType::Files(temp)
-                                }
-                            }
-                            nfd::Response::Cancel => println!("User canceled"),
+                        if let ChosenCommand::Upload = state.chosen_command {
+                            return Command::perform(file_dialog(), Message::FilesSelected);
                         }
                     }
-                    Message::FolderButtonPressed => {
-                        let result = nfd::open_pick_folder(None).unwrap();
-
-                        match result {
-                            nfd::Response::Okay(folder_path) => {
-                                state.selected_files =
-                                    PathType::Folder(std::path::PathBuf::from(folder_path))
+                    Message::FilesSelected(files) => {
+                        if let ChosenCommand::Upload = state.chosen_command {
+                            state.selected_files = match files {
+                                Ok(p) => p,
+                                Err(_) => PathType::default(),
                             }
-                            nfd::Response::Cancel => println!("User canceled"),
-                            _ => (),
                         }
                     }
                     Message::ExecuteButtonPressed => {
@@ -213,7 +192,6 @@ impl Application for App {
                 lp_input_value,
                 chosen_command,
                 file_button,
-                folder_button,
                 execute_button,
                 selected_files,
                 upload_scrollable,
@@ -302,10 +280,6 @@ impl Application for App {
                                             .on_press(Message::FileButtonPressed),
                                     )
                                     .push(
-                                        Button::new(folder_button, Text::new("Select Folder"))
-                                            .on_press(Message::FolderButtonPressed),
-                                    )
-                                    .push(
                                         Button::new(execute_button, Text::new("Execute"))
                                             .on_press(Message::ExecuteButtonPressed),
                                     ),
@@ -339,6 +313,22 @@ impl Application for App {
             }
         }
     }
+}
+
+async fn file_dialog() -> Result<PathType, ()> {
+    let dialog = OpenMultipleFile {
+        dir: None,
+        filter: None,
+    };
+    let result = tokio::task::spawn_blocking(|| dialog.show().unwrap())
+        .await
+        .unwrap();
+
+    let mut temp: Vec<std::path::PathBuf> = Vec::new();
+    for f in result {
+        temp.push(std::path::PathBuf::from(f));
+    }
+    Ok(PathType::Files(temp))
 }
 
 fn loading_message() -> Element<'static, Message> {
