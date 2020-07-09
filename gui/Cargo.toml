@@ -13,7 +13,7 @@ winres = "0.1"
 wtools = {path = "../core"}
 
 base64 = "0.12"
-directories-next = "1"
+directories = "3"
 iced = {git = "https://github.com/hecrj/iced.git", branch = "master", features = ["tokio", "glow"]}
 native-dialog = {version = "0", features = ["windows_dpi_awareness", "windows_visual_styles"]}
 serde = {version = "1.0", features = ["derive"]}

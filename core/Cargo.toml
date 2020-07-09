@@ -7,7 +7,7 @@ version = "0.1.0"
 [dependencies]
 anyhow = "1.0"
 base64 = "0.12"
-directories-next = "1"
+directories = "3"
 reqwest = {version = "0.10", features = ["json", "cookies"]}
 ring = "0.16"
 serde_json = {version = "1.0", features = ["preserve_order"]}
