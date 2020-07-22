@@ -1,7 +1,7 @@
 use clap::Clap;
 
 use wtools::{
-    commands::{delete::*, list::*, login::*, rename::*, upload::*},
+    commands::{delete::*, list::*, login::*, purge::*, rename::*, upload::*},
     Config,
 };
 
@@ -40,6 +40,14 @@ enum Subcommand {
         path: Option<std::path::PathBuf>,
     },
     Login,
+    Purge {
+        #[clap(long)]
+        forcelinkupdate: bool,
+
+        pages: Option<String>,
+        #[clap(parse(from_os_str))]
+        file: Option<std::path::PathBuf>,
+    },
     #[cfg(feature = "skylords-wiki")]
     Skylords {
         #[clap(arg_enum)]
@@ -153,6 +161,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Subcommand::Login => login(Config::new(cli.name, cli.password)).await?,
         Subcommand::Move { input } => {
             move_pages(Config::new(cli.name, cli.password).with_pathbuf(input)).await?
+        }
+        Subcommand::Purge {
+            forcelinkupdate,
+            pages,
+            ..
+        } => {
+            println!("{:?}", pages.unwrap());
+            purge().await
         }
         Subcommand::Upload { input } => {
             upload(Config::new(cli.name, cli.password).with_pathbuf(input)).await?
