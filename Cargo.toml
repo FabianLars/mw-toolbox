@@ -2,16 +2,14 @@
 
 [workspace]
 members = [
-    "core",
-
-    "cli",
-    "gui",
-
-    "league",
-    "skylords"
+  "core",
+  "cli",
+  "gui",
+  "league",
+  "skylords",
 ]
 # resolver = "2"
 
 [profile.release]
-lto=true
-panic='abort'
+lto = true
+panic = 'abort'
