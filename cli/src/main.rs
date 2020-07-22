@@ -68,6 +68,7 @@ enum LeagueType {
     Champions,
     Discount,
     Discounts,
+    Positions,
     Random,
     Rotation,
     Rotations,
@@ -179,6 +180,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             LeagueType::Discount | LeagueType::Discounts => {
                 discounts(Config::new(cli.name, cli.password).with_pathbuf_opt(path)).await?
             }
+            LeagueType::Positions => positions(Config::new(cli.name, cli.password)).await?,
             LeagueType::Random => {
                 random(Config::new(cli.name, cli.password).with_pathbuf_opt(path)).await?
             }

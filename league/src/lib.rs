@@ -2,6 +2,7 @@ use std::{collections::HashMap, error::Error, fs::File};
 
 use futures::{future::TryFutureExt, try_join};
 use reqwest::header::{HeaderMap, ACCEPT, AUTHORIZATION};
+use select::{document::Document, predicate::Class};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -701,6 +702,119 @@ pub async fn set(cfg: Config) -> Result<(), Box<dyn Error>> {
         fut_champion,
         fut_tft
     )?;
+
+    Ok(())
+}
+
+pub async fn positions(cfg: Config) -> Result<(), Box<dyn Error>> {
+    let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
+    let opgg = "https://euw.op.gg/champion/statistics";
+    let client = reqwest::Client::builder().cookie_store(true).build()?;
+
+    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
+
+    //let mut resp = client.get(opgg).send().await?.text().await?;
+    let resp = client.get(opgg).send().await?;
+    assert!(resp.status().is_success());
+
+    let document = Document::from(resp.text().await?.as_str());
+
+    let mut content = String::new();
+
+    for node in document.find(Class("champion-index__champion-item")) {
+        content.push_str("|");
+        content.push_str(
+            &node
+                .find(Class("champion-index__champion-item__name"))
+                .next()
+                .unwrap()
+                .text(),
+        );
+
+        content.push_str(" = ");
+        if node
+            .attr("class")
+            .unwrap()
+            .contains("champion-index__champion-item--TOP")
+        {
+            content.push_str("[[Kategorie:Oben Champion]]");
+        }
+        if node
+            .attr("class")
+            .unwrap()
+            .contains("champion-index__champion-item--MID")
+        {
+            content.push_str("[[Kategorie:Mitte Champion]]");
+        }
+        if node
+            .attr("class")
+            .unwrap()
+            .contains("champion-index__champion-item--ADC")
+        {
+            content.push_str("[[Kategorie:Unten Champion]]");
+        }
+        if node
+            .attr("class")
+            .unwrap()
+            .contains("champion-index__champion-item--SUPPORT")
+        {
+            content.push_str("[[Kategorie:Unterstützer Champion]]");
+        }
+        if node
+            .attr("class")
+            .unwrap()
+            .contains("champion-index__champion-item--JUNGLE")
+        {
+            content.push_str("[[Kategorie:Dschungel Champion]]");
+        }
+        content.push_str("\n");
+    }
+
+    let json: Value = client
+        .get(
+            reqwest::Url::parse_with_params(
+                wiki_api_url,
+                &[
+                    ("action", "query"),
+                    ("format", "json"),
+                    ("prop", "info"),
+                    ("intoken", "edit"),
+                    ("titles", "Vorlage:Position category/Stats"),
+                ],
+            )
+            .unwrap(),
+        )
+        .send()
+        .await?
+        .json()
+        .await?;
+
+    let (_i, o) = json["query"]["pages"]
+        .as_object()
+        .unwrap()
+        .into_iter()
+        .next()
+        .unwrap();
+    let edit_token = String::from(o["edittoken"].as_str().unwrap());
+
+    client
+        .post(wiki_api_url)
+        .form(&[
+            ("action", "edit"),
+            ("reason", "automated action"),
+            ("bot", "1"),
+            ("title", "Vorlage:Position category/Stats"),
+            (
+                "text",
+                &format!(
+                    "<!-- Fetched from op.gg --><includeonly>{{{{#switch:{{{{{{1}}}}}}\n{}}}}}</includeonly><noinclude>[[Kategorie:Update nach neuem Patch notwendig]][[Kategorie:Update nach neuem Champion notwendig]]</noinclude>",
+                    &content
+                ),
+            ),
+            ("token", &edit_token),
+        ])
+        .send()
+        .await?;
 
     Ok(())
 }
