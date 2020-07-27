@@ -1,7 +1,4 @@
-use iced::{
-    button, scrollable, text_input, Align, Application, Button, Column, Command, Container,
-    Element, HorizontalAlignment, Length, Radio, Row, Scrollable, Settings, Text, TextInput,
-};
+use iced::{button, scrollable, text_input, Align, Application, Button, Column, Command, Container, Element, HorizontalAlignment, Length, Radio, Row, Scrollable, Settings, Text, TextInput, Checkbox};
 use native_dialog::{Dialog, OpenMultipleFile};
 use serde::{Deserialize, Serialize};
 
@@ -21,12 +18,21 @@ enum App {
 
 #[derive(Debug, Default)]
 struct State {
+    active_tab: Tab,
+    btn_account: button::State,
+    btn_delete: button::State,
+    btn_list: button::State,
+    btn_upload: button::State,
+
     ln_input: text_input::State,
     ln_input_value: String,
     lp_input: text_input::State,
     lp_input_value: String,
+    wiki_url_input: text_input::State,
+    wiki_url_input_value: String,
+    is_persistent: bool,
+
     lockfile: String,
-    chosen_command: ChosenCommand,
     file_button: button::State,
     execute_button: button::State,
     selected_files: PathType,
@@ -36,33 +42,26 @@ struct State {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum ChosenCommand {
+enum Tab {
+    Account,
     Delete,
     List,
     Upload,
 }
 
-impl Default for ChosenCommand {
-    fn default() -> Self {
-        ChosenCommand::List
-    }
-}
-
-impl ChosenCommand {
-    pub const ALL: [ChosenCommand; 3] = [
-        ChosenCommand::Delete,
-        ChosenCommand::List,
-        ChosenCommand::Upload,
-    ];
+impl Default for Tab {
+    fn default() -> Self { Tab::Account }
 }
 
 #[derive(Debug, Clone)]
 enum Message {
     Loaded(std::result::Result<SavedState, ()>),
     Saved(std::result::Result<(), ()>),
+    TabSelected(Tab),
     LoginNameChanged(String),
     LoginPasswordChanged(String),
-    CommandSelected(ChosenCommand),
+    WikiUrlChanged(String),
+    CheckboxPersistentLogin(bool),
     FileButtonPressed,
     FilesSelected(Result<PathType, ()>),
     ExecuteButtonPressed,
@@ -101,6 +100,7 @@ impl Application for App {
                         *self = App::Loaded(State {
                             ln_input_value: state.ln_input_value,
                             lockfile: state.lockfile,
+                            wiki_url_input_value: state.wikiurl,
                             ..State::default()
                         });
                     }
@@ -116,22 +116,28 @@ impl Application for App {
                 let mut saved = false;
 
                 match message {
+                    Message::WikiUrlChanged(value) => {
+                        state.wiki_url_input_value = value;
+                    }
                     Message::LoginNameChanged(value) => {
                         state.ln_input_value = value;
                     }
                     Message::LoginPasswordChanged(value) => {
                         state.lp_input_value = value;
                     }
-                    Message::CommandSelected(selected) => {
-                        state.chosen_command = selected;
+                    Message::TabSelected(selected) => {
+                        state.active_tab = selected;
+                    }
+                    Message::CheckboxPersistentLogin(toggle) => {
+                        state.is_persistent = toggle;
                     }
                     Message::FileButtonPressed => {
-                        if let ChosenCommand::Upload = state.chosen_command {
+                        if let Tab::Upload = state.active_tab {
                             return Command::perform(file_dialog(), Message::FilesSelected);
                         }
                     }
                     Message::FilesSelected(files) => {
-                        if let ChosenCommand::Upload = state.chosen_command {
+                        if let Tab::Upload = state.active_tab {
                             state.selected_files = match files {
                                 Ok(p) => p,
                                 Err(_) => PathType::default(),
@@ -139,14 +145,14 @@ impl Application for App {
                         }
                     }
                     Message::ExecuteButtonPressed => {
-                        if let ChosenCommand::Upload = state.chosen_command {
+                        if let Tab::Upload = state.active_tab {
                             return Command::perform(
                                 upload::from_gui(
                                     Config::new(
                                         state.ln_input_value.clone(),
                                         state.lp_input_value.clone(),
                                     )
-                                    .with_pathtype(state.selected_files.clone()),
+                                        .with_pathtype(state.selected_files.clone()),
                                 ),
                                 Message::Executed,
                             );
@@ -171,8 +177,9 @@ impl Application for App {
                         SavedState {
                             ln_input_value: state.ln_input_value.clone(),
                             lockfile: state.lockfile.clone(),
+                            wikiurl: state.wiki_url_input_value.clone(),
                         }
-                        .save(),
+                            .save(),
                         Message::Saved,
                     )
                 } else {
@@ -186,59 +193,49 @@ impl Application for App {
         match self {
             App::Loading => loading_message(),
             App::Loaded(State {
+                active_tab,
+                btn_account,
+                btn_delete,
+                btn_list,
+                btn_upload,
                 ln_input,
                 ln_input_value,
                 lp_input,
                 lp_input_value,
-                chosen_command,
+                wiki_url_input,
+                wiki_url_input_value,
+                is_persistent,
                 file_button,
                 execute_button,
                 selected_files,
                 upload_scrollable,
                 ..
             }) => {
-                let navbar = Container::new(
-                    Column::new()
+                let navbar = Row::new().padding(10)
                         .push(
-                            Row::new()
-                                .padding(10)
-                                .spacing(10)
-                                .push(
-                                    TextInput::new(
-                                        ln_input,
-                                        "Fandom Username",
-                                        ln_input_value,
-                                        Message::LoginNameChanged,
-                                    )
-                                    .size(40),
-                                )
-                                .push(
-                                    TextInput::new(
-                                        lp_input,
-                                        "Fandom Password",
-                                        lp_input_value,
-                                        Message::LoginPasswordChanged,
-                                    )
-                                    .size(40)
-                                    .password(),
-                                ),
+                            Button::new(
+                                btn_account,
+                                Container::new(Text::new("Account")).padding(5),
+                            ).on_press(Message::TabSelected(Tab::Account))
                         )
-                        // TODO: Tabber instead of RadioButtons
-                        .push(ChosenCommand::ALL.iter().cloned().fold(
-                            Row::new().padding(10),
-                            |row, cmd| {
-                                row.push(
-                                    Radio::new(
-                                        cmd,
-                                        &format!("{:?}", cmd),
-                                        Some(chosen_command.to_owned()),
-                                        Message::CommandSelected,
-                                    )
-                                    .width(Length::FillPortion(1)),
-                                )
-                            },
-                        )),
-                );
+                        .push(
+                            Button::new(
+                                btn_delete,
+                                Container::new(Text::new("Delete")).padding(5),
+                            ).on_press(Message::TabSelected(Tab::Delete))
+                        )
+                        .push(
+                            Button::new(
+                                btn_list,
+                                Container::new(Text::new("List")).padding(5),
+                            ).on_press(Message::TabSelected(Tab::List))
+                        )
+                        .push(
+                            Button::new(
+                                btn_upload,
+                                Container::new(Text::new("Upload")).padding(5),
+                            ).on_press(Message::TabSelected(Tab::Upload))
+                        );
 
                 let mut text_files = String::new();
                 match selected_files {
@@ -260,15 +257,32 @@ impl Application for App {
                     }
                 }
 
-                let cmd_container = Container::new(match chosen_command {
-                    ChosenCommand::Upload => Column::new()
+                let tab_container = Container::new(match active_tab {
+                    Tab::Account => Column::new().padding(10).spacing(10)
+                        .push(
+                            TextInput::new(wiki_url_input, "Fandom Wiki URL (api.php)", wiki_url_input_value, Message::WikiUrlChanged)
+                                .size(40)
+                        )
+                        .push(Row::new()
+                            .push(
+                                TextInput::new(ln_input, "Fandom Username", ln_input_value, Message::LoginNameChanged).size(40)
+                            )
+                            .push(
+                                TextInput::new(lp_input, "Fandom Password", lp_input_value, Message::LoginPasswordChanged).size(40).password()
+                            )
+                        )
+                        .push(Checkbox::new(
+                        *is_persistent, "Stay logged in (stored locally on your device)", Message::CheckboxPersistentLogin
+                        )),
+
+                    Tab::Upload => Column::new()
                         .push(
                             Container::new(
                                 Scrollable::new(upload_scrollable).push(Text::new(text_files)),
                             )
-                            .width(Length::Fill)
-                            .height(Length::Fill)
-                            .align_x(Align::Center),
+                                .width(Length::Fill)
+                                .height(Length::Fill)
+                                .align_x(Align::Center),
                         )
                         .push(
                             Container::new(
@@ -284,9 +298,9 @@ impl Application for App {
                                             .on_press(Message::ExecuteButtonPressed),
                                     ),
                             )
-                            .width(Length::Fill)
-                            .height(Length::Shrink)
-                            .align_x(Align::Center),
+                                .width(Length::Fill)
+                                .height(Length::Shrink)
+                                .align_x(Align::Center),
                         ),
 
                     _ => Column::new(),
@@ -295,13 +309,12 @@ impl Application for App {
                 let content = Column::new()
                     .push(
                         navbar
-                            .height(Length::FillPortion(2))
-                            .style(style::Theme::Dark),
+                            .height(Length::FillPortion(1))
+                            .width(Length::Fill)
                     )
                     .push(
-                        cmd_container
+                        tab_container
                             .height(Length::FillPortion(10))
-                            .style(style::Theme::Dark),
                     );
 
                 Container::new(content)
@@ -309,6 +322,7 @@ impl Application for App {
                     .height(Length::Fill)
                     .center_x()
                     .center_y()
+                    .style(style::Theme::Dark)
                     .into()
             }
         }
@@ -337,35 +351,39 @@ fn loading_message() -> Element<'static, Message> {
             .horizontal_alignment(HorizontalAlignment::Center)
             .size(50),
     )
-    .width(Length::Fill)
-    .height(Length::Fill)
-    .center_y()
-    .into()
+        .width(Length::Fill)
+        .height(Length::Fill)
+        .center_y()
+        .into()
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct SavedState {
     ln_input_value: String,
     lockfile: String,
+    wikiurl: String,
 }
 
 impl SavedState {
     async fn load() -> Result<SavedState, ()> {
         Ok(Self {
             ln_input_value: storage::get_secure(&base64::encode("lgname"), "lgnamead")
-                .await
-                .map_err(|_| ())?,
+                .await.unwrap_or(String::new()),
             lockfile: storage::get_secure(&base64::encode("lockfile"), "lockfilead")
-                .await
-                .map_err(|_| ())?,
+                .await.unwrap_or(String::new()),
+            wikiurl: storage::get_secure(&base64::encode("wikiurl"), "wikiurlad")
+                .await.unwrap_or(String::from("https://leagueoflegends.fandom.com/de/api.php")),
         })
     }
 
     async fn save(self) -> Result<(), ()> {
         storage::insert_secure(&base64::encode("lgname"), &self.ln_input_value, "lgnamead")
             .await
-            .map_err(|_| ())?;
+            .map_err(|e| println!("{:?}", e))?;
         storage::insert_secure(&base64::encode("lockfile"), &self.lockfile, "lockfilead")
+            .await
+            .map_err(|_| ())?;
+        storage::insert_secure(&base64::encode("wikiurl"), &self.wikiurl, "wikiurlad")
             .await
             .map_err(|_| ())?;
 

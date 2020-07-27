@@ -52,6 +52,10 @@ pub(crate) async fn insert(key: &str, val: &str) -> Result<()> {
 async fn load() -> Result<String> {
     let mut contents = String::new();
 
+    if let Some(dir) = path().parent() {
+        tokio::fs::create_dir_all(dir).await?;
+    }
+
     let mut file = tokio::fs::File::open(path()).await?;
 
     file.read_to_string(&mut contents).await?;
@@ -60,7 +64,11 @@ async fn load() -> Result<String> {
 }
 
 pub(crate) async fn get(key: &str) -> Result<String> {
-    let contents = load().await?;
+    let contents = load().await.unwrap_or(String::new());
+
+    if contents.is_empty() {
+        return Err(anyhow!("empty appdata"))
+    }
 
     let json: Value = serde_json::from_str(&contents)?;
 
