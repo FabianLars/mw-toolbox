@@ -103,7 +103,7 @@ pub async fn get_secure(key: &str, to_ad: &str) -> Result<String> {
 
     let lskey = LessSafeKey::new(
         UnboundKey::new(&CHACHA20_POLY1305, env!("WTOOLS_AEAD_KEY").as_bytes())
-            .expect("error creating unboundkey"),
+            .map_err(|_| anyhow!("lskey error"))?,
     );
 
     let (nonce, mut sealed) = data.split_at_mut(12);
