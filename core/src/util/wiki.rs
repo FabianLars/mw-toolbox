@@ -46,24 +46,24 @@ pub async fn login_persistent(
     let name;
     let pw;
 
-    if let Ok(n) = storage::get_secure(&base64::encode("lgname"), "lgnamead").await {
-        name = n;
-    } else if botname.is_some() {
+    if botname.is_some() {
         name = botname.unwrap();
         storage::insert_secure(&base64::encode("lgname"), &name, "lgnamead").await?;
     } else {
-        println!("Name");
-        return Err(anyhow!("Missing loginname"));
+        name = match storage::get_secure(&base64::encode("lgname"), "lgnamead").await {
+            Ok(n) => n,
+            Err(e) => panic!("Missing loginname - {}", e)
+        }
     }
 
-    if let Ok(p) = storage::get_secure(&base64::encode("wk_botpw"), &name).await {
-        pw = p;
-    } else if botpw.is_some() {
+    if botpw.is_some() {
         pw = botpw.unwrap();
         storage::insert_secure(&base64::encode("wk_botpw"), &pw, &name).await?;
     } else {
-        println!("pw");
-        return Err(anyhow!("Missing loginname"));
+        pw = match storage::get_secure(&base64::encode("wk_botpw"), &name).await {
+            Ok(p) => p,
+            Err(e) => panic!("Missing loginname - {}", e)
+        }
     }
 
     let json: Value = client
