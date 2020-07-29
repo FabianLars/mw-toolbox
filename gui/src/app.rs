@@ -37,8 +37,8 @@ struct State {
     execute_button: button::State,
     selected_files: PathType,
     upload_scrollable: scrollable::State,
-    dirty: bool,
     saving: bool,
+    needs_saving: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -81,14 +81,14 @@ impl Application for App {
     }
 
     fn title(&self) -> String {
-        let dirty = match self {
+        let needs_saving = match self {
             App::Loading => false,
-            App::Loaded(state) => state.dirty,
+            App::Loaded(state) => state.needs_saving,
         };
 
         format!(
             "wtools by FabianLars{}",
-            if dirty { " - *Unsaved Changes" } else { "" }
+            if needs_saving { " - *Unsaved Changes" } else { "" }
         )
     }
 
@@ -99,7 +99,9 @@ impl Application for App {
                     Message::Loaded(Ok(state)) => {
                         *self = App::Loaded(State {
                             ln_input_value: state.ln_input_value,
+                            lp_input_value: state.lp_input_value,
                             lockfile: state.lockfile,
+                            is_persistent: state.is_persistent,
                             wiki_url_input_value: state.wikiurl,
                             ..State::default()
                         });
@@ -118,18 +120,22 @@ impl Application for App {
                 match message {
                     Message::WikiUrlChanged(value) => {
                         state.wiki_url_input_value = value;
+                        if state.is_persistent { state.needs_saving = true; }
                     }
                     Message::LoginNameChanged(value) => {
                         state.ln_input_value = value;
+                        if state.is_persistent { state.needs_saving = true; }
                     }
                     Message::LoginPasswordChanged(value) => {
                         state.lp_input_value = value;
+                        if state.is_persistent { state.needs_saving = true; }
                     }
                     Message::TabSelected(selected) => {
                         state.active_tab = selected;
                     }
                     Message::CheckboxPersistentLogin(toggle) => {
                         state.is_persistent = toggle;
+                        if state.is_persistent { state.needs_saving = true; }
                     }
                     Message::FileButtonPressed => {
                         if let Tab::Upload = state.active_tab {
@@ -161,23 +167,22 @@ impl Application for App {
                     Message::Saved(_) => {
                         state.saving = false;
                         saved = true;
+                        state.needs_saving = false;
                     }
                     _ => {}
                 }
 
-                if !saved {
-                    state.dirty = true;
-                }
-
-                if state.dirty && !state.saving {
-                    state.dirty = false;
+                if state.needs_saving && !saved && state.is_persistent {
+                    state.needs_saving = false;
                     state.saving = true;
 
                     Command::perform(
                         SavedState {
                             ln_input_value: state.ln_input_value.clone(),
-                            lockfile: state.lockfile.clone(),
+                            lp_input_value: state.lp_input_value.clone(),
                             wikiurl: state.wiki_url_input_value.clone(),
+                            is_persistent: state.is_persistent.clone(),
+                            lockfile: state.lockfile.clone(),
                         }
                             .save(),
                         Message::Saved,
@@ -362,17 +367,24 @@ struct SavedState {
     ln_input_value: String,
     lockfile: String,
     wikiurl: String,
+    lp_input_value: String,
+    is_persistent: bool
 }
 
 impl SavedState {
     async fn load() -> Result<SavedState, ()> {
+        let loginname = storage::get_secure(&base64::encode("lgname"), "lgnamead")
+            .await.unwrap_or(String::new());
         Ok(Self {
-            ln_input_value: storage::get_secure(&base64::encode("lgname"), "lgnamead")
+            lp_input_value: storage::get_secure(&base64::encode("wk_botpw"), &loginname)
                 .await.unwrap_or(String::new()),
-            lockfile: storage::get_secure(&base64::encode("lockfile"), "lockfilead")
-                .await.unwrap_or(String::new()),
+            ln_input_value: loginname,
             wikiurl: storage::get_secure(&base64::encode("wikiurl"), "wikiurlad")
                 .await.unwrap_or(String::from("https://leagueoflegends.fandom.com/de/api.php")),
+            is_persistent: storage::get_secure(&base64::encode("is_persistent"), "is_persistentad")
+                .await.unwrap_or(String::from("false")).parse::<bool>().unwrap_or(false),
+            lockfile: storage::get_secure(&base64::encode("lockfile"), "lockfilead")
+                .await.unwrap_or(String::new()),
         })
     }
 
@@ -380,10 +392,16 @@ impl SavedState {
         storage::insert_secure(&base64::encode("lgname"), &self.ln_input_value, "lgnamead")
             .await
             .map_err(|e| println!("{:?}", e))?;
+        storage::insert_secure(&base64::encode("wk_botpw"), &self.lp_input_value, &self.ln_input_value)
+            .await
+            .map_err(|_| ())?;
         storage::insert_secure(&base64::encode("lockfile"), &self.lockfile, "lockfilead")
             .await
             .map_err(|_| ())?;
         storage::insert_secure(&base64::encode("wikiurl"), &self.wikiurl, "wikiurlad")
+            .await
+            .map_err(|_| ())?;
+        storage::insert_secure(&base64::encode("is_persistent"), &self.is_persistent.to_string(), "is_persistentad")
             .await
             .map_err(|_| ())?;
 
