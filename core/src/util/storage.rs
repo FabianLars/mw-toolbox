@@ -29,8 +29,8 @@ pub(crate) async fn insert(key: &str, val: &str) -> Result<()> {
     {
         {
             json = match load().await {
-                Ok(c) => serde_json::from_str(&c).unwrap(),
-                Err(_) => json!({ "wtools": "persistent data" }),
+                Ok(c) if !c.is_empty() => serde_json::from_str(&c).unwrap_or(json!({ "wtools": "persistent data" })),
+                _ => json!({ "wtools": "persistent data" }),
             };
 
             json.as_object_mut()
