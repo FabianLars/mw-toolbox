@@ -263,7 +263,7 @@ pub async fn jsondata(cfg: Config) -> Result<(), Box<dyn Error>> {
             v["size"].take();
             v["counter"].take();
             v["weapon_type"].take();
-            if v.get("type").unwrap().as_str().unwrap() == "Spelling" {
+            if v.get("type").unwrap().as_str().unwrap() == "Spell" {
                 v["damage"].take();
                 v["health"].take();
             }
