@@ -15,6 +15,4 @@ wtools = {path = "../core"}
 directories = "3"
 iced = {git = "https://github.com/hecrj/iced.git", branch = "master", features = ["tokio", "glow"]}
 native-dialog = {version = "0", features = ["windows_dpi_awareness", "windows_visual_styles"]}
-serde = {version = "1.0", features = ["derive"]}
-serde_json = {version = "1.0", features = ["preserve_order"]}
-tokio = {version = "0.2", features = ["macros", "fs", "time"]}
+tokio = "0.2"

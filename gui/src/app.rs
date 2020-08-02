@@ -3,7 +3,6 @@ use iced::{
     Container, Element, HorizontalAlignment, Length, Row, Scrollable, Settings, Text, TextInput,
 };
 use native_dialog::{Dialog, OpenMultipleFile};
-use serde::{Deserialize, Serialize};
 
 use wtools::{commands::upload, storage, Config, PathType};
 
@@ -379,7 +378,7 @@ fn loading_message() -> Element<'static, Message> {
     .into()
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone)]
 struct SavedState {
     ln_input_value: String,
     lockfile: String,
