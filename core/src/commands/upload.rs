@@ -4,7 +4,7 @@ use serde_json::Value;
 use crate::util::{config::*, wiki};
 
 pub async fn from_gui(cfg: Config) -> Result<(), ()> {
-    Ok(upload(cfg).await.unwrap())
+    upload(cfg).await.map_err(|e| println!("{:?}", e))
 }
 
 pub async fn upload(cfg: Config) -> Result<(), Box<dyn std::error::Error>> {
@@ -14,11 +14,11 @@ pub async fn upload(cfg: Config) -> Result<(), Box<dyn std::error::Error>> {
     let mut pages = "".to_owned();
     let mut files: Vec<std::path::PathBuf> = Vec::new();
 
-    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
 
     match cfg.path {
         PathType::File(x) => {
-            files.push(x.clone());
+            files.push(x);
         }
         PathType::Files(v) => files = v,
         PathType::Folder(x) => {

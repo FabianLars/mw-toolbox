@@ -1,9 +1,9 @@
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use serde_json::Value;
 
 use crate::util::storage;
 
-pub async fn login(client: &reqwest::Client, botname: String, botpw: String) -> Result<()> {
+pub async fn login(client: &reqwest::Client, botname: &str, botpw: &str) -> Result<()> {
     let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
 
     let json: Value = client
@@ -11,8 +11,8 @@ pub async fn login(client: &reqwest::Client, botname: String, botpw: String) -> 
         .form(&[
             ("action", "login"),
             ("format", "json"),
-            ("lgname", &botname),
-            ("lgpassword", &botpw),
+            ("lgname", botname),
+            ("lgpassword", botpw),
         ])
         .send()
         .await?
@@ -26,8 +26,8 @@ pub async fn login(client: &reqwest::Client, botname: String, botpw: String) -> 
         .form(&[
             ("action", "login"),
             ("format", "json"),
-            ("lgname", &botname),
-            ("lgpassword", &botpw),
+            ("lgname", botname),
+            ("lgpassword", botpw),
             ("lgtoken", &token),
         ])
         .send()
@@ -48,21 +48,21 @@ pub async fn login_persistent(
 
     if botname.is_some() {
         name = botname.unwrap();
-        storage::insert_secure(&base64::encode("lgname"), &name, "lgnamead").await?;
+        storage::insert_secure("d7f0942b", &name).await?;
     } else {
-        name = match storage::get_secure(&base64::encode("lgname"), "lgnamead").await {
+        name = match storage::get_secure("d7f0942b").await {
             Ok(n) => n,
-            Err(e) => panic!("Missing loginname - {}", e)
+            Err(e) => panic!("Missing loginname - {}", e),
         }
     }
 
     if botpw.is_some() {
         pw = botpw.unwrap();
-        storage::insert_secure(&base64::encode("wk_botpw"), &pw, &name).await?;
+        storage::insert_secure("b9c95dde", &pw).await?;
     } else {
-        pw = match storage::get_secure(&base64::encode("wk_botpw"), &name).await {
+        pw = match storage::get_secure("b9c95dde").await {
             Ok(p) => p,
-            Err(e) => panic!("Missing loginname - {}", e)
+            Err(e) => panic!("Missing loginname - {}", e),
         }
     }
 

@@ -14,7 +14,7 @@ pub async fn delete_pages(cfg: Config) -> Result<(), Box<dyn std::error::Error>>
     }
     pages.pop();
 
-    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
 
     let json: Value = client
         .post(wiki_api_url)

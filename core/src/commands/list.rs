@@ -17,7 +17,7 @@ pub async fn allpages(mut cfg: Config) -> Result<Vec<String>, Box<dyn Error>> {
 
     match cfg.parameter.clone() {
         Some(param) => {
-            if param == "all".to_string() {
+            if param == "all" {
                 for ns in namespaces {
                     cfg.path = PathType::File(format!("wtools_output{}.json", ns).parse().unwrap());
                     cfg.parameter = Some(format!("&apnamespace={}", ns));
@@ -121,7 +121,7 @@ pub async fn exturlusage(cfg: Config) -> Result<HashMap<String, Vec<String>>, Bo
     let mut continue_from = String::new();
     let mut results: HashMap<String, Vec<String>> = HashMap::new();
 
-    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
 
     while has_next {
         let json: Value = client.get(&("https://leagueoflegends.fandom.com/de/api.php?action=query&format=json&list=exturlusage&eulimit=5000".to_string() + &continue_from)).send().await?.json().await?;
@@ -130,11 +130,7 @@ pub async fn exturlusage(cfg: Config) -> Result<HashMap<String, Vec<String>>, Bo
             let title = x["title"].as_str().unwrap().to_string();
             let url = x["url"].as_str().unwrap().to_string();
 
-            if results.contains_key(&title) {
-                results.get_mut(&title).unwrap().push(url);
-            } else {
-                results.insert(title, vec![url]);
-            }
+            results.entry(title).or_insert_with(Vec::new).push(url);
         }
 
         match json.get("query-continue") {
@@ -185,7 +181,7 @@ async fn get_from_api(cfg: Config, long: &str, short: &str) -> Result<Vec<String
     let mut has_next: bool = true;
     let mut continue_from = String::new();
     let mut results: Vec<String> = Vec::new();
-    let parameter = cfg.parameter.unwrap_or("".to_string());
+    let parameter = cfg.parameter.unwrap_or_default();
     let getter = match short {
         "ac" => "*",
         _ => "title",
@@ -195,7 +191,7 @@ async fn get_from_api(cfg: Config, long: &str, short: &str) -> Result<Vec<String
         _ => "from",
     };
 
-    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
 
     while has_next {
         let temp: String;
@@ -232,7 +228,7 @@ async fn get_infobox_lists(cfg: Config, typ: &str) -> Result<Vec<String>, Box<dy
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let mut results: Vec<String> = Vec::new();
 
-    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
 
     let json: Value = client
         .get(

@@ -1,7 +1,8 @@
 use anyhow::{anyhow, Result};
-use ring::aead::{Aad, LessSafeKey, Nonce, UnboundKey, CHACHA20_POLY1305};
-use ring::rand::{SecureRandom, SystemRandom};
-use serde_json::{json, Value};
+use chacha20poly1305::aead::{Aead, NewAead};
+use chacha20poly1305::{Key, XChaCha20Poly1305, XNonce};
+use rand::prelude::*;
+use std::collections::BTreeMap;
 use tokio::prelude::*;
 
 fn path() -> std::path::PathBuf {
@@ -12,45 +13,13 @@ fn path() -> std::path::PathBuf {
             std::env::current_dir().unwrap()
         };
 
-    path.push("wtools.json");
+    path.push("wtools");
 
     path
 }
 
-pub(crate) async fn insert(key: &str, val: &str) -> Result<()> {
-    let path = path();
-
-    let mut json: Value;
-
-    if let Some(dir) = path.parent() {
-        tokio::fs::create_dir_all(dir).await?;
-    }
-
-    {
-        {
-            json = match load().await {
-                Ok(c) if !c.is_empty() => serde_json::from_str(&c).unwrap_or(json!({ "wtools": "persistent data" })),
-                _ => json!({ "wtools": "persistent data" }),
-            };
-
-            json.as_object_mut()
-                .unwrap()
-                .insert(key.to_string(), json!(val));
-        }
-
-        {
-            let mut file = tokio::fs::File::create(path).await?;
-
-            file.write_all(serde_json::to_string_pretty(&json)?.as_bytes())
-                .await?;
-        }
-    }
-
-    Ok(())
-}
-
-async fn load() -> Result<String> {
-    let mut contents = String::new();
+async fn load() -> Result<BTreeMap<String, Vec<u8>>> {
+    let mut contents = Vec::new();
 
     if let Some(dir) = path().parent() {
         tokio::fs::create_dir_all(dir).await?;
@@ -58,71 +27,102 @@ async fn load() -> Result<String> {
 
     let mut file = tokio::fs::File::open(path()).await?;
 
-    file.read_to_string(&mut contents).await?;
+    file.read_to_end(&mut contents).await?;
 
-    Ok(contents)
+    bincode::deserialize(&contents).map_err(|e| anyhow!("Error while deserializing: {:?}", e))
 }
 
-pub(crate) async fn get(key: &str) -> Result<String> {
-    let contents = load().await.unwrap_or(String::new());
+pub async fn get(key: &str) -> Result<String> {
+    String::from_utf8(get_u8(key).await?)
+        .map_err(|e| anyhow!("Error converting u8 to String: {:?}", e))
+}
 
-    if contents.is_empty() {
-        return Err(anyhow!("empty appdata"))
+async fn get_u8(key: &str) -> Result<Vec<u8>> {
+    let data = load().await.unwrap_or_default();
+
+    if data.is_empty() {
+        return Err(anyhow!("empty appdata"));
     }
 
-    let json: Value = serde_json::from_str(&contents)?;
-
-    if let Some(v) = json.get(key) {
-        Ok(v.as_str().unwrap().to_string())
+    if let Some(v) = data.get(key) {
+        Ok(v.to_vec())
     } else {
         Err(anyhow!("Error getting value by key from file"))
     }
 }
 
-pub async fn insert_secure(key: &str, val: &str, to_ad: &str) -> Result<()> {
-    let lskey = LessSafeKey::new(
-        UnboundKey::new(&CHACHA20_POLY1305, env!("WTOOLS_AEAD_KEY").as_bytes())
-            .map_err(|_| anyhow!("lskey error"))?,
-    );
+pub async fn get_secure(key: &str) -> Result<String> {
+    let data = get_u8(key).await?;
+    if data.len() <= 24 {
+        return Err(anyhow!("Missing data. Extracted value is too short"));
+    }
+    let cryptkey = Key::from_slice(env!("WTOOLS_AEAD_KEY").as_bytes());
+    let aead = XChaCha20Poly1305::new(cryptkey);
 
-    let mut data = vec![0; val.len() + env!("WTOOLS_SECRET").len() + 28];
-    let (nonce_storage, in_out) = data.split_at_mut(12);
-    let (in_out, tag_storage) = in_out.split_at_mut(env!("WTOOLS_SECRET").len() + val.len());
-    in_out.copy_from_slice(&[env!("WTOOLS_SECRET").as_bytes(), val.as_bytes()].concat());
+    let (nonced, ciphertext) = data.split_at(24);
+    let nonce = XNonce::from_slice(nonced);
 
-    SystemRandom::new()
-        .fill(nonce_storage)
-        .expect("couldn't random fill nonce");
-    let nonce = Nonce::try_assume_unique_for_key(nonce_storage).expect("try_assume_unique");
+    let plaintext = aead
+        .decrypt(nonce, ciphertext)
+        .map_err(|e| anyhow!("Error decrypting value: {:?}", e))?;
 
-    let tag = lskey
-        .seal_in_place_separate_tag(nonce, Aad::from(to_ad.as_bytes()), in_out)
-        .map_err(|_| anyhow!("seal in place"))?;
-    tag_storage.copy_from_slice(tag.as_ref());
+    let (_, plaintext) = plaintext.split_at(env!("WTOOLS_SECRET").len());
 
-    insert(key, &base64::encode(&data)).await
+    String::from_utf8(plaintext.to_vec())
+        .map_err(|e| anyhow!("Error converting decrypted u8-value to String: {:?}", e))
 }
 
-pub async fn get_secure(key: &str, to_ad: &str) -> Result<String> {
-    let mut data = base64::decode(get(key).await?)?;
-    if data.len() <= 12 {
-        return Err(anyhow!("data len <= 12"));
+pub async fn insert(key: &str, val: &str) -> Result<()> {
+    insert_u8(key, val.as_bytes().to_vec()).await
+}
+
+async fn insert_u8(key: &str, val: Vec<u8>) -> Result<()> {
+    let path = path();
+
+    let mut map: BTreeMap<String, Vec<u8>>;
+
+    if let Some(dir) = path.parent() {
+        tokio::fs::create_dir_all(dir).await?;
     }
 
-    let lskey = LessSafeKey::new(
-        UnboundKey::new(&CHACHA20_POLY1305, env!("WTOOLS_AEAD_KEY").as_bytes())
-            .map_err(|_| anyhow!("lskey error"))?,
-    );
+    {
+        {
+            map = match load().await {
+                Ok(c) if !c.is_empty() => c,
+                _ => BTreeMap::new(),
+            };
 
-    let (nonce, mut sealed) = data.split_at_mut(12);
-    //let (in_out, tag_storage) = in_out.split_at_mut(env!("WTOOLS_SECRET").len() + val.len());
-    let nonce = Nonce::try_assume_unique_for_key(nonce).expect("invalid length of nonce");
-    let unsealed = lskey
-        .open_in_place(nonce, Aad::from(to_ad.as_bytes()), &mut sealed)
-        .map_err(|_| anyhow!("open in place"))?;
-    let (_, unsealed) = unsealed.split_at(env!("WTOOLS_SECRET").len());
+            map.insert(key.to_string(), val);
+        }
 
-    ::std::str::from_utf8(unsealed)
-        .map(|s| s.to_string())
-        .map_err(|_| anyhow!("utf8 error"))
+        {
+            let mut file = tokio::fs::File::create(path).await?;
+
+            file.write_all(
+                &bincode::serialize(&map)
+                    .map_err(|e| anyhow!("Error while serializing: {:?}", e))?,
+            )
+            .await?;
+        }
+    }
+
+    Ok(())
+}
+
+pub async fn insert_secure(key: &str, val: &str) -> Result<()> {
+    let cryptkey = Key::from_slice(env!("WTOOLS_AEAD_KEY").as_bytes());
+    let aead = XChaCha20Poly1305::new(cryptkey);
+
+    let mut rng_nonce = [0u8; 24];
+    rand_chacha::ChaCha20Rng::from_entropy().fill(&mut rng_nonce[..]);
+
+    let nonce = XNonce::from_slice(&rng_nonce);
+    let mut ciphertext = aead
+        .encrypt(nonce, [env!("WTOOLS_SECRET"), val].concat().as_bytes())
+        .map_err(|e| anyhow!("Error encrypting value: {:?}", e))?;
+
+    let mut data = rng_nonce.to_vec();
+    data.append(&mut ciphertext);
+
+    insert_u8(key, data).await
 }

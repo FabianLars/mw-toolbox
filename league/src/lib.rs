@@ -298,7 +298,7 @@ pub async fn discounts(cfg: Config) -> Result<(), Box<dyn Error>> {
         start_date, end_date, angebote
     );
 
-    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
 
     let json: Value = client
         .get(reqwest::Url::parse_with_params(
@@ -349,7 +349,7 @@ pub async fn rotation(cfg: Config) -> Result<(), Box<dyn Error>> {
     let client = reqwest::Client::builder().cookie_store(true).build()?;
     let curr_date = rename_m(chrono::Utc::today().format("%-d. %B %Y").to_string());
 
-    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
 
     let champions: HashMap<i32, Champ> = client
         .get("https://api.fabianlars.de/wiki/champion")
@@ -488,7 +488,7 @@ pub async fn set(cfg: Config) -> Result<(), Box<dyn Error>> {
     let mut champion: String = String::new();
     let mut tft: String = String::new();
 
-    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
 
     let fut_token = async {
         let json: Value = client
@@ -711,7 +711,7 @@ pub async fn positions(cfg: Config) -> Result<(), Box<dyn Error>> {
     let opgg = "https://euw.op.gg/champion/statistics";
     let client = reqwest::Client::builder().cookie_store(true).build()?;
 
-    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
 
     //let mut resp = client.get(opgg).send().await?.text().await?;
     let resp = client.get(opgg).send().await?;
@@ -825,7 +825,7 @@ pub async fn random(cfg: Config) -> Result<(), Box<dyn Error>> {
 
     let client = reqwest::Client::builder().cookie_store(true).build()?;
 
-    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
 
     let champions: HashMap<i32, Champ> = client
         .get("https://api.fabianlars.de/wiki/champion")

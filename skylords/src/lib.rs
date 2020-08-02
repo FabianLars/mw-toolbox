@@ -66,7 +66,7 @@ pub async fn carddata(cfg: Config) -> Result<(), Box<dyn Error>> {
             for a in v.get("Abilities").unwrap().as_array().unwrap() {
                 let mut skip = false;
                 for ab in &card.abilities {
-                    if ab.name == a.get("Name").unwrap().as_str().unwrap().to_string() {
+                    if ab.name == a.get("Name").unwrap().as_str().unwrap() {
                         skip = true;
                     }
                 }
@@ -219,8 +219,6 @@ pub async fn jsondata(cfg: Config) -> Result<(), Box<dyn Error>> {
     let reader2 = std::io::BufReader::new(file2);
     let maps: Value = serde_json::from_reader(reader2)?;
 
-    let mut output: Map<String, Value> = Map::new();
-
     for (k, v) in json.as_object_mut().unwrap() {
         if k == "Satanael" {
             continue;
@@ -261,11 +259,11 @@ pub async fn jsondata(cfg: Config) -> Result<(), Box<dyn Error>> {
             v["health"][3].take();
         }
 
-        if v.get("type").unwrap().as_str().unwrap().to_string() != "Unit".to_string() {
+        if v.get("type").unwrap().as_str().unwrap() != "Unit" {
             v["size"].take();
             v["counter"].take();
             v["weapon_type"].take();
-            if v.get("type").unwrap().as_str().unwrap().to_string() == "Spelling".to_string() {
+            if v.get("type").unwrap().as_str().unwrap() == "Spelling" {
                 v["damage"].take();
                 v["health"].take();
             }

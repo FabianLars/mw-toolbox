@@ -14,12 +14,12 @@ pub async fn move_pages(cfg: Config) -> Result<(), Box<dyn Error>> {
         if line.starts_with("replace:") {
             continue;
         }
-        pages.push_str(line.split(";").nth(0).unwrap());
+        pages.push_str(line.split(';').next().unwrap());
         pages.push_str("|");
     }
     pages.pop();
 
-    wiki::login(&client, cfg.loginname, cfg.loginpassword).await?;
+    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
 
     let json: Value = client
         .post(wiki_api_url)
@@ -43,7 +43,7 @@ pub async fn move_pages(cfg: Config) -> Result<(), Box<dyn Error>> {
         .unwrap();
     let move_token = String::from(o["movetoken"].as_str().unwrap());
 
-    let first_line = input.lines().nth(0).unwrap().starts_with("replace:");
+    let first_line = input.lines().next().unwrap().starts_with("replace:");
     let replace: Vec<String>;
     let with: Vec<String>;
     let is_regex: bool;
@@ -51,15 +51,15 @@ pub async fn move_pages(cfg: Config) -> Result<(), Box<dyn Error>> {
     if first_line {
         let temp: Vec<String> = input
             .lines()
-            .nth(0)
+            .next()
             .unwrap()
             .replace("replace:", "")
-            .split(";")
+            .split(';')
             .map(|x| x.to_string())
             .collect();
 
-        replace = temp[0].split(",").map(|x| x.to_string()).collect();
-        with = temp[1].split(",").map(|x| x.to_string()).collect();
+        replace = temp[0].split(',').map(|x| x.to_string()).collect();
+        with = temp[1].split(',').map(|x| x.to_string()).collect();
         if replace.len() != with.len() {
             panic!("Check 'replace:' line in input file");
         }
@@ -83,9 +83,9 @@ pub async fn move_pages(cfg: Config) -> Result<(), Box<dyn Error>> {
             for (from, to) in replace.iter().zip(with.iter()) {
                 dest = dest.replace(from, to);
             }
-        } else if line.contains(";") {
-            let mut temp = line.split(";");
-            from = temp.nth(0).unwrap().to_string();
+        } else if line.contains(';') {
+            let mut temp = line.split(';');
+            from = temp.next().unwrap().to_string();
             dest = temp.last().unwrap().to_string();
         } else {
             panic!("Check input file or --replace array");

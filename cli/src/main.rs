@@ -163,11 +163,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Subcommand::Move { input } => {
             move_pages(Config::new(cli.name, cli.password).with_pathbuf(input)).await?
         }
-        Subcommand::Purge {
-            forcelinkupdate,
-            pages,
-            ..
-        } => {
+        Subcommand::Purge { pages, .. } => {
             println!("{:?}", pages.unwrap());
             purge().await
         }
