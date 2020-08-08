@@ -7,8 +7,6 @@ use wtools::{
 
 #[cfg(feature = "league-wiki")]
 use league::*;
-#[cfg(feature = "skylords-wiki")]
-use skylords::*;
 
 #[derive(Clap, Debug, PartialEq)]
 enum Subcommand {
@@ -48,14 +46,6 @@ enum Subcommand {
         #[clap(parse(from_os_str))]
         file: Option<std::path::PathBuf>,
     },
-    #[cfg(feature = "skylords-wiki")]
-    Skylords {
-        #[clap(arg_enum)]
-        skylords_type: SkylordsType,
-
-        #[clap(short, long, parse(from_os_str))]
-        path: Option<std::path::PathBuf>,
-    },
     Upload {
         #[clap(parse(from_os_str))]
         input: std::path::PathBuf,
@@ -73,13 +63,6 @@ enum LeagueType {
     Rotation,
     Rotations,
     Set,
-}
-
-#[cfg(feature = "skylords-wiki")]
-#[derive(Clap, Debug, PartialEq)]
-enum SkylordsType {
-    Carddata,
-    Random,
 }
 
 #[derive(Clap, Debug, PartialEq)]
@@ -172,7 +155,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         #[cfg(feature = "league-wiki")]
         Subcommand::League { league_type, path } => match league_type {
-            LeagueType::Champs | LeagueType::Champions => champs().await?,
             LeagueType::Discount | LeagueType::Discounts => {
                 discounts(Config::new(cli.name, cli.password).with_pathbuf_opt(path)).await?
             }
@@ -188,18 +170,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             LeagueType::Set => {
                 set(Config::new(cli.name, cli.password).with_pathbuf_opt(path)).await?
-            }
-        },
-        #[cfg(feature = "skylords-wiki")]
-        Subcommand::Skylords {
-            skylords_type,
-            path,
-        } => match skylords_type {
-            SkylordsType::Carddata => {
-                carddata(Config::new(cli.name, cli.password).with_pathbuf_opt(path)).await?
-            }
-            SkylordsType::Random => {
-                jsondata(Config::new(cli.name, cli.password).with_pathbuf_opt(path)).await?
             }
         },
     }
