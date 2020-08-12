@@ -2,7 +2,6 @@ use anyhow::{anyhow, Result};
 use reqwest::{multipart::Form, Client, Response};
 use serde_json::Value;
 
-pub use util::storage;
 pub use util::PathType;
 
 mod commands;

@@ -4,7 +4,7 @@ use iced::{
 };
 use native_dialog::{Dialog, OpenMultipleFile};
 
-use wtools::{storage, Api, PathType};
+use wtools::{Api, PathType};
 
 use crate::style;
 use iced::futures::TryFutureExt;

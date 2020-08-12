@@ -6,6 +6,7 @@ members = [
     "cli",
     "gui",
     "league",
+    "storage",
 ]
 # resolver = "2"
 
