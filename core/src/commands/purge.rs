@@ -1,1 +1,5 @@
-pub async fn purge() {}
+use crate::Api;
+
+impl Api {
+    pub async fn purge(&self) {}
+}

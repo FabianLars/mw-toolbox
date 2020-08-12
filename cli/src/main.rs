@@ -1,12 +1,12 @@
-use clap::Clap;
+#![forbid(unsafe_code)]
+use std::fs;
+use std::path::PathBuf;
 
-use wtools::{
-    commands::{delete::*, list::*, login::*, purge::*, rename::*, upload::*},
-    Config,
-};
+use clap::Clap;
 
 #[cfg(feature = "league-wiki")]
 use league::*;
+use wtools::{Api, PathType};
 
 #[derive(Clap, Debug, PartialEq)]
 enum Subcommand {
@@ -37,7 +37,6 @@ enum Subcommand {
         #[clap(short, long, parse(from_os_str))]
         path: Option<std::path::PathBuf>,
     },
-    Login,
     Purge {
         #[clap(long)]
         forcelinkupdate: bool,
@@ -95,82 +94,93 @@ struct Cli {
     name: String,
     #[clap(short, long, env = "FANDOM_BOT_PASSWORD")]
     password: String,
+    #[clap(
+        short,
+        long,
+        default_value = "https://leagueoflegends.fandom.com/de/api.php"
+    )]
+    url: String,
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
+    let api = Api::from(&cli.url)
+        .credentials(&cli.name, &cli.password)
+        .login()
+        .await?;
+
     match cli.command {
         Subcommand::Delete { input } => {
-            delete_pages(Config::new(cli.name, cli.password).with_pathbuf(input)).await?
+            let contents = fs::read_to_string(input)?;
+            let titles: Vec<&str> = contents.lines().collect();
+            api.delete_pages(&titles).await?
         }
         Subcommand::List {
             list_type,
             parameter,
             output,
         } => {
-            let cfg = Config::new(cli.name, cli.password)
-                .with_parameter(parameter)
-                .with_pathbuf_opt(output);
             if list_type == ListType::Exturlusage {
                 ::serde_json::to_writer_pretty(
-                    &std::fs::File::create(cfg.path.clone().file_path())?,
-                    &exturlusage(cfg).await?,
+                    &fs::File::create(
+                        output.unwrap_or_else(|| PathBuf::from("./wtools_output.json")),
+                    )?,
+                    &api.exturlusage().await?,
                 )?;
             } else {
                 ::serde_json::to_writer_pretty(
-                    &std::fs::File::create(cfg.path.clone().file_path())?,
+                    &fs::File::create(
+                        output.unwrap_or_else(|| PathBuf::from("./wtools_output.json")),
+                    )?,
                     &match list_type {
-                        ListType::Allimages => allimages(cfg).await?,
-                        ListType::Allpages => allpages(cfg).await?,
-                        ListType::Alllinks => alllinks(cfg).await?,
-                        ListType::Allcategories => allcategories(cfg).await?,
-                        ListType::Backlinks => backlinks(cfg).await?,
-                        ListType::Categorymembers => categorymembers(cfg).await?,
-                        ListType::Embeddedin => embeddedin(cfg).await?,
-                        ListType::Imageusage => imageusage(cfg).await?,
-                        ListType::Iwbacklinks => iwbacklinks(cfg).await?,
-                        ListType::Langbacklinks => langbacklinks(cfg).await?,
-                        ListType::Search => search(cfg).await?,
-                        ListType::Protectedtitles => protectedtitles(cfg).await?,
-                        ListType::Querypage => querypage(cfg).await?,
-                        ListType::Wkpoppages => wkpoppages(cfg).await?,
-                        ListType::Unconvertedinfoboxes => unconvertedinfoboxes(cfg).await?,
-                        ListType::Allinfoboxes => allinfoboxes(cfg).await?,
+                        ListType::Allimages => api.allimages().await?,
+                        ListType::Allpages => api.allpages(parameter.as_deref()).await?,
+                        ListType::Alllinks => api.alllinks().await?,
+                        ListType::Allcategories => api.allcategories().await?,
+                        ListType::Backlinks => api.backlinks(parameter.as_deref()).await?,
+                        ListType::Categorymembers => {
+                            api.categorymembers(parameter.as_deref()).await?
+                        }
+                        ListType::Embeddedin => api.embeddedin(parameter.as_deref()).await?,
+                        ListType::Imageusage => api.imageusage(parameter.as_deref()).await?,
+                        ListType::Iwbacklinks => api.iwbacklinks(parameter.as_deref()).await?,
+                        ListType::Langbacklinks => api.langbacklinks(parameter.as_deref()).await?,
+                        ListType::Search => api.search(parameter.as_deref()).await?,
+                        ListType::Protectedtitles => api.protectedtitles().await?,
+                        ListType::Querypage => api.querypage(parameter.as_deref()).await?,
+                        ListType::Wkpoppages => api.wkpoppages().await?,
+                        ListType::Unconvertedinfoboxes => api.unconvertedinfoboxes().await?,
+                        ListType::Allinfoboxes => api.allinfoboxes().await?,
                         _ => vec![String::new()],
                     },
                 )?;
             }
         }
-        Subcommand::Login => login(Config::new(cli.name, cli.password)).await?,
-        Subcommand::Move { input } => {
-            move_pages(Config::new(cli.name, cli.password).with_pathbuf(input)).await?
-        }
+        Subcommand::Move { input } => api.move_pages(PathType::new(input)).await?,
         Subcommand::Purge { pages, .. } => {
             println!("{:?}", pages.unwrap());
-            purge().await
+            api.purge().await
         }
-        Subcommand::Upload { input } => {
-            upload(Config::new(cli.name, cli.password).with_pathbuf(input)).await?
-        }
+        Subcommand::Upload { input } => api.upload(PathType::new(input)).await?,
         #[cfg(feature = "league-wiki")]
         Subcommand::League { league_type, path } => match league_type {
+            LeagueType::Champs | LeagueType::Champions => champs().await?,
             LeagueType::Discount | LeagueType::Discounts => {
-                discounts(Config::new(cli.name, cli.password).with_pathbuf_opt(path)).await?
+                api.discounts(PathType::new(input.unwrap_or(PathBuf::from(
+                    "E:/Spiele/Riot Games/League of Legends/lockfile",
+                ))))
+                .await?
             }
-            LeagueType::Positions => positions(Config::new(cli.name, cli.password)).await?,
-            LeagueType::Random => {
-                random(Config::new(cli.name, cli.password).with_pathbuf_opt(path)).await?
-            }
+            LeagueType::Positions => positions(&api).await?,
+            LeagueType::Random => random(&api).await?,
             LeagueType::Rotation | LeagueType::Rotations => {
                 #[cfg(not(feature = "riot-api"))]
                 panic!("Did you forget to set the riot-api feature flag?");
                 #[cfg(feature = "riot-api")]
-                rotation(Config::new(cli.name, cli.password).with_pathbuf_opt(path)).await?
+                rotation(&api).await?
             }
-            LeagueType::Set => {
-                set(Config::new(cli.name, cli.password).with_pathbuf_opt(path)).await?
-            }
+            LeagueType::Set => set(&api).await?,
         },
     }
     Ok(())

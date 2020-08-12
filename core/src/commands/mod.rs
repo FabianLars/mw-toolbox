@@ -1,6 +1,5 @@
-pub mod delete;
-pub mod list;
-pub mod login;
-pub mod purge;
-pub mod rename;
-pub mod upload;
+mod delete;
+mod list;
+mod purge;
+mod rename;
+mod upload;

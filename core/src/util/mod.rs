@@ -1,3 +1,4 @@
-pub mod config;
+pub use pathtype::PathType;
+
+mod pathtype;
 pub mod storage;
-pub mod wiki;

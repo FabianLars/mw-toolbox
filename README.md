@@ -7,7 +7,7 @@ Interaction with Riot's API only via CLI (just "update rotation" for now)
 Input files need to be formatted with newline seperation (eg 1 wiki article per line)  
 Options (arguments specified with "-" or "--") work on compiled program only. (using "wtools" instead of "cargo run")
 * start GUI:
-  * double click exe or run "cargo run" or "wtools" (if compiled) in terminal
+  * double-click exe after building or type "cargo run -p gui" terminal
 * CLI usage:
   * run via "[cargo run|wtools] \<command\> (\<args if needed\>)" 
     * these commands need FANDOM_BOT_NAME, FANDOM_BOT_PASSWORD and/or RIOT_API_KEY (depends on command) environment variables as of now  

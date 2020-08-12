@@ -1,12 +1,14 @@
-use std::{collections::HashMap, error::Error, fs::File};
+#![forbid(unsafe_code)]
+use std::{collections::HashMap, fs::File};
 
+use anyhow::{anyhow, Error, Result};
 use futures::{future::TryFutureExt, try_join};
 use reqwest::header::{HeaderMap, ACCEPT, AUTHORIZATION};
 use select::{document::Document, predicate::Class};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use wtools::{wiki, Config};
+use wtools::{Api, PathType};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -89,17 +91,17 @@ struct Angebot {
     discount: String,
 }
 
-pub async fn champs() -> Result<(), Box<dyn Error>> {
+pub async fn champs() -> Result<()> {
     let client = reqwest::Client::new();
 
     let fut1 = async {
-        let response = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/champion-summary.json").send().await?.json::<Vec<SummaryEntry>>().await?;
-        Ok::<Vec<SummaryEntry>, reqwest::Error>(response)
-    }.map_err(|_e| "Can't get or convert champion-summary.json".to_string());
+        let response: Vec<SummaryEntry> = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/champion-summary.json").send().await?.json().await?;
+        Ok::<Vec<SummaryEntry>, Error>(response)
+    }.map_err(|_| anyhow!("Can't get or convert champion-summary.json"));
     let fut2 = async {
-        let response = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").send().await?.json::<HashMap<String, ChampSrc>>().await?;
-        Ok::<HashMap<String, ChampSrc>, reqwest::Error>(response)
-    }.map_err(|_e| "Can't get or convert skins.json".to_string());
+        let response: HashMap<String, ChampSrc> = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").send().await?.json().await?;
+        Ok::<HashMap<String, ChampSrc>, Error>(response)
+    }.map_err(|_| anyhow!("Can't get or convert skins.json"));
 
     let (summary, skins) = try_join!(fut1, fut2)?;
 
@@ -140,9 +142,8 @@ pub async fn champs() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub async fn discounts(cfg: Config) -> Result<(), Box<dyn Error>> {
-    let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
-    let lockfile = std::fs::read_to_string(cfg.path.file_path()).unwrap();
+pub async fn discounts(api: &Api, path: PathType) -> Result<()> {
+    let lockfile = std::fs::read_to_string(path.file_path()).unwrap();
     // 0: "LeagueClient", 1: PID, 2: Port, 3: Auth, 4: Protocol
     let contents = lockfile.split(':').collect::<Vec<_>>();
     let port = contents[2];
@@ -298,22 +299,14 @@ pub async fn discounts(cfg: Config) -> Result<(), Box<dyn Error>> {
         start_date, end_date, angebote
     );
 
-    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
-
-    let json: Value = client
-        .get(reqwest::Url::parse_with_params(
-            wiki_api_url,
-            &[
-                ("action", "query"),
-                ("format", "json"),
-                ("prop", "info"),
-                ("intoken", "edit"),
-                ("titles", "Vorlage:Aktuelle_Angebote"),
-            ],
-        )?)
-        .send()
-        .await?
-        .json()
+    let json: Value = api
+        .request_json(&[
+            ("action", "query"),
+            ("format", "json"),
+            ("prop", "info"),
+            ("intoken", "edit"),
+            ("titles", "Vorlage:Aktuelle_Angebote"),
+        ])
         .await?;
 
     let (_i, o) = json["query"]["pages"]
@@ -324,42 +317,34 @@ pub async fn discounts(cfg: Config) -> Result<(), Box<dyn Error>> {
         .unwrap();
     let edit_token = String::from(o["edittoken"].as_str().unwrap());
 
-    client
-        .post(wiki_api_url)
-        .form(&[
-            ("action", "edit"),
-            ("reason", "Nicht ganz so automatische Aktion"),
-            ("bot", "1"),
-            ("title", "Vorlage:Aktuelle_Angebote"),
-            ("text", &full_template),
-            ("token", &edit_token),
-        ])
-        .send()
-        .await?;
+    api.request(&[
+        ("action", "edit"),
+        ("reason", "Nicht ganz so automatische Aktion"),
+        ("bot", "1"),
+        ("title", "Vorlage:Aktuelle_Angebote"),
+        ("text", &full_template),
+        ("token", &edit_token),
+    ])
+    .await?;
 
     Ok(())
 }
 
 #[cfg(feature = "riot-api")]
-pub async fn rotation(cfg: Config) -> Result<(), Box<dyn Error>> {
-    let riot_api_url = "https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key="
-        .to_owned()
-        + &std::env::var("RIOT_API_KEY")?;
-    let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
-    let client = reqwest::Client::builder().cookie_store(true).build()?;
+pub async fn rotation(api: &Api) -> Result<()> {
+    let riot_api_url = format!(
+        "https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key={}",
+        &std::env::var("RIOT_API_KEY")?
+    );
     let curr_date = rename_m(chrono::Utc::today().format("%-d. %B %Y").to_string());
 
-    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
-
-    let champions: HashMap<i32, Champ> = client
-        .get("https://api.fabianlars.de/wiki/champion")
-        .send()
+    let champions: HashMap<i32, Champ> = api
+        .get_external("https://api.fabianlars.de/wiki/champion")
         .await?
         .json()
         .await?;
 
-    let res = client.get(&riot_api_url).send().await?.text().await?;
-    let rotations: Rotations = serde_json::from_str(&res)?;
+    let rotations: Rotations = api.get_external(&riot_api_url).await?.json().await?;
 
     let mut rotation: Vec<String> = rotations
         .free_champion_ids
@@ -376,20 +361,14 @@ pub async fn rotation(cfg: Config) -> Result<(), Box<dyn Error>> {
     let rotation: String = rotation.iter().map(|x| "|".to_owned() + x).collect();
     let new_players: String = new_players.iter().map(|x| "|".to_owned() + x).collect();
 
-    let json: Value = client
-        .get(reqwest::Url::parse_with_params(
-            wiki_api_url,
-            &[
-                ("action", "query"),
-                ("format", "json"),
-                ("prop", "info"),
-                ("intoken", "edit"),
-                ("titles", "Vorlage:Aktuelle_Championrotation"),
-            ],
-        )?)
-        .send()
-        .await?
-        .json()
+    let json = api
+        .request_json(&[
+            ("action", "query"),
+            ("format", "json"),
+            ("prop", "info"),
+            ("intoken", "edit"),
+            ("titles", "Vorlage:Aktuelle_Championrotation"),
+        ])
         .await?;
 
     let (_i, o) = json["query"]["pages"]
@@ -435,18 +414,15 @@ pub async fn rotation(cfg: Config) -> Result<(), Box<dyn Error>> {
         rotation, curr_date, curr_date, new_players
     );
 
-    client
-        .post(wiki_api_url)
-        .form(&[
-            ("action", "edit"),
-            ("reason", "automated action"),
-            ("bot", "1"),
-            ("title", "Vorlage:Aktuelle_Championrotation"),
-            ("text", &template),
-            ("token", &edit_token),
-        ])
-        .send()
-        .await?;
+    api.request(&[
+        ("action", "edit"),
+        ("reason", "automated action"),
+        ("bot", "1"),
+        ("title", "Vorlage:Aktuelle_Championrotation"),
+        ("text", &template),
+        ("token", &edit_token),
+    ])
+    .await?;
 
     Ok(())
 }
@@ -474,11 +450,7 @@ fn rename_m(d: String) -> String {
     }
 }
 
-pub async fn set(cfg: Config) -> Result<(), Box<dyn Error>> {
-    let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
-
-    let client = reqwest::Client::builder().cookie_store(true).build()?;
-
+pub async fn set(api: &Api) -> Result<()> {
     let mut edit_token = String::new();
     let mut skin: String = String::new();
     let mut set: String = String::new();
@@ -488,24 +460,14 @@ pub async fn set(cfg: Config) -> Result<(), Box<dyn Error>> {
     let mut champion: String = String::new();
     let mut tft: String = String::new();
 
-    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
-
     let fut_token = async {
-        let json: Value = client
-            .get(reqwest::Url::parse_with_params(
-                wiki_api_url,
-                &[
-                    ("action", "query"),
-                    ("format", "json"),
-                    ("prop", "info"),
-                    ("intoken", "edit"),
-                    ("titles", "Vorlage:Set/skins.json|Vorlage:Set/sets.json|Vorlage:Set/universes.json|Vorlage:Set/icons.json|Vorlage:Set/iconsets.json|Vorlage:Set/champion.json|Vorlage:Set/TFT.json"),
-                ],
-            ).unwrap())
-            .send()
-            .await?
-            .json()
-            .await?;
+        let json = api.request_json(&[
+            ("action", "query"),
+            ("format", "json"),
+            ("prop", "info"),
+            ("intoken", "edit"),
+            ("titles", "Vorlage:Set/skins.json|Vorlage:Set/sets.json|Vorlage:Set/universes.json|Vorlage:Set/icons.json|Vorlage:Set/iconsets.json|Vorlage:Set/champion.json|Vorlage:Set/TFT.json"),
+        ]).await?;
 
         let (_i, o) = json["query"]["pages"]
             .as_object()
@@ -514,60 +476,52 @@ pub async fn set(cfg: Config) -> Result<(), Box<dyn Error>> {
             .next()
             .unwrap();
         edit_token = String::from(o["edittoken"].as_str().unwrap());
-        Ok::<(), reqwest::Error>(())
-    }.map_err(|_e| "Can't get skins.json".to_string());
+        Ok::<(), Error>(())
+    }.map_err(|_| anyhow!("Can't get skins.json"));
     let fut_skin = async {
-        skin = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").send().await?.text().await?.replace(" ", " ").replace("Hexerei-Miss Fortune \"", "Hexerei-Miss Fortune\"");
-        Ok::<(), reqwest::Error>(())
-    }.map_err(|_e| "Can't get skins.json".to_string());
+        skin = api.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").await?.replace(" ", " ").replace("Hexerei-Miss Fortune \"", "Hexerei-Miss Fortune\"");
+        Ok::<(), Error>(())
+    }.map_err(|_| anyhow!("Can't get skins.json"));
     let fut_set = async {
-        set = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skinlines.json").send().await?.text().await?.replace(" ", " ");
-        Ok::<(), reqwest::Error>(())
-    }.map_err(|_e| "Can't get skinlines.json".to_string());
+        set = api.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skinlines.json").await?.replace(" ", " ");
+        Ok::<(), Error>(())
+    }.map_err(|_| anyhow!("Can't get skinlines.json"));
     let fut_universe = async {
-        universe = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/universes.json").send().await?.text().await?.replace(" ", " ");
-        Ok::<(), reqwest::Error>(())
-    }.map_err(|_e| "Can't get universes.json".to_string());
+        universe = api.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/universes.json").await?.replace(" ", " ");
+        Ok::<(), Error>(())
+    }.map_err(|_| anyhow!("Can't get universes.json"));
     let fut_icons = async {
-        icons = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icons.json").send().await?.text().await?.replace(" ", " ");
-        Ok::<(), reqwest::Error>(())
-    }.map_err(|_e| "Can't get universes.json".to_string());
+        icons = api.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icons.json").await?.replace(" ", " ");
+        Ok::<(), Error>(())
+    }.map_err(|_| anyhow!("Can't get universes.json"));
     let fut_iconsets = async {
-        iconsets = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icon-sets.json").send().await?.text().await?.replace(" ", " ");
-        Ok::<(), reqwest::Error>(())
-    }.map_err(|_e| "Can't get universes.json".to_string());
+        iconsets = api.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icon-sets.json").await?.replace(" ", " ");
+        Ok::<(), Error>(())
+    }.map_err(|_| anyhow!("Can't get universes.json"));
     let fut_champion = async {
-        let res: Value = client
-            .get("https://ddragon.leagueoflegends.com/api/versions.json")
-            .send()
-            .await?
-            .json()
+        let res = api
+            .get_external_json("https://ddragon.leagueoflegends.com/api/versions.json")
             .await?;
         let patch_id = res.get(0).unwrap().as_str().unwrap();
-        champion = client
-            .get(&format!(
+        champion = api
+            .get_external_text(&format!(
                 "http://ddragon.leagueoflegends.com/cdn/{}/data/de_DE/champion.json",
                 patch_id
             ))
-            .send()
-            .await?
-            .text()
             .await?
             .replace(" ", " ");
-        Ok::<(), reqwest::Error>(())
+        Ok::<(), Error>(())
     }
-    .map_err(|_e| "Can't get universes.json".to_string());
+    .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_tft = async {
-        tft = client
-            .get("http://raw.communitydragon.org/latest/cdragon/tft/de_de.json")
-            .send()
-            .await?
-            .text()
-            .await?
+        tft = api
+            .get_external_text("http://raw.communitydragon.org/latest/cdragon/tft/de_de.json")
+            .await
+            .expect("Can't get universes.json")
             .replace(" ", " ");
-        Ok::<(), reqwest::Error>(())
+        Ok::<(), Error>(())
     }
-    .map_err(|_e| "Can't get universes.json".to_string());
+    .map_err(|_| anyhow!("Can't get universes.json"));
 
     try_join!(
         fut_token,
@@ -581,117 +535,89 @@ pub async fn set(cfg: Config) -> Result<(), Box<dyn Error>> {
     )?;
 
     let fut_skin = async {
-        client
-            .post(wiki_api_url)
-            .form(&[
-                ("action", "edit"),
-                ("reason", "automated update"),
-                ("bot", "1"),
-                ("title", "Vorlage:Set/skins.json"),
-                ("text", &skin),
-                ("token", &edit_token),
-            ])
-            .send()
-            .await?;
-        Ok::<(), reqwest::Error>(())
+        api.request(&[
+            ("action", "edit"),
+            ("reason", "automated update"),
+            ("bot", "1"),
+            ("title", "Vorlage:Set/skins.json"),
+            ("text", &skin),
+            ("token", &edit_token),
+        ])
+        .await
     }
-    .map_err(|_e| "Can't get skins.json".to_string());
+    .map_err(|_| anyhow!("Can't get skins.json"));
     let fut_set = async {
-        client
-            .post(wiki_api_url)
-            .form(&[
-                ("action", "edit"),
-                ("reason", "automated update"),
-                ("bot", "1"),
-                ("title", "Vorlage:Set/sets.json"),
-                ("text", &set),
-                ("token", &edit_token),
-            ])
-            .send()
-            .await?;
-        Ok::<(), reqwest::Error>(())
+        api.request(&[
+            ("action", "edit"),
+            ("reason", "automated update"),
+            ("bot", "1"),
+            ("title", "Vorlage:Set/sets.json"),
+            ("text", &set),
+            ("token", &edit_token),
+        ])
+        .await
     }
-    .map_err(|_e| "Can't get skinlines.json".to_string());
+    .map_err(|_| anyhow!("Can't get skinlines.json"));
     let fut_universe = async {
-        client
-            .post(wiki_api_url)
-            .form(&[
-                ("action", "edit"),
-                ("reason", "automated update"),
-                ("bot", "1"),
-                ("title", "Vorlage:Set/universes.json"),
-                ("text", &universe),
-                ("token", &edit_token),
-            ])
-            .send()
-            .await?;
-        Ok::<(), reqwest::Error>(())
+        api.request(&[
+            ("action", "edit"),
+            ("reason", "automated update"),
+            ("bot", "1"),
+            ("title", "Vorlage:Set/universes.json"),
+            ("text", &universe),
+            ("token", &edit_token),
+        ])
+        .await
     }
-    .map_err(|_e| "Can't get universes.json".to_string());
+    .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_icons = async {
-        client
-            .post(wiki_api_url)
-            .form(&[
-                ("action", "edit"),
-                ("reason", "automated update"),
-                ("bot", "1"),
-                ("title", "Vorlage:Set/icons.json"),
-                ("text", &icons),
-                ("token", &edit_token),
-            ])
-            .send()
-            .await?;
-        Ok::<(), reqwest::Error>(())
+        api.request(&[
+            ("action", "edit"),
+            ("reason", "automated update"),
+            ("bot", "1"),
+            ("title", "Vorlage:Set/icons.json"),
+            ("text", &icons),
+            ("token", &edit_token),
+        ])
+        .await
     }
-    .map_err(|_e| "Can't get universes.json".to_string());
+    .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_iconsets = async {
-        client
-            .post(wiki_api_url)
-            .form(&[
-                ("action", "edit"),
-                ("reason", "automated update"),
-                ("bot", "1"),
-                ("title", "Vorlage:Set/iconsets.json"),
-                ("text", &iconsets),
-                ("token", &edit_token),
-            ])
-            .send()
-            .await?;
-        Ok::<(), reqwest::Error>(())
+        api.request(&[
+            ("action", "edit"),
+            ("reason", "automated update"),
+            ("bot", "1"),
+            ("title", "Vorlage:Set/iconsets.json"),
+            ("text", &iconsets),
+            ("token", &edit_token),
+        ])
+        .await
     }
-    .map_err(|_e| "Can't get universes.json".to_string());
+    .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_champion = async {
-        client
-            .post(wiki_api_url)
-            .form(&[
-                ("action", "edit"),
-                ("reason", "automated update"),
-                ("bot", "1"),
-                ("title", "Vorlage:Set/champion.json"),
-                ("text", &champion),
-                ("token", &edit_token),
-            ])
-            .send()
-            .await?;
-        Ok::<(), reqwest::Error>(())
+        api.request(&[
+            ("action", "edit"),
+            ("reason", "automated update"),
+            ("bot", "1"),
+            ("title", "Vorlage:Set/champion.json"),
+            ("text", &champion),
+            ("token", &edit_token),
+        ])
+        .await
     }
-    .map_err(|_e| "Can't get universes.json".to_string());
+    .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_tft = async {
-        client
-            .post(wiki_api_url)
-            .form(&[
-                ("action", "edit"),
-                ("reason", "automated update"),
-                ("bot", "1"),
-                ("title", "Vorlage:Set/TFT.json"),
-                ("text", &tft),
-                ("token", &edit_token),
-            ])
-            .send()
-            .await?;
-        Ok::<(), reqwest::Error>(())
+        api.request(&[
+            ("action", "edit"),
+            ("reason", "automated update"),
+            ("bot", "1"),
+            ("title", "Vorlage:Set/TFT.json"),
+            ("text", &tft),
+            ("token", &edit_token),
+        ])
+        .await
     }
-    .map_err(|_e| "Can't get universes.json".to_string());
+    .map_err(|_| anyhow!("Can't get universes.json"));
 
     try_join!(
         fut_skin,
@@ -706,15 +632,10 @@ pub async fn set(cfg: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub async fn positions(cfg: Config) -> Result<(), Box<dyn Error>> {
-    let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
+pub async fn positions(api: &Api) -> Result<()> {
     let opgg = "https://euw.op.gg/champion/statistics";
-    let client = reqwest::Client::builder().cookie_store(true).build()?;
 
-    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
-
-    //let mut resp = client.get(opgg).send().await?.text().await?;
-    let resp = client.get(opgg).send().await?;
+    let resp = api.get_external(opgg).await?;
     assert!(resp.status().is_success());
 
     let document = Document::from(resp.text().await?.as_str());
@@ -770,23 +691,14 @@ pub async fn positions(cfg: Config) -> Result<(), Box<dyn Error>> {
         content.push_str("\n");
     }
 
-    let json: Value = client
-        .get(
-            reqwest::Url::parse_with_params(
-                wiki_api_url,
-                &[
-                    ("action", "query"),
-                    ("format", "json"),
-                    ("prop", "info"),
-                    ("intoken", "edit"),
-                    ("titles", "Vorlage:Position category/Stats"),
-                ],
-            )
-            .unwrap(),
-        )
-        .send()
-        .await?
-        .json()
+    let json = api
+        .request_json(&[
+            ("action", "query"),
+            ("format", "json"),
+            ("prop", "info"),
+            ("intoken", "edit"),
+            ("titles", "Vorlage:Position category/Stats"),
+        ])
         .await?;
 
     let (_i, o) = json["query"]["pages"]
@@ -797,58 +709,40 @@ pub async fn positions(cfg: Config) -> Result<(), Box<dyn Error>> {
         .unwrap();
     let edit_token = String::from(o["edittoken"].as_str().unwrap());
 
-    client
-        .post(wiki_api_url)
-        .form(&[
-            ("action", "edit"),
-            ("reason", "automated action"),
-            ("bot", "1"),
-            ("title", "Vorlage:Position category/Stats"),
-            (
-                "text",
-                &format!(
-                    "<!-- Fetched from op.gg --><includeonly>{{{{#switch:{{{{{{1}}}}}}\n{}}}}}</includeonly><noinclude>[[Kategorie:Update nach neuem Patch notwendig]][[Kategorie:Update nach neuem Champion notwendig]]</noinclude>",
-                    &content
-                ),
+    api.request(&[
+        ("action", "edit"),
+        ("reason", "automated action"),
+        ("bot", "1"),
+        ("title", "Vorlage:Position category/Stats"),
+        (
+            "text",
+            &format!(
+                "<!-- Fetched from op.gg --><includeonly>{{{{#switch:{{{{{{1}}}}}}\n{}}}}}</includeonly><noinclude>[[Kategorie:Update nach neuem Patch notwendig]][[Kategorie:Update nach neuem Champion notwendig]]</noinclude>",
+                &content
             ),
-            ("token", &edit_token),
-        ])
-        .send()
+        ),
+        ("token", &edit_token),
+    ])
         .await?;
 
     Ok(())
 }
 
 // programmed on demand
-pub async fn random(cfg: Config) -> Result<(), Box<dyn Error>> {
-    let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
-
-    let client = reqwest::Client::builder().cookie_store(true).build()?;
-
-    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
-
-    let champions: HashMap<i32, Champ> = client
-        .get("https://api.fabianlars.de/wiki/champion")
-        .send()
+pub async fn random(api: &Api) -> Result<()> {
+    let champions: HashMap<i32, Champ> = api
+        .get_external("https://api.fabianlars.de/wiki/champion")
         .await?
         .json()
         .await?;
 
-    let json: Value = client
-        .get(reqwest::Url::parse_with_params(
-            wiki_api_url,
-            &[
-                ("action", "query"),
-                ("format", "json"),
-                ("prop", "info"),
-                ("intoken", "edit"),
-                ("titles", "Kategorie:Ahri HD-Splasharts|Kategorie:Akali HD-Splasharts|Kategorie:Alistar HD-Splasharts|Kategorie:Amumu HD-Splasharts|Kategorie:Anivia HD-Splasharts|Kategorie:Annie HD-Splasharts|Kategorie:Aphelios HD-Splasharts|Kategorie:Ashe HD-Splasharts|Kategorie:Aurelion Sol HD-Splasharts|Kategorie:Azir HD-Splasharts|Kategorie:Bard HD-Splasharts|Kategorie:Blitzcrank HD-Splasharts|Kategorie:Brand HD-Splasharts|Kategorie:Braum HD-Splasharts|Kategorie:Caitlyn HD-Splasharts|Kategorie:Camille HD-Splasharts|Kategorie:Cassiopeia HD-Splasharts|Kategorie:Cho'Gath HD-Splasharts|Kategorie:Corki HD-Splasharts|Kategorie:Darius HD-Splasharts|Kategorie:Diana HD-Splasharts|Kategorie:Dr. Mundo HD-Splasharts|Kategorie:Draven HD-Splasharts|Kategorie:Ekko HD-Splasharts|Kategorie:Elise HD-Splasharts|Kategorie:Evelynn HD-Splasharts|Kategorie:Ezreal HD-Splasharts|Kategorie:Fiddlesticks HD-Splasharts|Kategorie:Fiora HD-Splasharts|Kategorie:Fizz HD-Splasharts|Kategorie:Galio HD-Splasharts|Kategorie:Gangplank HD-Splasharts|Kategorie:Garen HD-Splasharts|Kategorie:Gnar HD-Splasharts|Kategorie:Gragas HD-Splasharts|Kategorie:Graves HD-Splasharts|Kategorie:Hecarim HD-Splasharts|Kategorie:Heimerdinger HD-Splasharts|Kategorie:Illaoi HD-Splasharts|Kategorie:Irelia HD-Splasharts|Kategorie:Ivern HD-Splasharts|Kategorie:Janna HD-Splasharts|Kategorie:Jarvan IV. HD-Splasharts|Kategorie:Jax HD-Splasharts|Kategorie:Jayce HD-Splasharts|Kategorie:Jhin HD-Splasharts|Kategorie:Jinx HD-Splasharts|Kategorie:Kai'Sa HD-Splasharts|Kategorie:Kalista HD-Splasharts|Kategorie:Karma HD-Splasharts|Kategorie:Karthus HD-Splasharts|Kategorie:Kassadin HD-Splasharts|Kategorie:Katarina HD-Splasharts|Kategorie:Kayle HD-Splasharts|Kategorie:Kayn HD-Splasharts|Kategorie:Kennen HD-Splasharts|Kategorie:Kha'Zix HD-Splasharts|Kategorie:Kindred HD-Splasharts|Kategorie:Kled HD-Splasharts|Kategorie:Kog'Maw HD-Splasharts|Kategorie:LeBlanc HD-Splasharts|Kategorie:Lee Sin HD-Splasharts|Kategorie:Leona HD-Splasharts|Kategorie:Lissandra HD-Splasharts|Kategorie:Lucian HD-Splasharts|Kategorie:Lulu HD-Splasharts|Kategorie:Lux HD-Splasharts|Kategorie:Malphite HD-Splasharts|Kategorie:Malzahar HD-Splasharts|Kategorie:Maokai HD-Splasharts|Kategorie:Master Yi HD-Splasharts|Kategorie:Miss Fortune HD-Splasharts|Kategorie:Mordekaiser HD-Splasharts|Kategorie:Morgana HD-Splasharts|Kategorie:Nami HD-Splasharts|Kategorie:Nasus HD-Splasharts|Kategorie:Nautilus HD-Splasharts|Kategorie:Neeko HD-Splasharts|Kategorie:Nidalee HD-Splasharts|Kategorie:Nocturne HD-Splasharts|Kategorie:Nunu & Willump HD-Splasharts|Kategorie:Olaf HD-Splasharts|Kategorie:Orianna HD-Splasharts|Kategorie:Ornn HD-Splasharts|Kategorie:Pantheon HD-Splasharts|Kategorie:Poppy HD-Splasharts|Kategorie:Pyke HD-Splasharts|Kategorie:Qiyana HD-Splasharts|Kategorie:Quinn HD-Splasharts|Kategorie:Rakan HD-Splasharts|Kategorie:Rammus HD-Splasharts|Kategorie:Rek'Sai HD-Splasharts|Kategorie:Renekton HD-Splasharts|Kategorie:Rengar HD-Splasharts|Kategorie:Riven HD-Splasharts|Kategorie:Rumble HD-Splasharts|Kategorie:Ryze HD-Splasharts|Kategorie:Sejuani HD-Splasharts|Kategorie:Senna HD-Splasharts|Kategorie:Sett HD-Splasharts|Kategorie:Shaco HD-Splasharts|Kategorie:Shen HD-Splasharts|Kategorie:Shyvana HD-Splasharts|Kategorie:Singed HD-Splasharts|Kategorie:Sion HD-Splasharts|Kategorie:Sivir HD-Splasharts|Kategorie:Skarner HD-Splasharts|Kategorie:Sona HD-Splasharts|Kategorie:Soraka HD-Splasharts|Kategorie:Swain HD-Splasharts|Kategorie:Sylas HD-Splasharts|Kategorie:Syndra HD-Splasharts|Kategorie:Tahm Kench HD-Splasharts|Kategorie:Taliyah HD-Splasharts|Kategorie:Talon HD-Splasharts|Kategorie:Taric HD-Splasharts|Kategorie:Teemo HD-Splasharts|Kategorie:Thresh HD-Splasharts|Kategorie:Tristana HD-Splasharts|Kategorie:Trundle HD-Splasharts|Kategorie:Tryndamere HD-Splasharts|Kategorie:Twisted Fate HD-Splasharts|Kategorie:Twitch HD-Splasharts|Kategorie:Udyr HD-Splasharts|Kategorie:Urgot HD-Splasharts|Kategorie:Varus HD-Splasharts|Kategorie:Vayne HD-Splasharts|Kategorie:Veigar HD-Splasharts|Kategorie:Vel'Koz HD-Splasharts|Kategorie:Vi HD-Splasharts|Kategorie:Viktor HD-Splasharts|Kategorie:Vladimir HD-Splasharts|Kategorie:Volibear HD-Splasharts|Kategorie:Warwick HD-Splasharts|Kategorie:Wukong HD-Splasharts|Kategorie:Xayah HD-Splasharts|Kategorie:Xerath HD-Splasharts|Kategorie:Xin Zhao HD-Splasharts|Kategorie:Yasuo HD-Splasharts|Kategorie:Yorick HD-Splasharts|Kategorie:Yuumi HD-Splasharts|Kategorie:Zac HD-Splasharts|Kategorie:Zed HD-Splasharts|Kategorie:Ziggs HD-Splasharts|Kategorie:Zilean HD-Splasharts|Kategorie:Zoe HD-Splasharts|Kategorie:Zyra HD-Splasharts")
-            ],
-        ).unwrap())
-        .send()
-        .await?
-        .json()
-        .await?;
+    let json: Value = api.request_json(&[
+        ("action", "query"),
+        ("format", "json"),
+        ("prop", "info"),
+        ("intoken", "edit"),
+        ("titles", "Kategorie:Ahri HD-Splasharts|Kategorie:Akali HD-Splasharts|Kategorie:Alistar HD-Splasharts|Kategorie:Amumu HD-Splasharts|Kategorie:Anivia HD-Splasharts|Kategorie:Annie HD-Splasharts|Kategorie:Aphelios HD-Splasharts|Kategorie:Ashe HD-Splasharts|Kategorie:Aurelion Sol HD-Splasharts|Kategorie:Azir HD-Splasharts|Kategorie:Bard HD-Splasharts|Kategorie:Blitzcrank HD-Splasharts|Kategorie:Brand HD-Splasharts|Kategorie:Braum HD-Splasharts|Kategorie:Caitlyn HD-Splasharts|Kategorie:Camille HD-Splasharts|Kategorie:Cassiopeia HD-Splasharts|Kategorie:Cho'Gath HD-Splasharts|Kategorie:Corki HD-Splasharts|Kategorie:Darius HD-Splasharts|Kategorie:Diana HD-Splasharts|Kategorie:Dr. Mundo HD-Splasharts|Kategorie:Draven HD-Splasharts|Kategorie:Ekko HD-Splasharts|Kategorie:Elise HD-Splasharts|Kategorie:Evelynn HD-Splasharts|Kategorie:Ezreal HD-Splasharts|Kategorie:Fiddlesticks HD-Splasharts|Kategorie:Fiora HD-Splasharts|Kategorie:Fizz HD-Splasharts|Kategorie:Galio HD-Splasharts|Kategorie:Gangplank HD-Splasharts|Kategorie:Garen HD-Splasharts|Kategorie:Gnar HD-Splasharts|Kategorie:Gragas HD-Splasharts|Kategorie:Graves HD-Splasharts|Kategorie:Hecarim HD-Splasharts|Kategorie:Heimerdinger HD-Splasharts|Kategorie:Illaoi HD-Splasharts|Kategorie:Irelia HD-Splasharts|Kategorie:Ivern HD-Splasharts|Kategorie:Janna HD-Splasharts|Kategorie:Jarvan IV. HD-Splasharts|Kategorie:Jax HD-Splasharts|Kategorie:Jayce HD-Splasharts|Kategorie:Jhin HD-Splasharts|Kategorie:Jinx HD-Splasharts|Kategorie:Kai'Sa HD-Splasharts|Kategorie:Kalista HD-Splasharts|Kategorie:Karma HD-Splasharts|Kategorie:Karthus HD-Splasharts|Kategorie:Kassadin HD-Splasharts|Kategorie:Katarina HD-Splasharts|Kategorie:Kayle HD-Splasharts|Kategorie:Kayn HD-Splasharts|Kategorie:Kennen HD-Splasharts|Kategorie:Kha'Zix HD-Splasharts|Kategorie:Kindred HD-Splasharts|Kategorie:Kled HD-Splasharts|Kategorie:Kog'Maw HD-Splasharts|Kategorie:LeBlanc HD-Splasharts|Kategorie:Lee Sin HD-Splasharts|Kategorie:Leona HD-Splasharts|Kategorie:Lissandra HD-Splasharts|Kategorie:Lucian HD-Splasharts|Kategorie:Lulu HD-Splasharts|Kategorie:Lux HD-Splasharts|Kategorie:Malphite HD-Splasharts|Kategorie:Malzahar HD-Splasharts|Kategorie:Maokai HD-Splasharts|Kategorie:Master Yi HD-Splasharts|Kategorie:Miss Fortune HD-Splasharts|Kategorie:Mordekaiser HD-Splasharts|Kategorie:Morgana HD-Splasharts|Kategorie:Nami HD-Splasharts|Kategorie:Nasus HD-Splasharts|Kategorie:Nautilus HD-Splasharts|Kategorie:Neeko HD-Splasharts|Kategorie:Nidalee HD-Splasharts|Kategorie:Nocturne HD-Splasharts|Kategorie:Nunu & Willump HD-Splasharts|Kategorie:Olaf HD-Splasharts|Kategorie:Orianna HD-Splasharts|Kategorie:Ornn HD-Splasharts|Kategorie:Pantheon HD-Splasharts|Kategorie:Poppy HD-Splasharts|Kategorie:Pyke HD-Splasharts|Kategorie:Qiyana HD-Splasharts|Kategorie:Quinn HD-Splasharts|Kategorie:Rakan HD-Splasharts|Kategorie:Rammus HD-Splasharts|Kategorie:Rek'Sai HD-Splasharts|Kategorie:Renekton HD-Splasharts|Kategorie:Rengar HD-Splasharts|Kategorie:Riven HD-Splasharts|Kategorie:Rumble HD-Splasharts|Kategorie:Ryze HD-Splasharts|Kategorie:Sejuani HD-Splasharts|Kategorie:Senna HD-Splasharts|Kategorie:Sett HD-Splasharts|Kategorie:Shaco HD-Splasharts|Kategorie:Shen HD-Splasharts|Kategorie:Shyvana HD-Splasharts|Kategorie:Singed HD-Splasharts|Kategorie:Sion HD-Splasharts|Kategorie:Sivir HD-Splasharts|Kategorie:Skarner HD-Splasharts|Kategorie:Sona HD-Splasharts|Kategorie:Soraka HD-Splasharts|Kategorie:Swain HD-Splasharts|Kategorie:Sylas HD-Splasharts|Kategorie:Syndra HD-Splasharts|Kategorie:Tahm Kench HD-Splasharts|Kategorie:Taliyah HD-Splasharts|Kategorie:Talon HD-Splasharts|Kategorie:Taric HD-Splasharts|Kategorie:Teemo HD-Splasharts|Kategorie:Thresh HD-Splasharts|Kategorie:Tristana HD-Splasharts|Kategorie:Trundle HD-Splasharts|Kategorie:Tryndamere HD-Splasharts|Kategorie:Twisted Fate HD-Splasharts|Kategorie:Twitch HD-Splasharts|Kategorie:Udyr HD-Splasharts|Kategorie:Urgot HD-Splasharts|Kategorie:Varus HD-Splasharts|Kategorie:Vayne HD-Splasharts|Kategorie:Veigar HD-Splasharts|Kategorie:Vel'Koz HD-Splasharts|Kategorie:Vi HD-Splasharts|Kategorie:Viktor HD-Splasharts|Kategorie:Vladimir HD-Splasharts|Kategorie:Volibear HD-Splasharts|Kategorie:Warwick HD-Splasharts|Kategorie:Wukong HD-Splasharts|Kategorie:Xayah HD-Splasharts|Kategorie:Xerath HD-Splasharts|Kategorie:Xin Zhao HD-Splasharts|Kategorie:Yasuo HD-Splasharts|Kategorie:Yorick HD-Splasharts|Kategorie:Yuumi HD-Splasharts|Kategorie:Zac HD-Splasharts|Kategorie:Zed HD-Splasharts|Kategorie:Ziggs HD-Splasharts|Kategorie:Zilean HD-Splasharts|Kategorie:Zoe HD-Splasharts|Kategorie:Zyra HD-Splasharts")
+    ]).await?;
 
     let (_i, o) = json["query"]["pages"]
         .as_object()
@@ -858,21 +752,13 @@ pub async fn random(cfg: Config) -> Result<(), Box<dyn Error>> {
         .unwrap();
     let edit_token1 = String::from(o["edittoken"].as_str().unwrap());
 
-    let json: Value = client
-        .get(reqwest::Url::parse_with_params(
-            wiki_api_url,
-            &[
-                ("action", "query"),
-                ("format", "json"),
-                ("prop", "info"),
-                ("intoken", "edit"),
-                ("titles", "Kategorie:Ahri Kreisbilder|Kategorie:Akali Kreisbilder|Kategorie:Alistar Kreisbilder|Kategorie:Amumu Kreisbilder|Kategorie:Anivia Kreisbilder|Kategorie:Annie Kreisbilder|Kategorie:Aphelios Kreisbilder|Kategorie:Ashe Kreisbilder|Kategorie:Aurelion Sol Kreisbilder|Kategorie:Azir Kreisbilder|Kategorie:Bard Kreisbilder|Kategorie:Blitzcrank Kreisbilder|Kategorie:Brand Kreisbilder|Kategorie:Braum Kreisbilder|Kategorie:Caitlyn Kreisbilder|Kategorie:Camille Kreisbilder|Kategorie:Cassiopeia Kreisbilder|Kategorie:Cho'Gath Kreisbilder|Kategorie:Corki Kreisbilder|Kategorie:Darius Kreisbilder|Kategorie:Diana Kreisbilder|Kategorie:Dr. Mundo Kreisbilder|Kategorie:Draven Kreisbilder|Kategorie:Ekko Kreisbilder|Kategorie:Elise Kreisbilder|Kategorie:Evelynn Kreisbilder|Kategorie:Ezreal Kreisbilder|Kategorie:Fiddlesticks Kreisbilder|Kategorie:Fiora Kreisbilder|Kategorie:Fizz Kreisbilder|Kategorie:Galio Kreisbilder|Kategorie:Gangplank Kreisbilder|Kategorie:Garen Kreisbilder|Kategorie:Gnar Kreisbilder|Kategorie:Gragas Kreisbilder|Kategorie:Graves Kreisbilder|Kategorie:Hecarim Kreisbilder|Kategorie:Heimerdinger Kreisbilder|Kategorie:Illaoi Kreisbilder|Kategorie:Irelia Kreisbilder|Kategorie:Ivern Kreisbilder|Kategorie:Janna Kreisbilder|Kategorie:Jarvan IV. Kreisbilder|Kategorie:Jax Kreisbilder|Kategorie:Jayce Kreisbilder|Kategorie:Jhin Kreisbilder|Kategorie:Jinx Kreisbilder|Kategorie:Kai'Sa Kreisbilder|Kategorie:Kalista Kreisbilder|Kategorie:Karma Kreisbilder|Kategorie:Karthus Kreisbilder|Kategorie:Kassadin Kreisbilder|Kategorie:Katarina Kreisbilder|Kategorie:Kayle Kreisbilder|Kategorie:Kayn Kreisbilder|Kategorie:Kennen Kreisbilder|Kategorie:Kha'Zix Kreisbilder|Kategorie:Kindred Kreisbilder|Kategorie:Kled Kreisbilder|Kategorie:Kog'Maw Kreisbilder|Kategorie:LeBlanc Kreisbilder|Kategorie:Lee Sin Kreisbilder|Kategorie:Leona Kreisbilder|Kategorie:Lissandra Kreisbilder|Kategorie:Lucian Kreisbilder|Kategorie:Lulu Kreisbilder|Kategorie:Lux Kreisbilder|Kategorie:Malphite Kreisbilder|Kategorie:Malzahar Kreisbilder|Kategorie:Maokai Kreisbilder|Kategorie:Master Yi Kreisbilder|Kategorie:Miss Fortune Kreisbilder|Kategorie:Mordekaiser Kreisbilder|Kategorie:Morgana Kreisbilder|Kategorie:Nami Kreisbilder|Kategorie:Nasus Kreisbilder|Kategorie:Nautilus Kreisbilder|Kategorie:Neeko Kreisbilder|Kategorie:Nidalee Kreisbilder|Kategorie:Nocturne Kreisbilder|Kategorie:Nunu & Willump Kreisbilder|Kategorie:Olaf Kreisbilder|Kategorie:Orianna Kreisbilder|Kategorie:Ornn Kreisbilder|Kategorie:Pantheon Kreisbilder|Kategorie:Poppy Kreisbilder|Kategorie:Pyke Kreisbilder|Kategorie:Qiyana Kreisbilder|Kategorie:Quinn Kreisbilder|Kategorie:Rakan Kreisbilder|Kategorie:Rammus Kreisbilder|Kategorie:Rek'Sai Kreisbilder|Kategorie:Renekton Kreisbilder|Kategorie:Rengar Kreisbilder|Kategorie:Riven Kreisbilder|Kategorie:Rumble Kreisbilder|Kategorie:Ryze Kreisbilder|Kategorie:Sejuani Kreisbilder|Kategorie:Senna Kreisbilder|Kategorie:Sett Kreisbilder|Kategorie:Shaco Kreisbilder|Kategorie:Shen Kreisbilder|Kategorie:Shyvana Kreisbilder|Kategorie:Singed Kreisbilder|Kategorie:Sion Kreisbilder|Kategorie:Sivir Kreisbilder|Kategorie:Skarner Kreisbilder|Kategorie:Sona Kreisbilder|Kategorie:Soraka Kreisbilder|Kategorie:Swain Kreisbilder|Kategorie:Sylas Kreisbilder|Kategorie:Syndra Kreisbilder|Kategorie:Tahm Kench Kreisbilder|Kategorie:Taliyah Kreisbilder|Kategorie:Talon Kreisbilder|Kategorie:Taric Kreisbilder|Kategorie:Teemo Kreisbilder|Kategorie:Thresh Kreisbilder|Kategorie:Tristana Kreisbilder|Kategorie:Trundle Kreisbilder|Kategorie:Tryndamere Kreisbilder|Kategorie:Twisted Fate Kreisbilder|Kategorie:Twitch Kreisbilder|Kategorie:Udyr Kreisbilder|Kategorie:Urgot Kreisbilder|Kategorie:Varus Kreisbilder|Kategorie:Vayne Kreisbilder|Kategorie:Veigar Kreisbilder|Kategorie:Vel'Koz Kreisbilder|Kategorie:Vi Kreisbilder|Kategorie:Viktor Kreisbilder|Kategorie:Vladimir Kreisbilder|Kategorie:Volibear Kreisbilder|Kategorie:Warwick Kreisbilder|Kategorie:Wukong Kreisbilder|Kategorie:Xayah Kreisbilder|Kategorie:Xerath Kreisbilder|Kategorie:Xin Zhao Kreisbilder|Kategorie:Yasuo Kreisbilder|Kategorie:Yorick Kreisbilder|Kategorie:Yuumi Kreisbilder|Kategorie:Zac Kreisbilder|Kategorie:Zed Kreisbilder|Kategorie:Ziggs Kreisbilder|Kategorie:Zilean Kreisbilder|Kategorie:Zoe Kreisbilder|Kategorie:Zyra Kreisbilder")
-            ],
-        ).unwrap())
-        .send()
-        .await?
-        .json()
-        .await?;
+    let json = api.request_json(&[
+        ("action", "query"),
+        ("format", "json"),
+        ("prop", "info"),
+        ("intoken", "edit"),
+        ("titles", "Kategorie:Ahri Kreisbilder|Kategorie:Akali Kreisbilder|Kategorie:Alistar Kreisbilder|Kategorie:Amumu Kreisbilder|Kategorie:Anivia Kreisbilder|Kategorie:Annie Kreisbilder|Kategorie:Aphelios Kreisbilder|Kategorie:Ashe Kreisbilder|Kategorie:Aurelion Sol Kreisbilder|Kategorie:Azir Kreisbilder|Kategorie:Bard Kreisbilder|Kategorie:Blitzcrank Kreisbilder|Kategorie:Brand Kreisbilder|Kategorie:Braum Kreisbilder|Kategorie:Caitlyn Kreisbilder|Kategorie:Camille Kreisbilder|Kategorie:Cassiopeia Kreisbilder|Kategorie:Cho'Gath Kreisbilder|Kategorie:Corki Kreisbilder|Kategorie:Darius Kreisbilder|Kategorie:Diana Kreisbilder|Kategorie:Dr. Mundo Kreisbilder|Kategorie:Draven Kreisbilder|Kategorie:Ekko Kreisbilder|Kategorie:Elise Kreisbilder|Kategorie:Evelynn Kreisbilder|Kategorie:Ezreal Kreisbilder|Kategorie:Fiddlesticks Kreisbilder|Kategorie:Fiora Kreisbilder|Kategorie:Fizz Kreisbilder|Kategorie:Galio Kreisbilder|Kategorie:Gangplank Kreisbilder|Kategorie:Garen Kreisbilder|Kategorie:Gnar Kreisbilder|Kategorie:Gragas Kreisbilder|Kategorie:Graves Kreisbilder|Kategorie:Hecarim Kreisbilder|Kategorie:Heimerdinger Kreisbilder|Kategorie:Illaoi Kreisbilder|Kategorie:Irelia Kreisbilder|Kategorie:Ivern Kreisbilder|Kategorie:Janna Kreisbilder|Kategorie:Jarvan IV. Kreisbilder|Kategorie:Jax Kreisbilder|Kategorie:Jayce Kreisbilder|Kategorie:Jhin Kreisbilder|Kategorie:Jinx Kreisbilder|Kategorie:Kai'Sa Kreisbilder|Kategorie:Kalista Kreisbilder|Kategorie:Karma Kreisbilder|Kategorie:Karthus Kreisbilder|Kategorie:Kassadin Kreisbilder|Kategorie:Katarina Kreisbilder|Kategorie:Kayle Kreisbilder|Kategorie:Kayn Kreisbilder|Kategorie:Kennen Kreisbilder|Kategorie:Kha'Zix Kreisbilder|Kategorie:Kindred Kreisbilder|Kategorie:Kled Kreisbilder|Kategorie:Kog'Maw Kreisbilder|Kategorie:LeBlanc Kreisbilder|Kategorie:Lee Sin Kreisbilder|Kategorie:Leona Kreisbilder|Kategorie:Lissandra Kreisbilder|Kategorie:Lucian Kreisbilder|Kategorie:Lulu Kreisbilder|Kategorie:Lux Kreisbilder|Kategorie:Malphite Kreisbilder|Kategorie:Malzahar Kreisbilder|Kategorie:Maokai Kreisbilder|Kategorie:Master Yi Kreisbilder|Kategorie:Miss Fortune Kreisbilder|Kategorie:Mordekaiser Kreisbilder|Kategorie:Morgana Kreisbilder|Kategorie:Nami Kreisbilder|Kategorie:Nasus Kreisbilder|Kategorie:Nautilus Kreisbilder|Kategorie:Neeko Kreisbilder|Kategorie:Nidalee Kreisbilder|Kategorie:Nocturne Kreisbilder|Kategorie:Nunu & Willump Kreisbilder|Kategorie:Olaf Kreisbilder|Kategorie:Orianna Kreisbilder|Kategorie:Ornn Kreisbilder|Kategorie:Pantheon Kreisbilder|Kategorie:Poppy Kreisbilder|Kategorie:Pyke Kreisbilder|Kategorie:Qiyana Kreisbilder|Kategorie:Quinn Kreisbilder|Kategorie:Rakan Kreisbilder|Kategorie:Rammus Kreisbilder|Kategorie:Rek'Sai Kreisbilder|Kategorie:Renekton Kreisbilder|Kategorie:Rengar Kreisbilder|Kategorie:Riven Kreisbilder|Kategorie:Rumble Kreisbilder|Kategorie:Ryze Kreisbilder|Kategorie:Sejuani Kreisbilder|Kategorie:Senna Kreisbilder|Kategorie:Sett Kreisbilder|Kategorie:Shaco Kreisbilder|Kategorie:Shen Kreisbilder|Kategorie:Shyvana Kreisbilder|Kategorie:Singed Kreisbilder|Kategorie:Sion Kreisbilder|Kategorie:Sivir Kreisbilder|Kategorie:Skarner Kreisbilder|Kategorie:Sona Kreisbilder|Kategorie:Soraka Kreisbilder|Kategorie:Swain Kreisbilder|Kategorie:Sylas Kreisbilder|Kategorie:Syndra Kreisbilder|Kategorie:Tahm Kench Kreisbilder|Kategorie:Taliyah Kreisbilder|Kategorie:Talon Kreisbilder|Kategorie:Taric Kreisbilder|Kategorie:Teemo Kreisbilder|Kategorie:Thresh Kreisbilder|Kategorie:Tristana Kreisbilder|Kategorie:Trundle Kreisbilder|Kategorie:Tryndamere Kreisbilder|Kategorie:Twisted Fate Kreisbilder|Kategorie:Twitch Kreisbilder|Kategorie:Udyr Kreisbilder|Kategorie:Urgot Kreisbilder|Kategorie:Varus Kreisbilder|Kategorie:Vayne Kreisbilder|Kategorie:Veigar Kreisbilder|Kategorie:Vel'Koz Kreisbilder|Kategorie:Vi Kreisbilder|Kategorie:Viktor Kreisbilder|Kategorie:Vladimir Kreisbilder|Kategorie:Volibear Kreisbilder|Kategorie:Warwick Kreisbilder|Kategorie:Wukong Kreisbilder|Kategorie:Xayah Kreisbilder|Kategorie:Xerath Kreisbilder|Kategorie:Xin Zhao Kreisbilder|Kategorie:Yasuo Kreisbilder|Kategorie:Yorick Kreisbilder|Kategorie:Yuumi Kreisbilder|Kategorie:Zac Kreisbilder|Kategorie:Zed Kreisbilder|Kategorie:Ziggs Kreisbilder|Kategorie:Zilean Kreisbilder|Kategorie:Zoe Kreisbilder|Kategorie:Zyra Kreisbilder")
+    ]).await?;
 
     let (_i, o) = json["query"]["pages"]
         .as_object()
@@ -882,21 +768,13 @@ pub async fn random(cfg: Config) -> Result<(), Box<dyn Error>> {
         .unwrap();
     let edit_token2 = String::from(o["edittoken"].as_str().unwrap());
 
-    let json: Value = client
-        .get(reqwest::Url::parse_with_params(
-            wiki_api_url,
-            &[
-                ("action", "query"),
-                ("format", "json"),
-                ("prop", "info"),
-                ("intoken", "edit"),
-                ("titles", "Kategorie:Ahri Quadratbilder|Kategorie:Akali Quadratbilder|Kategorie:Alistar Quadratbilder|Kategorie:Amumu Quadratbilder|Kategorie:Anivia Quadratbilder|Kategorie:Annie Quadratbilder|Kategorie:Aphelios Quadratbilder|Kategorie:Ashe Quadratbilder|Kategorie:Aurelion Sol Quadratbilder|Kategorie:Azir Quadratbilder|Kategorie:Bard Quadratbilder|Kategorie:Blitzcrank Quadratbilder|Kategorie:Brand Quadratbilder|Kategorie:Braum Quadratbilder|Kategorie:Caitlyn Quadratbilder|Kategorie:Camille Quadratbilder|Kategorie:Cassiopeia Quadratbilder|Kategorie:Cho'Gath Quadratbilder|Kategorie:Corki Quadratbilder|Kategorie:Darius Quadratbilder|Kategorie:Diana Quadratbilder|Kategorie:Dr. Mundo Quadratbilder|Kategorie:Draven Quadratbilder|Kategorie:Ekko Quadratbilder|Kategorie:Elise Quadratbilder|Kategorie:Evelynn Quadratbilder|Kategorie:Ezreal Quadratbilder|Kategorie:Fiddlesticks Quadratbilder|Kategorie:Fiora Quadratbilder|Kategorie:Fizz Quadratbilder|Kategorie:Galio Quadratbilder|Kategorie:Gangplank Quadratbilder|Kategorie:Garen Quadratbilder|Kategorie:Gnar Quadratbilder|Kategorie:Gragas Quadratbilder|Kategorie:Graves Quadratbilder|Kategorie:Hecarim Quadratbilder|Kategorie:Heimerdinger Quadratbilder|Kategorie:Illaoi Quadratbilder|Kategorie:Irelia Quadratbilder|Kategorie:Ivern Quadratbilder|Kategorie:Janna Quadratbilder|Kategorie:Jarvan IV. Quadratbilder|Kategorie:Jax Quadratbilder|Kategorie:Jayce Quadratbilder|Kategorie:Jhin Quadratbilder|Kategorie:Jinx Quadratbilder|Kategorie:Kai'Sa Quadratbilder|Kategorie:Kalista Quadratbilder|Kategorie:Karma Quadratbilder|Kategorie:Karthus Quadratbilder|Kategorie:Kassadin Quadratbilder|Kategorie:Katarina Quadratbilder|Kategorie:Kayle Quadratbilder|Kategorie:Kayn Quadratbilder|Kategorie:Kennen Quadratbilder|Kategorie:Kha'Zix Quadratbilder|Kategorie:Kindred Quadratbilder|Kategorie:Kled Quadratbilder|Kategorie:Kog'Maw Quadratbilder|Kategorie:LeBlanc Quadratbilder|Kategorie:Lee Sin Quadratbilder|Kategorie:Leona Quadratbilder|Kategorie:Lissandra Quadratbilder|Kategorie:Lucian Quadratbilder|Kategorie:Lulu Quadratbilder|Kategorie:Lux Quadratbilder|Kategorie:Malphite Quadratbilder|Kategorie:Malzahar Quadratbilder|Kategorie:Maokai Quadratbilder|Kategorie:Master Yi Quadratbilder|Kategorie:Miss Fortune Quadratbilder|Kategorie:Mordekaiser Quadratbilder|Kategorie:Morgana Quadratbilder|Kategorie:Nami Quadratbilder|Kategorie:Nasus Quadratbilder|Kategorie:Nautilus Quadratbilder|Kategorie:Neeko Quadratbilder|Kategorie:Nidalee Quadratbilder|Kategorie:Nocturne Quadratbilder|Kategorie:Nunu & Willump Quadratbilder|Kategorie:Olaf Quadratbilder|Kategorie:Orianna Quadratbilder|Kategorie:Ornn Quadratbilder|Kategorie:Pantheon Quadratbilder|Kategorie:Poppy Quadratbilder|Kategorie:Pyke Quadratbilder|Kategorie:Qiyana Quadratbilder|Kategorie:Quinn Quadratbilder|Kategorie:Rakan Quadratbilder|Kategorie:Rammus Quadratbilder|Kategorie:Rek'Sai Quadratbilder|Kategorie:Renekton Quadratbilder|Kategorie:Rengar Quadratbilder|Kategorie:Riven Quadratbilder|Kategorie:Rumble Quadratbilder|Kategorie:Ryze Quadratbilder|Kategorie:Sejuani Quadratbilder|Kategorie:Senna Quadratbilder|Kategorie:Sett Quadratbilder|Kategorie:Shaco Quadratbilder|Kategorie:Shen Quadratbilder|Kategorie:Shyvana Quadratbilder|Kategorie:Singed Quadratbilder|Kategorie:Sion Quadratbilder|Kategorie:Sivir Quadratbilder|Kategorie:Skarner Quadratbilder|Kategorie:Sona Quadratbilder|Kategorie:Soraka Quadratbilder|Kategorie:Swain Quadratbilder|Kategorie:Sylas Quadratbilder|Kategorie:Syndra Quadratbilder|Kategorie:Tahm Kench Quadratbilder|Kategorie:Taliyah Quadratbilder|Kategorie:Talon Quadratbilder|Kategorie:Taric Quadratbilder|Kategorie:Teemo Quadratbilder|Kategorie:Thresh Quadratbilder|Kategorie:Tristana Quadratbilder|Kategorie:Trundle Quadratbilder|Kategorie:Tryndamere Quadratbilder|Kategorie:Twisted Fate Quadratbilder|Kategorie:Twitch Quadratbilder|Kategorie:Udyr Quadratbilder|Kategorie:Urgot Quadratbilder|Kategorie:Varus Quadratbilder|Kategorie:Vayne Quadratbilder|Kategorie:Veigar Quadratbilder|Kategorie:Vel'Koz Quadratbilder|Kategorie:Vi Quadratbilder|Kategorie:Viktor Quadratbilder|Kategorie:Vladimir Quadratbilder|Kategorie:Volibear Quadratbilder|Kategorie:Warwick Quadratbilder|Kategorie:Wukong Quadratbilder|Kategorie:Xayah Quadratbilder|Kategorie:Xerath Quadratbilder|Kategorie:Xin Zhao Quadratbilder|Kategorie:Yasuo Quadratbilder|Kategorie:Yorick Quadratbilder|Kategorie:Yuumi Quadratbilder|Kategorie:Zac Quadratbilder|Kategorie:Zed Quadratbilder|Kategorie:Ziggs Quadratbilder|Kategorie:Zilean Quadratbilder|Kategorie:Zoe Quadratbilder|Kategorie:Zyra Quadratbilder")
-            ],
-        ).unwrap())
-        .send()
-        .await?
-        .json()
-        .await?;
+    let json = api.request_json(&[
+        ("action", "query"),
+        ("format", "json"),
+        ("prop", "info"),
+        ("intoken", "edit"),
+        ("titles", "Kategorie:Ahri Quadratbilder|Kategorie:Akali Quadratbilder|Kategorie:Alistar Quadratbilder|Kategorie:Amumu Quadratbilder|Kategorie:Anivia Quadratbilder|Kategorie:Annie Quadratbilder|Kategorie:Aphelios Quadratbilder|Kategorie:Ashe Quadratbilder|Kategorie:Aurelion Sol Quadratbilder|Kategorie:Azir Quadratbilder|Kategorie:Bard Quadratbilder|Kategorie:Blitzcrank Quadratbilder|Kategorie:Brand Quadratbilder|Kategorie:Braum Quadratbilder|Kategorie:Caitlyn Quadratbilder|Kategorie:Camille Quadratbilder|Kategorie:Cassiopeia Quadratbilder|Kategorie:Cho'Gath Quadratbilder|Kategorie:Corki Quadratbilder|Kategorie:Darius Quadratbilder|Kategorie:Diana Quadratbilder|Kategorie:Dr. Mundo Quadratbilder|Kategorie:Draven Quadratbilder|Kategorie:Ekko Quadratbilder|Kategorie:Elise Quadratbilder|Kategorie:Evelynn Quadratbilder|Kategorie:Ezreal Quadratbilder|Kategorie:Fiddlesticks Quadratbilder|Kategorie:Fiora Quadratbilder|Kategorie:Fizz Quadratbilder|Kategorie:Galio Quadratbilder|Kategorie:Gangplank Quadratbilder|Kategorie:Garen Quadratbilder|Kategorie:Gnar Quadratbilder|Kategorie:Gragas Quadratbilder|Kategorie:Graves Quadratbilder|Kategorie:Hecarim Quadratbilder|Kategorie:Heimerdinger Quadratbilder|Kategorie:Illaoi Quadratbilder|Kategorie:Irelia Quadratbilder|Kategorie:Ivern Quadratbilder|Kategorie:Janna Quadratbilder|Kategorie:Jarvan IV. Quadratbilder|Kategorie:Jax Quadratbilder|Kategorie:Jayce Quadratbilder|Kategorie:Jhin Quadratbilder|Kategorie:Jinx Quadratbilder|Kategorie:Kai'Sa Quadratbilder|Kategorie:Kalista Quadratbilder|Kategorie:Karma Quadratbilder|Kategorie:Karthus Quadratbilder|Kategorie:Kassadin Quadratbilder|Kategorie:Katarina Quadratbilder|Kategorie:Kayle Quadratbilder|Kategorie:Kayn Quadratbilder|Kategorie:Kennen Quadratbilder|Kategorie:Kha'Zix Quadratbilder|Kategorie:Kindred Quadratbilder|Kategorie:Kled Quadratbilder|Kategorie:Kog'Maw Quadratbilder|Kategorie:LeBlanc Quadratbilder|Kategorie:Lee Sin Quadratbilder|Kategorie:Leona Quadratbilder|Kategorie:Lissandra Quadratbilder|Kategorie:Lucian Quadratbilder|Kategorie:Lulu Quadratbilder|Kategorie:Lux Quadratbilder|Kategorie:Malphite Quadratbilder|Kategorie:Malzahar Quadratbilder|Kategorie:Maokai Quadratbilder|Kategorie:Master Yi Quadratbilder|Kategorie:Miss Fortune Quadratbilder|Kategorie:Mordekaiser Quadratbilder|Kategorie:Morgana Quadratbilder|Kategorie:Nami Quadratbilder|Kategorie:Nasus Quadratbilder|Kategorie:Nautilus Quadratbilder|Kategorie:Neeko Quadratbilder|Kategorie:Nidalee Quadratbilder|Kategorie:Nocturne Quadratbilder|Kategorie:Nunu & Willump Quadratbilder|Kategorie:Olaf Quadratbilder|Kategorie:Orianna Quadratbilder|Kategorie:Ornn Quadratbilder|Kategorie:Pantheon Quadratbilder|Kategorie:Poppy Quadratbilder|Kategorie:Pyke Quadratbilder|Kategorie:Qiyana Quadratbilder|Kategorie:Quinn Quadratbilder|Kategorie:Rakan Quadratbilder|Kategorie:Rammus Quadratbilder|Kategorie:Rek'Sai Quadratbilder|Kategorie:Renekton Quadratbilder|Kategorie:Rengar Quadratbilder|Kategorie:Riven Quadratbilder|Kategorie:Rumble Quadratbilder|Kategorie:Ryze Quadratbilder|Kategorie:Sejuani Quadratbilder|Kategorie:Senna Quadratbilder|Kategorie:Sett Quadratbilder|Kategorie:Shaco Quadratbilder|Kategorie:Shen Quadratbilder|Kategorie:Shyvana Quadratbilder|Kategorie:Singed Quadratbilder|Kategorie:Sion Quadratbilder|Kategorie:Sivir Quadratbilder|Kategorie:Skarner Quadratbilder|Kategorie:Sona Quadratbilder|Kategorie:Soraka Quadratbilder|Kategorie:Swain Quadratbilder|Kategorie:Sylas Quadratbilder|Kategorie:Syndra Quadratbilder|Kategorie:Tahm Kench Quadratbilder|Kategorie:Taliyah Quadratbilder|Kategorie:Talon Quadratbilder|Kategorie:Taric Quadratbilder|Kategorie:Teemo Quadratbilder|Kategorie:Thresh Quadratbilder|Kategorie:Tristana Quadratbilder|Kategorie:Trundle Quadratbilder|Kategorie:Tryndamere Quadratbilder|Kategorie:Twisted Fate Quadratbilder|Kategorie:Twitch Quadratbilder|Kategorie:Udyr Quadratbilder|Kategorie:Urgot Quadratbilder|Kategorie:Varus Quadratbilder|Kategorie:Vayne Quadratbilder|Kategorie:Veigar Quadratbilder|Kategorie:Vel'Koz Quadratbilder|Kategorie:Vi Quadratbilder|Kategorie:Viktor Quadratbilder|Kategorie:Vladimir Quadratbilder|Kategorie:Volibear Quadratbilder|Kategorie:Warwick Quadratbilder|Kategorie:Wukong Quadratbilder|Kategorie:Xayah Quadratbilder|Kategorie:Xerath Quadratbilder|Kategorie:Xin Zhao Quadratbilder|Kategorie:Yasuo Quadratbilder|Kategorie:Yorick Quadratbilder|Kategorie:Yuumi Quadratbilder|Kategorie:Zac Quadratbilder|Kategorie:Zed Quadratbilder|Kategorie:Ziggs Quadratbilder|Kategorie:Zilean Quadratbilder|Kategorie:Zoe Quadratbilder|Kategorie:Zyra Quadratbilder")
+    ]).await?;
 
     let (_i, o) = json["query"]["pages"]
         .as_object()
@@ -906,24 +784,13 @@ pub async fn random(cfg: Config) -> Result<(), Box<dyn Error>> {
         .unwrap();
     let edit_token3 = String::from(o["edittoken"].as_str().unwrap());
 
-    let json: Value = client
-        .get(
-            reqwest::Url::parse_with_params(
-                wiki_api_url,
-                &[
-                    ("action", "query"),
-                    ("format", "json"),
-                    ("prop", "info"),
-                    ("intoken", "edit"),
-                    ("titles", "Kategorie:Ahri Ladebildschirmbilder|Kategorie:Akali Ladebildschirmbilder|Kategorie:Alistar Ladebildschirmbilder|Kategorie:Amumu Ladebildschirmbilder|Kategorie:Anivia Ladebildschirmbilder|Kategorie:Annie Ladebildschirmbilder|Kategorie:Aphelios Ladebildschirmbilder|Kategorie:Ashe Ladebildschirmbilder|Kategorie:Aurelion Sol Ladebildschirmbilder|Kategorie:Azir Ladebildschirmbilder|Kategorie:Bard Ladebildschirmbilder|Kategorie:Blitzcrank Ladebildschirmbilder|Kategorie:Brand Ladebildschirmbilder|Kategorie:Braum Ladebildschirmbilder|Kategorie:Caitlyn Ladebildschirmbilder|Kategorie:Camille Ladebildschirmbilder|Kategorie:Cassiopeia Ladebildschirmbilder|Kategorie:Cho'Gath Ladebildschirmbilder|Kategorie:Corki Ladebildschirmbilder|Kategorie:Darius Ladebildschirmbilder|Kategorie:Diana Ladebildschirmbilder|Kategorie:Dr. Mundo Ladebildschirmbilder|Kategorie:Draven Ladebildschirmbilder|Kategorie:Ekko Ladebildschirmbilder|Kategorie:Elise Ladebildschirmbilder|Kategorie:Evelynn Ladebildschirmbilder|Kategorie:Ezreal Ladebildschirmbilder|Kategorie:Fiddlesticks Ladebildschirmbilder|Kategorie:Fiora Ladebildschirmbilder|Kategorie:Fizz Ladebildschirmbilder|Kategorie:Galio Ladebildschirmbilder|Kategorie:Gangplank Ladebildschirmbilder|Kategorie:Garen Ladebildschirmbilder|Kategorie:Gnar Ladebildschirmbilder|Kategorie:Gragas Ladebildschirmbilder|Kategorie:Graves Ladebildschirmbilder|Kategorie:Hecarim Ladebildschirmbilder|Kategorie:Heimerdinger Ladebildschirmbilder|Kategorie:Illaoi Ladebildschirmbilder|Kategorie:Irelia Ladebildschirmbilder|Kategorie:Ivern Ladebildschirmbilder|Kategorie:Janna Ladebildschirmbilder|Kategorie:Jarvan IV. Ladebildschirmbilder|Kategorie:Jax Ladebildschirmbilder|Kategorie:Jayce Ladebildschirmbilder|Kategorie:Jhin Ladebildschirmbilder|Kategorie:Jinx Ladebildschirmbilder|Kategorie:Kai'Sa Ladebildschirmbilder|Kategorie:Kalista Ladebildschirmbilder|Kategorie:Karma Ladebildschirmbilder|Kategorie:Karthus Ladebildschirmbilder|Kategorie:Kassadin Ladebildschirmbilder|Kategorie:Katarina Ladebildschirmbilder|Kategorie:Kayle Ladebildschirmbilder|Kategorie:Kayn Ladebildschirmbilder|Kategorie:Kennen Ladebildschirmbilder|Kategorie:Kha'Zix Ladebildschirmbilder|Kategorie:Kindred Ladebildschirmbilder|Kategorie:Kled Ladebildschirmbilder|Kategorie:Kog'Maw Ladebildschirmbilder|Kategorie:LeBlanc Ladebildschirmbilder|Kategorie:Lee Sin Ladebildschirmbilder|Kategorie:Leona Ladebildschirmbilder|Kategorie:Lissandra Ladebildschirmbilder|Kategorie:Lucian Ladebildschirmbilder|Kategorie:Lulu Ladebildschirmbilder|Kategorie:Lux Ladebildschirmbilder|Kategorie:Malphite Ladebildschirmbilder|Kategorie:Malzahar Ladebildschirmbilder|Kategorie:Maokai Ladebildschirmbilder|Kategorie:Master Yi Ladebildschirmbilder|Kategorie:Miss Fortune Ladebildschirmbilder|Kategorie:Mordekaiser Ladebildschirmbilder|Kategorie:Morgana Ladebildschirmbilder|Kategorie:Nami Ladebildschirmbilder|Kategorie:Nasus Ladebildschirmbilder|Kategorie:Nautilus Ladebildschirmbilder|Kategorie:Neeko Ladebildschirmbilder|Kategorie:Nidalee Ladebildschirmbilder|Kategorie:Nocturne Ladebildschirmbilder|Kategorie:Nunu & Willump Ladebildschirmbilder|Kategorie:Olaf Ladebildschirmbilder|Kategorie:Orianna Ladebildschirmbilder|Kategorie:Ornn Ladebildschirmbilder|Kategorie:Pantheon Ladebildschirmbilder|Kategorie:Poppy Ladebildschirmbilder|Kategorie:Pyke Ladebildschirmbilder|Kategorie:Qiyana Ladebildschirmbilder|Kategorie:Quinn Ladebildschirmbilder|Kategorie:Rakan Ladebildschirmbilder|Kategorie:Rammus Ladebildschirmbilder|Kategorie:Rek'Sai Ladebildschirmbilder|Kategorie:Renekton Ladebildschirmbilder|Kategorie:Rengar Ladebildschirmbilder|Kategorie:Riven Ladebildschirmbilder|Kategorie:Rumble Ladebildschirmbilder|Kategorie:Ryze Ladebildschirmbilder|Kategorie:Sejuani Ladebildschirmbilder|Kategorie:Senna Ladebildschirmbilder|Kategorie:Sett Ladebildschirmbilder|Kategorie:Shaco Ladebildschirmbilder|Kategorie:Shen Ladebildschirmbilder|Kategorie:Shyvana Ladebildschirmbilder|Kategorie:Singed Ladebildschirmbilder|Kategorie:Sion Ladebildschirmbilder|Kategorie:Sivir Ladebildschirmbilder|Kategorie:Skarner Ladebildschirmbilder|Kategorie:Sona Ladebildschirmbilder|Kategorie:Soraka Ladebildschirmbilder|Kategorie:Swain Ladebildschirmbilder|Kategorie:Sylas Ladebildschirmbilder|Kategorie:Syndra Ladebildschirmbilder|Kategorie:Tahm Kench Ladebildschirmbilder|Kategorie:Taliyah Ladebildschirmbilder|Kategorie:Talon Ladebildschirmbilder|Kategorie:Taric Ladebildschirmbilder|Kategorie:Teemo Ladebildschirmbilder|Kategorie:Thresh Ladebildschirmbilder|Kategorie:Tristana Ladebildschirmbilder|Kategorie:Trundle Ladebildschirmbilder|Kategorie:Tryndamere Ladebildschirmbilder|Kategorie:Twisted Fate Ladebildschirmbilder|Kategorie:Twitch Ladebildschirmbilder|Kategorie:Udyr Ladebildschirmbilder|Kategorie:Urgot Ladebildschirmbilder|Kategorie:Varus Ladebildschirmbilder|Kategorie:Vayne Ladebildschirmbilder|Kategorie:Veigar Ladebildschirmbilder|Kategorie:Vel'Koz Ladebildschirmbilder|Kategorie:Vi Ladebildschirmbilder|Kategorie:Viktor Ladebildschirmbilder|Kategorie:Vladimir Ladebildschirmbilder|Kategorie:Volibear Ladebildschirmbilder|Kategorie:Warwick Ladebildschirmbilder|Kategorie:Wukong Ladebildschirmbilder|Kategorie:Xayah Ladebildschirmbilder|Kategorie:Xerath Ladebildschirmbilder|Kategorie:Xin Zhao Ladebildschirmbilder|Kategorie:Yasuo Ladebildschirmbilder|Kategorie:Yorick Ladebildschirmbilder|Kategorie:Yuumi Ladebildschirmbilder|Kategorie:Zac Ladebildschirmbilder|Kategorie:Zed Ladebildschirmbilder|Kategorie:Ziggs Ladebildschirmbilder|Kategorie:Zilean Ladebildschirmbilder|Kategorie:Zoe Ladebildschirmbilder|Kategorie:Zyra Ladebildschirmbilder"),
-                ],
-            )
-            .unwrap(),
-        )
-        .send()
-        .await?
-        .json()
-        .await?;
+    let json = api.request_json(&[
+        ("action", "query"),
+        ("format", "json"),
+        ("prop", "info"),
+        ("intoken", "edit"),
+        ("titles", "Kategorie:Ahri Ladebildschirmbilder|Kategorie:Akali Ladebildschirmbilder|Kategorie:Alistar Ladebildschirmbilder|Kategorie:Amumu Ladebildschirmbilder|Kategorie:Anivia Ladebildschirmbilder|Kategorie:Annie Ladebildschirmbilder|Kategorie:Aphelios Ladebildschirmbilder|Kategorie:Ashe Ladebildschirmbilder|Kategorie:Aurelion Sol Ladebildschirmbilder|Kategorie:Azir Ladebildschirmbilder|Kategorie:Bard Ladebildschirmbilder|Kategorie:Blitzcrank Ladebildschirmbilder|Kategorie:Brand Ladebildschirmbilder|Kategorie:Braum Ladebildschirmbilder|Kategorie:Caitlyn Ladebildschirmbilder|Kategorie:Camille Ladebildschirmbilder|Kategorie:Cassiopeia Ladebildschirmbilder|Kategorie:Cho'Gath Ladebildschirmbilder|Kategorie:Corki Ladebildschirmbilder|Kategorie:Darius Ladebildschirmbilder|Kategorie:Diana Ladebildschirmbilder|Kategorie:Dr. Mundo Ladebildschirmbilder|Kategorie:Draven Ladebildschirmbilder|Kategorie:Ekko Ladebildschirmbilder|Kategorie:Elise Ladebildschirmbilder|Kategorie:Evelynn Ladebildschirmbilder|Kategorie:Ezreal Ladebildschirmbilder|Kategorie:Fiddlesticks Ladebildschirmbilder|Kategorie:Fiora Ladebildschirmbilder|Kategorie:Fizz Ladebildschirmbilder|Kategorie:Galio Ladebildschirmbilder|Kategorie:Gangplank Ladebildschirmbilder|Kategorie:Garen Ladebildschirmbilder|Kategorie:Gnar Ladebildschirmbilder|Kategorie:Gragas Ladebildschirmbilder|Kategorie:Graves Ladebildschirmbilder|Kategorie:Hecarim Ladebildschirmbilder|Kategorie:Heimerdinger Ladebildschirmbilder|Kategorie:Illaoi Ladebildschirmbilder|Kategorie:Irelia Ladebildschirmbilder|Kategorie:Ivern Ladebildschirmbilder|Kategorie:Janna Ladebildschirmbilder|Kategorie:Jarvan IV. Ladebildschirmbilder|Kategorie:Jax Ladebildschirmbilder|Kategorie:Jayce Ladebildschirmbilder|Kategorie:Jhin Ladebildschirmbilder|Kategorie:Jinx Ladebildschirmbilder|Kategorie:Kai'Sa Ladebildschirmbilder|Kategorie:Kalista Ladebildschirmbilder|Kategorie:Karma Ladebildschirmbilder|Kategorie:Karthus Ladebildschirmbilder|Kategorie:Kassadin Ladebildschirmbilder|Kategorie:Katarina Ladebildschirmbilder|Kategorie:Kayle Ladebildschirmbilder|Kategorie:Kayn Ladebildschirmbilder|Kategorie:Kennen Ladebildschirmbilder|Kategorie:Kha'Zix Ladebildschirmbilder|Kategorie:Kindred Ladebildschirmbilder|Kategorie:Kled Ladebildschirmbilder|Kategorie:Kog'Maw Ladebildschirmbilder|Kategorie:LeBlanc Ladebildschirmbilder|Kategorie:Lee Sin Ladebildschirmbilder|Kategorie:Leona Ladebildschirmbilder|Kategorie:Lissandra Ladebildschirmbilder|Kategorie:Lucian Ladebildschirmbilder|Kategorie:Lulu Ladebildschirmbilder|Kategorie:Lux Ladebildschirmbilder|Kategorie:Malphite Ladebildschirmbilder|Kategorie:Malzahar Ladebildschirmbilder|Kategorie:Maokai Ladebildschirmbilder|Kategorie:Master Yi Ladebildschirmbilder|Kategorie:Miss Fortune Ladebildschirmbilder|Kategorie:Mordekaiser Ladebildschirmbilder|Kategorie:Morgana Ladebildschirmbilder|Kategorie:Nami Ladebildschirmbilder|Kategorie:Nasus Ladebildschirmbilder|Kategorie:Nautilus Ladebildschirmbilder|Kategorie:Neeko Ladebildschirmbilder|Kategorie:Nidalee Ladebildschirmbilder|Kategorie:Nocturne Ladebildschirmbilder|Kategorie:Nunu & Willump Ladebildschirmbilder|Kategorie:Olaf Ladebildschirmbilder|Kategorie:Orianna Ladebildschirmbilder|Kategorie:Ornn Ladebildschirmbilder|Kategorie:Pantheon Ladebildschirmbilder|Kategorie:Poppy Ladebildschirmbilder|Kategorie:Pyke Ladebildschirmbilder|Kategorie:Qiyana Ladebildschirmbilder|Kategorie:Quinn Ladebildschirmbilder|Kategorie:Rakan Ladebildschirmbilder|Kategorie:Rammus Ladebildschirmbilder|Kategorie:Rek'Sai Ladebildschirmbilder|Kategorie:Renekton Ladebildschirmbilder|Kategorie:Rengar Ladebildschirmbilder|Kategorie:Riven Ladebildschirmbilder|Kategorie:Rumble Ladebildschirmbilder|Kategorie:Ryze Ladebildschirmbilder|Kategorie:Sejuani Ladebildschirmbilder|Kategorie:Senna Ladebildschirmbilder|Kategorie:Sett Ladebildschirmbilder|Kategorie:Shaco Ladebildschirmbilder|Kategorie:Shen Ladebildschirmbilder|Kategorie:Shyvana Ladebildschirmbilder|Kategorie:Singed Ladebildschirmbilder|Kategorie:Sion Ladebildschirmbilder|Kategorie:Sivir Ladebildschirmbilder|Kategorie:Skarner Ladebildschirmbilder|Kategorie:Sona Ladebildschirmbilder|Kategorie:Soraka Ladebildschirmbilder|Kategorie:Swain Ladebildschirmbilder|Kategorie:Sylas Ladebildschirmbilder|Kategorie:Syndra Ladebildschirmbilder|Kategorie:Tahm Kench Ladebildschirmbilder|Kategorie:Taliyah Ladebildschirmbilder|Kategorie:Talon Ladebildschirmbilder|Kategorie:Taric Ladebildschirmbilder|Kategorie:Teemo Ladebildschirmbilder|Kategorie:Thresh Ladebildschirmbilder|Kategorie:Tristana Ladebildschirmbilder|Kategorie:Trundle Ladebildschirmbilder|Kategorie:Tryndamere Ladebildschirmbilder|Kategorie:Twisted Fate Ladebildschirmbilder|Kategorie:Twitch Ladebildschirmbilder|Kategorie:Udyr Ladebildschirmbilder|Kategorie:Urgot Ladebildschirmbilder|Kategorie:Varus Ladebildschirmbilder|Kategorie:Vayne Ladebildschirmbilder|Kategorie:Veigar Ladebildschirmbilder|Kategorie:Vel'Koz Ladebildschirmbilder|Kategorie:Vi Ladebildschirmbilder|Kategorie:Viktor Ladebildschirmbilder|Kategorie:Vladimir Ladebildschirmbilder|Kategorie:Volibear Ladebildschirmbilder|Kategorie:Warwick Ladebildschirmbilder|Kategorie:Wukong Ladebildschirmbilder|Kategorie:Xayah Ladebildschirmbilder|Kategorie:Xerath Ladebildschirmbilder|Kategorie:Xin Zhao Ladebildschirmbilder|Kategorie:Yasuo Ladebildschirmbilder|Kategorie:Yorick Ladebildschirmbilder|Kategorie:Yuumi Ladebildschirmbilder|Kategorie:Zac Ladebildschirmbilder|Kategorie:Zed Ladebildschirmbilder|Kategorie:Ziggs Ladebildschirmbilder|Kategorie:Zilean Ladebildschirmbilder|Kategorie:Zoe Ladebildschirmbilder|Kategorie:Zyra Ladebildschirmbilder"),
+    ]).await?;
 
     let (_i, o) = json["query"]["pages"]
         .as_object()
@@ -934,88 +801,76 @@ pub async fn random(cfg: Config) -> Result<(), Box<dyn Error>> {
     let edit_token4 = String::from(o["edittoken"].as_str().unwrap());
 
     for (_k, v) in champions {
-        client
-            .post(wiki_api_url)
-            .form(&[
-                ("action", "edit"),
-                ("reason", "automated action"),
-                ("bot", "1"),
-                ("title", &format!("Kategorie:{} HD-Splasharts", v.name)),
-                (
-                    "text",
-                    &format!(
-                        "Diese Kategorie beinhaltet alle hochauflösenden Splasharts von {{{{ci|{}}}}}.
+        api.request(&[
+            ("action", "edit"),
+            ("reason", "automated action"),
+            ("bot", "1"),
+            ("title", &format!("Kategorie:{} HD-Splasharts", v.name)),
+            (
+                "text",
+                &format!(
+                    "Diese Kategorie beinhaltet alle hochauflösenden Splasharts von {{{{ci|{}}}}}.
 [[Kategorie:{}]][[Kategorie:Champion HD-Splasharts]]",
-                        v.name, v.name
-                    ),
+                    v.name, v.name
                 ),
-                ("token", &edit_token1),
-            ])
-            .send()
-            .await?;
+            ),
+            ("token", &edit_token1),
+        ])
+        .await?;
 
-        client
-            .post(wiki_api_url)
-            .form(&[
-                ("action", "edit"),
-                ("reason", "automated action"),
-                ("bot", "1"),
-                ("title", &format!("Kategorie:{} Kreisbilder", v.name)),
-                (
-                    "text",
-                    &format!(
-                        "Diese Kategorie beinhaltet alle Kreisbilder von {{{{ci|{}}}}}.
+        api.request(&[
+            ("action", "edit"),
+            ("reason", "automated action"),
+            ("bot", "1"),
+            ("title", &format!("Kategorie:{} Kreisbilder", v.name)),
+            (
+                "text",
+                &format!(
+                    "Diese Kategorie beinhaltet alle Kreisbilder von {{{{ci|{}}}}}.
 [[Kategorie:{}]][[Kategorie:Champion Kreisbilder]]",
-                        v.name, v.name
-                    ),
+                    v.name, v.name
                 ),
-                ("token", &edit_token2),
-            ])
-            .send()
-            .await?;
+            ),
+            ("token", &edit_token2),
+        ])
+        .await?;
 
-        client
-            .post(wiki_api_url)
-            .form(&[
-                ("action", "edit"),
-                ("reason", "automated action"),
-                ("bot", "1"),
-                ("title", &format!("Kategorie:{} Quadratbilder", v.name)),
-                (
-                    "text",
-                    &format!(
-                        "Diese Kategorie beinhaltet alle Quadratbilder von {{{{ci|{}}}}}.
+        api.request(&[
+            ("action", "edit"),
+            ("reason", "automated action"),
+            ("bot", "1"),
+            ("title", &format!("Kategorie:{} Quadratbilder", v.name)),
+            (
+                "text",
+                &format!(
+                    "Diese Kategorie beinhaltet alle Quadratbilder von {{{{ci|{}}}}}.
 [[Kategorie:{}]][[Kategorie:Champion Quadratbilder]]",
-                        v.name, v.name
-                    ),
+                    v.name, v.name
                 ),
-                ("token", &edit_token3),
-            ])
-            .send()
-            .await?;
+            ),
+            ("token", &edit_token3),
+        ])
+        .await?;
 
-        client
-            .post(wiki_api_url)
-            .form(&[
-                ("action", "edit"),
-                ("reason", "automated action"),
-                ("bot", "1"),
-                (
-                    "title",
-                    &format!("Kategorie:{} Ladebildschirmbilder", v.name),
-                ),
-                (
-                    "text",
-                    &format!(
-                        "Diese Kategorie beinhaltet alle Ladebildschirmbilder von {{{{ci|{}}}}}.
+        api.request(&[
+            ("action", "edit"),
+            ("reason", "automated action"),
+            ("bot", "1"),
+            (
+                "title",
+                &format!("Kategorie:{} Ladebildschirmbilder", v.name),
+            ),
+            (
+                "text",
+                &format!(
+                    "Diese Kategorie beinhaltet alle Ladebildschirmbilder von {{{{ci|{}}}}}.
 [[Kategorie:{}]][[Kategorie:Champion Ladebildschirmbilder]]",
-                        v.name, v.name
-                    ),
+                    v.name, v.name
                 ),
-                ("token", &edit_token4),
-            ])
-            .send()
-            .await?;
+            ),
+            ("token", &edit_token4),
+        ])
+        .await?;
 
         println!("{}", v.name);
 

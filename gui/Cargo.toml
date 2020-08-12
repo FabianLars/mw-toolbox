@@ -10,9 +10,11 @@ version = "0.1.0"
 winres = "0.1"
 
 [dependencies]
-wtools = {path = "../core"}
+wtools = { path = "../core" }
 
+anyhow = "1"
 directories = "3"
-iced = {git = "https://github.com/hecrj/iced.git", branch = "master", features = ["tokio", "glow"]}
-native-dialog = {version = "0", features = ["windows_dpi_awareness", "windows_visual_styles"]}
+iced = { git = "https://github.com/hecrj/iced.git", branch = "master", features = ["tokio", "glow"] }
+native-dialog = { version = "0", features = ["windows_dpi_awareness", "windows_visual_styles"] }
+once_cell = "1.4"
 tokio = "0.2"

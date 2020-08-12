@@ -1,97 +1,84 @@
 use reqwest::multipart::{Form, Part};
 use serde_json::Value;
 
-use crate::util::{config::*, wiki};
+use crate::util::PathType;
+use crate::Api;
 
-pub async fn from_gui(cfg: Config) -> Result<(), ()> {
-    upload(cfg).await.map_err(|e| println!("{:?}", e))
-}
+impl Api {
+    pub async fn upload(&self, path: PathType) -> anyhow::Result<()> {
+        let mut pages = String::new();
+        let mut files: Vec<std::path::PathBuf> = Vec::new();
 
-pub async fn upload(cfg: Config) -> Result<(), Box<dyn std::error::Error>> {
-    let client = reqwest::Client::builder().cookie_store(true).build()?;
-    let wiki_api_url = "https://leagueoflegends.fandom.com/de/api.php";
-
-    let mut pages = "".to_owned();
-    let mut files: Vec<std::path::PathBuf> = Vec::new();
-
-    wiki::login(&client, &cfg.loginname, &cfg.loginpassword).await?;
-
-    match cfg.path {
-        PathType::File(x) => {
-            files.push(x);
-        }
-        PathType::Files(v) => files = v,
-        PathType::Folder(x) => {
-            let mut entries = tokio::fs::read_dir(x).await?;
-            while let Some(entry) = entries.next_entry().await? {
-                files.push(entry.path());
+        match path {
+            PathType::File(x) => {
+                files.push(x);
+            }
+            PathType::Files(v) => files = v,
+            PathType::Folder(x) => {
+                let mut entries = tokio::fs::read_dir(x).await?;
+                while let Some(entry) = entries.next_entry().await? {
+                    files.push(entry.path());
+                }
             }
         }
-    }
 
-    for f in &files {
-        pages.push_str(&format!(
-            "Datei:{}|",
-            f.file_name().unwrap().to_os_string().to_str().unwrap()
-        ))
-    }
-    pages.pop();
+        for f in &files {
+            pages.push_str(&format!(
+                "Datei:{}|",
+                f.file_name().unwrap().to_os_string().to_str().unwrap()
+            ))
+        }
+        pages.pop();
 
-    let json: Value = client
-        .post(wiki_api_url)
-        .form(&[
-            ("action", "query"),
-            ("format", "json"),
-            ("prop", "info"),
-            ("intoken", "edit"),
-            ("titles", &pages),
-        ])
-        .send()
-        .await?
-        .json()
-        .await?;
+        let json: Value = self
+            .request_json(&[
+                ("action", "query"),
+                ("format", "json"),
+                ("prop", "info"),
+                ("intoken", "edit"),
+                ("titles", &pages),
+            ])
+            .await?;
 
-    let (_i, o) = json["query"]["pages"]
-        .as_object()
-        .unwrap()
-        .into_iter()
-        .next()
-        .unwrap();
-    let edit_token = String::from(o["edittoken"].as_str().unwrap());
-
-    for f in files {
-        let file_name = f
-            .file_name()
+        let (_i, o) = json["query"]["pages"]
+            .as_object()
             .unwrap()
-            .to_os_string()
-            .to_str()
-            .unwrap()
-            .to_string();
-        let contents = tokio::fs::read(f).await?;
-        let part = Part::bytes(contents)
-            .file_name(file_name.clone())
-            .mime_str("multipart/form-data")?;
-        let form = Form::new().part("file", part);
+            .into_iter()
+            .next()
+            .unwrap();
+        let edit_token = String::from(o["edittoken"].as_str().unwrap());
 
-        println!(
-            "{:?}",
-            client
-                .post(wiki_api_url)
-                .query(&[
-                    ("action", "upload"),
-                    ("text", "{{Dateienkategorisierung}}"),
-                    ("format", "json"),
-                    ("filename", &file_name),
-                    ("ignorewarnings", "1"),
-                    ("token", &edit_token),
-                ])
-                .multipart(form)
-                .send()
+        for f in files {
+            let file_name = f
+                .file_name()
+                .unwrap()
+                .to_os_string()
+                .to_str()
+                .unwrap()
+                .to_string();
+            let contents = tokio::fs::read(f).await?;
+            let part = Part::bytes(contents)
+                .file_name(file_name.clone())
+                .mime_str("multipart/form-data")?;
+            let form = Form::new().part("file", part);
+
+            println!(
+                "{:?}",
+                self.send_multipart(
+                    &[
+                        ("action", "upload"),
+                        ("text", "{{Dateienkategorisierung}}"),
+                        ("format", "json"),
+                        ("filename", &file_name),
+                        ("ignorewarnings", "1"),
+                        ("token", &edit_token),
+                    ],
+                    form,
+                )
                 .await?
-                .text()
-                .await?
-        );
+            );
+        }
+
+        Ok(())
     }
-
-    Ok(())
 }

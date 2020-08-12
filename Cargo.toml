@@ -2,10 +2,10 @@
 
 [workspace]
 members = [
-  "core",
-  "cli",
-  "gui",
-  "league",
+    "core",
+    "cli",
+    "gui",
+    "league",
 ]
 # resolver = "2"
 

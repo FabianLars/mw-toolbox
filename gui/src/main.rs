@@ -1,4 +1,5 @@
 #![windows_subsystem = "windows"]
+#![forbid(unsafe_code)]
 
 mod app;
 mod style;
