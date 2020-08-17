@@ -83,21 +83,24 @@ pub async fn upload<C: AsRef<WikiClient>>(client: C, path: PathType) -> anyhow::
             .mime_str(mime)?;
         let form = reqwest::multipart::Form::new().part("file", part);
 
-        let res = client
-            .send_multipart(
-                &[
-                    ("action", "upload"),
-                    ("text", "{{Dateienkategorisierung}}"),
-                    ("format", "json"),
-                    ("filename", &file_name),
-                    ("ignorewarnings", "1"),
-                    ("token", &edit_token),
-                ],
-                form,
-            )
-            .await?;
-        dbg!(&res);
-        dbg!(&res.text().await?);
+        println!(
+            "{:?}",
+            client
+                .send_multipart(
+                    &[
+                        ("action", "upload"),
+                        ("text", "{{Dateienkategorisierung}}"),
+                        ("format", "json"),
+                        ("filename", &file_name),
+                        ("ignorewarnings", "1"),
+                        ("token", &edit_token),
+                    ],
+                    form,
+                )
+                .await?
+                .text()
+                .await?
+        );
     }
 
     Ok(())
