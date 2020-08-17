@@ -2,13 +2,13 @@
 use std::{collections::HashMap, fs::File};
 
 use anyhow::{anyhow, Error, Result};
-use async_std::prelude::*;
-use futures::{try_join, TryFutureExt};
+use futures::{prelude::*, try_join};
+use reqwest::Client;
 use select::{document::Document, predicate::Class};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use surf::Client;
 
+use reqwest::header::{HeaderMap, ACCEPT, AUTHORIZATION};
 use wtools::{PathType, WikiClient};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -96,15 +96,15 @@ pub async fn champs() -> Result<()> {
     let client = Client::new();
 
     let fut1 = async {
-        let response: Vec<SummaryEntry> = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/champion-summary.json").await.map_err(|e| anyhow!("Couldn't get champion-summary.json: {}", e))?.body_json().await.map_err(|e| anyhow!("Couldn't convert champion-summary.json to vec: {}", e))?;
+        let response: Vec<SummaryEntry> = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/champion-summary.json").send().await.map_err(|e| anyhow!("Couldn't get champion-summary.json: {}", e))?.json().map_err(|e| anyhow!("Couldn't convert champion-summary.json to vec: {}", e)).await?;
         Ok::<Vec<SummaryEntry>, Error>(response)
     }.map_err(|_| anyhow!("Can't get or convert champion-summary.json"));
     let fut2 = async {
-        let response: HashMap<String, ChampSrc> = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").await.map_err(|e| anyhow!("Couldn't get skins.json: {}", e))?.body_json().await.map_err(|e| anyhow!("Couldn't convert skins.json to hashmap: {}", e))?;
+        let response: HashMap<String, ChampSrc> = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").send().await.map_err(|e| anyhow!("Couldn't get skins.json: {}", e))?.json().map_err(|e| anyhow!("Couldn't convert skins.json to hashmap: {}", e)).await?;
         Ok::<HashMap<String, ChampSrc>, Error>(response)
     }.map_err(|_| anyhow!("Can't get or convert skins.json"));
 
-    let (summary, skins) = fut1.try_join(fut2).await?;
+    let (summary, skins) = try_join!(fut1, fut2)?;
 
     let mut champions = HashMap::new();
 
@@ -150,20 +150,30 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathType) -> Resul
     let contents = lockfile.split(':').collect::<Vec<_>>();
     let port = contents[2];
     let auth = base64::encode(format!("riot:{}", contents[3]).as_bytes());
-    let json: Vec<StoreChamp> = Vec::new(); /*surf::get
-                                            .send_async(Request::builder().uri(&format!(
-                                                "https://127.0.0.1:{}/lol-store/v1/catalog?inventoryType=[\"CHAMPION\",\"CHAMPION_SKIN\"]",
-                                                port)).ssl_options(SslOption::DANGER_ACCEPT_INVALID_CERTS).header(ACCEPT, "application/json").header(AUTHORIZATION, format!("Basic {}", auth)).body(())?
-                                            )
-                                            .await?
-                                            .json()?;*/
+    let mut headers = HeaderMap::new();
+    headers.insert(ACCEPT, "application/json".parse()?);
+    headers.insert(AUTHORIZATION, format!("Basic {}", auth).parse()?);
+    let unsafe_client = Client::builder()
+        .danger_accept_invalid_certs(true)
+        .default_headers(headers)
+        .cookie_store(true)
+        .build()?;
+    let json: Vec<StoreChamp> = unsafe_client
+        .get(&format!(
+            "https://127.0.0.1:{}/lol-store/v1/catalog?inventoryType=[\"CHAMPION\",\"CHAMPION_SKIN\"]",
+            port
+        ))
+        .send()
+        .await?
+        .json()
+        .await?;
 
     let champions_wapi: HashMap<i32, Champ> = client
         .get_external("https://api.fabianlars.de/wiki/champion")
         .await?
-        .body_json()
+        .json()
         .await
-        .map_err(|e| anyhow!("Can't convert champion json to hashmap"))?;
+        .map_err(|e| anyhow!("Can't convert champion json to hashmap: {}", e))?;
 
     let mut champs: Vec<Angebot> = Vec::new();
     let mut skins: Vec<Angebot> = Vec::new();
@@ -341,7 +351,7 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let rotations: Rotations = client
         .get_external(&riot_api_url)
         .await?
-        .body_json()
+        .json()
         .await
         .map_err(|e| anyhow!("Can't convert rotations json to struct: {}", e))?;
 
@@ -887,7 +897,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
 
         println!("{}", v.name);
 
-        async_std::task::sleep(std::time::Duration::from_millis(500)).await;
+        tokio::time::delay_for(tokio::time::Duration::from_millis(500)).await;
     }
 
     Ok(())

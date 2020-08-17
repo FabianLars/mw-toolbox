@@ -1,22 +1,18 @@
 use anyhow::{anyhow, Result};
+use reqwest::{Client, Method, Request, RequestBuilder, Response};
 use serde_json::Value;
-use surf::{Client, Response};
 
-use async_std::path::Path;
-use surf::http::mime;
 pub use util::PathType;
-//pub use surf::Client::*;
 
 pub mod api;
 mod util;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct WikiClient {
     client: Client,
     url: String,
     loginname: String,
     password: String,
-    //TODO: cookies: Vec<Cookie oder String>,
 }
 
 impl AsRef<WikiClient> for WikiClient {
@@ -25,26 +21,28 @@ impl AsRef<WikiClient> for WikiClient {
     }
 }
 
-impl Default for WikiClient {
-    fn default() -> Self {
-        Self {
-            client: Client::new(),
-            ..Self::default()
-        }
-    }
-}
-
 impl WikiClient {
     pub fn new() -> Self {
-        Self::default()
+        Self {
+            client: Client::builder()
+                .cookie_store(true)
+                .user_agent("wtools by FabianLars (https://github.com/FabianLars/wtools)")
+                .build()
+                .unwrap(),
+            ..Self::default()
+        }
     }
 
     pub async fn new_logged_in<S: Into<String>>(url: S, loginname: S, password: S) -> Result<Self> {
         let mut client = Self {
+            client: Client::builder()
+                .cookie_store(true)
+                .user_agent("wtools by FabianLars (https://github.com/FabianLars/wtools)")
+                .build()
+                .unwrap(),
             url: url.into(),
             loginname: loginname.into(),
             password: password.into(),
-            ..Self::default()
         };
         client.login().await?;
         Ok(client)
@@ -52,6 +50,11 @@ impl WikiClient {
 
     pub fn from<S: Into<String>>(url: S) -> Self {
         Self {
+            client: Client::builder()
+                .cookie_store(true)
+                .user_agent("wtools by FabianLars (https://github.com/FabianLars/wtools)")
+                .build()
+                .unwrap(),
             url: url.into(),
             ..Self::default()
         }
@@ -96,69 +99,64 @@ impl WikiClient {
     }
 
     pub async fn request(&self, parameters: &[(&str, &str)]) -> Result<Response> {
-        let res = self
-            .client
-            .send(
-                surf::post(&self.url).content_type(mime::FORM).body(
-                    parameters
-                        .iter()
-                        .map(|(k, v)| format!("{}={}", k, v))
-                        .collect::<Vec<String>>()
-                        .join("&"),
-                ),
-            )
+        self.client
+            .post(&self.url)
+            .form(parameters)
+            .send()
             .await
-            .map_err(|e| anyhow!("Error requesting. Surf error: {}", e));
-        dbg!(&res);
-        res
+            .map_err(|e| anyhow!("Error requesting. Reqwest error: {}", e))
     }
 
     pub async fn request_text(&self, parameters: &[(&str, &str)]) -> Result<String> {
         self.request(parameters)
             .await?
-            .body_string()
+            .text()
             .await
-            .map_err(|e| anyhow!("Error getting text from Response. Surf error: {}", e))
+            .map_err(|e| anyhow!("Error getting text from Response. Reqwest error: {}", e))
     }
 
     pub async fn request_json(&self, parameters: &[(&str, &str)]) -> Result<Value> {
         self.request(parameters)
             .await?
-            .body_json()
+            .json()
             .await
-            .map_err(|e| anyhow!("Error getting json from Response. Surf error: {}", e))
+            .map_err(|e| anyhow!("Error getting json from Response. Reqwest error: {}", e))
     }
-
-    pub async fn upload_file(&self, parameters: &[(&str, &str)], file: &Path) -> Result<Response> {
-        let mut req = surf::post(&self.url).build();
-        req.set_query(&parameters)?;
-        req.body_file(file).await?;
+    pub async fn send_multipart(
+        &self,
+        paramters: &[(&str, &str)],
+        form: reqwest::multipart::Form,
+    ) -> Result<Response> {
         self.client
-            .send(req)
+            .post(&self.url)
+            .query(paramters)
+            .multipart(form)
+            .send()
             .await
-            .map_err(|e| anyhow!("Error sending multipart form data. Surf error: {}", e))
+            .map_err(|e| anyhow!("Error sending multipart form data. Reqwest error: {}", e))
     }
 
     pub async fn get_external(&self, url: &str) -> Result<Response> {
         self.client
-            .send(surf::get(url))
+            .get(url)
+            .send()
             .await
-            .map_err(|e| anyhow::anyhow!("Error sending external get request. Surf error: {}", e))
+            .map_err(|e| anyhow::anyhow!("Error sending get request: Reqwest error: {}", e))
     }
 
     pub async fn get_external_json(&self, url: &str) -> Result<Value> {
         self.get_external(url)
             .await?
-            .body_json()
+            .json()
             .await
-            .map_err(|e| anyhow!("Error getting json from Response. Surf error: {}", e))
+            .map_err(|e| anyhow!("Error getting json from Response. Reqwest error: {}", e))
     }
 
     pub async fn get_external_text(&self, url: &str) -> Result<String> {
         self.get_external(url)
             .await?
-            .body_string()
+            .text()
             .await
-            .map_err(|e| anyhow!("Error getting text from Response. Surf error: {}", e))
+            .map_err(|e| anyhow!("Error getting text from Response. Reqwest error: {}", e))
     }
 }

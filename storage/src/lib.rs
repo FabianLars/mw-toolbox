@@ -1,10 +1,10 @@
 use std::collections::BTreeMap;
 
 use anyhow::{anyhow, Result};
-use async_std::{fs::File, prelude::*};
 use chacha20poly1305::aead::{Aead, NewAead};
 use chacha20poly1305::{Key, XChaCha20Poly1305, XNonce};
 use rand::prelude::*;
+use tokio::{fs::File, prelude::*};
 
 fn path() -> std::path::PathBuf {
     let mut path =
@@ -20,15 +20,11 @@ fn path() -> std::path::PathBuf {
 }
 
 async fn load() -> Result<BTreeMap<String, Vec<u8>>> {
-    let mut contents = Vec::new();
-
     if let Some(dir) = path().parent() {
-        async_std::fs::create_dir_all(dir).await?;
+        tokio::fs::create_dir_all(dir).await?;
     }
 
-    let mut file = File::open(path()).await?;
-
-    file.read_to_end(&mut contents).await?;
+    let contents = tokio::fs::read(path()).await?;
 
     bincode::deserialize(&contents).map_err(|e| anyhow!("Error while deserializing: {:?}", e))
 }
@@ -83,29 +79,21 @@ async fn insert_u8(key: &str, val: Vec<u8>) -> Result<()> {
     let mut map: BTreeMap<String, Vec<u8>>;
 
     if let Some(dir) = path.parent() {
-        async_std::fs::create_dir_all(dir).await?;
+        tokio::fs::create_dir_all(dir).await?;
     }
 
-    {
-        {
-            map = match load().await {
-                Ok(c) if !c.is_empty() => c,
-                _ => BTreeMap::new(),
-            };
+    let loaded = load().await;
+    map = match loaded {
+        Ok(c) => c,
+        _ => BTreeMap::new(),
+    };
+    map.insert(key.to_string(), val);
 
-            map.insert(key.to_string(), val);
-        }
-
-        {
-            let mut file = File::create(path).await?;
-
-            file.write_all(
-                &bincode::serialize(&map)
-                    .map_err(|e| anyhow!("Error while serializing: {:?}", e))?,
-            )
-            .await?;
-        }
-    }
+    let mut file = File::create(path).await?;
+    file.write_all(
+        &bincode::serialize(&map).map_err(|e| anyhow!("Error while serializing: {:?}", e))?,
+    )
+    .await?;
 
     Ok(())
 }

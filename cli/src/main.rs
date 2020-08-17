@@ -1,7 +1,9 @@
 #![forbid(unsafe_code)]
 
-use async_std::{fs, path::PathBuf, prelude::*};
+use std::path::PathBuf;
+
 use clap::Clap;
+use tokio::{fs, prelude::*, runtime::Runtime};
 
 use wtools::{api, PathType, WikiClient};
 
@@ -100,7 +102,7 @@ struct Cli {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    async_std::task::block_on(async {
+    Runtime::new()?.block_on(async {
         let cli = Cli::parse();
         let mut client = WikiClient::from(&cli.url);
         client.credentials(&cli.name, &cli.password);
@@ -124,7 +126,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .await?;
                     file.write(&serde_json::to_vec_pretty(
                         &api::list::exturlusage(&client).await?,
-                    )?);
+                    )?)
+                    .await?;
                 } else {
                     let mut file = fs::File::create(
                         output.unwrap_or_else(|| PathBuf::from("./wtools_output.json")),

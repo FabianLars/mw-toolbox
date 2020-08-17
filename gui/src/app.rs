@@ -8,6 +8,7 @@ use native_dialog::{Dialog, OpenMultipleFile};
 use wtools::{api, PathType, WikiClient};
 
 use crate::style;
+use std::path::PathBuf;
 
 pub fn start() {
     App::run(Settings::default())
@@ -81,9 +82,9 @@ impl Application for App {
     type Message = Message;
     type Flags = ();
 
-    fn new(_flags: ()) -> (App, Command<Message>) {
+    fn new(_flags: ()) -> (Self, Command<Message>) {
         (
-            App {
+            Self {
                 loading: true,
                 ..App::default()
             },
@@ -374,11 +375,13 @@ async fn file_dialog() -> Result<PathType, ()> {
         dir: None,
         filter: None,
     };
-    let result = async_std::task::spawn_blocking(|| dialog.show().unwrap()).await;
+    let result = tokio::task::spawn_blocking(|| dialog.show().unwrap())
+        .await
+        .map_err(|_| ())?;
 
-    let mut temp: Vec<async_std::path::PathBuf> = Vec::new();
+    let mut temp: Vec<PathBuf> = Vec::new();
     for f in result {
-        temp.push(async_std::path::PathBuf::from(f));
+        temp.push(f);
     }
     Ok(PathType::Files(temp))
 }
@@ -418,13 +421,14 @@ impl SavedState {
             .unwrap_or(false);
         let lockfile = storage::get("lockfile").await.unwrap_or_default();
 
-        Ok(Self {
+        let s = Self {
             lp_input_value,
             ln_input_value,
             wikiurl,
             is_persistent,
             lockfile,
-        })
+        };
+        Ok(s)
     }
 
     async fn save(self) -> Result<(), ()> {
