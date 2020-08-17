@@ -2,13 +2,14 @@
 use std::{collections::HashMap, fs::File};
 
 use anyhow::{anyhow, Error, Result};
-use futures::{future::TryFutureExt, try_join};
-use reqwest::header::{HeaderMap, ACCEPT, AUTHORIZATION};
+use async_std::prelude::*;
+use futures::{try_join, TryFutureExt};
 use select::{document::Document, predicate::Class};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use surf::Client;
 
-use wtools::{Api, PathType};
+use wtools::{PathType, WikiClient};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -92,18 +93,18 @@ struct Angebot {
 }
 
 pub async fn champs() -> Result<()> {
-    let client = reqwest::Client::new();
+    let client = Client::new();
 
     let fut1 = async {
-        let response: Vec<SummaryEntry> = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/champion-summary.json").send().await?.json().await?;
+        let response: Vec<SummaryEntry> = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/champion-summary.json").await.map_err(|e| anyhow!("Couldn't get champion-summary.json: {}", e))?.body_json().await.map_err(|e| anyhow!("Couldn't convert champion-summary.json to vec: {}", e))?;
         Ok::<Vec<SummaryEntry>, Error>(response)
     }.map_err(|_| anyhow!("Can't get or convert champion-summary.json"));
     let fut2 = async {
-        let response: HashMap<String, ChampSrc> = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").send().await?.json().await?;
+        let response: HashMap<String, ChampSrc> = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").await.map_err(|e| anyhow!("Couldn't get skins.json: {}", e))?.body_json().await.map_err(|e| anyhow!("Couldn't convert skins.json to hashmap: {}", e))?;
         Ok::<HashMap<String, ChampSrc>, Error>(response)
     }.map_err(|_| anyhow!("Can't get or convert skins.json"));
 
-    let (summary, skins) = try_join!(fut1, fut2)?;
+    let (summary, skins) = fut1.try_join(fut2).await?;
 
     let mut champions = HashMap::new();
 
@@ -142,36 +143,27 @@ pub async fn champs() -> Result<()> {
     Ok(())
 }
 
-pub async fn discounts(api: &Api, path: PathType) -> Result<()> {
+pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathType) -> Result<()> {
+    let client = client.as_ref();
     let lockfile = std::fs::read_to_string(path.file_path()).unwrap();
     // 0: "LeagueClient", 1: PID, 2: Port, 3: Auth, 4: Protocol
     let contents = lockfile.split(':').collect::<Vec<_>>();
     let port = contents[2];
     let auth = base64::encode(format!("riot:{}", contents[3]).as_bytes());
-    let mut headers = HeaderMap::new();
-    headers.insert(ACCEPT, "application/json".parse().unwrap());
-    headers.insert(AUTHORIZATION, format!("Basic {}", auth).parse().unwrap());
-    let client = reqwest::Client::builder()
-        .danger_accept_invalid_certs(true)
-        .default_headers(headers)
-        .cookie_store(true)
-        .build()?;
-    let json: Vec<StoreChamp> = client
-        .get(&format!(
-            "https://127.0.0.1:{}/lol-store/v1/catalog?inventoryType=[\"CHAMPION\",\"CHAMPION_SKIN\"]",
-            port
-        ))
-        .send()
-        .await?
-        .json()
-        .await?;
+    let json: Vec<StoreChamp> = Vec::new(); /*surf::get
+                                            .send_async(Request::builder().uri(&format!(
+                                                "https://127.0.0.1:{}/lol-store/v1/catalog?inventoryType=[\"CHAMPION\",\"CHAMPION_SKIN\"]",
+                                                port)).ssl_options(SslOption::DANGER_ACCEPT_INVALID_CERTS).header(ACCEPT, "application/json").header(AUTHORIZATION, format!("Basic {}", auth)).body(())?
+                                            )
+                                            .await?
+                                            .json()?;*/
 
     let champions_wapi: HashMap<i32, Champ> = client
-        .get("https://api.fabianlars.de/wiki/champion")
-        .send()
+        .get_external("https://api.fabianlars.de/wiki/champion")
         .await?
-        .json()
-        .await?;
+        .body_json()
+        .await
+        .map_err(|e| anyhow!("Can't convert champion json to hashmap"))?;
 
     let mut champs: Vec<Angebot> = Vec::new();
     let mut skins: Vec<Angebot> = Vec::new();
@@ -299,7 +291,7 @@ pub async fn discounts(api: &Api, path: PathType) -> Result<()> {
         start_date, end_date, angebote
     );
 
-    let json: Value = api
+    let json: Value = client
         .request_json(&[
             ("action", "query"),
             ("format", "json"),
@@ -317,34 +309,41 @@ pub async fn discounts(api: &Api, path: PathType) -> Result<()> {
         .unwrap();
     let edit_token = String::from(o["edittoken"].as_str().unwrap());
 
-    api.request(&[
-        ("action", "edit"),
-        ("reason", "Nicht ganz so automatische Aktion"),
-        ("bot", "1"),
-        ("title", "Vorlage:Aktuelle_Angebote"),
-        ("text", &full_template),
-        ("token", &edit_token),
-    ])
-    .await?;
+    client
+        .request(&[
+            ("action", "edit"),
+            ("reason", "Nicht ganz so automatische Aktion"),
+            ("bot", "1"),
+            ("title", "Vorlage:Aktuelle_Angebote"),
+            ("text", &full_template),
+            ("token", &edit_token),
+        ])
+        .await?;
 
     Ok(())
 }
 
 #[cfg(feature = "riot-api")]
-pub async fn rotation(api: &Api) -> Result<()> {
+pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
+    let client = client.as_ref();
     let riot_api_url = format!(
         "https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key={}",
         &std::env::var("RIOT_API_KEY")?
     );
     let curr_date = rename_m(chrono::Utc::today().format("%-d. %B %Y").to_string());
 
-    let champions: HashMap<i32, Champ> = api
-        .get_external("https://api.fabianlars.de/wiki/champion")
-        .await?
-        .json()
-        .await?;
+    let champions: HashMap<i32, Champ> = serde_json::from_str(
+        &client
+            .get_external_text("https://api.fabianlars.de/wiki/champion")
+            .await?,
+    )?;
 
-    let rotations: Rotations = api.get_external(&riot_api_url).await?.json().await?;
+    let rotations: Rotations = client
+        .get_external(&riot_api_url)
+        .await?
+        .body_json()
+        .await
+        .map_err(|e| anyhow!("Can't convert rotations json to struct: {}", e))?;
 
     let mut rotation: Vec<String> = rotations
         .free_champion_ids
@@ -361,7 +360,7 @@ pub async fn rotation(api: &Api) -> Result<()> {
     let rotation: String = rotation.iter().map(|x| "|".to_owned() + x).collect();
     let new_players: String = new_players.iter().map(|x| "|".to_owned() + x).collect();
 
-    let json = api
+    let json = client
         .request_json(&[
             ("action", "query"),
             ("format", "json"),
@@ -414,15 +413,16 @@ pub async fn rotation(api: &Api) -> Result<()> {
         rotation, curr_date, curr_date, new_players
     );
 
-    api.request(&[
-        ("action", "edit"),
-        ("reason", "automated action"),
-        ("bot", "1"),
-        ("title", "Vorlage:Aktuelle_Championrotation"),
-        ("text", &template),
-        ("token", &edit_token),
-    ])
-    .await?;
+    client
+        .request(&[
+            ("action", "edit"),
+            ("reason", "automated action"),
+            ("bot", "1"),
+            ("title", "Vorlage:Aktuelle_Championrotation"),
+            ("text", &template),
+            ("token", &edit_token),
+        ])
+        .await?;
 
     Ok(())
 }
@@ -450,7 +450,7 @@ fn rename_m(d: String) -> String {
     }
 }
 
-pub async fn set(api: &Api) -> Result<()> {
+pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let mut edit_token = String::new();
     let mut skin: String = String::new();
     let mut set: String = String::new();
@@ -459,9 +459,10 @@ pub async fn set(api: &Api) -> Result<()> {
     let mut iconsets: String = String::new();
     let mut champion: String = String::new();
     let mut tft: String = String::new();
+    let client = client.as_ref();
 
     let fut_token = async {
-        let json = api.request_json(&[
+        let json = client.request_json(&[
             ("action", "query"),
             ("format", "json"),
             ("prop", "info"),
@@ -479,31 +480,31 @@ pub async fn set(api: &Api) -> Result<()> {
         Ok::<(), Error>(())
     }.map_err(|_| anyhow!("Can't get skins.json"));
     let fut_skin = async {
-        skin = api.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").await?.replace(" ", " ").replace("Hexerei-Miss Fortune \"", "Hexerei-Miss Fortune\"");
+        skin = client.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").await?.replace(" ", " ").replace("Hexerei-Miss Fortune \"", "Hexerei-Miss Fortune\"");
         Ok::<(), Error>(())
     }.map_err(|_| anyhow!("Can't get skins.json"));
     let fut_set = async {
-        set = api.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skinlines.json").await?.replace(" ", " ");
+        set = client.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skinlines.json").await?.replace(" ", " ");
         Ok::<(), Error>(())
     }.map_err(|_| anyhow!("Can't get skinlines.json"));
     let fut_universe = async {
-        universe = api.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/universes.json").await?.replace(" ", " ");
+        universe = client.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/universes.json").await?.replace(" ", " ");
         Ok::<(), Error>(())
     }.map_err(|_| anyhow!("Can't get universes.json"));
     let fut_icons = async {
-        icons = api.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icons.json").await?.replace(" ", " ");
+        icons = client.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icons.json").await?.replace(" ", " ");
         Ok::<(), Error>(())
     }.map_err(|_| anyhow!("Can't get universes.json"));
     let fut_iconsets = async {
-        iconsets = api.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icon-sets.json").await?.replace(" ", " ");
+        iconsets = client.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icon-sets.json").await?.replace(" ", " ");
         Ok::<(), Error>(())
     }.map_err(|_| anyhow!("Can't get universes.json"));
     let fut_champion = async {
-        let res = api
+        let res = client
             .get_external_json("https://ddragon.leagueoflegends.com/api/versions.json")
             .await?;
         let patch_id = res.get(0).unwrap().as_str().unwrap();
-        champion = api
+        champion = client
             .get_external_text(&format!(
                 "http://ddragon.leagueoflegends.com/cdn/{}/data/de_DE/champion.json",
                 patch_id
@@ -514,7 +515,7 @@ pub async fn set(api: &Api) -> Result<()> {
     }
     .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_tft = async {
-        tft = api
+        tft = client
             .get_external_text("http://raw.communitydragon.org/latest/cdragon/tft/de_de.json")
             .await
             .expect("Can't get universes.json")
@@ -535,87 +536,94 @@ pub async fn set(api: &Api) -> Result<()> {
     )?;
 
     let fut_skin = async {
-        api.request(&[
-            ("action", "edit"),
-            ("reason", "automated update"),
-            ("bot", "1"),
-            ("title", "Vorlage:Set/skins.json"),
-            ("text", &skin),
-            ("token", &edit_token),
-        ])
-        .await
+        client
+            .request(&[
+                ("action", "edit"),
+                ("reason", "automated update"),
+                ("bot", "1"),
+                ("title", "Vorlage:Set/skins.json"),
+                ("text", &skin),
+                ("token", &edit_token),
+            ])
+            .await
     }
     .map_err(|_| anyhow!("Can't get skins.json"));
     let fut_set = async {
-        api.request(&[
-            ("action", "edit"),
-            ("reason", "automated update"),
-            ("bot", "1"),
-            ("title", "Vorlage:Set/sets.json"),
-            ("text", &set),
-            ("token", &edit_token),
-        ])
-        .await
+        client
+            .request(&[
+                ("action", "edit"),
+                ("reason", "automated update"),
+                ("bot", "1"),
+                ("title", "Vorlage:Set/sets.json"),
+                ("text", &set),
+                ("token", &edit_token),
+            ])
+            .await
     }
     .map_err(|_| anyhow!("Can't get skinlines.json"));
     let fut_universe = async {
-        api.request(&[
-            ("action", "edit"),
-            ("reason", "automated update"),
-            ("bot", "1"),
-            ("title", "Vorlage:Set/universes.json"),
-            ("text", &universe),
-            ("token", &edit_token),
-        ])
-        .await
+        client
+            .request(&[
+                ("action", "edit"),
+                ("reason", "automated update"),
+                ("bot", "1"),
+                ("title", "Vorlage:Set/universes.json"),
+                ("text", &universe),
+                ("token", &edit_token),
+            ])
+            .await
     }
     .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_icons = async {
-        api.request(&[
-            ("action", "edit"),
-            ("reason", "automated update"),
-            ("bot", "1"),
-            ("title", "Vorlage:Set/icons.json"),
-            ("text", &icons),
-            ("token", &edit_token),
-        ])
-        .await
+        client
+            .request(&[
+                ("action", "edit"),
+                ("reason", "automated update"),
+                ("bot", "1"),
+                ("title", "Vorlage:Set/icons.json"),
+                ("text", &icons),
+                ("token", &edit_token),
+            ])
+            .await
     }
     .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_iconsets = async {
-        api.request(&[
-            ("action", "edit"),
-            ("reason", "automated update"),
-            ("bot", "1"),
-            ("title", "Vorlage:Set/iconsets.json"),
-            ("text", &iconsets),
-            ("token", &edit_token),
-        ])
-        .await
+        client
+            .request(&[
+                ("action", "edit"),
+                ("reason", "automated update"),
+                ("bot", "1"),
+                ("title", "Vorlage:Set/iconsets.json"),
+                ("text", &iconsets),
+                ("token", &edit_token),
+            ])
+            .await
     }
     .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_champion = async {
-        api.request(&[
-            ("action", "edit"),
-            ("reason", "automated update"),
-            ("bot", "1"),
-            ("title", "Vorlage:Set/champion.json"),
-            ("text", &champion),
-            ("token", &edit_token),
-        ])
-        .await
+        client
+            .request(&[
+                ("action", "edit"),
+                ("reason", "automated update"),
+                ("bot", "1"),
+                ("title", "Vorlage:Set/champion.json"),
+                ("text", &champion),
+                ("token", &edit_token),
+            ])
+            .await
     }
     .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_tft = async {
-        api.request(&[
-            ("action", "edit"),
-            ("reason", "automated update"),
-            ("bot", "1"),
-            ("title", "Vorlage:Set/TFT.json"),
-            ("text", &tft),
-            ("token", &edit_token),
-        ])
-        .await
+        client
+            .request(&[
+                ("action", "edit"),
+                ("reason", "automated update"),
+                ("bot", "1"),
+                ("title", "Vorlage:Set/TFT.json"),
+                ("text", &tft),
+                ("token", &edit_token),
+            ])
+            .await
     }
     .map_err(|_| anyhow!("Can't get universes.json"));
 
@@ -632,13 +640,13 @@ pub async fn set(api: &Api) -> Result<()> {
     Ok(())
 }
 
-pub async fn positions(api: &Api) -> Result<()> {
+pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
+    let client = client.as_ref();
     let opgg = "https://euw.op.gg/champion/statistics";
 
-    let resp = api.get_external(opgg).await?;
-    assert!(resp.status().is_success());
+    let resp = client.get_external_text(opgg).await?;
 
-    let document = Document::from(resp.text().await?.as_str());
+    let document = Document::from(resp.as_str());
 
     let mut content = String::new();
 
@@ -691,7 +699,7 @@ pub async fn positions(api: &Api) -> Result<()> {
         content.push_str("\n");
     }
 
-    let json = api
+    let json = client
         .request_json(&[
             ("action", "query"),
             ("format", "json"),
@@ -709,7 +717,7 @@ pub async fn positions(api: &Api) -> Result<()> {
         .unwrap();
     let edit_token = String::from(o["edittoken"].as_str().unwrap());
 
-    api.request(&[
+    client.request(&[
         ("action", "edit"),
         ("reason", "automated action"),
         ("bot", "1"),
@@ -729,14 +737,15 @@ pub async fn positions(api: &Api) -> Result<()> {
 }
 
 // programmed on demand
-pub async fn random(api: &Api) -> Result<()> {
-    let champions: HashMap<i32, Champ> = api
-        .get_external("https://api.fabianlars.de/wiki/champion")
-        .await?
-        .json()
-        .await?;
+pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
+    let client = client.as_ref();
+    let champions: HashMap<i32, Champ> = serde_json::from_str(
+        &client
+            .get_external_text("https://api.fabianlars.de/wiki/champion")
+            .await?,
+    )?;
 
-    let json: Value = api.request_json(&[
+    let json: Value = client.request_json(&[
         ("action", "query"),
         ("format", "json"),
         ("prop", "info"),
@@ -752,7 +761,7 @@ pub async fn random(api: &Api) -> Result<()> {
         .unwrap();
     let edit_token1 = String::from(o["edittoken"].as_str().unwrap());
 
-    let json = api.request_json(&[
+    let json = client.request_json(&[
         ("action", "query"),
         ("format", "json"),
         ("prop", "info"),
@@ -768,7 +777,7 @@ pub async fn random(api: &Api) -> Result<()> {
         .unwrap();
     let edit_token2 = String::from(o["edittoken"].as_str().unwrap());
 
-    let json = api.request_json(&[
+    let json = client.request_json(&[
         ("action", "query"),
         ("format", "json"),
         ("prop", "info"),
@@ -784,7 +793,7 @@ pub async fn random(api: &Api) -> Result<()> {
         .unwrap();
     let edit_token3 = String::from(o["edittoken"].as_str().unwrap());
 
-    let json = api.request_json(&[
+    let json = client.request_json(&[
         ("action", "query"),
         ("format", "json"),
         ("prop", "info"),
@@ -801,80 +810,84 @@ pub async fn random(api: &Api) -> Result<()> {
     let edit_token4 = String::from(o["edittoken"].as_str().unwrap());
 
     for (_k, v) in champions {
-        api.request(&[
-            ("action", "edit"),
-            ("reason", "automated action"),
-            ("bot", "1"),
-            ("title", &format!("Kategorie:{} HD-Splasharts", v.name)),
-            (
-                "text",
-                &format!(
+        client
+            .request(&[
+                ("action", "edit"),
+                ("reason", "automated action"),
+                ("bot", "1"),
+                ("title", &format!("Kategorie:{} HD-Splasharts", v.name)),
+                (
+                    "text",
+                    &format!(
                     "Diese Kategorie beinhaltet alle hochauflösenden Splasharts von {{{{ci|{}}}}}.
 [[Kategorie:{}]][[Kategorie:Champion HD-Splasharts]]",
                     v.name, v.name
                 ),
-            ),
-            ("token", &edit_token1),
-        ])
-        .await?;
+                ),
+                ("token", &edit_token1),
+            ])
+            .await?;
 
-        api.request(&[
-            ("action", "edit"),
-            ("reason", "automated action"),
-            ("bot", "1"),
-            ("title", &format!("Kategorie:{} Kreisbilder", v.name)),
-            (
-                "text",
-                &format!(
-                    "Diese Kategorie beinhaltet alle Kreisbilder von {{{{ci|{}}}}}.
+        client
+            .request(&[
+                ("action", "edit"),
+                ("reason", "automated action"),
+                ("bot", "1"),
+                ("title", &format!("Kategorie:{} Kreisbilder", v.name)),
+                (
+                    "text",
+                    &format!(
+                        "Diese Kategorie beinhaltet alle Kreisbilder von {{{{ci|{}}}}}.
 [[Kategorie:{}]][[Kategorie:Champion Kreisbilder]]",
-                    v.name, v.name
+                        v.name, v.name
+                    ),
                 ),
-            ),
-            ("token", &edit_token2),
-        ])
-        .await?;
+                ("token", &edit_token2),
+            ])
+            .await?;
 
-        api.request(&[
-            ("action", "edit"),
-            ("reason", "automated action"),
-            ("bot", "1"),
-            ("title", &format!("Kategorie:{} Quadratbilder", v.name)),
-            (
-                "text",
-                &format!(
-                    "Diese Kategorie beinhaltet alle Quadratbilder von {{{{ci|{}}}}}.
+        client
+            .request(&[
+                ("action", "edit"),
+                ("reason", "automated action"),
+                ("bot", "1"),
+                ("title", &format!("Kategorie:{} Quadratbilder", v.name)),
+                (
+                    "text",
+                    &format!(
+                        "Diese Kategorie beinhaltet alle Quadratbilder von {{{{ci|{}}}}}.
 [[Kategorie:{}]][[Kategorie:Champion Quadratbilder]]",
-                    v.name, v.name
+                        v.name, v.name
+                    ),
                 ),
-            ),
-            ("token", &edit_token3),
-        ])
-        .await?;
+                ("token", &edit_token3),
+            ])
+            .await?;
 
-        api.request(&[
-            ("action", "edit"),
-            ("reason", "automated action"),
-            ("bot", "1"),
-            (
-                "title",
-                &format!("Kategorie:{} Ladebildschirmbilder", v.name),
-            ),
-            (
-                "text",
-                &format!(
-                    "Diese Kategorie beinhaltet alle Ladebildschirmbilder von {{{{ci|{}}}}}.
-[[Kategorie:{}]][[Kategorie:Champion Ladebildschirmbilder]]",
-                    v.name, v.name
+        client
+            .request(&[
+                ("action", "edit"),
+                ("reason", "automated action"),
+                ("bot", "1"),
+                (
+                    "title",
+                    &format!("Kategorie:{} Ladebildschirmbilder", v.name),
                 ),
-            ),
-            ("token", &edit_token4),
-        ])
-        .await?;
+                (
+                    "text",
+                    &format!(
+                        "Diese Kategorie beinhaltet alle Ladebildschirmbilder von {{{{ci|{}}}}}.
+[[Kategorie:{}]][[Kategorie:Champion Ladebildschirmbilder]]",
+                        v.name, v.name
+                    ),
+                ),
+                ("token", &edit_token4),
+            ])
+            .await?;
 
         println!("{}", v.name);
 
-        tokio::time::delay_for(tokio::time::Duration::from_millis(500)).await;
+        async_std::task::sleep(std::time::Duration::from_millis(500)).await;
     }
 
     Ok(())

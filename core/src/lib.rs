@@ -1,57 +1,72 @@
 use anyhow::{anyhow, Result};
-use reqwest::{multipart::Form, Client, Response};
 use serde_json::Value;
+use surf::{Client, Response};
 
+use async_std::path::Path;
+use surf::http::mime;
 pub use util::PathType;
+//pub use surf::Client::*;
 
-mod commands;
+pub mod api;
 mod util;
 
-#[derive(Clone, Debug, Default)]
-pub struct Api {
+#[derive(Clone, Debug)]
+pub struct WikiClient {
     client: Client,
     url: String,
     loginname: String,
     password: String,
-    wiki_headers: Option<reqwest::header::HeaderMap>,
+    //TODO: cookies: Vec<Cookie oder String>,
 }
 
-impl Api {
-    pub fn new() -> Self {
+impl AsRef<WikiClient> for WikiClient {
+    fn as_ref(&self) -> &Self {
+        self
+    }
+}
+
+impl Default for WikiClient {
+    fn default() -> Self {
         Self {
-            client: Client::builder()
-                .cookie_store(true)
-                .user_agent("wtools by FabianLars (https://github.com/FabianLars/wtools)")
-                .build()
-                .unwrap(),
+            client: Client::new(),
             ..Self::default()
         }
+    }
+}
+
+impl WikiClient {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub async fn new_logged_in<S: Into<String>>(url: S, loginname: S, password: S) -> Result<Self> {
+        let mut client = Self {
+            url: url.into(),
+            loginname: loginname.into(),
+            password: password.into(),
+            ..Self::default()
+        };
+        client.login().await?;
+        Ok(client)
     }
 
     pub fn from<S: Into<String>>(url: S) -> Self {
         Self {
-            client: Client::builder()
-                .cookie_store(true)
-                .user_agent("wtools by FabianLars (https://github.com/FabianLars/wtools)")
-                .build()
-                .unwrap(),
             url: url.into(),
             ..Self::default()
         }
     }
 
-    pub fn url<S: Into<String>>(mut self, url: S) -> Self {
+    pub fn url<S: Into<String>>(&mut self, url: S) {
         self.url = url.into();
-        self
     }
 
-    pub fn credentials<S: Into<String>>(mut self, loginname: S, password: S) -> Self {
+    pub fn credentials<S: Into<String>>(&mut self, loginname: S, password: S) {
         self.loginname = loginname.into();
         self.password = password.into();
-        self
     }
 
-    pub async fn login(self) -> Result<Self> {
+    pub async fn login(&mut self) -> Result<()> {
         let json: Value = self
             .request_json(&[
                 ("action", "login"),
@@ -67,7 +82,7 @@ impl Api {
 
         println!(
             "{:?}",
-            self.request(&[
+            self.request_text(&[
                 ("action", "login"),
                 ("format", "json"),
                 ("lgname", &self.loginname),
@@ -75,73 +90,75 @@ impl Api {
                 ("lgtoken", &token),
             ])
             .await?
-            .text()
-            .await
         );
 
-        Ok(self)
+        Ok(())
     }
 
     pub async fn request(&self, parameters: &[(&str, &str)]) -> Result<Response> {
-        self.client
-            .post(&self.url)
-            .form(parameters)
-            .send()
+        let res = self
+            .client
+            .send(
+                surf::post(&self.url).content_type(mime::FORM).body(
+                    parameters
+                        .iter()
+                        .map(|(k, v)| format!("{}={}", k, v))
+                        .collect::<Vec<String>>()
+                        .join("&"),
+                ),
+            )
             .await
-            .map_err(|e| anyhow!("Error requesting. Reqwest error: {}", e))
+            .map_err(|e| anyhow!("Error requesting. Surf error: {}", e));
+        dbg!(&res);
+        res
     }
 
     pub async fn request_text(&self, parameters: &[(&str, &str)]) -> Result<String> {
         self.request(parameters)
             .await?
-            .text()
+            .body_string()
             .await
-            .map_err(|e| anyhow!("Error getting text from Response. Reqwest error: {}", e))
+            .map_err(|e| anyhow!("Error getting text from Response. Surf error: {}", e))
     }
 
     pub async fn request_json(&self, parameters: &[(&str, &str)]) -> Result<Value> {
         self.request(parameters)
             .await?
-            .json()
+            .body_json()
             .await
-            .map_err(|e| anyhow!("Error getting json from Response. Reqwest error: {}", e))
+            .map_err(|e| anyhow!("Error getting json from Response. Surf error: {}", e))
     }
 
-    pub async fn send_multipart(
-        &self,
-        parameters: &[(&str, &str)],
-        form: Form,
-    ) -> Result<Response> {
+    pub async fn upload_file(&self, parameters: &[(&str, &str)], file: &Path) -> Result<Response> {
+        let mut req = surf::post(&self.url).build();
+        req.set_query(&parameters)?;
+        req.body_file(file).await?;
         self.client
-            .post(&self.url)
-            .query(parameters)
-            .multipart(form)
-            .send()
+            .send(req)
             .await
-            .map_err(|e| anyhow!("Error sending multipart form data. Reqwest error: {}", e))
+            .map_err(|e| anyhow!("Error sending multipart form data. Surf error: {}", e))
     }
 
     pub async fn get_external(&self, url: &str) -> Result<Response> {
         self.client
-            .get(url)
-            .send()
+            .send(surf::get(url))
             .await
-            .map_err(|e| anyhow::anyhow!("Error sending get request: Reqwest error: {}", e))
+            .map_err(|e| anyhow::anyhow!("Error sending external get request. Surf error: {}", e))
     }
 
     pub async fn get_external_json(&self, url: &str) -> Result<Value> {
         self.get_external(url)
             .await?
-            .json()
+            .body_json()
             .await
-            .map_err(|e| anyhow!("Error getting json from Response. Reqwest error: {}", e))
+            .map_err(|e| anyhow!("Error getting json from Response. Surf error: {}", e))
     }
 
     pub async fn get_external_text(&self, url: &str) -> Result<String> {
         self.get_external(url)
             .await?
-            .text()
+            .body_string()
             .await
-            .map_err(|e| anyhow!("Error getting text from Response. Reqwest error: {}", e))
+            .map_err(|e| anyhow!("Error getting text from Response. Surf error: {}", e))
     }
 }

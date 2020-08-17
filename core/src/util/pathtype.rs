@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use async_std::path::PathBuf;
 
 #[derive(Debug, Clone)]
 pub enum PathType {
@@ -8,7 +8,11 @@ pub enum PathType {
 }
 
 impl PathType {
-    pub fn new(pathbuf: PathBuf) -> Self {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn from(pathbuf: PathBuf) -> Self {
         if std::fs::metadata(&pathbuf).unwrap().is_dir() {
             PathType::Folder(pathbuf)
         } else if std::fs::metadata(&pathbuf).unwrap().is_file() {

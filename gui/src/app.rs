@@ -1,13 +1,13 @@
 use iced::{
-    button, scrollable, text_input, Align, Application, Button, Checkbox, Column, Command,
-    Container, Element, HorizontalAlignment, Length, Row, Scrollable, Settings, Text, TextInput,
+    button, futures::TryFutureExt, scrollable, text_input, Align, Application, Button, Checkbox,
+    Column, Command, Container, Element, HorizontalAlignment, Length, Row, Scrollable, Settings,
+    Text, TextInput,
 };
 use native_dialog::{Dialog, OpenMultipleFile};
 
-use wtools::{Api, PathType};
+use wtools::{api, PathType, WikiClient};
 
 use crate::style;
-use iced::futures::TryFutureExt;
 
 pub fn start() {
     App::run(Settings::default())
@@ -16,7 +16,7 @@ pub fn start() {
 #[derive(Debug, Default)]
 struct App {
     loading: bool,
-    api: Api,
+    wk_client: WikiClient,
     state: State,
 }
 
@@ -69,7 +69,7 @@ enum Message {
     WikiUrlChanged(String),
     CheckboxPersistentLogin(bool),
     LoginButtonPressed,
-    LoggedIn(Result<Api, ()>),
+    LoggedIn(Result<WikiClient, ()>),
     FileButtonPressed,
     FilesSelected(Result<PathType, ()>),
     ExecuteButtonPressed,
@@ -137,13 +137,12 @@ impl Application for App {
                     }
                     Message::LoginButtonPressed => {
                         return Command::perform(
-                            Api::from(self.state.wiki_url_input_value.clone())
-                                .credentials(
-                                    self.state.ln_input_value.clone(),
-                                    self.state.lp_input_value.clone(),
-                                )
-                                .login()
-                                .map_err(|_| ()),
+                            WikiClient::new_logged_in(
+                                self.state.wiki_url_input_value.clone(),
+                                self.state.ln_input_value.clone(),
+                                self.state.lp_input_value.clone(),
+                            )
+                            .map_err(|_| ()),
                             Message::LoggedIn,
                         );
                     }
@@ -162,19 +161,19 @@ impl Application for App {
                     }
                     Message::ExecuteButtonPressed => {
                         if let Tab::Upload = self.state.active_tab {
-                            // TODO:
-                            /*return Command::perform(
-                                self.api
-                                    .clone()
-                                    .upload(self.state.selected_files.clone())
-                                    .map_err(|_| ()),
+                            return Command::perform(
+                                api::upload::upload(
+                                    self.wk_client.clone(),
+                                    self.state.selected_files.clone(),
+                                )
+                                .map_err(|_| ()),
                                 Message::Executed,
-                            );*/
+                            );
                         }
                     }
                     Message::LoggedIn(res) => {
-                        if let Ok(api) = res {
-                            self.api = api;
+                        if let Ok(client) = res {
+                            self.wk_client = client;
 
                             return match self.state.is_persistent {
                                 true => Command::perform(
@@ -375,13 +374,11 @@ async fn file_dialog() -> Result<PathType, ()> {
         dir: None,
         filter: None,
     };
-    let result = tokio::task::spawn_blocking(|| dialog.show().unwrap())
-        .await
-        .unwrap();
+    let result = async_std::task::spawn_blocking(|| dialog.show().unwrap()).await;
 
-    let mut temp: Vec<std::path::PathBuf> = Vec::new();
+    let mut temp: Vec<async_std::path::PathBuf> = Vec::new();
     for f in result {
-        temp.push(f);
+        temp.push(async_std::path::PathBuf::from(f));
     }
     Ok(PathType::Files(temp))
 }

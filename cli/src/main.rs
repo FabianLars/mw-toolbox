@@ -1,19 +1,16 @@
 #![forbid(unsafe_code)]
-use std::fs;
-use std::path::PathBuf;
 
+use async_std::{fs, path::PathBuf, prelude::*};
 use clap::Clap;
 
-#[cfg(feature = "league-wiki")]
-use league::*;
-use wtools::{Api, PathType};
+use wtools::{api, PathType, WikiClient};
 
 #[derive(Clap, Debug, PartialEq)]
 enum Subcommand {
     Delete {
         /// uses newline seperation
         #[clap(parse(from_os_str))]
-        input: std::path::PathBuf,
+        input: PathBuf,
     },
     List {
         #[clap(arg_enum)]
@@ -22,12 +19,12 @@ enum Subcommand {
         parameter: Option<String>,
 
         #[clap(short, long, parse(from_os_str))]
-        output: Option<std::path::PathBuf>,
+        output: Option<PathBuf>,
     },
     Move {
         /// uses newline seperation
         #[clap(parse(from_os_str))]
-        input: std::path::PathBuf,
+        input: PathBuf,
     },
     #[cfg(feature = "league-wiki")]
     League {
@@ -35,7 +32,7 @@ enum Subcommand {
         league_type: LeagueType,
 
         #[clap(short, long, parse(from_os_str))]
-        path: Option<std::path::PathBuf>,
+        path: Option<PathBuf>,
     },
     Purge {
         #[clap(long)]
@@ -43,11 +40,11 @@ enum Subcommand {
 
         pages: Option<String>,
         #[clap(parse(from_os_str))]
-        file: Option<std::path::PathBuf>,
+        file: Option<PathBuf>,
     },
     Upload {
         #[clap(parse(from_os_str))]
-        input: std::path::PathBuf,
+        input: PathBuf,
     },
 }
 
@@ -102,86 +99,112 @@ struct Cli {
     url: String,
 }
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let cli = Cli::parse();
-    let api = Api::from(&cli.url)
-        .credentials(&cli.name, &cli.password)
-        .login()
-        .await?;
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    async_std::task::block_on(async {
+        let cli = Cli::parse();
+        let mut client = WikiClient::from(&cli.url);
+        client.credentials(&cli.name, &cli.password);
+        client.login().await?;
 
-    match cli.command {
-        Subcommand::Delete { input } => {
-            let contents = fs::read_to_string(input)?;
-            let titles: Vec<&str> = contents.lines().collect();
-            api.delete_pages(&titles).await?
-        }
-        Subcommand::List {
-            list_type,
-            parameter,
-            output,
-        } => {
-            if list_type == ListType::Exturlusage {
-                ::serde_json::to_writer_pretty(
-                    &fs::File::create(
+        match cli.command {
+            Subcommand::Delete { input } => {
+                let contents = fs::read_to_string(input).await?;
+                let titles: Vec<&str> = contents.lines().collect();
+                api::delete::delete_pages(&client, &titles).await?
+            }
+            Subcommand::List {
+                list_type,
+                parameter,
+                output,
+            } => {
+                if list_type == ListType::Exturlusage {
+                    let mut file = fs::File::create(
                         output.unwrap_or_else(|| PathBuf::from("./wtools_output.json")),
-                    )?,
-                    &api.exturlusage().await?,
-                )?;
-            } else {
-                ::serde_json::to_writer_pretty(
-                    &fs::File::create(
+                    )
+                    .await?;
+                    file.write(&serde_json::to_vec_pretty(
+                        &api::list::exturlusage(&client).await?,
+                    )?);
+                } else {
+                    let mut file = fs::File::create(
                         output.unwrap_or_else(|| PathBuf::from("./wtools_output.json")),
-                    )?,
-                    &match list_type {
-                        ListType::Allimages => api.allimages().await?,
-                        ListType::Allpages => api.allpages(parameter.as_deref()).await?,
-                        ListType::Alllinks => api.alllinks().await?,
-                        ListType::Allcategories => api.allcategories().await?,
-                        ListType::Backlinks => api.backlinks(parameter.as_deref()).await?,
-                        ListType::Categorymembers => {
-                            api.categorymembers(parameter.as_deref()).await?
+                    )
+                    .await?;
+                    file.write(&serde_json::to_vec_pretty(&match list_type {
+                        ListType::Allimages => api::list::allimages(&client).await?,
+                        ListType::Allpages => {
+                            api::list::allpages(&client, parameter.as_deref()).await?
                         }
-                        ListType::Embeddedin => api.embeddedin(parameter.as_deref()).await?,
-                        ListType::Imageusage => api.imageusage(parameter.as_deref()).await?,
-                        ListType::Iwbacklinks => api.iwbacklinks(parameter.as_deref()).await?,
-                        ListType::Langbacklinks => api.langbacklinks(parameter.as_deref()).await?,
-                        ListType::Search => api.search(parameter.as_deref()).await?,
-                        ListType::Protectedtitles => api.protectedtitles().await?,
-                        ListType::Querypage => api.querypage(parameter.as_deref()).await?,
-                        ListType::Wkpoppages => api.wkpoppages().await?,
-                        ListType::Unconvertedinfoboxes => api.unconvertedinfoboxes().await?,
-                        ListType::Allinfoboxes => api.allinfoboxes().await?,
+                        ListType::Alllinks => api::list::alllinks(&client).await?,
+                        ListType::Allcategories => api::list::allcategories(&client).await?,
+                        ListType::Backlinks => {
+                            api::list::backlinks(&client, parameter.as_deref()).await?
+                        }
+                        ListType::Categorymembers => {
+                            api::list::categorymembers(&client, parameter.as_deref()).await?
+                        }
+                        ListType::Embeddedin => {
+                            api::list::embeddedin(&client, parameter.as_deref()).await?
+                        }
+                        ListType::Imageusage => {
+                            api::list::imageusage(&client, parameter.as_deref()).await?
+                        }
+                        ListType::Iwbacklinks => {
+                            api::list::iwbacklinks(&client, parameter.as_deref()).await?
+                        }
+                        ListType::Langbacklinks => {
+                            api::list::langbacklinks(&client, parameter.as_deref()).await?
+                        }
+                        ListType::Search => {
+                            api::list::search(&client, parameter.as_deref()).await?
+                        }
+                        ListType::Protectedtitles => api::list::protectedtitles(&client).await?,
+                        ListType::Querypage => {
+                            api::list::querypage(&client, parameter.as_deref()).await?
+                        }
+                        ListType::Wkpoppages => api::list::wkpoppages(&client).await?,
+                        ListType::Unconvertedinfoboxes => {
+                            api::list::unconvertedinfoboxes(&client).await?
+                        }
+                        ListType::Allinfoboxes => api::list::allinfoboxes(&client).await?,
                         _ => vec![String::new()],
-                    },
-                )?;
+                    })?)
+                    .await?;
+                }
             }
+            Subcommand::Move { input } => {
+                api::rename::move_pages(&client, PathType::from(input)).await?
+            }
+            Subcommand::Purge { pages, .. } => {
+                println!("{:?}", pages.unwrap());
+                api::purge::purge(&client).await?
+            }
+            Subcommand::Upload { input } => {
+                api::upload::upload(&client, PathType::from(input)).await?
+            }
+            #[cfg(feature = "league-wiki")]
+            Subcommand::League { league_type, path } => match league_type {
+                LeagueType::Champs | LeagueType::Champions => league::champs().await?,
+                LeagueType::Discount | LeagueType::Discounts => {
+                    league::discounts(
+                        &client,
+                        PathType::from(path.unwrap_or(PathBuf::from(
+                            "E:/Spiele/Riot Games/League of Legends/lockfile",
+                        ))),
+                    )
+                    .await?
+                }
+                LeagueType::Positions => league::positions(&client).await?,
+                LeagueType::Random => league::random(&client).await?,
+                LeagueType::Rotation | LeagueType::Rotations => {
+                    #[cfg(not(feature = "riot-api"))]
+                    panic!("Did you forget to set the riot-api feature flag?");
+                    #[cfg(feature = "riot-api")]
+                    league::rotation(&client).await?
+                }
+                LeagueType::Set => league::set(&client).await?,
+            },
         }
-        Subcommand::Move { input } => api.move_pages(PathType::new(input)).await?,
-        Subcommand::Purge { pages, .. } => {
-            println!("{:?}", pages.unwrap());
-            api.purge().await
-        }
-        Subcommand::Upload { input } => api.upload(PathType::new(input)).await?,
-        #[cfg(feature = "league-wiki")]
-        Subcommand::League { league_type, path } => match league_type {
-            LeagueType::Champs | LeagueType::Champions => champs().await?,
-            LeagueType::Discount | LeagueType::Discounts => {
-                api.discounts(PathType::new(input.unwrap_or(PathBuf::from(
-                    "E:/Spiele/Riot Games/League of Legends/lockfile",
-                ))))
-                .await?
-            }
-            LeagueType::Positions => positions(&api).await?,
-            LeagueType::Random => random(&api).await?,
-            LeagueType::Rotation | LeagueType::Rotations => {
-                #[cfg(not(feature = "riot-api"))]
-                panic!("Did you forget to set the riot-api feature flag?");
-                #[cfg(feature = "riot-api")]
-                rotation(&api).await?
-            }
-            LeagueType::Set => set(&api).await?,
-        },
-    }
-    Ok(())
+        Ok(())
+    })
 }

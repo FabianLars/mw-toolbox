@@ -1,10 +1,10 @@
 use std::collections::BTreeMap;
 
 use anyhow::{anyhow, Result};
+use async_std::{fs::File, prelude::*};
 use chacha20poly1305::aead::{Aead, NewAead};
 use chacha20poly1305::{Key, XChaCha20Poly1305, XNonce};
 use rand::prelude::*;
-use tokio::prelude::*;
 
 fn path() -> std::path::PathBuf {
     let mut path =
@@ -23,10 +23,10 @@ async fn load() -> Result<BTreeMap<String, Vec<u8>>> {
     let mut contents = Vec::new();
 
     if let Some(dir) = path().parent() {
-        tokio::fs::create_dir_all(dir).await?;
+        async_std::fs::create_dir_all(dir).await?;
     }
 
-    let mut file = tokio::fs::File::open(path()).await?;
+    let mut file = File::open(path()).await?;
 
     file.read_to_end(&mut contents).await?;
 
@@ -83,7 +83,7 @@ async fn insert_u8(key: &str, val: Vec<u8>) -> Result<()> {
     let mut map: BTreeMap<String, Vec<u8>>;
 
     if let Some(dir) = path.parent() {
-        tokio::fs::create_dir_all(dir).await?;
+        async_std::fs::create_dir_all(dir).await?;
     }
 
     {
@@ -97,7 +97,7 @@ async fn insert_u8(key: &str, val: Vec<u8>) -> Result<()> {
         }
 
         {
-            let mut file = tokio::fs::File::create(path).await?;
+            let mut file = File::create(path).await?;
 
             file.write_all(
                 &bincode::serialize(&map)

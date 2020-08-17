@@ -1,0 +1,37 @@
+use crate::WikiClient;
+use serde_json::Value;
+
+pub async fn delete_pages<C: AsRef<WikiClient>>(client: C, titles: &[&str]) -> anyhow::Result<()> {
+    let client = client.as_ref();
+    let json: Value = client
+        .request_json(&[
+            ("action", "query"),
+            ("format", "json"),
+            ("prop", "info"),
+            ("intoken", "delete"),
+            ("titles", &titles.join("|")),
+        ])
+        .await?;
+
+    let (_i, o) = json["query"]["pages"]
+        .as_object()
+        .unwrap()
+        .into_iter()
+        .next()
+        .unwrap();
+    let delete_token = String::from(o["deletetoken"].as_str().unwrap());
+
+    for title in titles {
+        client
+            .request(&[
+                ("action", "delete"),
+                ("reason", "automated action"),
+                ("title", title),
+                ("token", &delete_token),
+            ])
+            .await?;
+        std::thread::sleep(std::time::Duration::from_millis(500))
+    }
+
+    Ok(())
+}
