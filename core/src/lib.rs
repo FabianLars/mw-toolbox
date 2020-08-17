@@ -1,5 +1,5 @@
 use anyhow::{anyhow, Result};
-use reqwest::{Client, Method, Request, RequestBuilder, Response};
+use reqwest::{Client, Response};
 use serde_json::Value;
 
 pub use util::PathType;

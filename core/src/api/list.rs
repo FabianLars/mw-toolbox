@@ -25,8 +25,13 @@ pub async fn allpages<C: AsRef<WikiClient>>(
             let mut temp: Vec<String> = Vec::new();
             for ns in namespaces {
                 temp.append(
-                    &mut get_from_api(client, "allpages", "ap", Some(&format!("apnamespace={}", ns)))
-                        .await?,
+                    &mut get_from_api(
+                        client,
+                        "allpages",
+                        "ap",
+                        Some(&format!("apnamespace={}", ns)),
+                    )
+                    .await?,
                 );
             }
             return Ok(temp);
@@ -49,18 +54,22 @@ pub async fn alllinks<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
     get_from_api(client.as_ref(), "alllinks", "al", None).await
 }
 
-pub async fn allcategories<C: AsRef<WikiClient>>(client: C,) -> Result<Vec<String>> {
+pub async fn allcategories<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
     get_from_api(client.as_ref(), "allcategories", "ac", None).await
 }
 
-pub async fn backlinks<C: AsRef<WikiClient>>(client: C, parameter: Option<&str>) -> Result<Vec<String>> {
+pub async fn backlinks<C: AsRef<WikiClient>>(
+    client: C,
+    parameter: Option<&str>,
+) -> Result<Vec<String>> {
     if parameter.is_none() {
         panic!("Missing btitle (Title to search)")
     }
     get_from_api(client.as_ref(), "backlinks", "bl", parameter).await
 }
 
-pub async fn categorymembers<C: AsRef<WikiClient>>(client: C,
+pub async fn categorymembers<C: AsRef<WikiClient>>(
+    client: C,
     parameter: Option<&str>,
 ) -> Result<Vec<String>> {
     if parameter.is_none() {
@@ -69,35 +78,50 @@ pub async fn categorymembers<C: AsRef<WikiClient>>(client: C,
     get_from_api(client.as_ref(), "categorymembers", "cm", parameter).await
 }
 
-pub async fn embeddedin<C: AsRef<WikiClient>>(client: C, parameter: Option<&str>) -> Result<Vec<String>> {
+pub async fn embeddedin<C: AsRef<WikiClient>>(
+    client: C,
+    parameter: Option<&str>,
+) -> Result<Vec<String>> {
     if parameter.is_none() {
         panic!("missing eititle: Title to search")
     }
     get_from_api(client.as_ref(), "embeddedin", "ei", parameter).await
 }
 
-pub async fn imageusage<C: AsRef<WikiClient>>(client: C, parameter: Option<&str>) -> Result<Vec<String>> {
+pub async fn imageusage<C: AsRef<WikiClient>>(
+    client: C,
+    parameter: Option<&str>,
+) -> Result<Vec<String>> {
     if parameter.is_none() {
         panic!("missing iutitle: Title to search")
     }
     get_from_api(client.as_ref(), "imageusage", "iu", parameter).await
 }
 
-pub async fn iwbacklinks<C: AsRef<WikiClient>>(client: C, parameter: Option<&str>) -> Result<Vec<String>> {
+pub async fn iwbacklinks<C: AsRef<WikiClient>>(
+    client: C,
+    parameter: Option<&str>,
+) -> Result<Vec<String>> {
     if parameter.is_none() {
         panic!("missing iwblprefix: Prefix for the interwiki")
     }
     get_from_api(client.as_ref(), "iwbacklinks", "iwbl", parameter).await
 }
 
-pub async fn langbacklinks<C: AsRef<WikiClient>>(client: C, parameter: Option<&str>) -> Result<Vec<String>> {
+pub async fn langbacklinks<C: AsRef<WikiClient>>(
+    client: C,
+    parameter: Option<&str>,
+) -> Result<Vec<String>> {
     if parameter.is_none() {
         panic!("missing lbllang: Language for the language link")
     }
     get_from_api(client.as_ref(), "langbacklinks", "lbl", parameter).await
 }
 
-pub async fn search<C: AsRef<WikiClient>>(client: C, parameter: Option<&str>) -> Result<Vec<String>> {
+pub async fn search<C: AsRef<WikiClient>>(
+    client: C,
+    parameter: Option<&str>,
+) -> Result<Vec<String>> {
     if parameter.is_none() {
         panic!("missing srsearch: Search for all page titles (or content) that has this value")
     }
@@ -146,7 +170,10 @@ pub async fn protectedtitles<C: AsRef<WikiClient>>(client: C) -> Result<Vec<Stri
     get_from_api(client.as_ref(), "protectedtitles", "pt", None).await
 }
 
-pub async fn querypage<C: AsRef<WikiClient>>(client: C, parameter: Option<&str>) -> Result<Vec<String>> {
+pub async fn querypage<C: AsRef<WikiClient>>(
+    client: C,
+    parameter: Option<&str>,
+) -> Result<Vec<String>> {
     if parameter.is_none() {
         panic!("missing qppage: The name of the special page. Note, this is case sensitive")
     }

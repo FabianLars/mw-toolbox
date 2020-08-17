@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use iced::{
     button, futures::TryFutureExt, scrollable, text_input, Align, Application, Button, Checkbox,
     Column, Command, Container, Element, HorizontalAlignment, Length, Row, Scrollable, Settings,
@@ -8,7 +10,6 @@ use native_dialog::{Dialog, OpenMultipleFile};
 use wtools::{api, PathType, WikiClient};
 
 use crate::style;
-use std::path::PathBuf;
 
 pub fn start() {
     App::run(Settings::default())

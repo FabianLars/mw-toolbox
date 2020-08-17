@@ -1,5 +1,6 @@
-use crate::WikiClient;
 use serde_json::Value;
+
+use crate::WikiClient;
 
 pub async fn delete_pages<C: AsRef<WikiClient>>(client: C, titles: &[&str]) -> anyhow::Result<()> {
     let client = client.as_ref();

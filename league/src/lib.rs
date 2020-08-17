@@ -1,14 +1,15 @@
 #![forbid(unsafe_code)]
+
 use std::{collections::HashMap, fs::File};
 
 use anyhow::{anyhow, Error, Result};
 use futures::{prelude::*, try_join};
+use reqwest::header::{HeaderMap, ACCEPT, AUTHORIZATION};
 use reqwest::Client;
 use select::{document::Document, predicate::Class};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use reqwest::header::{HeaderMap, ACCEPT, AUTHORIZATION};
 use wtools::{PathType, WikiClient};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -829,10 +830,10 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
                 (
                     "text",
                     &format!(
-                    "Diese Kategorie beinhaltet alle hochauflösenden Splasharts von {{{{ci|{}}}}}.
+                        "Diese Kategorie beinhaltet alle hochauflösenden Splasharts von {{{{ci|{}}}}}.
 [[Kategorie:{}]][[Kategorie:Champion HD-Splasharts]]",
-                    v.name, v.name
-                ),
+                        v.name, v.name
+                    ),
                 ),
                 ("token", &edit_token1),
             ])
