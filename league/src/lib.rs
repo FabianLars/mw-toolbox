@@ -1,6 +1,6 @@
 #![forbid(unsafe_code)]
 
-use std::{collections::HashMap, fs::File};
+use std::collections::HashMap;
 
 use anyhow::{anyhow, Error, Result};
 use futures::{prelude::*, try_join};
@@ -9,6 +9,7 @@ use reqwest::Client;
 use select::{document::Document, predicate::Class};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use tokio::{fs::File, prelude::*};
 
 use wtools::{PathType, WikiClient};
 
@@ -139,7 +140,10 @@ pub async fn champs() -> Result<()> {
         champions.get_mut(&champid).unwrap().skins.push(temp);
     }
 
-    ::serde_json::to_writer(&File::create("champions.json")?, &champions)?;
+    File::create("champions.json")
+        .await?
+        .write_all(serde_json::to_string(&champions)?.as_bytes())
+        .await?;
 
     Ok(())
 }
