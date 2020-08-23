@@ -3,7 +3,8 @@
 use std::collections::HashMap;
 
 use anyhow::{anyhow, Error, Result};
-use futures::{prelude::*, try_join};
+use futures::{join, prelude::*, try_join};
+use regex::Regex;
 use reqwest::header::{HeaderMap, ACCEPT, AUTHORIZATION};
 use reqwest::Client;
 use select::{document::Document, predicate::Class};
@@ -659,13 +660,32 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let client = client.as_ref();
     let opgg = "https://euw.op.gg/champion/statistics";
 
-    let resp = client.get_external_text(opgg).await?;
+    let (resp, resp2) = join!(
+        client.get_external_text(opgg),
+        client.request_json(&[
+            ("action", "parse"),
+            ("page", "Module:ChampionData/data"),
+            ("prop", "wikitext"),
+            ("format", "json")
+        ])
+    );
 
-    let document = Document::from(resp.as_str());
+    let document = Document::from(resp?.as_str());
 
     let mut content = String::new();
 
+    let champdata = resp2?;
+    let champdata: String = champdata["parse"]["wikitext"]["*"]
+        .as_str()
+        .unwrap()
+        .to_string();
+    let champdata_regex = Regex::new("(?m)\\[\"positions\"\\] += .+,$")?;
+    let champdata_iter = champdata_regex.split(&champdata);
+    let mut positions: Vec<String> = Vec::new();
+
     for node in document.find(Class("champion-index__champion-item")) {
+        let mut temp_positions: Vec<String> = Vec::new();
+
         content.push_str("|");
         content.push_str(
             &node
@@ -682,6 +702,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .contains("champion-index__champion-item--TOP")
         {
             content.push_str("[[Kategorie:Oben Champion]]");
+            temp_positions.push("\"Oben\"".to_string());
         }
         if node
             .attr("class")
@@ -689,6 +710,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .contains("champion-index__champion-item--MID")
         {
             content.push_str("[[Kategorie:Mitte Champion]]");
+            temp_positions.push("\"Mitte\"".to_string());
         }
         if node
             .attr("class")
@@ -696,6 +718,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .contains("champion-index__champion-item--ADC")
         {
             content.push_str("[[Kategorie:Unten Champion]]");
+            temp_positions.push("\"Unten\"".to_string());
         }
         if node
             .attr("class")
@@ -703,6 +726,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .contains("champion-index__champion-item--SUPPORT")
         {
             content.push_str("[[Kategorie:Unterstützer Champion]]");
+            temp_positions.push("\"Unterstützer\"".to_string());
         }
         if node
             .attr("class")
@@ -710,9 +734,17 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .contains("champion-index__champion-item--JUNGLE")
         {
             content.push_str("[[Kategorie:Dschungel Champion]]");
+            temp_positions.push("\"Dschungel\"".to_string());
         }
         content.push_str("\n");
+        positions.push(temp_positions.join(", "));
     }
+
+    let mut new_champdata: Vec<String> = Vec::new();
+    for (x, y) in champdata_iter.zip(positions.into_iter()) {
+        new_champdata.push(format!("{}[\"positions\"]    = {{{}}},", x, y));
+    }
+    println!("{}", new_champdata.clone().concat());
 
     let json = client
         .request_json(&[
@@ -720,7 +752,10 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             ("format", "json"),
             ("prop", "info"),
             ("intoken", "edit"),
-            ("titles", "Vorlage:Position category/Stats"),
+            (
+                "titles",
+                "Vorlage:Position category/Stats|Module:ChampionData/data",
+            ),
         ])
         .await?;
 
@@ -745,7 +780,17 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             ),
         ),
         ("token", &edit_token),
-    ])
+    ]).await?;
+
+    client
+        .request(&[
+            ("action", "edit"),
+            ("reason", "automated action"),
+            ("bot", "1"),
+            ("title", "Module:ChampionData/data"),
+            ("text", &new_champdata.concat()),
+            ("token", &edit_token),
+        ])
         .await?;
 
     Ok(())
