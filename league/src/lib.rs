@@ -679,7 +679,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         .as_str()
         .unwrap()
         .to_string();
-    let champdata_regex = Regex::new("(?m)\\[\"positions\"\\] += .+,$")?;
+    let champdata_regex = Regex::new("(?m)\\[\"op_positions\"\\] += .+,$")?;
     let champdata_iter = champdata_regex.split(&champdata);
     let mut positions: Vec<String> = Vec::new();
 
@@ -740,9 +740,14 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         positions.push(temp_positions.join(", "));
     }
 
+    positions.push(String::new());
     let mut new_champdata: Vec<String> = Vec::new();
     for (x, y) in champdata_iter.zip(positions.into_iter()) {
-        new_champdata.push(format!("{}[\"positions\"]    = {{{}}},", x, y));
+        if y.is_empty() {
+            new_champdata.push(x.to_string());
+        } else {
+            new_champdata.push(format!("{}[\"op_positions\"] = {{{}}},", x, y));
+        }
     }
     println!("{}", new_champdata.clone().concat());
 
