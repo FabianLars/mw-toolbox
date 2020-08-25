@@ -749,7 +749,6 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             new_champdata.push(format!("{}[\"op_positions\"] = {{{}}},", x, y));
         }
     }
-    println!("{}", new_champdata.clone().concat());
 
     let json = client
         .request_json(&[
@@ -949,8 +948,6 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
                 ("token", &edit_token4),
             ])
             .await?;
-
-        println!("{}", v.name);
 
         tokio::time::delay_for(tokio::time::Duration::from_millis(500)).await;
     }
