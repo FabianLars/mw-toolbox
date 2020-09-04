@@ -686,22 +686,11 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     for node in document.find(Class("champion-index__champion-item")) {
         let mut temp_positions: Vec<String> = Vec::new();
 
-        content.push_str("|");
-        content.push_str(
-            &node
-                .find(Class("champion-index__champion-item__name"))
-                .next()
-                .unwrap()
-                .text(),
-        );
-
-        content.push_str(" = ");
         if node
             .attr("class")
             .unwrap()
             .contains("champion-index__champion-item--TOP")
         {
-            content.push_str("[[Kategorie:Oben Champion]]");
             temp_positions.push("\"Oben\"".to_string());
         }
         if node
@@ -709,7 +698,6 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .unwrap()
             .contains("champion-index__champion-item--MID")
         {
-            content.push_str("[[Kategorie:Mitte Champion]]");
             temp_positions.push("\"Mitte\"".to_string());
         }
         if node
@@ -717,7 +705,6 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .unwrap()
             .contains("champion-index__champion-item--ADC")
         {
-            content.push_str("[[Kategorie:Unten Champion]]");
             temp_positions.push("\"Unten\"".to_string());
         }
         if node
@@ -725,7 +712,6 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .unwrap()
             .contains("champion-index__champion-item--SUPPORT")
         {
-            content.push_str("[[Kategorie:Unterstützer Champion]]");
             temp_positions.push("\"Unterstützer\"".to_string());
         }
         if node
@@ -733,7 +719,6 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .unwrap()
             .contains("champion-index__champion-item--JUNGLE")
         {
-            content.push_str("[[Kategorie:Dschungel Champion]]");
             temp_positions.push("\"Dschungel\"".to_string());
         }
         content.push_str("\n");
@@ -756,10 +741,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             ("format", "json"),
             ("prop", "info"),
             ("intoken", "edit"),
-            (
-                "titles",
-                "Vorlage:Position category/Stats|Module:ChampionData/data",
-            ),
+            ("titles", "Module:ChampionData/data"),
         ])
         .await?;
 
@@ -770,21 +752,6 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         .next()
         .unwrap();
     let edit_token = String::from(o["edittoken"].as_str().unwrap());
-
-    client.request(&[
-        ("action", "edit"),
-        ("reason", "automated action"),
-        ("bot", "1"),
-        ("title", "Vorlage:Position category/Stats"),
-        (
-            "text",
-            &format!(
-                "<!-- Fetched from op.gg --><includeonly>{{{{#switch:{{{{{{1}}}}}}\n{}}}}}</includeonly><noinclude>[[Kategorie:Update nach neuem Patch notwendig]][[Kategorie:Update nach neuem Champion notwendig]]</noinclude>",
-                &content
-            ),
-        ),
-        ("token", &edit_token),
-    ]).await?;
 
     client
         .request(&[
