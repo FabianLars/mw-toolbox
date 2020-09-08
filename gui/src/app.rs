@@ -12,7 +12,7 @@ use wtools::{api, PathType, WikiClient};
 use crate::style;
 
 pub fn start() {
-    App::run(Settings::default())
+    App::run(Settings::default()).unwrap()
 }
 
 #[derive(Debug, Default)]
