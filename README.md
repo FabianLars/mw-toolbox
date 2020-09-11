@@ -3,9 +3,9 @@ some tools to interact with http://leagueoflegends.fandom.com/de/wiki/
 more or less connected to [wapi](https://github.com/FabianLars/wapi)  
 uses limited editing rate of ~1 edit per second according to fandoms rules  
 Interaction with Riot's API only via CLI (just "update rotation" for now)  
-* Needs feature flag "riot-api"
+* Needs feature flag "riot-api"  
 Input files need to be formatted with newline seperation (eg 1 wiki article per line)  
-Options (arguments specified with "-" or "--") work on compiled program only. (using "wtools" instead of "cargo run")
+Options (arguments specified with "-" or "--") work on compiled program only. (using "wtools" instead of "cargo run")  
 * start GUI:
   * double-click exe after building or type "cargo run -p gui" terminal
 * CLI usage:
