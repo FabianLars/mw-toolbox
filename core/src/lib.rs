@@ -71,26 +71,23 @@ impl WikiClient {
 
     pub async fn login(&mut self) -> Result<()> {
         let json: Value = self
-            .request_json(&[
-                ("action", "login"),
-                ("format", "json"),
-                ("lgname", &self.loginname),
-                ("lgpassword", &self.password),
-            ])
+            .request_json(&[("action", "query"), ("meta", "tokens"), ("type", "login")])
             .await?;
 
         println!("{:?}", &json);
 
-        let token: String = String::from(json["login"]["token"].as_str().unwrap());
+        let token: String = String::from(json["query"]["tokens"]["logintoken"].as_str().unwrap());
 
         println!(
             "{:?}",
             self.request_text(&[
-                ("action", "login"),
+                ("action", "clientlogin"),
                 ("format", "json"),
-                ("lgname", &self.loginname),
-                ("lgpassword", &self.password),
-                ("lgtoken", &token),
+                ("username", &self.loginname),
+                ("password", &self.password),
+                ("loginreturnurl", "http://example.com"),
+                ("rememberMe", "1"),
+                ("logintoken", &token),
             ])
             .await?
         );
