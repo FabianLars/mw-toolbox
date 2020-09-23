@@ -679,7 +679,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         .as_str()
         .unwrap()
         .to_string();
-    let champdata_regex = Regex::new("(?m)\\[\"op_positions\"] += .+,$")?;
+    let champdata_regex = Regex::new("(?m)\\[\"op_positions\"] *= .+,$")?;
     let champdata_iter = champdata_regex.split(&champdata);
     let mut positions: Vec<String> = Vec::new();
 
