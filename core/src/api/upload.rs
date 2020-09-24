@@ -32,7 +32,7 @@ pub async fn upload<C: AsRef<WikiClient>>(client: C, path: PathType) -> anyhow::
     pages.pop();
 
     let json: Value = client
-        .request_json(&[
+        .get_into_json(&[
             ("action", "query"),
             ("format", "json"),
             ("prop", "info"),

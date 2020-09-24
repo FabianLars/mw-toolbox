@@ -308,7 +308,7 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathType) -> Resul
     );
 
     let json: Value = client
-        .request_json(&[
+        .get_into_json(&[
             ("action", "query"),
             ("format", "json"),
             ("prop", "info"),
@@ -326,7 +326,7 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathType) -> Resul
     let edit_token = String::from(o["edittoken"].as_str().unwrap());
 
     client
-        .request(&[
+        .get(&[
             ("action", "edit"),
             ("reason", "Nicht ganz so automatische Aktion"),
             ("bot", "1"),
@@ -377,7 +377,7 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let new_players: String = new_players.iter().map(|x| "|".to_owned() + x).collect();
 
     let json = client
-        .request_json(&[
+        .get_into_json(&[
             ("action", "query"),
             ("format", "json"),
             ("prop", "info"),
@@ -430,7 +430,7 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     );
 
     client
-        .request(&[
+        .get(&[
             ("action", "edit"),
             ("reason", "automated action"),
             ("bot", "1"),
@@ -478,7 +478,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let client = client.as_ref();
 
     let fut_token = async {
-        let json = client.request_json(&[
+        let json = client.get_into_json(&[
             ("action", "query"),
             ("format", "json"),
             ("prop", "info"),
@@ -553,7 +553,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
 
     let fut_skin = async {
         client
-            .request(&[
+            .get(&[
                 ("action", "edit"),
                 ("reason", "automated update"),
                 ("bot", "1"),
@@ -566,7 +566,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't get skins.json"));
     let fut_set = async {
         client
-            .request(&[
+            .get(&[
                 ("action", "edit"),
                 ("reason", "automated update"),
                 ("bot", "1"),
@@ -579,7 +579,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't get skinlines.json"));
     let fut_universe = async {
         client
-            .request(&[
+            .get(&[
                 ("action", "edit"),
                 ("reason", "automated update"),
                 ("bot", "1"),
@@ -592,7 +592,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_icons = async {
         client
-            .request(&[
+            .get(&[
                 ("action", "edit"),
                 ("reason", "automated update"),
                 ("bot", "1"),
@@ -605,7 +605,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_iconsets = async {
         client
-            .request(&[
+            .get(&[
                 ("action", "edit"),
                 ("reason", "automated update"),
                 ("bot", "1"),
@@ -618,7 +618,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_champion = async {
         client
-            .request(&[
+            .get(&[
                 ("action", "edit"),
                 ("reason", "automated update"),
                 ("bot", "1"),
@@ -631,7 +631,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_tft = async {
         client
-            .request(&[
+            .get(&[
                 ("action", "edit"),
                 ("reason", "automated update"),
                 ("bot", "1"),
@@ -662,7 +662,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
 
     let (resp, resp2) = join!(
         client.get_external_text(opgg),
-        client.request_json(&[
+        client.get_into_json(&[
             ("action", "parse"),
             ("page", "Module:ChampionData/data"),
             ("prop", "wikitext"),
@@ -736,7 +736,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     }
 
     let json = client
-        .request_json(&[
+        .get_into_json(&[
             ("action", "query"),
             ("format", "json"),
             ("prop", "info"),
@@ -754,7 +754,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let edit_token = String::from(o["edittoken"].as_str().unwrap());
 
     client
-        .request(&[
+        .get(&[
             ("action", "edit"),
             ("reason", "automated action"),
             ("bot", "1"),
@@ -776,7 +776,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .await?,
     )?;
 
-    let json: Value = client.request_json(&[
+    let json: Value = client.get_into_json(&[
         ("action", "query"),
         ("format", "json"),
         ("prop", "info"),
@@ -792,7 +792,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         .unwrap();
     let edit_token1 = String::from(o["edittoken"].as_str().unwrap());
 
-    let json = client.request_json(&[
+    let json = client.get_into_json(&[
         ("action", "query"),
         ("format", "json"),
         ("prop", "info"),
@@ -808,7 +808,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         .unwrap();
     let edit_token2 = String::from(o["edittoken"].as_str().unwrap());
 
-    let json = client.request_json(&[
+    let json = client.get_into_json(&[
         ("action", "query"),
         ("format", "json"),
         ("prop", "info"),
@@ -824,7 +824,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         .unwrap();
     let edit_token3 = String::from(o["edittoken"].as_str().unwrap());
 
-    let json = client.request_json(&[
+    let json = client.get_into_json(&[
         ("action", "query"),
         ("format", "json"),
         ("prop", "info"),
@@ -842,7 +842,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
 
     for (_k, v) in champions {
         client
-            .request(&[
+            .get(&[
                 ("action", "edit"),
                 ("reason", "automated action"),
                 ("bot", "1"),
@@ -860,7 +860,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .await?;
 
         client
-            .request(&[
+            .get(&[
                 ("action", "edit"),
                 ("reason", "automated action"),
                 ("bot", "1"),
@@ -878,7 +878,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .await?;
 
         client
-            .request(&[
+            .get(&[
                 ("action", "edit"),
                 ("reason", "automated action"),
                 ("bot", "1"),
@@ -896,7 +896,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .await?;
 
         client
-            .request(&[
+            .get(&[
                 ("action", "edit"),
                 ("reason", "automated action"),
                 ("bot", "1"),

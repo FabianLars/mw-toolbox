@@ -21,7 +21,7 @@ pub async fn move_pages<C: AsRef<WikiClient>>(
     pages.pop();
 
     let json: Value = client
-        .request_json(&[
+        .get_into_json(&[
             ("action", "query"),
             ("format", "json"),
             ("prop", "info"),
@@ -89,7 +89,7 @@ pub async fn move_pages<C: AsRef<WikiClient>>(
         println!("{} => MOVED TO => {}", &from, &dest);
 
         client
-            .request(&[
+            .get(&[
                 ("action", "move"),
                 ("from", &from),
                 ("to", &dest),

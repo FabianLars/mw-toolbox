@@ -5,7 +5,7 @@ use crate::WikiClient;
 pub async fn delete_pages<C: AsRef<WikiClient>>(client: C, titles: &[&str]) -> anyhow::Result<()> {
     let client = client.as_ref();
     let json: Value = client
-        .request_json(&[
+        .get_into_json(&[
             ("action", "query"),
             ("format", "json"),
             ("prop", "info"),
@@ -24,7 +24,7 @@ pub async fn delete_pages<C: AsRef<WikiClient>>(client: C, titles: &[&str]) -> a
 
     for title in titles {
         client
-            .request(&[
+            .post(&[
                 ("action", "delete"),
                 ("reason", "automated action"),
                 ("title", title),

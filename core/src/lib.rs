@@ -71,7 +71,7 @@ impl WikiClient {
 
     pub async fn login(&mut self) -> Result<()> {
         let json: Value = self
-            .request_json(&[("action", "query"), ("meta", "tokens"), ("type", "login")])
+            .get_into_json(&[("action", "query"), ("meta", "tokens"), ("type", "login")])
             .await?;
 
         println!("{:?}", &json);
@@ -80,9 +80,8 @@ impl WikiClient {
 
         println!(
             "{:?}",
-            self.request_text(&[
+            self.post(&[
                 ("action", "clientlogin"),
-                ("format", "json"),
                 ("username", &self.loginname),
                 ("password", &self.password),
                 ("loginreturnurl", "http://example.com"),
@@ -90,35 +89,69 @@ impl WikiClient {
                 ("logintoken", &token),
             ])
             .await?
+            .text()
+            .await?
         );
 
         Ok(())
     }
 
-    pub async fn request(&self, parameters: &[(&str, &str)]) -> Result<Response> {
+    pub async fn get(&self, parameters: &[(&str, &str)]) -> Result<Response> {
+        self.client
+            .get(&self.url)
+            .query(&[("format", "json")])
+            .query(parameters)
+            .send()
+            .await
+            .map_err(|e| anyhow!("Error requesting (GET). Reqwest error: {}", e))
+    }
+
+    pub async fn get_into_text(&self, parameters: &[(&str, &str)]) -> Result<String> {
+        self.get(parameters).await?.text().await.map_err(|e| {
+            anyhow!(
+                "Error getting text from Response (GET). Reqwest error: {}",
+                e
+            )
+        })
+    }
+
+    pub async fn get_into_json(&self, parameters: &[(&str, &str)]) -> Result<Value> {
+        self.get(parameters).await?.json().await.map_err(|e| {
+            anyhow!(
+                "Error getting json from Response (GET). Reqwest error: {}",
+                e
+            )
+        })
+    }
+
+    pub async fn post(&self, parameters: &[(&str, &str)]) -> Result<Response> {
         self.client
             .post(&self.url)
+            .query(&[("format", "json")])
             .form(parameters)
             .send()
             .await
-            .map_err(|e| anyhow!("Error requesting. Reqwest error: {}", e))
+            .map_err(|e| anyhow!("Error requesting (POST). Reqwest error: {}", e))
     }
 
-    pub async fn request_text(&self, parameters: &[(&str, &str)]) -> Result<String> {
-        self.request(parameters)
-            .await?
-            .text()
-            .await
-            .map_err(|e| anyhow!("Error getting text from Response. Reqwest error: {}", e))
+    pub async fn post_into_text(&self, parameters: &[(&str, &str)]) -> Result<String> {
+        self.post(parameters).await?.text().await.map_err(|e| {
+            anyhow!(
+                "Error getting text from Response (POST). Reqwest error: {}",
+                e
+            )
+        })
     }
 
-    pub async fn request_json(&self, parameters: &[(&str, &str)]) -> Result<Value> {
-        self.request(parameters)
-            .await?
-            .json()
-            .await
-            .map_err(|e| anyhow!("Error getting json from Response. Reqwest error: {}", e))
+    pub async fn post_into_json(&self, parameters: &[(&str, &str)]) -> Result<Value> {
+        self.post(parameters).await?.json().await.map_err(|e| {
+            anyhow!(
+                "Error getting json from Response (POST). Reqwest error: {}",
+                e
+            )
+        })
     }
+
     pub async fn send_multipart(
         &self,
         paramters: &[(&str, &str)],

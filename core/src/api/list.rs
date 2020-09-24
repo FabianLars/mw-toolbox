@@ -136,7 +136,7 @@ pub async fn exturlusage<C: AsRef<WikiClient>>(client: C) -> Result<HashMap<Stri
 
     while has_next {
         let json: Value = client
-            .request_json(&[
+            .get_into_json(&[
                 ("action", "query"),
                 ("format", "json"),
                 ("list", "exturlusage"),
@@ -219,7 +219,7 @@ async fn get_from_api(
 
     while has_next {
         let json: Value = api
-            .request_json(&[
+            .get_into_json(&[
                 ("action", "query"),
                 ("format", "json"),
                 ("list", long),
@@ -260,7 +260,7 @@ async fn get_infobox_lists(api: &WikiClient, typ: &str) -> Result<Vec<String>> {
     let mut results: Vec<String> = Vec::new();
 
     let json: Value = api
-        .request_json(&[("action", "query"), ("format", "json"), ("list", typ)])
+        .get_into_json(&[("action", "query"), ("format", "json"), ("list", typ)])
         .await?;
 
     for x in json["query"][typ].as_array().unwrap().iter() {
