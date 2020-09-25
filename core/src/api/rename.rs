@@ -89,7 +89,7 @@ pub async fn move_pages<C: AsRef<WikiClient>>(
         println!("{} => MOVED TO => {}", &from, &dest);
 
         client
-            .get(&[
+            .post(&[
                 ("action", "move"),
                 ("from", &from),
                 ("to", &dest),
