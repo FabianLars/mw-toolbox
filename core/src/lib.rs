@@ -71,7 +71,12 @@ impl WikiClient {
 
     pub async fn login(&mut self) -> Result<()> {
         let json: Value = self
-            .get_into_json(&[("action", "query"), ("meta", "tokens"), ("type", "login")])
+            .get_into_json(&[
+                ("format", "json"),
+                ("action", "query"),
+                ("meta", "tokens"),
+                ("type", "login"),
+            ])
             .await?;
 
         println!("{:?}", &json);
@@ -81,12 +86,16 @@ impl WikiClient {
         println!(
             "{:?}",
             self.post(&[
-                ("action", "clientlogin"),
+                ("action", "login"),
+                ("lgname", &self.loginname),
+                ("lgpassword", &self.password),
+                ("lgtoken", &token),
+                /* ("action", "clientlogin"), can't get clientlogin to work...
                 ("username", &self.loginname),
                 ("password", &self.password),
                 ("loginreturnurl", "http://example.com"),
                 ("rememberMe", "1"),
-                ("logintoken", &token),
+                ("logintoken", &token), */
             ])
             .await?
             .text()
