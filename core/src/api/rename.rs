@@ -23,7 +23,6 @@ pub async fn move_pages<C: AsRef<WikiClient>>(
     let json: Value = client
         .get_into_json(&[
             ("action", "query"),
-            ("format", "json"),
             ("prop", "info"),
             ("intoken", "move"),
             ("titles", &pages),
@@ -93,7 +92,6 @@ pub async fn move_pages<C: AsRef<WikiClient>>(
                 ("action", "move"),
                 ("from", &from),
                 ("to", &dest),
-                ("format", "json"),
                 ("reason", "automated action"),
                 ("movetalk", "1"),
                 //("ignorewarnings", ""),

@@ -7,7 +7,6 @@ pub async fn delete_pages<C: AsRef<WikiClient>>(client: C, titles: &[&str]) -> a
     let json: Value = client
         .get_into_json(&[
             ("action", "query"),
-            ("format", "json"),
             ("prop", "info"),
             ("intoken", "delete"),
             ("titles", &titles.join("|")),

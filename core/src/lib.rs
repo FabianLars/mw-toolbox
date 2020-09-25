@@ -72,7 +72,6 @@ impl WikiClient {
     pub async fn login(&mut self) -> Result<()> {
         let json: Value = self
             .get_into_json(&[
-                ("format", "json"),
                 ("action", "query"),
                 ("meta", "tokens"),
                 ("type", "login"),
