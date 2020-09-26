@@ -104,7 +104,7 @@ struct Cli {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     Runtime::new()?.block_on(async {
         let cli = Cli::parse();
-        let mut client = WikiClient::from(&cli.url);
+        let mut client = WikiClient::from(&cli.url)?;
         client.credentials(&cli.name, &cli.password);
         client.login().await?;
 
@@ -176,14 +176,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
             Subcommand::Move { input } => {
-                api::rename::move_pages(&client, PathType::from(input)).await?
+                api::rename::move_pages(&client, PathType::from(input)?).await?
             }
             Subcommand::Purge { pages, .. } => {
                 println!("{:?}", pages.unwrap());
                 api::purge::purge(&client).await?
             }
             Subcommand::Upload { input } => {
-                api::upload::upload(&client, PathType::from(input)).await?
+                api::upload::upload(&client, PathType::from(input)?).await?
             }
             #[cfg(feature = "league-wiki")]
             Subcommand::League { league_type, path } => match league_type {
@@ -193,7 +193,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         &client,
                         PathType::from(path.unwrap_or(PathBuf::from(
                             "E:/Spiele/Riot Games/League of Legends/lockfile",
-                        ))),
+                        )))?,
                     )
                     .await?
                 }

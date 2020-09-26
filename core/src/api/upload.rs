@@ -2,10 +2,10 @@ use std::path::PathBuf;
 
 use serde_json::Value;
 
-use crate::util::PathType;
 use crate::WikiClient;
+use crate::{error::ApiError, PathType};
 
-pub async fn upload<C: AsRef<WikiClient>>(client: C, path: PathType) -> anyhow::Result<()> {
+pub async fn upload<C: AsRef<WikiClient>>(client: C, path: PathType) -> Result<(), ApiError> {
     let client = client.as_ref();
     let mut pages = String::new();
     let mut files: Vec<PathBuf> = Vec::new();
