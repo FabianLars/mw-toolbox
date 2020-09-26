@@ -151,7 +151,7 @@ pub async fn champs() -> Result<()> {
 
 pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathType) -> Result<()> {
     let client = client.as_ref();
-    let lockfile = std::fs::read_to_string(path.file_path()).unwrap();
+    let lockfile = std::fs::read_to_string(path.file_path()?).unwrap();
     // 0: "LeagueClient", 1: PID, 2: Port, 3: Auth, 4: Protocol
     let contents = lockfile.split(':').collect::<Vec<_>>();
     let port = contents[2];
@@ -675,7 +675,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         .as_str()
         .unwrap()
         .to_string();
-    let champdata_regex = Regex::new("(?m)\\[\"op_positions\"] += .+,$")?;
+    let champdata_regex = Regex::new("(?m)\\[\"op_positions\"] *= .+,$")?;
     let champdata_iter = champdata_regex.split(&champdata);
     let mut positions: Vec<String> = Vec::new();
 

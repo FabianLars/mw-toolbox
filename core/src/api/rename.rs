@@ -2,7 +2,7 @@ use std::error::Error;
 
 use serde_json::Value;
 
-use crate::{PathType, WikiClient};
+use crate::{error::ApiError, PathType, WikiClient};
 
 pub async fn move_pages<C: AsRef<WikiClient>>(
     client: C,
@@ -10,13 +10,18 @@ pub async fn move_pages<C: AsRef<WikiClient>>(
 ) -> Result<(), Box<dyn Error>> {
     let client = client.as_ref();
     let mut pages = String::new();
-    let input = std::fs::read_to_string(path.file_path())?;
+    let input = std::fs::read_to_string(path.file_path()?)?;
     for line in input.lines() {
         if line.starts_with("replace:") {
             continue;
         }
-        pages.push_str(line.split(';').next().unwrap());
-        pages.push_str("|");
+        match line.split(';').next() {
+            Some(l) => {
+                pages.push_str(l);
+                pages.push_str("|");
+            }
+            None => (),
+        }
     }
     pages.pop();
 
@@ -31,13 +36,21 @@ pub async fn move_pages<C: AsRef<WikiClient>>(
 
     let (_i, o) = json["query"]["pages"]
         .as_object()
-        .unwrap()
+        .ok_or(ApiError::InvalidJsonOperation(json.to_string()))?
         .into_iter()
         .next()
-        .unwrap();
-    let move_token = String::from(o["movetoken"].as_str().unwrap());
+        .ok_or(ApiError::InvalidJsonOperation(json.to_string()))?;
+    let move_token = String::from(
+        o["movetoken"]
+            .as_str()
+            .ok_or(ApiError::InvalidJsonOperation(o.to_string()))?,
+    );
 
-    let first_line = input.lines().next().unwrap().starts_with("replace:");
+    let first_line = input
+        .lines()
+        .next()
+        .ok_or(ApiError::EmptyInput)?
+        .starts_with("replace:");
     let replace: Vec<String>;
     let with: Vec<String>;
     let is_regex: bool;

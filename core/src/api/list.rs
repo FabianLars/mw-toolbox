@@ -1,9 +1,10 @@
 use std::collections::HashMap;
 
-use anyhow::Result;
 use serde_json::Value;
 
-use crate::WikiClient;
+use crate::{error::ApiError, WikiClient};
+
+type Result<T, E = ApiError> = core::result::Result<T, E>;
 
 pub async fn allimages<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
     get_from_api(client.as_ref(), "allimages", "ai", None).await
@@ -144,9 +145,19 @@ pub async fn exturlusage<C: AsRef<WikiClient>>(client: C) -> Result<HashMap<Stri
             ])
             .await?;
 
-        for x in json["query"]["exturlusage"].as_array().unwrap().iter() {
-            let title = x["title"].as_str().unwrap().to_string();
-            let url = x["url"].as_str().unwrap().to_string();
+        for x in json["query"]["exturlusage"]
+            .as_array()
+            .ok_or(ApiError::InvalidJsonOperation(json.to_string()))?
+            .iter()
+        {
+            let title = x["title"]
+                .as_str()
+                .ok_or(ApiError::InvalidJsonOperation(x.to_string()))?
+                .to_string();
+            let url = x["url"]
+                .as_str()
+                .ok_or(ApiError::InvalidJsonOperation(x.to_string()))?
+                .to_string();
 
             results.entry(title).or_insert_with(Vec::new).push(url);
         }
@@ -156,7 +167,7 @@ pub async fn exturlusage<C: AsRef<WikiClient>>(client: C) -> Result<HashMap<Stri
             Some(_) => {
                 continue_from = json["query-continue"]["exturlusage"]["euoffset"]
                     .as_i64()
-                    .unwrap()
+                    .ok_or(ApiError::InvalidJsonOperation(json.to_string()))?
                     .to_string()
             }
         }
@@ -227,12 +238,30 @@ async fn get_from_api(
             ])
             .await?;
         if json["query"][long].is_object() {
-            for (_, x) in json["query"][long].as_object().unwrap().iter() {
-                results.push(x[getter].as_str().unwrap().to_string())
+            for (_, x) in json["query"][long]
+                .as_object()
+                .ok_or(ApiError::InvalidJsonOperation(json.to_string()))?
+                .iter()
+            {
+                results.push(
+                    x[getter]
+                        .as_str()
+                        .ok_or(ApiError::InvalidJsonOperation(x.to_string()))?
+                        .to_string(),
+                )
             }
         } else if json["query"][long].is_array() {
-            for x in json["query"][long].as_array().unwrap().iter() {
-                results.push(x[getter].as_str().unwrap().to_string())
+            for x in json["query"][long]
+                .as_array()
+                .ok_or(ApiError::InvalidJsonOperation(json.to_string()))?
+                .iter()
+            {
+                results.push(
+                    x[getter]
+                        .as_str()
+                        .ok_or(ApiError::InvalidJsonOperation(x.to_string()))?
+                        .to_string(),
+                )
             }
         }
 
@@ -244,7 +273,7 @@ async fn get_from_api(
                         Some(x) => x.to_string(),
                         None => json["query-continue"][long][format!("{}{}", short, from)]
                             .as_i64()
-                            .unwrap()
+                            .ok_or(ApiError::InvalidJsonOperation(json.to_string()))?
                             .to_string(),
                     };
             }
@@ -261,8 +290,17 @@ async fn get_infobox_lists(api: &WikiClient, typ: &str) -> Result<Vec<String>> {
         .get_into_json(&[("action", "query"), ("list", typ)])
         .await?;
 
-    for x in json["query"][typ].as_array().unwrap().iter() {
-        results.push(x["title"].as_str().unwrap().to_string())
+    for x in json["query"][typ]
+        .as_array()
+        .ok_or(ApiError::InvalidJsonOperation(json.to_string()))?
+        .iter()
+    {
+        results.push(
+            x["title"]
+                .as_str()
+                .ok_or(ApiError::InvalidJsonOperation(x.to_string()))?
+                .to_string(),
+        )
     }
 
     Ok(results)
