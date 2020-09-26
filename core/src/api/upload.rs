@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use serde_json::Value;
 
-use crate::util::PathType;
+use crate::PathType;
 use crate::WikiClient;
 
 pub async fn upload<C: AsRef<WikiClient>>(client: C, path: PathType) -> anyhow::Result<()> {
