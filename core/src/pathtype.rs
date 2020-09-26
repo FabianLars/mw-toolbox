@@ -1,5 +1,7 @@
 use std::path::PathBuf;
 
+use crate::error::PathTypeError;
+
 #[derive(Debug, Clone)]
 pub enum PathType {
     File(PathBuf),
@@ -12,21 +14,21 @@ impl PathType {
         Self::default()
     }
 
-    pub fn from(pathbuf: PathBuf) -> Self {
-        if std::fs::metadata(&pathbuf).unwrap().is_dir() {
-            PathType::Folder(pathbuf)
-        } else if std::fs::metadata(&pathbuf).unwrap().is_file() {
-            PathType::File(pathbuf)
+    pub fn from(pathbuf: PathBuf) -> Result<Self, PathTypeError> {
+        if std::fs::metadata(&pathbuf)?.is_dir() {
+            Ok(PathType::Folder(pathbuf))
+        } else if std::fs::metadata(&pathbuf)?.is_file() {
+            Ok(PathType::File(pathbuf))
         } else {
-            panic!("weird error");
+            Err(PathTypeError::Unknown)
         }
     }
 
-    pub fn file_path(self) -> PathBuf {
+    pub fn file_path(self) -> Result<PathBuf, PathTypeError> {
         if let PathType::File(p) = self {
-            p
+            Ok(p)
         } else {
-            panic!("Not a file")
+            Err(PathTypeError::NotAFile)
         }
     }
 }
