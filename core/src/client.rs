@@ -71,60 +71,89 @@ impl WikiClient {
 
     pub async fn login(&mut self) -> Result<(), ClientError> {
         let json: Value = self
-            .request_json(&[
-                ("action", "login"),
-                ("format", "json"),
-                ("lgname", &self.loginname),
-                ("lgpassword", &self.password),
-            ])
+            .get_into_json(&[("action", "query"), ("meta", "tokens"), ("type", "login")])
             .await?;
 
         println!("{:?}", &json);
 
-        let token = match json["login"]["token"].as_str() {
+        let token = match json["query"]["tokens"]["logintoken"].as_str() {
             Some(s) => s.to_string(),
             _ => return Err(ClientError::TokenNotFound(json.to_string())),
         };
 
         println!(
             "{:?}",
-            self.request_text(&[
+            self.post(&[
                 ("action", "login"),
-                ("format", "json"),
                 ("lgname", &self.loginname),
                 ("lgpassword", &self.password),
                 ("lgtoken", &token),
+                /* ("action", "login"),
+                ("format", "json"),
+                ("lgname", &self.loginname),
+                ("lgpassword", &self.password),
+                ("lgtoken", &token), */
             ])
+            .await?
+            .text()
             .await?
         );
 
         Ok(())
     }
 
-    pub async fn request(&self, parameters: &[(&str, &str)]) -> Result<Response, ClientError> {
+    pub async fn get(&self, parameters: &[(&str, &str)]) -> Result<Response, ClientError> {
         self.client
-            .post(&self.url)
-            .form(parameters)
+            .get(&self.url)
+            .query(&[("format", "json")])
+            .query(parameters)
             .send()
             .await
             .map_err(|source| ClientError::RequestFailed { source })
     }
 
-    pub async fn request_text(&self, parameters: &[(&str, &str)]) -> Result<String, ClientError> {
-        self.request(parameters)
+    pub async fn get_into_text(&self, parameters: &[(&str, &str)]) -> Result<String, ClientError> {
+        self.get(parameters)
             .await?
             .text()
             .await
             .map_err(|source| ClientError::TextConversionFailed { source })
     }
 
-    pub async fn request_json(&self, parameters: &[(&str, &str)]) -> Result<Value, ClientError> {
-        self.request(parameters)
+    pub async fn get_into_json(&self, parameters: &[(&str, &str)]) -> Result<Value, ClientError> {
+        self.get(parameters)
             .await?
             .json()
             .await
             .map_err(|source| ClientError::JsonConversionFailed { source })
     }
+
+    pub async fn post(&self, parameters: &[(&str, &str)]) -> Result<Response, ClientError> {
+        self.client
+            .post(&self.url)
+            .query(&[("format", "json")])
+            .form(parameters)
+            .send()
+            .await
+            .map_err(|source| ClientError::RequestFailed { source })
+    }
+
+    pub async fn post_into_text(&self, parameters: &[(&str, &str)]) -> Result<String, ClientError> {
+        self.post(parameters)
+            .await?
+            .text()
+            .await
+            .map_err(|source| ClientError::TextConversionFailed { source })
+    }
+
+    pub async fn post_into_json(&self, parameters: &[(&str, &str)]) -> Result<Value, ClientError> {
+        self.post(parameters)
+            .await?
+            .json()
+            .await
+            .map_err(|source| ClientError::JsonConversionFailed { source })
+    }
+
     pub async fn send_multipart(
         &self,
         paramters: &[(&str, &str)],

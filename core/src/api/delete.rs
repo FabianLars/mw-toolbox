@@ -9,9 +9,8 @@ pub async fn delete_pages<C: AsRef<WikiClient>>(
 ) -> Result<(), ApiError> {
     let client = client.as_ref();
     let json: Value = client
-        .request_json(&[
+        .get_into_json(&[
             ("action", "query"),
-            ("format", "json"),
             ("prop", "info"),
             ("intoken", "delete"),
             ("titles", &titles.join("|")),
@@ -32,7 +31,7 @@ pub async fn delete_pages<C: AsRef<WikiClient>>(
 
     for title in titles {
         client
-            .request(&[
+            .post(&[
                 ("action", "delete"),
                 ("reason", "automated action"),
                 ("title", title),
