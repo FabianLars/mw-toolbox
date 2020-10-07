@@ -88,11 +88,6 @@ impl WikiClient {
                 ("lgname", &self.loginname),
                 ("lgpassword", &self.password),
                 ("lgtoken", &token),
-                /* ("action", "login"),
-                ("format", "json"),
-                ("lgname", &self.loginname),
-                ("lgpassword", &self.password),
-                ("lgtoken", &token), */
             ])
             .await?
             .text()
