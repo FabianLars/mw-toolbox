@@ -1,7 +1,5 @@
 use std::error::Error;
 
-use serde_json::Value;
-
 use crate::{error::ApiError, PathType, WikiClient};
 
 pub async fn move_pages<C: AsRef<WikiClient>>(
@@ -9,42 +7,9 @@ pub async fn move_pages<C: AsRef<WikiClient>>(
     path: PathType,
 ) -> Result<(), Box<dyn Error>> {
     let client = client.as_ref();
-    let mut pages = String::new();
     let input = std::fs::read_to_string(path.file_path()?)?;
-    for line in input.lines() {
-        if line.starts_with("replace:") {
-            continue;
-        }
-        match line.split(';').next() {
-            Some(l) => {
-                pages.push_str(l);
-                pages.push_str("|");
-            }
-            None => (),
-        }
-    }
-    pages.pop();
 
-    let json: Value = client
-        .get_into_json(&[
-            ("action", "query"),
-            ("prop", "info"),
-            ("intoken", "move"),
-            ("titles", &pages),
-        ])
-        .await?;
-
-    let (_i, o) = json["query"]["pages"]
-        .as_object()
-        .ok_or(ApiError::InvalidJsonOperation(json.to_string()))?
-        .into_iter()
-        .next()
-        .ok_or(ApiError::InvalidJsonOperation(json.to_string()))?;
-    let move_token = String::from(
-        o["movetoken"]
-            .as_str()
-            .ok_or(ApiError::InvalidJsonOperation(o.to_string()))?,
-    );
+    let move_token = client.get_csrf_token().await?;
 
     let first_line = input
         .lines()

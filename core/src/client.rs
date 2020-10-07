@@ -149,6 +149,19 @@ impl WikiClient {
             .map_err(|source| ClientError::JsonConversionFailed { source })
     }
 
+    pub async fn get_csrf_token(&self) -> Result<String, ClientError> {
+        let res = self
+            .get_into_json(&[("action", "query"), ("meta", "tokens"), ("type", "csrf")])
+            .await?;
+
+        let token = res["query"]["tokens"]["csrftoken"]
+            .as_str()
+            .ok_or(ClientError::TokenNotFound(res.to_string()))?
+            .to_string();
+
+        Ok(token)
+    }
+
     pub async fn send_multipart(
         &self,
         paramters: &[(&str, &str)],

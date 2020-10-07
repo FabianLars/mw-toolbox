@@ -1,13 +1,10 @@
 use std::path::PathBuf;
 
-use serde_json::Value;
-
 use crate::WikiClient;
 use crate::{error::ApiError, PathType};
 
 pub async fn upload<C: AsRef<WikiClient>>(client: C, path: PathType) -> Result<(), ApiError> {
     let client = client.as_ref();
-    let mut pages = String::new();
     let mut files: Vec<PathBuf> = Vec::new();
 
     match path {
@@ -23,30 +20,7 @@ pub async fn upload<C: AsRef<WikiClient>>(client: C, path: PathType) -> Result<(
         }
     }
 
-    for f in &files {
-        pages.push_str(&format!(
-            "Datei:{}|",
-            f.file_name().unwrap().to_os_string().to_str().unwrap()
-        ))
-    }
-    pages.pop();
-
-    let json: Value = client
-        .get_into_json(&[
-            ("action", "query"),
-            ("prop", "info"),
-            ("intoken", "edit"),
-            ("titles", &pages),
-        ])
-        .await?;
-
-    let (_i, o) = json["query"]["pages"]
-        .as_object()
-        .unwrap()
-        .into_iter()
-        .next()
-        .unwrap();
-    let edit_token = String::from(o["edittoken"].as_str().unwrap());
+    let edit_token = client.get_csrf_token().await?;
 
     for f in files {
         let file_name = f
