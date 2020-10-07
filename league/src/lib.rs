@@ -308,16 +308,19 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathType) -> Resul
 
     let edit_token = client.get_csrf_token().await?;
 
-    client
-        .post(&[
-            ("action", "edit"),
-            ("reason", "Nicht ganz so automatische Aktion"),
-            ("bot", "1"),
-            ("title", "Vorlage:Aktuelle_Angebote"),
-            ("text", &full_template),
-            ("token", &edit_token),
-        ])
-        .await?;
+    println!(
+        "{:?}",
+        client
+            .post_into_text(&[
+                ("action", "edit"),
+                ("reason", "Nicht ganz so automatische Aktion"),
+                ("bot", "1"),
+                ("title", "Vorlage:Aktuelle_Angebote"),
+                ("text", &full_template),
+                ("token", &edit_token),
+            ])
+            .await?
+    );
 
     Ok(())
 }
