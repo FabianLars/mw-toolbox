@@ -2,11 +2,13 @@
 
 [workspace]
 members = [
-    "core",
-    "cli",
-    "gui",
-    "league",
-    "storage",
+  "core",
+  "cli",
+  "gui-druid",
+  "gui-orbtk",
+  "gui",
+  "league",
+  "storage",
 ]
 # resolver = "2"
 

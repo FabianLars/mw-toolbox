@@ -12,6 +12,8 @@
       <sourceFolder url="file://$MODULE_DIR$/cli/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/league/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/storage/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/gui-druid/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/gui-orbtk/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
