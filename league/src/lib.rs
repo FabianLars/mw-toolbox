@@ -325,7 +325,7 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathType) -> Resul
     let edit_token = String::from(o["edittoken"].as_str().unwrap());
 
     client
-        .get(&[
+        .post(&[
             ("action", "edit"),
             ("reason", "Nicht ganz so automatische Aktion"),
             ("bot", "1"),
@@ -428,7 +428,7 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     );
 
     client
-        .get(&[
+        .post(&[
             ("action", "edit"),
             ("reason", "automated action"),
             ("bot", "1"),
@@ -550,7 +550,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
 
     let fut_skin = async {
         client
-            .get(&[
+            .post(&[
                 ("action", "edit"),
                 ("reason", "automated update"),
                 ("bot", "1"),
@@ -563,7 +563,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't get skins.json"));
     let fut_set = async {
         client
-            .get(&[
+            .post(&[
                 ("action", "edit"),
                 ("reason", "automated update"),
                 ("bot", "1"),
@@ -576,7 +576,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't get skinlines.json"));
     let fut_universe = async {
         client
-            .get(&[
+            .post(&[
                 ("action", "edit"),
                 ("reason", "automated update"),
                 ("bot", "1"),
@@ -589,7 +589,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_icons = async {
         client
-            .get(&[
+            .post(&[
                 ("action", "edit"),
                 ("reason", "automated update"),
                 ("bot", "1"),
@@ -602,7 +602,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_iconsets = async {
         client
-            .get(&[
+            .post(&[
                 ("action", "edit"),
                 ("reason", "automated update"),
                 ("bot", "1"),
@@ -615,7 +615,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_champion = async {
         client
-            .get(&[
+            .post(&[
                 ("action", "edit"),
                 ("reason", "automated update"),
                 ("bot", "1"),
@@ -628,7 +628,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_tft = async {
         client
-            .get(&[
+            .post(&[
                 ("action", "edit"),
                 ("reason", "automated update"),
                 ("bot", "1"),
@@ -749,7 +749,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let edit_token = String::from(o["edittoken"].as_str().unwrap());
 
     client
-        .get(&[
+        .post(&[
             ("action", "edit"),
             ("reason", "automated action"),
             ("bot", "1"),
@@ -833,7 +833,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
 
     for (_k, v) in champions {
         client
-            .get(&[
+            .post(&[
                 ("action", "edit"),
                 ("reason", "automated action"),
                 ("bot", "1"),
@@ -851,7 +851,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .await?;
 
         client
-            .get(&[
+            .post(&[
                 ("action", "edit"),
                 ("reason", "automated action"),
                 ("bot", "1"),
@@ -869,7 +869,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .await?;
 
         client
-            .get(&[
+            .post(&[
                 ("action", "edit"),
                 ("reason", "automated action"),
                 ("bot", "1"),
@@ -887,7 +887,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .await?;
 
         client
-            .get(&[
+            .post(&[
                 ("action", "edit"),
                 ("reason", "automated action"),
                 ("bot", "1"),
