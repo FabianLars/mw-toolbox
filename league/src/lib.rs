@@ -367,7 +367,7 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let template = format!(
         r#"{{{{Kopfzeile|[[Kostenlose Championrotation]]}}}}
 <tabber>Klassisch=<h3 style="display:none">Klassisch</h3>
-{{{{#ifeq:{{{{FULLPAGENAME}}}}|Vorlage:Aktuelle Championrotation|{{{{#ifeq:{{{{#time:N|{{{{CURRENTTIMESTAMP}}}}}}}}|2|{{{{#ifexpr:{{{{#expr:{{{{#time:U|{{{{REVISIONTIMESTAMP}}}}}}}}+100000}}}}<{{{{#time:U|{{{{CURRENTTIMESTAMP}}}}}}}}|[[Kategorie:Datumskategorie Championrotation]]}}}}}}}}}}}}{{{{Aktuelle Championrotation/var
+{{{{Aktuelle Championrotation/var
 |specialweek      = <!-- Nur für Sonderfälle, sonst leer lassen! -->
 |specialstartdate = <!-- Nur für Sonderfälle, sonst leer lassen! -->
 |specialenddate   = <!-- Nur für Sonderfälle, sonst leer lassen! -->
