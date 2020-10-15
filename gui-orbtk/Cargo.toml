@@ -12,4 +12,4 @@ wtools = {path = "../core"}
 anyhow = "1"
 directories = "3"
 orbtk = {git = "https://github.com/redox-os/orbtk.git", branch = "develop"}
-tokio = "0.2"
+tokio = "0.3"
