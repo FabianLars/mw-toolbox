@@ -12,7 +12,7 @@ pub async fn delete_pages<C: AsRef<WikiClient>>(
         client
             .post(&[
                 ("action", "delete"),
-                ("reason", "automated action"),
+                ("summary", "automated action"),
                 ("title", title),
                 ("token", &delete_token),
             ])

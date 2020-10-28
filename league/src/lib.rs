@@ -313,7 +313,7 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathType) -> Resul
         client
             .post_into_text(&[
                 ("action", "edit"),
-                ("reason", "Nicht ganz so automatische Aktion"),
+                ("summary", "Nicht ganz so automatische Aktion"),
                 ("bot", "1"),
                 ("title", "Vorlage:Aktuelle_Angebote"),
                 ("text", &full_template),
@@ -402,7 +402,7 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     client
         .post(&[
             ("action", "edit"),
-            ("reason", "automated action"),
+            ("summary", "automated action"),
             ("bot", "1"),
             ("title", "Vorlage:Aktuelle_Championrotation"),
             ("text", &template),
@@ -507,7 +507,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         client
             .post(&[
                 ("action", "edit"),
-                ("reason", "automated update"),
+                ("summary", "automated update"),
                 ("bot", "1"),
                 ("title", "Vorlage:Set/skins.json"),
                 ("text", &skin),
@@ -520,7 +520,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         client
             .post(&[
                 ("action", "edit"),
-                ("reason", "automated update"),
+                ("summary", "automated update"),
                 ("bot", "1"),
                 ("title", "Vorlage:Set/sets.json"),
                 ("text", &set),
@@ -533,7 +533,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         client
             .post(&[
                 ("action", "edit"),
-                ("reason", "automated update"),
+                ("summary", "automated update"),
                 ("bot", "1"),
                 ("title", "Vorlage:Set/universes.json"),
                 ("text", &universe),
@@ -546,7 +546,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         client
             .post(&[
                 ("action", "edit"),
-                ("reason", "automated update"),
+                ("summary", "automated update"),
                 ("bot", "1"),
                 ("title", "Vorlage:Set/icons.json"),
                 ("text", &icons),
@@ -559,7 +559,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         client
             .post(&[
                 ("action", "edit"),
-                ("reason", "automated update"),
+                ("summary", "automated update"),
                 ("bot", "1"),
                 ("title", "Vorlage:Set/iconsets.json"),
                 ("text", &iconsets),
@@ -572,7 +572,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         client
             .post(&[
                 ("action", "edit"),
-                ("reason", "automated update"),
+                ("summary", "automated update"),
                 ("bot", "1"),
                 ("title", "Vorlage:Set/champion.json"),
                 ("text", &champion),
@@ -585,7 +585,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         client
             .post(&[
                 ("action", "edit"),
-                ("reason", "automated update"),
+                ("summary", "automated update"),
                 ("bot", "1"),
                 ("title", "Vorlage:Set/TFT.json"),
                 ("text", &tft),
@@ -691,7 +691,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     client
         .post(&[
             ("action", "edit"),
-            ("reason", "automated action"),
+            ("summary", "automated action"),
             ("bot", "1"),
             ("title", "Module:ChampionData/data"),
             ("text", &new_champdata.concat()),
@@ -717,7 +717,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         client
             .post(&[
                 ("action", "edit"),
-                ("reason", "automated action"),
+                ("summary", "automated action"),
                 ("bot", "1"),
                 ("title", &format!("Kategorie:{} HD-Splasharts", v.name)),
                 (
@@ -735,7 +735,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         client
             .post(&[
                 ("action", "edit"),
-                ("reason", "automated action"),
+                ("summary", "automated action"),
                 ("bot", "1"),
                 ("title", &format!("Kategorie:{} Kreisbilder", v.name)),
                 (
@@ -753,7 +753,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         client
             .post(&[
                 ("action", "edit"),
-                ("reason", "automated action"),
+                ("summary", "automated action"),
                 ("bot", "1"),
                 ("title", &format!("Kategorie:{} Quadratbilder", v.name)),
                 (
@@ -771,7 +771,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         client
             .post(&[
                 ("action", "edit"),
-                ("reason", "automated action"),
+                ("summary", "automated action"),
                 ("bot", "1"),
                 (
                     "title",

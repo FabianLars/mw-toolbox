@@ -70,7 +70,7 @@ pub async fn move_pages<C: AsRef<WikiClient>>(
                 ("action", "move"),
                 ("from", &from),
                 ("to", &dest),
-                ("reason", "automated action"),
+                ("summary", "automated action"),
                 ("movetalk", "1"),
                 //("ignorewarnings", ""),
                 ("token", &move_token),
