@@ -789,7 +789,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             ])
             .await?;
 
-        tokio::time::delay_for(tokio::time::Duration::from_millis(500)).await;
+        tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
     }
 
     Ok(())
