@@ -621,84 +621,94 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         ])
     );
 
-    let document = Document::from(resp?.as_str());
-
-    let mut content = String::new();
-
-    let champdata = resp2?;
-    let champdata: String = champdata["parse"]["wikitext"]["*"]
+    let lua = resp2?["parse"]["wikitext"]["*"]
         .as_str()
-        .unwrap()
+        .expect("Can't get module data")
         .to_string();
-    let champdata_regex = Regex::new("(?m)\\[\"op_positions\"] *= .+,$")?;
-    let champdata_iter = champdata_regex.split(&champdata);
-    let mut positions: Vec<String> = Vec::new();
 
-    for node in document.find(Class("champion-index__champion-item")) {
-        let mut temp_positions: Vec<String> = Vec::new();
+    assert!(full_moon::parse(&lua).is_ok());
 
-        if node
-            .attr("class")
+    println!("{}", full_moon::print(&full_moon::parse(&lua).unwrap()));
+
+    /*
+        let document = Document::from(resp?.as_str());
+
+        let mut content = String::new();
+
+        let champdata = resp2?;
+        let champdata: String = champdata["parse"]["wikitext"]["*"]
+            .as_str()
             .unwrap()
-            .contains("champion-index__champion-item--TOP")
-        {
-            temp_positions.push("\"Oben\"".to_string());
-        }
-        if node
-            .attr("class")
-            .unwrap()
-            .contains("champion-index__champion-item--MID")
-        {
-            temp_positions.push("\"Mitte\"".to_string());
-        }
-        if node
-            .attr("class")
-            .unwrap()
-            .contains("champion-index__champion-item--ADC")
-        {
-            temp_positions.push("\"Unten\"".to_string());
-        }
-        if node
-            .attr("class")
-            .unwrap()
-            .contains("champion-index__champion-item--SUPPORT")
-        {
-            temp_positions.push("\"Unterstützer\"".to_string());
-        }
-        if node
-            .attr("class")
-            .unwrap()
-            .contains("champion-index__champion-item--JUNGLE")
-        {
-            temp_positions.push("\"Dschungel\"".to_string());
-        }
-        content.push_str("\n");
-        positions.push(temp_positions.join(", "));
-    }
+            .to_string();
+        let champdata_regex = Regex::new("(?m)\\[\"op_positions\"] *= .+,$")?;
+        let champdata_iter = champdata_regex.split(&champdata);
+        let mut positions: Vec<String> = Vec::new();
 
-    positions.push(String::new());
-    let mut new_champdata: Vec<String> = Vec::new();
-    for (x, y) in champdata_iter.zip(positions.into_iter()) {
-        if y.is_empty() {
-            new_champdata.push(x.to_string());
-        } else {
-            new_champdata.push(format!("{}[\"op_positions\"] = {{{}}},", x, y));
+        for node in document.find(Class("champion-index__champion-item")) {
+            let mut temp_positions: Vec<String> = Vec::new();
+
+            if node
+                .attr("class")
+                .unwrap()
+                .contains("champion-index__champion-item--TOP")
+            {
+                temp_positions.push("\"Oben\"".to_string());
+            }
+            if node
+                .attr("class")
+                .unwrap()
+                .contains("champion-index__champion-item--MID")
+            {
+                temp_positions.push("\"Mitte\"".to_string());
+            }
+            if node
+                .attr("class")
+                .unwrap()
+                .contains("champion-index__champion-item--ADC")
+            {
+                temp_positions.push("\"Unten\"".to_string());
+            }
+            if node
+                .attr("class")
+                .unwrap()
+                .contains("champion-index__champion-item--SUPPORT")
+            {
+                temp_positions.push("\"Unterstützer\"".to_string());
+            }
+            if node
+                .attr("class")
+                .unwrap()
+                .contains("champion-index__champion-item--JUNGLE")
+            {
+                temp_positions.push("\"Dschungel\"".to_string());
+            }
+            content.push_str("\n");
+            positions.push(temp_positions.join(", "));
         }
-    }
 
-    let edit_token = client.get_csrf_token().await?;
+        positions.push(String::new());
+        let mut new_champdata: Vec<String> = Vec::new();
+        for (x, y) in champdata_iter.zip(positions.into_iter()) {
+            if y.is_empty() {
+                new_champdata.push(x.to_string());
+            } else {
+                new_champdata.push(format!("{}[\"op_positions\"] = {{{}}},", x, y));
+            }
+        }
 
-    client
-        .post(&[
-            ("action", "edit"),
-            ("summary", "automated action"),
-            ("bot", "1"),
-            ("title", "Module:ChampionData/data"),
-            ("text", &new_champdata.concat()),
-            ("token", &edit_token),
-        ])
-        .await?;
+        let edit_token = client.get_csrf_token().await?;
 
+        client
+            .post(&[
+                ("action", "edit"),
+                ("summary", "automated action"),
+                ("bot", "1"),
+                ("title", "Module:ChampionData/data"),
+                ("text", &new_champdata.concat()),
+                ("token", &edit_token),
+            ])
+            .await?;
+    */
     Ok(())
 }
 
