@@ -642,42 +642,31 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .expect("Panicking is alright")
             .text();
 
-        if node
-            .attr("class")
-            .unwrap()
-            .contains("champion-index__champion-item--TOP")
-        {
+        let classes = node.attr("class").expect("Can't get classes of node");
+
+        if classes.contains("champion-index__champion-item--TOP") {
             temp_positions.push("\"Oben\"".to_string());
         }
-        if node
-            .attr("class")
-            .unwrap()
-            .contains("champion-index__champion-item--MID")
-        {
+        if classes.contains("champion-index__champion-item--MID") {
             temp_positions.push("\"Mitte\"".to_string());
         }
-        if node
-            .attr("class")
-            .unwrap()
-            .contains("champion-index__champion-item--ADC")
-        {
+        if classes.contains("champion-index__champion-item--ADC") {
             temp_positions.push("\"Unten\"".to_string());
         }
-        if node
-            .attr("class")
-            .unwrap()
-            .contains("champion-index__champion-item--SUPPORT")
-        {
+        if classes.contains("champion-index__champion-item--SUPPORT") {
             temp_positions.push("\"Unterstützer\"".to_string());
         }
-        if node
-            .attr("class")
-            .unwrap()
-            .contains("champion-index__champion-item--JUNGLE")
-        {
+        if classes.contains("champion-index__champion-item--JUNGLE") {
             temp_positions.push("\"Dschungel\"".to_string());
         }
-        positions.push((name, temp_positions.join(", ")));
+        positions.push((
+            if name.contains("Jarvan") {
+                "Jarvan IV.".to_string()
+            } else {
+                name
+            },
+            temp_positions.join(", "),
+        ));
     }
 
     for block in champdata_iter {
@@ -691,7 +680,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             }
         }
         if !action_done {
-            new_champdata.push("[\"op_positions\"] = {{}},".to_string());
+            new_champdata.push("[\"op_positions\"] = {},".to_string());
         }
     }
     new_champdata.pop();
