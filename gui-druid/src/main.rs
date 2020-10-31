@@ -27,7 +27,7 @@ fn ui_builder() -> impl Widget<String> {
         .default_type(txt);
     let open_dialog_options = save_dialog_options.clone();
 
-    let input = TextBox::new();
+    let input = TextBox::multiline();
     let save = Button::new("Save").on_click(move |ctx, _, _| {
         ctx.submit_command(Command::new(
             druid::commands::SHOW_SAVE_PANEL,
