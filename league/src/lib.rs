@@ -612,6 +612,9 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let client = client.as_ref();
     let opgg = "https://euw.op.gg/champion/statistics";
 
+    let mut positions: Vec<(String, String)> = Vec::new();
+    let mut new_champdata: Vec<String> = Vec::new();
+
     let (resp, resp2) = join!(
         client.get_external_text(opgg),
         client.get_into_json(&[
@@ -620,95 +623,92 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             ("prop", "wikitext"),
         ])
     );
+    let document = Document::from(resp?.as_str());
 
-    let lua = resp2?["parse"]["wikitext"]["*"]
+    let champdata = resp2?;
+    let champdata: String = champdata["parse"]["wikitext"]["*"]
         .as_str()
-        .expect("Can't get module data")
+        .unwrap()
         .to_string();
+    let champdata_regex = Regex::new("(?m)\\[\"op_positions\"] *= .+,$")?;
+    let champdata_iter = champdata_regex.split(&champdata);
 
-    assert!(full_moon::parse(&lua).is_ok());
+    for node in document.find(Class("champion-index__champion-item")) {
+        let mut temp_positions: Vec<String> = Vec::new();
 
-    println!("{}", full_moon::print(&full_moon::parse(&lua).unwrap()));
+        let name = node
+            .find(Class("champion-index__champion-item__name"))
+            .next()
+            .expect("Panicking is alright")
+            .text();
 
-    /*
-        let document = Document::from(resp?.as_str());
-
-        let mut content = String::new();
-
-        let champdata = resp2?;
-        let champdata: String = champdata["parse"]["wikitext"]["*"]
-            .as_str()
+        if node
+            .attr("class")
             .unwrap()
-            .to_string();
-        let champdata_regex = Regex::new("(?m)\\[\"op_positions\"] *= .+,$")?;
-        let champdata_iter = champdata_regex.split(&champdata);
-        let mut positions: Vec<String> = Vec::new();
-
-        for node in document.find(Class("champion-index__champion-item")) {
-            let mut temp_positions: Vec<String> = Vec::new();
-
-            if node
-                .attr("class")
-                .unwrap()
-                .contains("champion-index__champion-item--TOP")
-            {
-                temp_positions.push("\"Oben\"".to_string());
-            }
-            if node
-                .attr("class")
-                .unwrap()
-                .contains("champion-index__champion-item--MID")
-            {
-                temp_positions.push("\"Mitte\"".to_string());
-            }
-            if node
-                .attr("class")
-                .unwrap()
-                .contains("champion-index__champion-item--ADC")
-            {
-                temp_positions.push("\"Unten\"".to_string());
-            }
-            if node
-                .attr("class")
-                .unwrap()
-                .contains("champion-index__champion-item--SUPPORT")
-            {
-                temp_positions.push("\"Unterstützer\"".to_string());
-            }
-            if node
-                .attr("class")
-                .unwrap()
-                .contains("champion-index__champion-item--JUNGLE")
-            {
-                temp_positions.push("\"Dschungel\"".to_string());
-            }
-            content.push_str("\n");
-            positions.push(temp_positions.join(", "));
+            .contains("champion-index__champion-item--TOP")
+        {
+            temp_positions.push("\"Oben\"".to_string());
         }
+        if node
+            .attr("class")
+            .unwrap()
+            .contains("champion-index__champion-item--MID")
+        {
+            temp_positions.push("\"Mitte\"".to_string());
+        }
+        if node
+            .attr("class")
+            .unwrap()
+            .contains("champion-index__champion-item--ADC")
+        {
+            temp_positions.push("\"Unten\"".to_string());
+        }
+        if node
+            .attr("class")
+            .unwrap()
+            .contains("champion-index__champion-item--SUPPORT")
+        {
+            temp_positions.push("\"Unterstützer\"".to_string());
+        }
+        if node
+            .attr("class")
+            .unwrap()
+            .contains("champion-index__champion-item--JUNGLE")
+        {
+            temp_positions.push("\"Dschungel\"".to_string());
+        }
+        positions.push((name, temp_positions.join(", ")));
+    }
 
-        positions.push(String::new());
-        let mut new_champdata: Vec<String> = Vec::new();
-        for (x, y) in champdata_iter.zip(positions.into_iter()) {
-            if y.is_empty() {
-                new_champdata.push(x.to_string());
-            } else {
-                new_champdata.push(format!("{}[\"op_positions\"] = {{{}}},", x, y));
+    for block in champdata_iter {
+        let mut action_done = false;
+        new_champdata.push(block.to_string());
+        for (champ, pos) in &positions {
+            if block.contains(&format!("[\"{}\"]", champ)) {
+                new_champdata.push(format!("[\"op_positions\"] = {{{}}},", pos));
+                action_done = true;
+                break;
             }
         }
+        if !action_done {
+            new_champdata.push("[\"op_positions\"] = {{}},".to_string());
+        }
+    }
+    new_champdata.pop();
 
-        let edit_token = client.get_csrf_token().await?;
+    let edit_token = client.get_csrf_token().await?;
 
-        client
-            .post(&[
-                ("action", "edit"),
-                ("summary", "automated action"),
-                ("bot", "1"),
-                ("title", "Module:ChampionData/data"),
-                ("text", &new_champdata.concat()),
-                ("token", &edit_token),
-            ])
-            .await?;
-    */
+    client
+        .post(&[
+            ("action", "edit"),
+            ("summary", "automated action"),
+            ("bot", "1"),
+            ("title", "Module:ChampionData/data"),
+            ("text", &new_champdata.concat()),
+            ("token", &edit_token),
+        ])
+        .await?;
+
     Ok(())
 }
 
