@@ -18,4 +18,4 @@ wtools = {path = "../core"}
 
 clap = {git = "https://github.com/clap-rs/clap/"}
 serde_json = {version = "1.0", features = ["preserve_order"]}
-tokio = {version = "0.3", features = ["fs", "macros", "rt-multi-thread"]}
+tokio = {version = "0.2", features = ["fs", "macros"]}
