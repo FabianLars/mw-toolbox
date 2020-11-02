@@ -17,4 +17,4 @@ anyhow = "1"
 directories = "3"
 iced = {git = "https://github.com/hecrj/iced.git", branch = "master", default-features = false, features = ["tokio", "glow", "glow_default_system_font"]}
 native-dialog = {version = "0", features = ["windows_dpi_awareness", "windows_visual_styles"]}
-tokio = "0.2"
+tokio = "0.3"
