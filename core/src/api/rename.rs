@@ -9,7 +9,7 @@ pub async fn move_pages<C: AsRef<WikiClient>>(
     let client = client.as_ref();
     let input = std::fs::read_to_string(path.file_path()?)?;
 
-    let move_token = client.get_csrf_token().await?;
+    let move_token = client.get_csrf_token();
 
     let first_line = input
         .lines()

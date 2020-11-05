@@ -306,7 +306,7 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathType) -> Resul
         start_date, end_date, angebote
     );
 
-    let edit_token = client.get_csrf_token().await?;
+    let edit_token = client.get_csrf_token();
 
     println!(
         "{:?}",
@@ -362,7 +362,7 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let rotation: String = rotation.iter().map(|x| "|".to_owned() + x).collect();
     let new_players: String = new_players.iter().map(|x| "|".to_owned() + x).collect();
 
-    let edit_token = client.get_csrf_token().await?;
+    let edit_token = client.get_csrf_token();
 
     let template = format!(
         r#"{{{{Kopfzeile|[[Kostenlose Championrotation]]}}}}
@@ -446,7 +446,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let mut tft: String = String::new();
     let client = client.as_ref();
 
-    let edit_token = client.get_csrf_token().await?;
+    let edit_token = client.get_csrf_token();
 
     let fut_skin = async {
         skin = client.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").await?.replace(" ", " ").replace("Hexerei-Miss Fortune \"", "Hexerei-Miss Fortune\"");
@@ -685,7 +685,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     }
     new_champdata.pop();
 
-    let edit_token = client.get_csrf_token().await?;
+    let edit_token = client.get_csrf_token();
 
     client
         .post(&[
@@ -710,7 +710,7 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .await?,
     )?;
 
-    let edit_token = client.get_csrf_token().await?;
+    let edit_token = client.get_csrf_token();
 
     for (_k, v) in champions {
         client

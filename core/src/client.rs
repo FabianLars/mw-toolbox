@@ -9,6 +9,7 @@ pub struct WikiClient {
     url: String,
     loginname: String,
     password: String,
+    csrf_token: String,
 }
 
 impl AsRef<WikiClient> for WikiClient {
@@ -43,6 +44,7 @@ impl WikiClient {
             url: url.into(),
             loginname: loginname.into(),
             password: password.into(),
+            ..Self::default()
         };
         client.login().await?;
         Ok(client)
@@ -94,7 +96,11 @@ impl WikiClient {
             .await?
         );
 
-        Ok(())
+        self.request_csrf_token().await
+    }
+
+    pub fn get_csrf_token(&self) -> String {
+        self.csrf_token.to_string()
     }
 
     pub async fn get(&self, parameters: &[(&str, &str)]) -> Result<Response, ClientError> {
@@ -149,7 +155,7 @@ impl WikiClient {
             .map_err(|source| ClientError::JsonConversionFailed { source })
     }
 
-    pub async fn get_csrf_token(&self) -> Result<String, ClientError> {
+    async fn request_csrf_token(&mut self) -> Result<(), ClientError> {
         let res = self
             .get_into_json(&[("action", "query"), ("meta", "tokens"), ("type", "csrf")])
             .await?;
@@ -159,7 +165,9 @@ impl WikiClient {
             .ok_or(ClientError::TokenNotFound(res.to_string()))?
             .to_string();
 
-        Ok(token)
+        self.csrf_token = token;
+
+        Ok(())
     }
 
     pub async fn send_multipart(
