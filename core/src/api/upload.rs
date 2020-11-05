@@ -20,8 +20,6 @@ pub async fn upload<C: AsRef<WikiClient>>(client: C, path: PathType) -> Result<(
         }
     }
 
-    let edit_token = client.get_csrf_token();
-
     for f in files {
         let file_name = f
             .file_name()
@@ -66,7 +64,6 @@ pub async fn upload<C: AsRef<WikiClient>>(client: C, path: PathType) -> Result<(
                         ("format", "json"),
                         ("filename", &file_name),
                         ("ignorewarnings", "1"),
-                        ("token", &edit_token),
                     ],
                     form,
                 )

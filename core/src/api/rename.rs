@@ -9,8 +9,6 @@ pub async fn move_pages<C: AsRef<WikiClient>>(
     let client = client.as_ref();
     let input = std::fs::read_to_string(path.file_path()?)?;
 
-    let move_token = client.get_csrf_token();
-
     let first_line = input
         .lines()
         .next()
@@ -73,7 +71,6 @@ pub async fn move_pages<C: AsRef<WikiClient>>(
                 ("summary", "automated action"),
                 ("movetalk", "1"),
                 //("ignorewarnings", ""),
-                ("token", &move_token),
             ])
             .await?;
         // Wenn fandom ausnahmsweise mal nen guten Tag haben sollte, wären die Abfragen zu schnell, deswegen warten wir hier vorsichtshalber eine halbe Sekunde

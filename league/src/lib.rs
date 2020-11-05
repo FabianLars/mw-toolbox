@@ -306,8 +306,6 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathType) -> Resul
         start_date, end_date, angebote
     );
 
-    let edit_token = client.get_csrf_token();
-
     println!(
         "{:?}",
         client
@@ -317,7 +315,6 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathType) -> Resul
                 ("bot", "1"),
                 ("title", "Vorlage:Aktuelle_Angebote"),
                 ("text", &full_template),
-                ("token", &edit_token),
             ])
             .await?
     );
@@ -362,8 +359,6 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let rotation: String = rotation.iter().map(|x| "|".to_owned() + x).collect();
     let new_players: String = new_players.iter().map(|x| "|".to_owned() + x).collect();
 
-    let edit_token = client.get_csrf_token();
-
     let template = format!(
         r#"{{{{Kopfzeile|[[Kostenlose Championrotation]]}}}}
 <tabber>Klassisch=<h3 style="display:none">Klassisch</h3>
@@ -406,7 +401,6 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             ("bot", "1"),
             ("title", "Vorlage:Aktuelle_Championrotation"),
             ("text", &template),
-            ("token", &edit_token),
         ])
         .await?;
 
@@ -445,8 +439,6 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let mut champion: String = String::new();
     let mut tft: String = String::new();
     let client = client.as_ref();
-
-    let edit_token = client.get_csrf_token();
 
     let fut_skin = async {
         skin = client.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").await?.replace(" ", " ").replace("Hexerei-Miss Fortune \"", "Hexerei-Miss Fortune\"");
@@ -511,7 +503,6 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
                 ("bot", "1"),
                 ("title", "Vorlage:Set/skins.json"),
                 ("text", &skin),
-                ("token", &edit_token),
             ])
             .await
     }
@@ -524,7 +515,6 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
                 ("bot", "1"),
                 ("title", "Vorlage:Set/sets.json"),
                 ("text", &set),
-                ("token", &edit_token),
             ])
             .await
     }
@@ -537,7 +527,6 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
                 ("bot", "1"),
                 ("title", "Vorlage:Set/universes.json"),
                 ("text", &universe),
-                ("token", &edit_token),
             ])
             .await
     }
@@ -550,7 +539,6 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
                 ("bot", "1"),
                 ("title", "Vorlage:Set/icons.json"),
                 ("text", &icons),
-                ("token", &edit_token),
             ])
             .await
     }
@@ -563,7 +551,6 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
                 ("bot", "1"),
                 ("title", "Vorlage:Set/iconsets.json"),
                 ("text", &iconsets),
-                ("token", &edit_token),
             ])
             .await
     }
@@ -576,7 +563,6 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
                 ("bot", "1"),
                 ("title", "Vorlage:Set/champion.json"),
                 ("text", &champion),
-                ("token", &edit_token),
             ])
             .await
     }
@@ -589,7 +575,6 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
                 ("bot", "1"),
                 ("title", "Vorlage:Set/TFT.json"),
                 ("text", &tft),
-                ("token", &edit_token),
             ])
             .await
     }
@@ -685,8 +670,6 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     }
     new_champdata.pop();
 
-    let edit_token = client.get_csrf_token();
-
     client
         .post(&[
             ("action", "edit"),
@@ -694,7 +677,6 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             ("bot", "1"),
             ("title", "Module:ChampionData/data"),
             ("text", &new_champdata.concat()),
-            ("token", &edit_token),
         ])
         .await?;
 
@@ -709,8 +691,6 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .get_external_text("https://api.fabianlars.de/wiki/champion")
             .await?,
     )?;
-
-    let edit_token = client.get_csrf_token();
 
     for (_k, v) in champions {
         client
@@ -727,7 +707,6 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
                         v.name, v.name
                     ),
                 ),
-                ("token", &edit_token),
             ])
             .await?;
 
@@ -745,7 +724,6 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
                         v.name, v.name
                     ),
                 ),
-                ("token", &edit_token),
             ])
             .await?;
 
@@ -763,7 +741,6 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
                         v.name, v.name
                     ),
                 ),
-                ("token", &edit_token),
             ])
             .await?;
 
@@ -784,7 +761,6 @@ pub async fn random<C: AsRef<WikiClient>>(client: C) -> Result<()> {
                         v.name, v.name
                     ),
                 ),
-                ("token", &edit_token),
             ])
             .await?;
 

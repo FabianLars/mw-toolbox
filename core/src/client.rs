@@ -99,10 +99,6 @@ impl WikiClient {
         self.request_csrf_token().await
     }
 
-    pub fn get_csrf_token(&self) -> String {
-        self.csrf_token.to_string()
-    }
-
     pub async fn get(&self, parameters: &[(&str, &str)]) -> Result<Response, ClientError> {
         self.client
             .get(&self.url)
@@ -130,10 +126,19 @@ impl WikiClient {
     }
 
     pub async fn post(&self, parameters: &[(&str, &str)]) -> Result<Response, ClientError> {
+        let parameters = if parameters
+            .iter()
+            .any(|(x, y)| *x == "action" && ["delete", "edit", "move", "upload"].contains(y))
+        {
+            [parameters, &[("token", self.csrf_token.as_str())]].concat()
+        } else {
+            parameters.to_vec()
+        };
+
         self.client
             .post(&self.url)
             .query(&[("format", "json")])
-            .form(parameters)
+            .form(&parameters)
             .send()
             .await
             .map_err(|source| ClientError::RequestFailed { source })
