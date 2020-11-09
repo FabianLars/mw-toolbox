@@ -15,7 +15,7 @@ pub async fn delete_pages<C: AsRef<WikiClient>>(
                 ("title", title),
             ])
             .await?;
-        std::thread::sleep(std::time::Duration::from_millis(500))
+        tokio::time::delay_for(tokio::time::Duration::from_millis(500)).await;
     }
 
     Ok(())

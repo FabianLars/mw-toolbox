@@ -1,11 +1,6 @@
-use std::error::Error;
-
 use crate::{error::ApiError, PathType, WikiClient};
 
-pub async fn move_pages<C: AsRef<WikiClient>>(
-    client: C,
-    path: PathType,
-) -> Result<(), Box<dyn Error>> {
+pub async fn move_pages<C: AsRef<WikiClient>>(client: C, path: PathType) -> Result<(), ApiError> {
     let client = client.as_ref();
     let input = std::fs::read_to_string(path.file_path()?)?;
 
@@ -73,8 +68,8 @@ pub async fn move_pages<C: AsRef<WikiClient>>(
                 //("ignorewarnings", ""),
             ])
             .await?;
-        // Wenn fandom ausnahmsweise mal nen guten Tag haben sollte, wären die Abfragen zu schnell, deswegen warten wir hier vorsichtshalber eine halbe Sekunde
-        std::thread::sleep(std::time::Duration::from_millis(500))
+
+        tokio::time::delay_for(tokio::time::Duration::from_millis(500)).await;
     }
 
     Ok(())
