@@ -69,11 +69,8 @@ pub async fn get_secure(key: &str) -> Result<String> {
         .map_err(|e| anyhow!("Error converting decrypted u8-value to String: {:?}", e))
 }
 
-pub async fn insert(key: &str, val: &str) -> Result<()> {
-    insert_u8(key, val.as_bytes().to_vec()).await
-}
-
-async fn insert_u8(key: &str, val: Vec<u8>) -> Result<()> {
+pub async fn insert<T: AsRef<[u8]>>(key: &str, val: T) -> Result<()> {
+    let val = val.as_ref().to_vec();
     let path = path();
 
     let mut map: BTreeMap<String, Vec<u8>>;
@@ -113,7 +110,7 @@ pub async fn insert_secure(key: &str, val: &str) -> Result<()> {
     let mut data = rng_nonce.to_vec();
     data.append(&mut ciphertext);
 
-    insert_u8(key, data).await
+    insert(key, data).await
 }
 
 #[cfg(test)]
