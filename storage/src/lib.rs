@@ -115,3 +115,34 @@ pub async fn insert_secure(key: &str, val: &str) -> Result<()> {
 
     insert_u8(key, data).await
 }
+
+#[cfg(test)]
+mod tests {
+    #[tokio::test]
+    async fn storage() {
+        use rand::{distributions::Alphanumeric, Rng};
+
+        super::insert("libtest_unsec", "abcdefghi123456789")
+            .await
+            .unwrap();
+
+        assert_eq!(
+            super::get("libtest_unsec").await.unwrap(),
+            "abcdefghi123456789".to_string()
+        );
+
+        let test_string = rand::thread_rng()
+            .sample_iter(&Alphanumeric)
+            .take(18)
+            .collect::<String>();
+
+        super::insert_secure("unittest_secure", &test_string)
+            .await
+            .unwrap();
+
+        assert_eq!(
+            super::get_secure("unittest_secure").await.unwrap(),
+            test_string
+        );
+    }
+}
