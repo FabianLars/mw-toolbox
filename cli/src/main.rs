@@ -34,12 +34,11 @@ enum Subcommand {
         input: PathBuf,
     },
     Purge {
-        #[clap(long)]
-        forcelinkupdate: bool,
+        #[clap(short, long)]
+        recursive: bool,
 
-        pages: Option<String>,
         #[clap(parse(from_os_str))]
-        file: Option<PathBuf>,
+        input: PathBuf,
     },
     Upload {
         #[clap(parse(from_os_str))]
@@ -187,9 +186,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let titles: Vec<&str> = contents.lines().collect();
             api::edit::nulledit(&client, &titles).await?
         }
-        Subcommand::Purge { pages, .. } => {
-            println!("{:?}", pages.unwrap());
-            api::purge::purge(&client).await?
+        Subcommand::Purge { input, recursive } => {
+            let contents = fs::read_to_string(input).await?;
+            let titles: Vec<&str> = contents.lines().collect();
+            api::purge::purge(&client, &titles, recursive).await?
         }
         Subcommand::Upload { input } => {
             api::upload::upload(&client, PathType::from(input)?).await?
