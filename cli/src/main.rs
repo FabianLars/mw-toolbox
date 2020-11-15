@@ -28,13 +28,10 @@ enum Subcommand {
         #[clap(parse(from_os_str))]
         input: PathBuf,
     },
-    #[cfg(feature = "league-wiki")]
-    League {
-        #[clap(arg_enum)]
-        league_type: LeagueType,
-
-        #[clap(short, long, parse(from_os_str))]
-        path: Option<PathBuf>,
+    Nulledit {
+        /// uses newline seperation
+        #[clap(parse(from_os_str))]
+        input: PathBuf,
     },
     Purge {
         #[clap(long)]
@@ -47,6 +44,15 @@ enum Subcommand {
     Upload {
         #[clap(parse(from_os_str))]
         input: PathBuf,
+    },
+
+    #[cfg(feature = "league-wiki")]
+    League {
+        #[clap(arg_enum)]
+        league_type: LeagueType,
+
+        #[clap(short, long, parse(from_os_str))]
+        path: Option<PathBuf>,
     },
 }
 
@@ -175,6 +181,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         Subcommand::Move { input } => {
             api::rename::move_pages(&client, PathType::from(input)?).await?
+        }
+        Subcommand::Nulledit { input } => {
+            let contents = fs::read_to_string(input).await?;
+            let titles: Vec<&str> = contents.lines().collect();
+            api::edit::nulledit(&client, &titles).await?
         }
         Subcommand::Purge { pages, .. } => {
             println!("{:?}", pages.unwrap());
