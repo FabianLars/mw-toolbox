@@ -7,7 +7,7 @@ pub async fn move_pages<C: AsRef<WikiClient>>(client: C, path: PathType) -> Resu
     let first_line = input
         .lines()
         .next()
-        .ok_or(ApiError::EmptyInput)?
+        .ok_or_else(|| ApiError::EmptyInput)?
         .starts_with("replace:");
     let replace: Vec<String>;
     let with: Vec<String>;

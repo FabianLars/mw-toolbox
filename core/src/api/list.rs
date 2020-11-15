@@ -147,16 +147,16 @@ pub async fn exturlusage<C: AsRef<WikiClient>>(client: C) -> Result<HashMap<Stri
 
         for x in json["query"]["exturlusage"]
             .as_array()
-            .ok_or(ApiError::InvalidJsonOperation(json.to_string()))?
+            .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
             .iter()
         {
             let title = x["title"]
                 .as_str()
-                .ok_or(ApiError::InvalidJsonOperation(x.to_string()))?
+                .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
                 .to_string();
             let url = x["url"]
                 .as_str()
-                .ok_or(ApiError::InvalidJsonOperation(x.to_string()))?
+                .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
                 .to_string();
 
             results.entry(title).or_insert_with(Vec::new).push(url);
@@ -167,7 +167,7 @@ pub async fn exturlusage<C: AsRef<WikiClient>>(client: C) -> Result<HashMap<Stri
             Some(_) => {
                 continue_from = json["query-continue"]["exturlusage"]["euoffset"]
                     .as_i64()
-                    .ok_or(ApiError::InvalidJsonOperation(json.to_string()))?
+                    .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
                     .to_string()
             }
         }
@@ -240,26 +240,26 @@ async fn get_from_api(
         if json["query"][long].is_object() {
             for (_, x) in json["query"][long]
                 .as_object()
-                .ok_or(ApiError::InvalidJsonOperation(json.to_string()))?
+                .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
                 .iter()
             {
                 results.push(
                     x[getter]
                         .as_str()
-                        .ok_or(ApiError::InvalidJsonOperation(x.to_string()))?
+                        .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
                         .to_string(),
                 )
             }
         } else if json["query"][long].is_array() {
             for x in json["query"][long]
                 .as_array()
-                .ok_or(ApiError::InvalidJsonOperation(json.to_string()))?
+                .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
                 .iter()
             {
                 results.push(
                     x[getter]
                         .as_str()
-                        .ok_or(ApiError::InvalidJsonOperation(x.to_string()))?
+                        .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
                         .to_string(),
                 )
             }
@@ -273,7 +273,7 @@ async fn get_from_api(
                         Some(x) => x.to_string(),
                         None => json["query-continue"][long][format!("{}{}", short, from)]
                             .as_i64()
-                            .ok_or(ApiError::InvalidJsonOperation(json.to_string()))?
+                            .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
                             .to_string(),
                     };
             }
@@ -292,13 +292,13 @@ async fn get_infobox_lists(api: &WikiClient, typ: &str) -> Result<Vec<String>> {
 
     for x in json["query"][typ]
         .as_array()
-        .ok_or(ApiError::InvalidJsonOperation(json.to_string()))?
+        .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
         .iter()
     {
         results.push(
             x["title"]
                 .as_str()
-                .ok_or(ApiError::InvalidJsonOperation(x.to_string()))?
+                .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
                 .to_string(),
         )
     }

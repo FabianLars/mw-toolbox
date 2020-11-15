@@ -167,7 +167,7 @@ impl WikiClient {
 
         let token = res["query"]["tokens"]["csrftoken"]
             .as_str()
-            .ok_or(ClientError::TokenNotFound(res.to_string()))?
+            .ok_or_else(|| ClientError::TokenNotFound(res.to_string()))?
             .to_string();
 
         self.csrf_token = token;
