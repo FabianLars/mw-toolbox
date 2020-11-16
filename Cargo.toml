@@ -5,7 +5,6 @@ members = [
   "core",
   "cli",
   "gui",
-  "gui-druid",
   "gui-vgtk",
   "league",
   "storage",
