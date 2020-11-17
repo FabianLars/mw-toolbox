@@ -39,7 +39,6 @@ struct State {
     is_persistent: bool,
     login_button: button::State,
 
-    lockfile: String,
     file_button: button::State,
     execute_button: button::State,
     selected_files: PathType,
@@ -106,7 +105,6 @@ impl Application for App {
                         self.state = State {
                             ln_input_value: state.ln_input_value,
                             lp_input_value: state.lp_input_value,
-                            lockfile: state.lockfile,
                             is_persistent: state.is_persistent,
                             wiki_url_input_value: state.wikiurl,
                             ..State::default()
@@ -184,7 +182,6 @@ impl Application for App {
                                         lp_input_value: self.state.lp_input_value.clone(),
                                         wikiurl: self.state.wiki_url_input_value.clone(),
                                         is_persistent: self.state.is_persistent,
-                                        lockfile: self.state.lockfile.clone(),
                                     }
                                     .save(),
                                     Message::Saved,
@@ -195,7 +192,6 @@ impl Application for App {
                                         lp_input_value: String::new(),
                                         wikiurl: self.state.wiki_url_input_value.clone(),
                                         is_persistent: self.state.is_persistent,
-                                        lockfile: self.state.lockfile.clone(),
                                     }
                                     .save(),
                                     Message::Saved,
@@ -402,7 +398,6 @@ fn loading_message() -> Element<'static, Message> {
 #[derive(Debug, Clone)]
 struct SavedState {
     ln_input_value: String,
-    lockfile: String,
     wikiurl: String,
     lp_input_value: String,
     is_persistent: bool,
@@ -420,14 +415,12 @@ impl SavedState {
             .unwrap_or_else(|_| String::from("false"))
             .parse::<bool>()
             .unwrap_or(false);
-        let lockfile = storage::get("lockfile").await.unwrap_or_default();
 
         let s = Self {
             lp_input_value,
             ln_input_value,
             wikiurl,
             is_persistent,
-            lockfile,
         };
         Ok(s)
     }
@@ -446,7 +439,6 @@ impl SavedState {
                     .map_err(|e| println!("Error encrypting name: {}", e))?
                     .as_slice(),
             ),
-            ("lockfile", self.lockfile.as_bytes()),
             ("wikiurl", self.wikiurl.as_bytes()),
             ("is_persistent", self.is_persistent.to_string().as_bytes()),
         ])
