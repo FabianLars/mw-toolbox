@@ -439,6 +439,23 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let mut champion: String = String::new();
     let mut tft: String = String::new();
     let client = client.as_ref();
+    let lua_regex = Regex::new(r#""(?P<k>\w+)":"#)?;
+
+    let convert = |x: String| {
+        let lua: String = x
+            .chars()
+            .map(|s| match s {
+                '[' => '{',
+                ']' => '}',
+                _ => s,
+            })
+            .collect();
+
+        let lua = lua.replace("null,", "nil,");
+        let lua = lua_regex.replace_all(&lua, "[\"$k\"]=");
+
+        format!("return {}", lua)
+    };
 
     let fut_skin = async {
         skin = client.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").await?.replace(" ", " ").replace("Hexerei-Miss Fortune \"", "Hexerei-Miss Fortune\"");
@@ -579,6 +596,101 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .await
     }
     .map_err(|_| anyhow!("Can't get universes.json"));
+
+    try_join!(
+        fut_skin,
+        fut_set,
+        fut_universe,
+        fut_icons,
+        fut_iconsets,
+        fut_champion,
+        fut_tft
+    )?;
+
+    let fut_skin = async {
+        client
+            .post(&[
+                ("action", "edit"),
+                ("summary", "automated update"),
+                ("bot", "1"),
+                ("title", "Modul:Set/skins.src"),
+                ("text", &convert(skin)),
+            ])
+            .await
+    }
+    .map_err(|_| anyhow!("Can't edit skins.src"));
+    let fut_set = async {
+        client
+            .post(&[
+                ("action", "edit"),
+                ("summary", "automated update"),
+                ("bot", "1"),
+                ("title", "Modul:Set/sets.src"),
+                ("text", &convert(set)),
+            ])
+            .await
+    }
+    .map_err(|_| anyhow!("Can't edit skinlines.src"));
+    let fut_universe = async {
+        client
+            .post(&[
+                ("action", "edit"),
+                ("summary", "automated update"),
+                ("bot", "1"),
+                ("title", "Modul:Set/universes.src"),
+                ("text", &convert(universe)),
+            ])
+            .await
+    }
+    .map_err(|_| anyhow!("Can't edit universes.src"));
+    let fut_icons = async {
+        client
+            .post(&[
+                ("action", "edit"),
+                ("summary", "automated update"),
+                ("bot", "1"),
+                ("title", "Modul:Set/icons.src"),
+                ("text", &convert(icons)),
+            ])
+            .await
+    }
+    .map_err(|_| anyhow!("Can't edit universes.src"));
+    let fut_iconsets = async {
+        client
+            .post(&[
+                ("action", "edit"),
+                ("summary", "automated update"),
+                ("bot", "1"),
+                ("title", "Modul:Set/iconsets.json"),
+                ("text", &convert(iconsets)),
+            ])
+            .await
+    }
+    .map_err(|_| anyhow!("Can't edit universes.src"));
+    let fut_champion = async {
+        client
+            .post(&[
+                ("action", "edit"),
+                ("summary", "automated update"),
+                ("bot", "1"),
+                ("title", "Modul:Set/champion.src"),
+                ("text", &convert(champion)),
+            ])
+            .await
+    }
+    .map_err(|_| anyhow!("Can't edit universes.src"));
+    let fut_tft = async {
+        client
+            .post(&[
+                ("action", "edit"),
+                ("summary", "automated update"),
+                ("bot", "1"),
+                ("title", "Modul:Set/TFT.src"),
+                ("text", &convert(tft)),
+            ])
+            .await
+    }
+    .map_err(|_| anyhow!("Can't edit universes.src"));
 
     try_join!(
         fut_skin,
