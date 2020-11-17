@@ -523,7 +523,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             ])
             .await
     }
-    .map_err(|_| anyhow!("Can't get skins.json"));
+    .map_err(|_| anyhow!("Can't edit skins.json"));
     let fut_set = async {
         client
             .post(&[
@@ -535,7 +535,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             ])
             .await
     }
-    .map_err(|_| anyhow!("Can't get skinlines.json"));
+    .map_err(|_| anyhow!("Can't edit skinlines.json"));
     let fut_universe = async {
         client
             .post(&[
@@ -547,7 +547,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             ])
             .await
     }
-    .map_err(|_| anyhow!("Can't get universes.json"));
+    .map_err(|_| anyhow!("Can't edit universes.json"));
     let fut_icons = async {
         client
             .post(&[
@@ -559,7 +559,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             ])
             .await
     }
-    .map_err(|_| anyhow!("Can't get universes.json"));
+    .map_err(|_| anyhow!("Can't edit universes.json"));
     let fut_iconsets = async {
         client
             .post(&[
@@ -571,7 +571,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             ])
             .await
     }
-    .map_err(|_| anyhow!("Can't get universes.json"));
+    .map_err(|_| anyhow!("Can't edit universes.json"));
     let fut_champion = async {
         client
             .post(&[
@@ -583,7 +583,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             ])
             .await
     }
-    .map_err(|_| anyhow!("Can't get universes.json"));
+    .map_err(|_| anyhow!("Can't edit universes.json"));
     let fut_tft = async {
         client
             .post(&[
@@ -595,7 +595,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             ])
             .await
     }
-    .map_err(|_| anyhow!("Can't get universes.json"));
+    .map_err(|_| anyhow!("Can't edit universes.json"));
 
     try_join!(
         fut_skin,
