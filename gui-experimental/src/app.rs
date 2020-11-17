@@ -433,22 +433,24 @@ impl SavedState {
     }
 
     async fn save(self) -> Result<(), ()> {
-        storage::insert_secure("d7f0942b", &self.ln_input_value)
-            .await
-            .map_err(|e| println!("loginname: {:?}", e))?;
-        storage::insert_secure("b9c95dde", &self.lp_input_value)
-            .await
-            .map_err(|e| println!("botpw: {:?}", e))?;
-        storage::insert("lockfile", &self.lockfile)
-            .await
-            .map_err(|e| println!("lockfile: {:?}", e))?;
-        storage::insert("wikiurl", &self.wikiurl)
-            .await
-            .map_err(|e| println!("wikiurl: {:?}", e))?;
-        storage::insert("is_persistent", &self.is_persistent.to_string())
-            .await
-            .map_err(|e| println!("persistent: {:?}", e))?;
-
-        Ok(())
+        storage::insert_multiple(&[
+            (
+                "d7f0942b",
+                storage::encrypt(&self.ln_input_value)
+                    .map_err(|e| println!("Error encrypting password: {}", e))?
+                    .as_slice(),
+            ),
+            (
+                "b9c95dde",
+                storage::encrypt(&self.lp_input_value)
+                    .map_err(|e| println!("Error encrypting name: {}", e))?
+                    .as_slice(),
+            ),
+            ("lockfile", self.lockfile.as_bytes()),
+            ("wikiurl", self.wikiurl.as_bytes()),
+            ("is_persistent", self.is_persistent.to_string().as_bytes()),
+        ])
+        .await
+        .map_err(|e| println!("Error saving app data: {}", e))
     }
 }

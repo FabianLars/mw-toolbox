@@ -29,29 +29,32 @@ async fn load() -> Result<BTreeMap<String, Vec<u8>>> {
     bincode::deserialize(&contents).map_err(|e| anyhow!("Error while deserializing: {:?}", e))
 }
 
-pub async fn get(key: &str) -> Result<String> {
-    String::from_utf8(get_u8(key).await?)
-        .map_err(|e| anyhow!("Error converting u8 to String: {:?}", e))
+pub fn encrypt<T: AsRef<[u8]>>(val: T) -> Result<Vec<u8>> {
+    let cryptkey = Key::from_slice(env!("WTOOLS_AEAD_KEY").as_bytes());
+    let aead = XChaCha20Poly1305::new(cryptkey);
+
+    let mut rng_nonce = [0u8; 24];
+    rand_chacha::ChaCha20Rng::from_entropy().fill(&mut rng_nonce[..]);
+
+    let nonce = XNonce::from_slice(&rng_nonce);
+    let mut ciphertext = aead
+        .encrypt(
+            nonce,
+            [env!("WTOOLS_SECRET").as_bytes(), val.as_ref()]
+                .concat()
+                .as_slice(),
+        )
+        .map_err(|e| anyhow!("Error encrypting value: {:?}", e))?;
+
+    let mut data = rng_nonce.to_vec();
+    data.append(&mut ciphertext);
+
+    Ok(data)
 }
 
-async fn get_u8(key: &str) -> Result<Vec<u8>> {
-    let data = load().await.unwrap_or_default();
-
-    if data.is_empty() {
-        return Err(anyhow!("empty appdata"));
-    }
-
-    if let Some(v) = data.get(key) {
-        Ok(v.to_vec())
-    } else {
-        Err(anyhow!("Error getting value by key from file"))
-    }
-}
-
-pub async fn get_secure(key: &str) -> Result<String> {
-    let data = get_u8(key).await?;
+pub fn decrypt(data: Vec<u8>) -> Result<String> {
     if data.len() <= 24 {
-        return Err(anyhow!("Missing data. Extracted value is too short"));
+        return Err(anyhow!("Value given is too short to be encrypted data"));
     }
     let cryptkey = Key::from_slice(env!("WTOOLS_AEAD_KEY").as_bytes());
     let aead = XChaCha20Poly1305::new(cryptkey);
@@ -69,8 +72,36 @@ pub async fn get_secure(key: &str) -> Result<String> {
         .map_err(|e| anyhow!("Error converting decrypted u8-value to String: {:?}", e))
 }
 
+async fn get_u8(key: &str) -> Result<Vec<u8>> {
+    let data = load().await.unwrap_or_default();
+
+    if data.is_empty() {
+        return Err(anyhow!("empty appdata"));
+    }
+
+    if let Some(v) = data.get(key) {
+        Ok(v.to_vec())
+    } else {
+        Err(anyhow!("Error getting value by key from file"))
+    }
+}
+
+pub async fn get(key: &str) -> Result<String> {
+    String::from_utf8(get_u8(key).await?)
+        .map_err(|e| anyhow!("Error converting u8 to String: {:?}", e))
+}
+
+pub async fn get_secure(key: &str) -> Result<String> {
+    let data = get_u8(key).await?;
+
+    decrypt(data)
+}
+
 pub async fn insert<T: AsRef<[u8]>>(key: &str, val: T) -> Result<()> {
-    let val = val.as_ref().to_vec();
+    insert_multiple(&[(key, val)]).await
+}
+
+pub async fn insert_multiple<T: AsRef<[u8]>>(data: &[(&str, T)]) -> Result<()> {
     let path = path();
 
     let mut map: BTreeMap<String, Vec<u8>>;
@@ -84,7 +115,10 @@ pub async fn insert<T: AsRef<[u8]>>(key: &str, val: T) -> Result<()> {
         Ok(c) => c,
         _ => BTreeMap::new(),
     };
-    map.insert(key.to_string(), val);
+
+    for (k, v) in data {
+        map.insert(k.to_string(), v.as_ref().to_vec());
+    }
 
     let mut file = File::create(path).await?;
     file.write_all(
@@ -96,21 +130,7 @@ pub async fn insert<T: AsRef<[u8]>>(key: &str, val: T) -> Result<()> {
 }
 
 pub async fn insert_secure(key: &str, val: &str) -> Result<()> {
-    let cryptkey = Key::from_slice(env!("WTOOLS_AEAD_KEY").as_bytes());
-    let aead = XChaCha20Poly1305::new(cryptkey);
-
-    let mut rng_nonce = [0u8; 24];
-    rand_chacha::ChaCha20Rng::from_entropy().fill(&mut rng_nonce[..]);
-
-    let nonce = XNonce::from_slice(&rng_nonce);
-    let mut ciphertext = aead
-        .encrypt(nonce, [env!("WTOOLS_SECRET"), val].concat().as_bytes())
-        .map_err(|e| anyhow!("Error encrypting value: {:?}", e))?;
-
-    let mut data = rng_nonce.to_vec();
-    data.append(&mut ciphertext);
-
-    insert(key, data).await
+    insert(key, encrypt(val)?).await
 }
 
 #[cfg(test)]
