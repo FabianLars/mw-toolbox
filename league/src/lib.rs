@@ -329,7 +329,10 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         "https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key={}",
         &std::env::var("RIOT_API_KEY")?
     );
-    let curr_date = rename_m(chrono::Utc::today().format("%-d. %B %Y").to_string());
+
+    let curr_date = chrono::Utc::today()
+        .format_localized("%-d. %B %Y", chrono::Locale::de_DE)
+        .to_string();
 
     let champions: HashMap<i32, Champ> = serde_json::from_str(
         &client
@@ -405,29 +408,6 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         .await?;
 
     Ok(())
-}
-
-#[cfg(feature = "riot-api")]
-fn rename_m(d: String) -> String {
-    if d.contains("January") {
-        d.replace("January", "Januar").to_string()
-    } else if d.contains("February") {
-        d.replace("February", "Februar").to_string()
-    } else if d.contains("March") {
-        d.replace("March", "März").to_string()
-    } else if d.contains("May") {
-        d.replace("May", "Mai").to_string()
-    } else if d.contains("June") {
-        d.replace("June", "Juni").to_string()
-    } else if d.contains("July") {
-        d.replace("July", "Juli").to_string()
-    } else if d.contains("October") {
-        d.replace("October", "Oktober").to_string()
-    } else if d.contains("December") {
-        d.replace("December", "Dezember").to_string()
-    } else {
-        d
-    }
 }
 
 pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
