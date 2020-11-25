@@ -97,7 +97,7 @@ mod light {
         fn active(&self) -> button::Style {
             button::Style {
                 background: Some(Background::Color(Color::from_rgb(0.11, 0.42, 0.87))),
-                border_radius: 12,
+                border_radius: 12.0,
                 shadow_offset: Vector::new(1.0, 1.0),
                 text_color: Color::from_rgb8(0xEE, 0xEE, 0xEE),
                 ..button::Style::default()
@@ -163,7 +163,7 @@ mod dark {
             radio::Style {
                 background: Background::Color(SURFACE),
                 dot_color: ACTIVE,
-                border_width: 1,
+                border_width: 1.0,
                 border_color: ACTIVE,
             }
         }
@@ -182,15 +182,15 @@ mod dark {
         fn active(&self) -> text_input::Style {
             text_input::Style {
                 background: Background::Color(SURFACE),
-                border_radius: 2,
-                border_width: 0,
+                border_radius: 2.0,
+                border_width: 0.0,
                 border_color: Color::TRANSPARENT,
             }
         }
 
         fn focused(&self) -> text_input::Style {
             text_input::Style {
-                border_width: 1,
+                border_width: 1.0,
                 border_color: ACCENT,
                 ..self.active()
             }
@@ -210,7 +210,7 @@ mod dark {
 
         fn hovered(&self) -> text_input::Style {
             text_input::Style {
-                border_width: 1,
+                border_width: 1.0,
                 border_color: Color { a: 0.3, ..ACCENT },
                 ..self.focused()
             }
@@ -223,7 +223,7 @@ mod dark {
         fn active(&self) -> button::Style {
             button::Style {
                 background: Some(Background::Color(ACTIVE)),
-                border_radius: 3,
+                border_radius: 3.0,
                 text_color: Color::WHITE,
                 ..button::Style::default()
             }
@@ -239,7 +239,7 @@ mod dark {
 
         fn pressed(&self) -> button::Style {
             button::Style {
-                border_width: 1,
+                border_width: 1.0,
                 border_color: Color::WHITE,
                 ..self.hovered()
             }
@@ -252,13 +252,13 @@ mod dark {
         fn active(&self) -> scrollable::Scrollbar {
             scrollable::Scrollbar {
                 background: Some(Background::Color(SURFACE)),
-                border_radius: 2,
-                border_width: 0,
+                border_radius: 2.0,
+                border_width: 0.0,
                 border_color: Color::TRANSPARENT,
                 scroller: scrollable::Scroller {
                     color: ACTIVE,
-                    border_radius: 2,
-                    border_width: 0,
+                    border_radius: 2.0,
+                    border_width: 0.0,
                     border_color: Color::TRANSPARENT,
                 },
             }
@@ -297,9 +297,9 @@ mod dark {
             slider::Style {
                 rail_colors: (ACTIVE, Color { a: 0.1, ..ACTIVE }),
                 handle: slider::Handle {
-                    shape: slider::HandleShape::Circle { radius: 9 },
+                    shape: slider::HandleShape::Circle { radius: 9.0 },
                     color: ACTIVE,
-                    border_width: 0,
+                    border_width: 0.0,
                     border_color: Color::TRANSPARENT,
                 },
             }
@@ -337,7 +337,7 @@ mod dark {
             progress_bar::Style {
                 background: Background::Color(SURFACE),
                 bar: Background::Color(ACTIVE),
-                border_radius: 10,
+                border_radius: 10.0,
             }
         }
     }
@@ -349,8 +349,8 @@ mod dark {
             checkbox::Style {
                 background: Background::Color(if is_checked { ACTIVE } else { SURFACE }),
                 checkmark_color: Color::WHITE,
-                border_radius: 2,
-                border_width: 1,
+                border_radius: 2.0,
+                border_width: 1.0,
                 border_color: ACTIVE,
             }
         }
