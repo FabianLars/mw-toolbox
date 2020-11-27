@@ -1,2 +1,14 @@
 [build]
 rustflags = "-C link-arg=-s"
+
+# You may want to remove everything below this line (or parts of it) if you don't have lld installed and/or aren't using nightly (for -Z features)
+[target.x86_64-unknown-linux-gnu]
+linker = "/usr/bin/clang"
+rustflags = ["-Clink-arg=-fuse-ld=lld", "-Zshare-generics=y"]
+
+[target.x86_64-apple-darwin]
+rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/zld", "-Zshare-generics=y", "-Zrun-dsymutil=no"]
+
+[target.x86_64-pc-windows-msvc]
+linker = "rust-lld.exe"
+rustflags = ["-Zshare-generics=y"]
