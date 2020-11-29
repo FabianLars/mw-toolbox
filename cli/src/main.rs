@@ -62,7 +62,6 @@ enum LeagueType {
     Discount,
     Discounts,
     Positions,
-    Random,
     Rotation,
     Rotations,
     Set,
@@ -207,7 +206,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .await?
             }
             LeagueType::Positions => league::positions(&client).await?,
-            LeagueType::Random => league::random(&client).await?,
             LeagueType::Rotation | LeagueType::Rotations => {
                 #[cfg(not(feature = "riot-api"))]
                 panic!("Did you forget to set the riot-api feature flag?");
