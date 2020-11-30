@@ -174,7 +174,7 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathType) -> Resul
         .await?;
 
     let champions_wapi: HashMap<i32, Champ> = client
-        .get_external("https://api.fabianlars.de/wiki/champion")
+        .get_external("https://api.fabianlars.de/v1/wiki/champions")
         .await?
         .json()
         .await
@@ -336,7 +336,7 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
 
     let champions: HashMap<i32, Champ> = serde_json::from_str(
         &client
-            .get_external_text("https://api.fabianlars.de/wiki/champion")
+            .get_external_text("https://api.fabianlars.de/v1/wiki/champions")
             .await?,
     )?;
 
