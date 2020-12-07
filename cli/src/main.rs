@@ -124,20 +124,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             output,
         } => {
             if list_type == ListType::Exturlusage {
-                let mut file = fs::File::create(
-                    output.unwrap_or_else(|| PathBuf::from("./wtools_output.json")),
-                )
-                .await?;
-                file.write_all(&serde_json::to_vec_pretty(
-                    &api::list::exturlusage(&client).await?,
-                )?)
-                .await?;
+                let res = serde_json::to_vec_pretty(&api::list::exturlusage(&client).await?)?;
+                match output {
+                    Some(o) => {
+                        let mut file = fs::File::create(o).await?;
+                        file.write_all(&res).await?;
+                    }
+                    None => println!("{}", String::from_utf8_lossy(&res)),
+                }
             } else {
-                let mut file = fs::File::create(
-                    output.unwrap_or_else(|| PathBuf::from("./wtools_output.json")),
-                )
-                .await?;
-                file.write_all(&serde_json::to_vec_pretty(&match list_type {
+                let res = match list_type {
                     ListType::Allimages => api::list::allimages(&client).await?,
                     ListType::Allpages => {
                         api::list::allpages(&client, parameter.as_deref()).await?
@@ -173,8 +169,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     }
                     ListType::Allinfoboxes => api::list::allinfoboxes(&client).await?,
                     _ => vec![String::new()],
-                })?)
-                .await?;
+                };
+
+                match output {
+                    Some(o) => {
+                        let mut file = fs::File::create(o).await?;
+                        file.write_all(&serde_json::to_vec_pretty(&res)?).await?;
+                    }
+                    None => println!("{}", res.join("\n")),
+                }
             }
         }
         Subcommand::Move { input } => {
