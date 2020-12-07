@@ -12,6 +12,8 @@ pub enum ApiError {
     IoError(#[from] std::io::Error),
     #[error(transparent)]
     ReqwestError(#[from] reqwest::Error),
+    #[error(transparent)]
+    UrlEncodingError(#[from] urlencoding::FromUrlEncodingError),
     #[error("Provied input file is empty")]
     EmptyInput,
     #[error("unknown api error")]

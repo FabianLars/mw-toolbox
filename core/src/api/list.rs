@@ -154,10 +154,11 @@ pub async fn exturlusage<C: AsRef<WikiClient>>(client: C) -> Result<HashMap<Stri
                 .as_str()
                 .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
                 .to_string();
-            let url = x["url"]
-                .as_str()
-                .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
-                .to_string();
+            let url = urlencoding::decode(
+                x["url"]
+                    .as_str()
+                    .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?,
+            )?;
 
             results.entry(title).or_insert_with(Vec::new).push(url);
         }
