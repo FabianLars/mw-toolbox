@@ -91,15 +91,15 @@ impl WikiClient {
             .get_into_json(&[("action", "query"), ("meta", "tokens"), ("type", "login")])
             .await?;
 
-        println!("{:?}", &json);
+        log::debug!("this should contain the requested login token: {:?}", &json);
 
         let token = match json["query"]["tokens"]["logintoken"].as_str() {
             Some(s) => s.to_string(),
             _ => return Err(ClientError::TokenNotFound(json.to_string())),
         };
 
-        println!(
-            "{:?}",
+        log::info!(
+            "login request completed: {:?}",
             self.post(&[
                 ("action", "login"),
                 ("lgname", &self.loginname),
@@ -179,6 +179,8 @@ impl WikiClient {
         let res = self
             .get_into_json(&[("action", "query"), ("meta", "tokens"), ("type", "csrf")])
             .await?;
+
+        log::debug!("this should contain the requested csrf token: {:?}", &res);
 
         let token = res["query"]["tokens"]["csrftoken"]
             .as_str()

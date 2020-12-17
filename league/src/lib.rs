@@ -306,7 +306,7 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathType) -> Resul
         start_date, end_date, angebote
     );
 
-    println!(
+    log::info!(
         "{:?}",
         client
             .post_into_text(&[

@@ -54,7 +54,7 @@ pub async fn upload<C: AsRef<WikiClient>>(client: C, path: PathType) -> Result<(
             .mime_str(mime)?;
         let form = reqwest::multipart::Form::new().part("file", part);
 
-        println!(
+        log::info!(
             "{:?}",
             client
                 .send_multipart(
