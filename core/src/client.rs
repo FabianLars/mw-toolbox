@@ -23,7 +23,12 @@ impl WikiClient {
         Ok(Self {
             client: Client::builder()
                 .cookie_store(true)
-                .user_agent("wtools by FabianLars (https://github.com/FabianLars/wtools)")
+                .user_agent(concat!(
+                    env!("CARGO_PKG_NAME"),
+                    "/",
+                    env!("CARGO_PKG_VERSION"),
+                    " using rust/reqwest",
+                ))
                 .build()
                 .map_err(|source| ClientError::BuildFailed { source })?,
             ..Self::default()
@@ -38,7 +43,12 @@ impl WikiClient {
         let mut client = Self {
             client: Client::builder()
                 .cookie_store(true)
-                .user_agent("wtools by FabianLars (https://github.com/FabianLars/wtools)")
+                .user_agent(concat!(
+                    env!("CARGO_PKG_NAME"),
+                    "/",
+                    env!("CARGO_PKG_VERSION"),
+                    " using rust/reqwest",
+                ))
                 .build()
                 .map_err(|source| ClientError::BuildFailed { source })?,
             url: url.into(),
@@ -54,7 +64,12 @@ impl WikiClient {
         Ok(Self {
             client: Client::builder()
                 .cookie_store(true)
-                .user_agent("wtools by FabianLars (https://github.com/FabianLars/wtools)")
+                .user_agent(concat!(
+                    env!("CARGO_PKG_NAME"),
+                    "/",
+                    env!("CARGO_PKG_VERSION"),
+                    " using rust/reqwest",
+                ))
                 .build()
                 .map_err(|source| ClientError::BuildFailed { source })?,
             url: url.into(),
