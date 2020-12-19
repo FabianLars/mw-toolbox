@@ -10,6 +10,6 @@ anyhow = "1.0"
 bincode = "1"
 chacha20poly1305 = "0.7"
 directories = "3"
-rand = "0.7"
-rand_chacha = "0.2"
+rand = "0.8"
+rand_chacha = "0.3"
 tokio = {version = "0.2", features = ["fs", "io-util", "macros"]}
