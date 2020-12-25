@@ -151,7 +151,9 @@ mod tests {
         let test_string = rand::thread_rng()
             .sample_iter(&Alphanumeric)
             .take(18)
-            .collect::<String>();
+            .collect::<Vec<u8>>();
+
+        let test_string = String::from_utf8(test_string).unwrap();
 
         super::insert_secure("unittest_secure", &test_string)
             .await
