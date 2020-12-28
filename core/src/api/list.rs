@@ -130,48 +130,15 @@ pub async fn search<C: AsRef<WikiClient>>(
 }
 
 pub async fn exturlusage<C: AsRef<WikiClient>>(client: C) -> Result<HashMap<String, Vec<String>>> {
-    let client = client.as_ref();
-    let mut has_next: bool = true;
-    let mut continue_from = String::new();
+    let api_res = get_from_api(client.as_ref(), "exturlusage", "eu", None).await?;
     let mut results: HashMap<String, Vec<String>> = HashMap::new();
 
-    while has_next {
-        let json: Value = client
-            .get_into_json(&[
-                ("action", "query"),
-                ("list", "exturlusage"),
-                ("eulimit", "5000"),
-                ("euoffset", &continue_from),
-            ])
-            .await?;
-
-        for x in json["query"]["exturlusage"]
-            .as_array()
-            .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
-            .iter()
-        {
-            let title = x["title"]
-                .as_str()
-                .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
-                .to_string();
-            let url = urlencoding::decode(
-                x["url"]
-                    .as_str()
-                    .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?,
-            )?;
-
-            results.entry(title).or_insert_with(Vec::new).push(url);
-        }
-
-        match json.get("query-continue") {
-            None => has_next = false,
-            Some(_) => {
-                continue_from = json["query-continue"]["exturlusage"]["euoffset"]
-                    .as_i64()
-                    .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
-                    .to_string()
-            }
-        }
+    for v in api_res {
+        let split: Vec<&str> = v.split("~URL~").collect();
+        results
+            .entry(split[0].to_string())
+            .or_insert_with(Vec::new)
+            .push(split[1].to_string())
     }
 
     Ok(results)
@@ -226,7 +193,13 @@ async fn get_from_api(
                 ("action", "query"),
                 ("list", long),
                 (&format!("{}limit", short), "5000"),
-                (&format!("{}continue", short), &continue_from),
+                (
+                    &format!(
+                        "{}continue",
+                        if continue_from.is_empty() { "" } else { short }
+                    ),
+                    &continue_from,
+                ),
                 param,
             ])
             .await?;
@@ -244,17 +217,40 @@ async fn get_from_api(
                 )
             }
         } else if json["query"][long].is_array() {
-            for x in json["query"][long]
-                .as_array()
-                .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
-                .iter()
-            {
-                results.push(
-                    x[getter]
-                        .as_str()
-                        .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
-                        .to_string(),
-                )
+            match short {
+                "eu" => {
+                    for x in json["query"][long]
+                        .as_array()
+                        .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
+                        .iter()
+                    {
+                        results.push(format!(
+                            "{}~URL~{}",
+                            x["title"]
+                                .as_str()
+                                .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
+                                .to_string(),
+                            x["url"]
+                                .as_str()
+                                .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
+                                .to_string()
+                        ))
+                    }
+                }
+                _ => {
+                    for x in json["query"][long]
+                        .as_array()
+                        .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
+                        .iter()
+                    {
+                        results.push(
+                            x[getter]
+                                .as_str()
+                                .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
+                                .to_string(),
+                        );
+                    }
+                }
             }
         }
 
