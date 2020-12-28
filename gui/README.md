@@ -2,7 +2,7 @@ GUI experiments got moved out of this repo. At least until there is something us
 
 Current experiments:
 
--   (wtools-tauri)[https://github.com/FabianLars/wtools-tauri]
--   (wtools-iced)[https://github.com/FabianLars/wtools-iced]
--   (wtools-gtk)[https://github.com/FabianLars/wtools-gtk]
--   (wtools-druid)[https://github.com/FabianLars/wtools-druid]
+-   [wtools-tauri](https://github.com/FabianLars/wtools-tauri)
+-   [wtools-iced](https://github.com/FabianLars/wtools-iced)
+-   [wtools-gtk](https://github.com/FabianLars/wtools-gtk)
+-   [wtools-druid](https://github.com/FabianLars/wtools-druid)
