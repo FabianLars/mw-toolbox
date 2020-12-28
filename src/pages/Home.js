@@ -7,11 +7,13 @@ import { Button, Flex, Input } from '@chakra-ui/react';
 import Header from '../components/sections/Header';
 
 function Home() {
-    const [wurl, setWurl] = useState('');
+    const [wurl, setWurl] = useState('https://leagueoflegends.fandom.com/de/api.php');
     const [lgname, setLgname] = useState('');
     const [lgpasswd, setLgpasswd] = useState('');
+    const [logginin, setLoggingin] = useState('');
 
     function login() {
+        setLoggingin(true);
         promisified({
             cmd: 'login',
             loginname: lgname,
@@ -32,6 +34,7 @@ function Home() {
 
     useEffect(() => {
         listen('loggedin', (payload) => {
+            setLoggingin(false);
             console.log(payload);
         });
     }, []);
@@ -72,7 +75,7 @@ function Home() {
                     placeholder="Password via S:BotPasswords"
                     isRequired
                 />
-                <Button colorScheme="blue" onClick={login}>
+                <Button isLoading={logginin} colorScheme="blue" onClick={login}>
                     Login
                 </Button>
                 {/* <button onClick={list}>list</button> */}

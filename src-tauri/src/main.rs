@@ -34,6 +34,7 @@ fn main() {
                             error,
                         } => {
                             // This blocks the ui, but works best for now
+                            // TODO: Handle malformed url rejections
                             client = WikiClient::from(url).unwrap();
                             client.credentials(loginname, password);
                             async_std::task::block_on(client.login()).unwrap();
