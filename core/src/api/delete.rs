@@ -8,13 +8,16 @@ pub async fn delete_pages<C: AsRef<WikiClient>>(
     let client = client.as_ref();
 
     for title in titles {
-        client
-            .post(&[
-                ("action", "delete"),
-                ("summary", "automated action"),
-                ("title", title),
-            ])
-            .await?;
+        log::debug!(
+            "{:?}",
+            client
+                .post_into_json(&[
+                    ("action", "delete"),
+                    ("reason", "automated action"),
+                    ("title", title),
+                ])
+                .await?
+        );
         tokio::time::delay_for(tokio::time::Duration::from_millis(500)).await;
     }
 

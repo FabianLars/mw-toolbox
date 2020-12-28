@@ -63,7 +63,7 @@ pub async fn move_pages<C: AsRef<WikiClient>>(client: C, path: PathType) -> Resu
                 ("action", "move"),
                 ("from", &from),
                 ("to", &dest),
-                ("summary", "automated action"),
+                ("reason", "automated action"),
                 ("movetalk", "1"),
                 //("ignorewarnings", ""),
             ])
