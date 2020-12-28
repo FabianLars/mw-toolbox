@@ -2749,6 +2749,7 @@ dependencies = [
 [[package]]
 name = "wtools"
 version = "0.1.0"
+source = "git+https://github.com/FabianLars/wtools#8eba9ec4b0b226b56ba9ed92dc3557b50e7fd279"
 dependencies = [
  "log",
  "reqwest",
