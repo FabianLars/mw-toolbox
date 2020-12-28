@@ -84,7 +84,6 @@ enum ListType {
     Protectedtitles,
     Querypage,
     Wkpoppages,
-    Unconvertedinfoboxes,
     Allinfoboxes,
 }
 
@@ -166,9 +165,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         api::list::querypage(&client, parameter.as_deref()).await?
                     }
                     ListType::Wkpoppages => api::list::wkpoppages(&client).await?,
-                    ListType::Unconvertedinfoboxes => {
-                        api::list::unconvertedinfoboxes(&client).await?
-                    }
                     ListType::Allinfoboxes => api::list::allinfoboxes(&client).await?,
                     _ => vec![String::new()],
                 };

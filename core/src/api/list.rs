@@ -195,12 +195,8 @@ pub async fn wkpoppages<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> 
     get_from_api(client.as_ref(), "wkpoppages", "wk", None).await
 }
 
-pub async fn unconvertedinfoboxes<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
-    get_infobox_lists(client.as_ref(), "unconvertedinfoboxes").await
-}
-
 pub async fn allinfoboxes<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
-    get_infobox_lists(client.as_ref(), "allinfoboxes").await
+    get_from_api(client.as_ref(), "allinfoboxes", "", None).await
 }
 
 async fn get_from_api(
@@ -216,10 +212,6 @@ async fn get_from_api(
         "ac" => "*",
         _ => "title",
     };
-    let from = match short {
-        "eu" => "offset",
-        _ => "from",
-    };
     let param = match parameter {
         Some(p) => {
             let temp: Vec<&str> = p.split('=').collect();
@@ -234,7 +226,7 @@ async fn get_from_api(
                 ("action", "query"),
                 ("list", long),
                 (&format!("{}limit", short), "5000"),
-                (&format!("{}{}", short, from), &continue_from),
+                (&format!("{}continue", short), &continue_from),
                 param,
             ])
             .await?;
@@ -266,42 +258,18 @@ async fn get_from_api(
             }
         }
 
-        match json.get("query-continue") {
+        match json.get("continue") {
             None => has_next = false,
             Some(_) => {
-                continue_from =
-                    match json["query-continue"][long][format!("{}{}", short, from)].as_str() {
-                        Some(x) => x.to_string(),
-                        None => json["query-continue"][long][format!("{}{}", short, from)]
-                            .as_i64()
-                            .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
-                            .to_string(),
-                    };
+                continue_from = match json["continue"][format!("{}continue", short)].as_str() {
+                    Some(x) => x.to_string(),
+                    None => json["continue"][format!("{}continue", short)]
+                        .as_i64()
+                        .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
+                        .to_string(),
+                };
             }
         }
-    }
-
-    Ok(results)
-}
-
-async fn get_infobox_lists(api: &WikiClient, typ: &str) -> Result<Vec<String>> {
-    let mut results: Vec<String> = Vec::new();
-
-    let json: Value = api
-        .get_into_json(&[("action", "query"), ("list", typ)])
-        .await?;
-
-    for x in json["query"][typ]
-        .as_array()
-        .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
-        .iter()
-    {
-        results.push(
-            x["title"]
-                .as_str()
-                .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
-                .to_string(),
-        )
     }
 
     Ok(results)

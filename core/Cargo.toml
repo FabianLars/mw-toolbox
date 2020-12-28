@@ -1,6 +1,7 @@
 [package]
 authors = ["FabianLars <fabianlars@fabianlars.de>"]
 edition = "2018"
+license = "MIT"
 name = "wtools"
 version = "0.1.0"
 

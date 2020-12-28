@@ -60,6 +60,7 @@ impl WikiClient {
         Ok(client)
     }
 
+    // TODO: Validate URL
     pub fn from<S: Into<String>>(url: S) -> Result<Self, ClientError> {
         Ok(Self {
             client: Client::builder()
