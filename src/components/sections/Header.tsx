@@ -3,11 +3,11 @@ import { Link as ReactLink } from 'react-router-dom';
 import { Box, Flex, Link, Button } from '@chakra-ui/react';
 import { CloseIcon, HamburgerIcon as MenuIcon } from '@chakra-ui/icons';
 
-interface Props {
+type Props = {
     children: React.ReactNode,
     to: string,
     [x: string]: any,
-}
+};
 
 const MenuItems = (props: Props) => {
     const { children, isLast, to = '/', ...rest } = props;
