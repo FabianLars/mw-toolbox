@@ -1,9 +1,15 @@
-import { React, useState } from 'react';
+import React, { useState } from 'react';
 import { Link as ReactLink } from 'react-router-dom';
 import { Box, Flex, Link, Button } from '@chakra-ui/react';
 import { CloseIcon, HamburgerIcon as MenuIcon } from '@chakra-ui/icons';
 
-const MenuItems = (props) => {
+interface Props {
+    children: React.ReactNode,
+    to: string,
+    [x: string]: any,
+}
+
+const MenuItems = (props: Props) => {
     const { children, isLast, to = '/', ...rest } = props;
     return (
         <Link
@@ -19,7 +25,7 @@ const MenuItems = (props) => {
     );
 };
 
-const Header = (props) => {
+const Header = () => {
     const [show, setShow] = useState(false);
     const toggleMenu = () => setShow(!show);
 
@@ -35,7 +41,6 @@ const Header = (props) => {
             bg={['primary.500', 'primary.500', 'transparent', 'transparent']}
             color={['white', 'white', 'primary.700', 'primary.700']}
             borderBottom="1px solid #deb992;"
-            {...props}
         >
             <Box display={{ base: 'block', md: 'none' }} onClick={toggleMenu}>
                 {show ? <CloseIcon /> : <MenuIcon />}

@@ -1,7 +1,7 @@
 import { promisified } from 'tauri/api/tauri';
 import { listen } from 'tauri/api/event';
 
-import { React, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Flex, Input } from '@chakra-ui/react';
 
 import Header from '../components/sections/Header';
@@ -10,7 +10,7 @@ function Home() {
     const [wurl, setWurl] = useState('https://leagueoflegends.fandom.com/de/api.php');
     const [lgname, setLgname] = useState('');
     const [lgpasswd, setLgpasswd] = useState('');
-    const [logginin, setLoggingin] = useState('');
+    const [logginin, setLoggingin] = useState(false);
 
     function login() {
         setLoggingin(true);
@@ -21,7 +21,7 @@ function Home() {
             url: wurl,
         })
             .then((res) => console.log(res))
-            .catch((err) => console.err(err));
+            .catch((err) => console.error(err));
     }
 
     function list() {
@@ -29,7 +29,7 @@ function Home() {
             cmd: 'list',
         })
             .then((res) => console.log(res))
-            .catch((err) => console.err(err));
+            .catch((err) => console.error(err));
     }
 
     useEffect(() => {
