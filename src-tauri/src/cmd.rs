@@ -10,6 +10,7 @@ pub enum Cmd {
         loginname: String,
         password: String,
         url: String,
+        persistent: bool,
         callback: String,
         error: String,
     },

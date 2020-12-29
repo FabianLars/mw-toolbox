@@ -30,6 +30,7 @@ fn main() {
                             loginname,
                             password,
                             url,
+                            persistent,
                             callback,
                             error,
                         } => {

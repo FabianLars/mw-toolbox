@@ -2,7 +2,7 @@ import { promisified } from 'tauri/api/tauri';
 import { listen } from 'tauri/api/event';
 
 import React, { useEffect, useState } from 'react';
-import { Button, Flex, Input } from '@chakra-ui/react';
+import { Button, Checkbox, Flex, Input, Spacer } from '@chakra-ui/react';
 
 import Header from '../components/sections/Header';
 
@@ -11,6 +11,7 @@ function Home() {
     const [lgname, setLgname] = useState('');
     const [lgpasswd, setLgpasswd] = useState('');
     const [logginin, setLoggingin] = useState(false);
+    const [persistent, setPersistent] = useState(false);
 
     function login() {
         setLoggingin(true);
@@ -19,6 +20,7 @@ function Home() {
             loginname: lgname,
             password: lgpasswd,
             url: wurl,
+            persistent: persistent,
         })
             .then((res) => console.log(res))
             .catch((err) => console.error(err));
@@ -75,9 +77,13 @@ function Home() {
                     placeholder="Password via S:BotPasswords"
                     isRequired
                 />
-                <Button isLoading={logginin} colorScheme="blue" onClick={login}>
+                <Flex direction="row" w="100%" justify="flex-end">
+                    <Checkbox onChange={(event) => setPersistent(event.target.checked)}>Stay logged in</Checkbox>
+                    <Button ml={2} isLoading={logginin} colorScheme="blue" onClick={login}>
                     Login
                 </Button>
+                </Flex>
+
                 {/* <button onClick={list}>list</button> */}
             </Flex>
         </Flex>
