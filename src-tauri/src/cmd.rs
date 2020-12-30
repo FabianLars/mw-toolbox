@@ -6,11 +6,15 @@ pub enum Cmd {
     // your custom commands
     // multiple arguments are allowed
     // note that rename_all = "camelCase": you need to use "myCustomCommand" on JS
+    Init {
+        callback: String,
+        error: String,
+    },
     Login {
         loginname: String,
         password: String,
-        url: String,
-        persistent: bool,
+        wikiurl: String,
+        is_persistent: bool,
         callback: String,
         error: String,
     },
