@@ -77,6 +77,7 @@ function Home() {
                 h="100%"
                 justify="center"
             >
+                {/* TODO: Text that shows if user is logged in or not*/}
                 <Input
                     mb={2}
                     value={wurl}

@@ -18,21 +18,21 @@ fn main() {
     async_std::task::block_on(async {
         pretty_env_logger::init();
 
-        let state = SavedState::load().await.unwrap();
+        let mut state = SavedState::load().await.unwrap();
 
         let mut client = WikiClient::new().unwrap();
         tauri::AppBuilder::new()
             //.setup(|webview, _source| {})
             .invoke_handler(move |_webview, arg| {
                 use cmd::Cmd::*;
-                let state = state.clone();
+                let state_inner = state.clone();
                 match serde_json::from_str(arg) {
                     Err(e) => Err(e.to_string()),
                     Ok(command) => {
                         match command {
                             Init { callback, error } => tauri::execute_promise(
                                 _webview,
-                                move || async_std::task::block_on(SavedState::load()),
+                                move || Ok(state_inner),
                                 callback,
                                 error,
                             ),
@@ -50,6 +50,12 @@ fn main() {
                                 client = WikiClient::from(&wikiurl).unwrap();
                                 client.credentials(&loginname, &password);
                                 async_std::task::block_on(client.login()).unwrap();
+                                state = SavedState {
+                                    wikiurl: wikiurl.clone(),
+                                    loginname: loginname.clone(),
+                                    password: password.clone(),
+                                    is_persistent,
+                                };
                                 if is_persistent {
                                     async_std::task::block_on(
                                         SavedState {
@@ -61,8 +67,19 @@ fn main() {
                                         .save(),
                                     )
                                     .unwrap()
+                                } else {
+                                    async_std::task::block_on(
+                                        SavedState {
+                                            wikiurl,
+                                            loginname: String::new(),
+                                            password: String::new(),
+                                            is_persistent,
+                                        }
+                                        .save(),
+                                    )
+                                    .unwrap()
                                 }
-                                // TODO: remove this emit in favor of success_callback
+                                // TODO: remove this emit in favor of success_callback or sth
                                 emit(
                                     &mut _webview.as_mut(),
                                     "loggedin",
