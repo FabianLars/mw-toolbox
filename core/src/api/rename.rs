@@ -1,4 +1,4 @@
-use crate::{error::ApiError, PathType, WikiClient};
+use crate::{error::ApiError, WikiClient};
 
 pub async fn rename<C: AsRef<WikiClient>>(
     client: C,
