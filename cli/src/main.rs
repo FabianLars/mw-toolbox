@@ -99,9 +99,9 @@ struct Cli {
     #[clap(subcommand)]
     command: Subcommand,
 
-    #[clap(short, long, env = "FANDOM_BOT_NAME")]
+    #[clap(short, long, env = "FANDOM_BOT_NAME", hide_env_values = true)]
     name: String,
-    #[clap(short, long, env = "FANDOM_BOT_PASSWORD")]
+    #[clap(short, long, env = "FANDOM_BOT_PASSWORD", hide_env_values = true)]
     password: String,
     #[clap(
         short,
