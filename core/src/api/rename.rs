@@ -54,17 +54,20 @@ pub async fn rename<C: AsRef<WikiClient>>(
         // TODO: Handle response
         println!("{} => MOVED TO => {}", x, y);
 
-        client
-            .post(&[
-                ("action", "move"),
-                ("from", x),
-                ("to", y),
-                ("reason", "automated action"),
-                ("movetalk", "1"),
-                ("movesubpages", "1"),
-                //("ignorewarnings", ""),
-            ])
-            .await?;
+        log::debug!(
+            "{:?}",
+            client
+                .post_into_text(&[
+                    ("action", "move"),
+                    ("from", x),
+                    ("to", y),
+                    ("reason", "automated action"),
+                    ("movetalk", "1"),
+                    ("movesubpages", "1"),
+                    //("ignorewarnings", ""),
+                ])
+                .await?
+        );
 
         tokio::time::delay_for(tokio::time::Duration::from_millis(500)).await;
     }

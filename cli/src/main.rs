@@ -197,7 +197,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             file.lines().for_each(|l| {
                 let parts: Vec<String> = l.split(',').map(|x| x.to_string()).collect();
                 from.push(parts[0].clone());
-                if !parts[1].is_empty() {
+                if parts.len() > 1 && !parts[1].is_empty() {
                     to.push(parts[1].clone());
                 }
             });
