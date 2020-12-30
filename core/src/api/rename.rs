@@ -1,70 +1,67 @@
 use crate::{error::ApiError, PathType, WikiClient};
 
-pub async fn move_pages<C: AsRef<WikiClient>>(client: C, path: PathType) -> Result<(), ApiError> {
+pub async fn rename<C: AsRef<WikiClient>>(
+    client: C,
+    from: Vec<String>,
+    to: Option<Destination>,
+    prepend: Option<String>,
+    append: Option<String>,
+) -> Result<(), ApiError> {
     let client = client.as_ref();
-    let input = std::fs::read_to_string(path.file_path()?)?;
 
-    let first_line = input
-        .lines()
-        .next()
-        .ok_or_else(|| ApiError::EmptyInput)?
-        .starts_with("replace:");
-    let replace: Vec<String>;
-    let with: Vec<String>;
-    let is_regex: bool;
+    let mut actual_destination: Vec<String> = Vec::new();
 
-    if first_line {
-        let temp: Vec<String> = input
-            .lines()
-            .next()
-            .unwrap()
-            .replace("replace:", "")
-            .split(';')
-            .map(|x| x.to_string())
-            .collect();
-
-        replace = temp[0].split(',').map(|x| x.to_string()).collect();
-        with = temp[1].split(',').map(|x| x.to_string()).collect();
-        if replace.len() != with.len() {
-            panic!("Check 'replace:' line in input file");
+    match to {
+        Some(inner_to) => match inner_to {
+            Destination::Plain(dest) => {
+                if from.len() != dest.len() {
+                    return Err(ApiError::InvalidInput(
+                        "amount of from/to pages is not the same".to_string(),
+                    ));
+                }
+                actual_destination = dest;
+            }
+            Destination::Replace((replace, with)) => {
+                from.iter().for_each(|x| {
+                    actual_destination.push(x.replace(&replace, &with));
+                });
+            }
+        },
+        None => {
+            if prepend.is_none() && append.is_none() {
+                return Err(ApiError::InvalidInput(
+                    "at least one of 'to', 'prepend' or 'append' needed".to_string(),
+                ));
+            }
+            actual_destination = from.clone();
         }
-        is_regex = true;
-    } else {
-        replace = Vec::new();
-        with = Vec::new();
-        is_regex = false;
     }
 
-    for line in input.lines() {
-        if line.starts_with("replace:") {
-            continue;
-        }
-        let from;
-        let mut dest;
-
-        if is_regex {
-            from = line.to_string();
-            dest = line.to_string();
-            for (from, to) in replace.iter().zip(with.iter()) {
-                dest = dest.replace(from, to);
+    if prepend.is_some() || append.is_some() {
+        actual_destination.iter_mut().for_each(|x| {
+            match &prepend {
+                Some(p) => x.insert_str(0, p),
+                None => (),
             }
-        } else if line.contains(';') {
-            let mut temp = line.split(';');
-            from = temp.next().unwrap().to_string();
-            dest = temp.last().unwrap().to_string();
-        } else {
-            panic!("Check input file or --replace array");
-        }
+            match &append {
+                Some(a) => x.push_str(a),
+                None => (),
+            }
+        });
+    }
 
-        println!("{} => MOVED TO => {}", &from, &dest);
+    for (x, y) in from.iter().zip(actual_destination.iter()) {
+        // TODO: Handle response
+        println!("{} => MOVED TO => {}", x, y);
 
         client
             .post(&[
                 ("action", "move"),
-                ("from", &from),
-                ("to", &dest),
+                ("from", x),
+                ("to", y),
                 ("reason", "automated action"),
                 ("movetalk", "1"),
+                ("movesubpages", "1"),
                 //("ignorewarnings", ""),
             ])
             .await?;
@@ -73,4 +70,9 @@ pub async fn move_pages<C: AsRef<WikiClient>>(client: C, path: PathType) -> Resu
     }
 
     Ok(())
+}
+
+pub enum Destination {
+    Plain(Vec<String>),
+    Replace((String, String)),
 }

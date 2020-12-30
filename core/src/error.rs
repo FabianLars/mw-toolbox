@@ -14,6 +14,8 @@ pub enum ApiError {
     ReqwestError(#[from] reqwest::Error),
     #[error(transparent)]
     UrlEncodingError(#[from] urlencoding::FromUrlEncodingError),
+    #[error("Invalid Input: {0}")]
+    InvalidInput(String),
     #[error("Provied input file is empty")]
     EmptyInput,
     #[error("unknown api error")]

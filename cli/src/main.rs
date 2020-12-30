@@ -2,6 +2,7 @@
 
 use std::path::PathBuf;
 
+use api::rename::Destination;
 use clap::Clap;
 use tokio::{fs, prelude::*};
 
@@ -27,6 +28,12 @@ enum Subcommand {
         /// uses newline seperation
         #[clap(parse(from_os_str))]
         input: PathBuf,
+        #[clap(long)]
+        append: Option<String>,
+        #[clap(long)]
+        prepend: Option<String>,
+        #[clap(long)]
+        replace: Option<Vec<String>>,
     },
     Nulledit {
         /// uses newline seperation
@@ -178,8 +185,30 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
         }
-        Subcommand::Move { input } => {
-            api::rename::move_pages(&client, PathType::from(input)?).await?
+        Subcommand::Move {
+            input,
+            append,
+            prepend,
+            replace,
+        } => {
+            let file = fs::read_to_string(input).await?;
+            let mut from: Vec<String> = Vec::new();
+            let mut to: Vec<String> = Vec::new();
+            file.lines().for_each(|l| {
+                let parts: Vec<String> = l.split(',').map(|x| x.to_string()).collect();
+                from.push(parts[0].clone());
+                if !parts[1].is_empty() {
+                    to.push(parts[1].clone());
+                }
+            });
+            let to = match to.is_empty() {
+                true => match replace {
+                    None => None,
+                    Some(x) => Some(Destination::Replace((x[0].clone(), x[1].clone()))),
+                },
+                false => Some(Destination::Plain(to)),
+            };
+            api::rename::rename(&client, from, to, prepend, append).await?
         }
         Subcommand::Nulledit { input } => {
             let contents = fs::read_to_string(input).await?;
