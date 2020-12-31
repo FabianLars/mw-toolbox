@@ -9,6 +9,7 @@ use reqwest::header::{HeaderMap, ACCEPT, AUTHORIZATION};
 use reqwest::Client;
 use select::{document::Document, predicate::Class};
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use tokio::{fs::File, prelude::*};
 
 use wtools::{PathType, WikiClient};
@@ -174,7 +175,9 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathType) -> Resul
         .await?;
 
     let champions_wapi: HashMap<i32, Champ> = client
-        .get_external("https://api.fabianlars.de/v1/wiki/champions")
+        .client()
+        .get("https://api.fabianlars.de/v1/wiki/champions")
+        .send()
         .await?
         .json()
         .await
@@ -334,14 +337,18 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         .format_localized("%-d. %B %Y", chrono::Locale::de_DE)
         .to_string();
 
-    let champions: HashMap<i32, Champ> = serde_json::from_str(
-        &client
-            .get_external_text("https://api.fabianlars.de/v1/wiki/champions")
-            .await?,
-    )?;
+    let champions: HashMap<i32, Champ> = client
+        .client()
+        .get("https://api.fabianlars.de/v1/wiki/champions")
+        .send()
+        .await?
+        .json()
+        .await?;
 
     let rotations: Rotations = client
-        .get_external(&riot_api_url)
+        .client()
+        .get(&riot_api_url)
+        .send()
         .await?
         .json()
         .await
@@ -419,6 +426,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let mut champion: String = String::new();
     let mut tft: String = String::new();
     let client = client.as_ref();
+    let ext_client = client.client();
     let lua_regex = Regex::new(r#""(?P<k>\w+)":"#)?;
 
     let convert = |x: String| {
@@ -438,45 +446,54 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     };
 
     let fut_skin = async {
-        skin = client.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").await?.replace(" ", " ").replace("Hexerei-Miss Fortune \"", "Hexerei-Miss Fortune\"");
+        skin = ext_client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").send().await?.text().await?.replace(" ", " ").replace("Hexerei-Miss Fortune \"", "Hexerei-Miss Fortune\"");
         Ok::<(), Error>(())
     }.map_err(|_| anyhow!("Can't get skins.json"));
     let fut_set = async {
-        set = client.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skinlines.json").await?.replace(" ", " ");
+        set = ext_client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skinlines.json").send().await?.text().await?.replace(" ", " ");
         Ok::<(), Error>(())
     }.map_err(|_| anyhow!("Can't get skinlines.json"));
     let fut_universe = async {
-        universe = client.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/universes.json").await?.replace(" ", " ");
+        universe = ext_client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/universes.json").send().await?.text().await?.replace(" ", " ");
         Ok::<(), Error>(())
     }.map_err(|_| anyhow!("Can't get universes.json"));
     let fut_icons = async {
-        icons = client.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icons.json").await?.replace(" ", " ");
+        icons = ext_client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icons.json").send().await?.text().await?.replace(" ", " ");
         Ok::<(), Error>(())
     }.map_err(|_| anyhow!("Can't get universes.json"));
     let fut_iconsets = async {
-        iconsets = client.get_external_text("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icon-sets.json").await?.replace(" ", " ");
+        iconsets = ext_client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icon-sets.json").send().await?.text().await?.replace(" ", " ");
         Ok::<(), Error>(())
     }.map_err(|_| anyhow!("Can't get universes.json"));
     let fut_champion = async {
-        let res = client
-            .get_external_json("https://ddragon.leagueoflegends.com/api/versions.json")
+        let res: Value = ext_client
+            .get("https://ddragon.leagueoflegends.com/api/versions.json")
+            .send()
+            .await?
+            .json()
             .await?;
         let patch_id = res.get(0).unwrap().as_str().unwrap();
-        champion = client
-            .get_external_text(&format!(
+        champion = ext_client
+            .get(&format!(
                 "http://ddragon.leagueoflegends.com/cdn/{}/data/de_DE/champion.json",
                 patch_id
             ))
+            .send()
+            .await?
+            .text()
             .await?
             .replace(" ", " ");
         Ok::<(), Error>(())
     }
     .map_err(|_| anyhow!("Can't get universes.json"));
     let fut_tft = async {
-        tft = client
-            .get_external_text("http://raw.communitydragon.org/latest/cdragon/tft/de_de.json")
+        tft = ext_client
+            .get("http://raw.communitydragon.org/latest/cdragon/tft/de_de.json")
+            .send()
             .await
             .expect("Can't get universes.json")
+            .text()
+            .await?
             .replace(" ", " ");
         Ok::<(), Error>(())
     }
@@ -693,14 +710,15 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let mut new_champdata: Vec<String> = Vec::new();
 
     let (resp, resp2) = join!(
-        client.get_external_text(opgg),
+        client.client().get(opgg).send(),
         client.get_into_json(&[
             ("action", "parse"),
             ("page", "Module:ChampionData/data"),
             ("prop", "wikitext"),
         ])
     );
-    let document = Document::from(resp?.as_str());
+    let resp = resp?.text().await?;
+    let document = Document::from(resp.as_str());
 
     let champdata = resp2?;
     let champdata: String = champdata["parse"]["wikitext"]["*"]

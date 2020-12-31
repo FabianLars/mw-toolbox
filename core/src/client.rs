@@ -115,6 +115,10 @@ impl WikiClient {
         self.request_csrf_token().await
     }
 
+    pub fn client(&self) -> &Client {
+        &self.client
+    }
+
     pub async fn get(&self, parameters: &[(&str, &str)]) -> Result<Response, ClientError> {
         self.client
             .get(&self.url)
@@ -205,29 +209,5 @@ impl WikiClient {
             .send()
             .await
             .map_err(|source| ClientError::RequestFailed { source })
-    }
-
-    pub async fn get_external(&self, url: &str) -> Result<Response, ClientError> {
-        self.client
-            .get(url)
-            .send()
-            .await
-            .map_err(|source| ClientError::RequestFailed { source })
-    }
-
-    pub async fn get_external_json(&self, url: &str) -> Result<Value, ClientError> {
-        self.get_external(url)
-            .await?
-            .json()
-            .await
-            .map_err(|source| ClientError::JsonConversionFailed { source })
-    }
-
-    pub async fn get_external_text(&self, url: &str) -> Result<String, ClientError> {
-        self.get_external(url)
-            .await?
-            .text()
-            .await
-            .map_err(|source| ClientError::TextConversionFailed { source })
     }
 }
