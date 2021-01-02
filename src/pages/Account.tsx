@@ -2,7 +2,7 @@ import { promisified } from 'tauri/api/tauri';
 import { listen } from 'tauri/api/event';
 
 import React, { useEffect, useState } from 'react';
-import { Button, Checkbox, Flex, Input, Spacer } from '@chakra-ui/react';
+import { Button, Checkbox, Flex, Input, Spacer, Text } from '@chakra-ui/react';
 
 import Header from '../components/sections/Header';
 //({ wikiurl, loginname, password, is_persistent }: {wikiurl: string, loginname: string, password: string, is_persistant: boolean})
@@ -14,12 +14,22 @@ type InitRes = {
     is_persistent: boolean,
 }
 
-function Home() {
+type LoggedInEvent = {
+    payload: {
+        username: string,
+        url: string,
+    },
+    type: string,
+}
+
+function Account() {
     const [wurl, setWurl] = useState('https://leagueoflegends.fandom.com/de/api.php');
     const [lgname, setLgname] = useState('');
     const [lgpasswd, setLgpasswd] = useState('');
     const [logginin, setLoggingin] = useState(false);
     const [persistent, setPersistent] = useState(false);
+    const [loggedin, setLoggedin] = useState(false);
+    const [user, setUser] = useState({loggedin: false, username: "", url: ""})
 
     function init() {
         (promisified({
@@ -56,9 +66,10 @@ function Home() {
     }
 
     useEffect(() => {
-        listen('loggedin', (payload) => {
+        listen('loggedin', ({payload}: LoggedInEvent) => {
             setLoggingin(false);
-            console.log(payload);
+            setLoggedin(true);
+            setUser({ loggedin: true, username: payload.username, url: payload.url });
         });
         init();
     }, []);
@@ -77,7 +88,8 @@ function Home() {
                 h="100%"
                 justify="center"
             >
-                {/* TODO: Text that shows if user is logged in or not*/}
+                <Text fontSize="xl" align="center">{user.loggedin ? user.username : ''}</Text>
+                <Text fontSize="xl" mb={2} align="center">{user.loggedin ? user.url : 'Not logged in!' }</Text>
                 <Input
                     mb={2}
                     value={wurl}
@@ -113,4 +125,4 @@ function Home() {
     );
 }
 
-export default Home;
+export default Account;

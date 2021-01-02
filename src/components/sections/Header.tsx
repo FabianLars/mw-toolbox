@@ -26,9 +26,6 @@ const MenuItems = (props: Props) => {
 };
 
 const Header = () => {
-    const [show, setShow] = useState(false);
-    const toggleMenu = () => setShow(!show);
-
     return (
         <Flex
             as="nav"
@@ -42,24 +39,19 @@ const Header = () => {
             color={['white', 'white', 'primary.700', 'primary.700']}
             borderBottom="1px solid #deb992;"
         >
-            <Box display={{ base: 'block', md: 'none' }} onClick={toggleMenu}>
-                {show ? <CloseIcon /> : <MenuIcon />}
-            </Box>
-
-            <Box display={{ base: show ? 'block' : 'none', md: 'block' }} flexBasis={{ base: '100%', md: 'auto' }}>
+            <Box flexBasis={{ base: '100%', md: 'auto' }}>
                 <Flex
                     align={['center', 'center', 'center', 'center']}
                     justify={['center', 'space-between', 'flex-end', 'flex-end']}
                     direction={['column', 'row', 'row', 'row']}
                     pt={[4, 4, 0, 0]}
                 >
-                    <MenuItems to="/">Home</MenuItems>
-                    <MenuItems to="/">How It works </MenuItems>
-                    <MenuItems to="/">Features </MenuItems>
-                    <MenuItems to="/">Pricing </MenuItems>
-                    <MenuItems to="/" isLast>
-                        Login
-                    </MenuItems>
+                    <MenuItems to="/">Account</MenuItems>
+                    <MenuItems to="/Delete">Delete</MenuItems>
+                    {/* <MenuItems to="/Edit">Edit</MenuItems> */}
+                    <MenuItems to="/List">List</MenuItems>
+                    <MenuItems to="/Move">Move</MenuItems>
+                    <MenuItems to="/Other" isLast>Other</MenuItems>
                 </Flex>
             </Box>
         </Flex>

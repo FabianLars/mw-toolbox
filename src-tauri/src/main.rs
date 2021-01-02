@@ -14,6 +14,12 @@ struct Response<'a> {
     message: &'a str,
 }
 
+#[derive(Serialize)]
+struct LoggedIn<'a> {
+    username: &'a str,
+    url: &'a str,
+}
+
 fn main() {
     async_std::task::block_on(async {
         pretty_env_logger::init();
@@ -83,7 +89,10 @@ fn main() {
                                 emit(
                                     &mut _webview.as_mut(),
                                     "loggedin",
-                                    Some("sollte logged in sein."),
+                                    Some(LoggedIn {
+                                        username: &state.loginname,
+                                        url: &state.wikiurl,
+                                    }),
                                 )
                                 .unwrap();
                             }
