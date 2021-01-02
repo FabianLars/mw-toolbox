@@ -2,13 +2,7 @@ import React from 'react';
 import { Link as ReactLink } from 'react-router-dom';
 import { Flex, Link } from '@chakra-ui/react';
 
-type Props = {
-    children: React.ReactNode,
-    to: string,
-    [x: string]: any,
-};
-
-const MenuItems = (props: Props) => {
+const MenuItems = (props) => {
     const { children, isLast, to = '/', ...rest } = props;
     return (
         <Link
