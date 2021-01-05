@@ -69,7 +69,7 @@ pub async fn rename<C: AsRef<WikiClient>>(
                 .await?
         );
 
-        tokio::time::delay_for(tokio::time::Duration::from_millis(500)).await;
+        tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
     }
 
     Ok(())

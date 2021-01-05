@@ -19,4 +19,4 @@ wtools = {path = "../core"}
 clap = "3.0.0-beta.2"
 env_logger = "0.8"
 serde_json = {version = "1.0", features = ["preserve_order"]}
-tokio = {version = "0.2", features = ["fs", "macros"]}
+tokio = {version = "1.0", features = ["fs", "macros", "rt-multi-thread"]}

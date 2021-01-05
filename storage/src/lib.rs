@@ -4,7 +4,7 @@ use anyhow::{anyhow, Result};
 use chacha20poly1305::aead::{Aead, NewAead};
 use chacha20poly1305::{Key, XChaCha20Poly1305, XNonce};
 use rand::prelude::*;
-use tokio::{fs::File, prelude::*};
+use tokio::{fs::File, io::AsyncWriteExt};
 
 fn path() -> std::path::PathBuf {
     let mut path =

@@ -4,7 +4,7 @@ use std::path::PathBuf;
 
 use api::rename::Destination;
 use clap::Clap;
-use tokio::{fs, prelude::*};
+use tokio::{fs, io::AsyncWriteExt};
 
 use wtools::{api, PathType, WikiClient};
 

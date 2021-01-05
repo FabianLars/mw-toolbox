@@ -14,7 +14,7 @@ pub async fn nulledit<C: AsRef<WikiClient>>(client: C, titles: &[&str]) -> Resul
                 ("title", title),
             ])
             .await?;
-        tokio::time::delay_for(tokio::time::Duration::from_millis(500)).await;
+        tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
     }
 
     Ok(())
