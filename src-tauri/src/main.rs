@@ -5,6 +5,8 @@
 
 mod cmd;
 
+use std::sync::Arc;
+
 use serde::Serialize;
 use tauri::{event::emit, Result};
 use wtools::{api, PathType, WikiClient};
@@ -21,110 +23,110 @@ struct LoggedIn<'a> {
 }
 
 fn main() {
-    async_std::task::block_on(async {
-        pretty_env_logger::init();
+    let rt = Arc::new(tokio::runtime::Runtime::new().unwrap());
 
-        let mut state = SavedState::load().await.unwrap();
+    pretty_env_logger::init();
 
-        let mut client = WikiClient::new().unwrap();
-        tauri::AppBuilder::new()
-            //.setup(|webview, _source| {})
-            .invoke_handler(move |_webview, arg| {
-                use cmd::Cmd::*;
-                let state_inner = state.clone();
-                match serde_json::from_str(arg) {
-                    Err(e) => Err(e.to_string()),
-                    Ok(command) => {
-                        match command {
-                            Init { callback, error } => tauri::execute_promise(
-                                _webview,
-                                move || Ok(state_inner),
-                                callback,
-                                error,
-                            ),
-                            // TODO: Delete previously saved password if is_persistent is false
-                            Login {
-                                loginname,
-                                password,
-                                wikiurl,
+    let mut state = rt.block_on(SavedState::load()).unwrap();
+
+    let mut client = WikiClient::new().unwrap();
+    tauri::AppBuilder::new()
+        //.setup(|webview, _source| {})
+        .invoke_handler(move |_webview, arg| {
+            use cmd::Cmd::*;
+            let state_inner = state.clone();
+            match serde_json::from_str(arg) {
+                Err(e) => Err(e.to_string()),
+                Ok(command) => {
+                    match command {
+                        Init { callback, error } => tauri::execute_promise(
+                            _webview,
+                            move || Ok(state_inner),
+                            callback,
+                            error,
+                        ),
+                        // TODO: Delete previously saved password if is_persistent is false
+                        Login {
+                            loginname,
+                            password,
+                            wikiurl,
+                            is_persistent,
+                            callback,
+                            error,
+                        } => {
+                            // This blocks the ui, but works best for now
+                            // TODO: Handle malformed url rejections
+                            client = WikiClient::from(&wikiurl).unwrap();
+                            client.credentials(&loginname, &password);
+                            rt.block_on(client.login()).unwrap();
+                            state = SavedState {
+                                wikiurl: wikiurl.clone(),
+                                loginname: loginname.clone(),
+                                password: password.clone(),
                                 is_persistent,
+                            };
+                            if is_persistent {
+                                rt.block_on(
+                                    SavedState {
+                                        wikiurl,
+                                        loginname,
+                                        password,
+                                        is_persistent,
+                                    }
+                                    .save(),
+                                )
+                                .unwrap()
+                            } else {
+                                rt.block_on(
+                                    SavedState {
+                                        wikiurl,
+                                        loginname: String::new(),
+                                        password: String::new(),
+                                        is_persistent,
+                                    }
+                                    .save(),
+                                )
+                                .unwrap()
+                            }
+                            // TODO: remove this emit in favor of success_callback or sth
+                            emit(
+                                &mut _webview.as_mut(),
+                                "loggedin",
+                                Some(LoggedIn {
+                                    username: &state.loginname,
+                                    url: &state.wikiurl,
+                                }),
+                            )
+                            .unwrap();
+                        }
+                        List { callback, error } => {
+                            let client = client.clone();
+                            let handle = rt.clone();
+                            tauri::execute_promise(
+                                _webview,
+                                move || {
+                                    println!(
+                                        "{:?}",
+                                        handle
+                                            .block_on(api::delete::delete_pages(client, &["Test"]))
+                                            .unwrap()
+                                    );
+                                    Ok(Response {
+                                        message: "ICH WEINE immernoch",
+                                    })
+                                },
                                 callback,
                                 error,
-                            } => {
-                                // This blocks the ui, but works best for now
-                                // TODO: Handle malformed url rejections
-                                client = WikiClient::from(&wikiurl).unwrap();
-                                client.credentials(&loginname, &password);
-                                async_std::task::block_on(client.login()).unwrap();
-                                state = SavedState {
-                                    wikiurl: wikiurl.clone(),
-                                    loginname: loginname.clone(),
-                                    password: password.clone(),
-                                    is_persistent,
-                                };
-                                if is_persistent {
-                                    async_std::task::block_on(
-                                        SavedState {
-                                            wikiurl,
-                                            loginname,
-                                            password,
-                                            is_persistent,
-                                        }
-                                        .save(),
-                                    )
-                                    .unwrap()
-                                } else {
-                                    async_std::task::block_on(
-                                        SavedState {
-                                            wikiurl,
-                                            loginname: String::new(),
-                                            password: String::new(),
-                                            is_persistent,
-                                        }
-                                        .save(),
-                                    )
-                                    .unwrap()
-                                }
-                                // TODO: remove this emit in favor of success_callback or sth
-                                emit(
-                                    &mut _webview.as_mut(),
-                                    "loggedin",
-                                    Some(LoggedIn {
-                                        username: &state.loginname,
-                                        url: &state.wikiurl,
-                                    }),
-                                )
-                                .unwrap();
-                            }
-                            List { callback, error } => {
-                                let client2 = client.clone();
-                                tauri::execute_promise(
-                                    _webview,
-                                    move || {
-                                        println!(
-                                            "{:?}",
-                                            async_std::task::block_on(api::delete::delete_pages(
-                                                client2,
-                                                &["Test"]
-                                            ))
-                                            .unwrap()
-                                        );
-                                        Ok(Response {
-                                            message: "ICH WEINE immernoch",
-                                        })
-                                    },
-                                    callback,
-                                    error,
-                                )
-                            }
+                            )
                         }
-                        Ok(())
                     }
+                    Ok(())
                 }
-            })
-            .build()
-            .run();
-    });
+            }
+        })
+        .build()
+        .run();
+    //});
 }
 
 #[derive(Clone, Debug, Serialize)]
