@@ -1,13 +1,11 @@
 # wtools
 some tools to interact with http://leagueoflegends.fandom.com/de/wiki/  
-more or less connected to [wapi](https://github.com/FabianLars/wapi)  
-uses limited editing rate of ~1 edit per second according to fandoms rules  
-Interaction with Riot's API only via CLI (just "update rotation" for now)  
-* Needs feature flag "riot-api"  
+uses limited editing rate of ~1-2 edits per second according to fandoms rules  
+Interaction with Riot's API only via CLI + feature flag "riot-api" (just "update rotation" for now)  
+
 Input files need to be formatted with newline seperation (eg 1 wiki article per line)  
-Options (arguments specified with "-" or "--") work on compiled program only. (using "wtools" instead of "cargo run")  
-* start GUI:
-  * double-click exe after building or type "cargo run -p gui" terminal
+* GUIs:
+  * see README inside gui directory
 * CLI usage:
   * run via "[cargo run|wtools] \<command\> (\<args if needed\>)" 
     * these commands need FANDOM_BOT_NAME, FANDOM_BOT_PASSWORD and/or RIOT_API_KEY (depends on command) environment variables as of now  
