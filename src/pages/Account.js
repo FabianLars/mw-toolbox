@@ -16,6 +16,7 @@ function Account() {
     const [user, setUser] = useState({ loggedin: false, username: '', url: '' });
     const toast = useToast();
 
+    //TODO: call this only on app startup, not on every mount
     function init() {
         promisified({
             cmd: 'init',
@@ -59,12 +60,8 @@ function Account() {
     }
 
     useEffect(() => {
-        // to enable gui development in browser
+        // make gui development in browser possible
         if (typeof window.__TAURI_INVOKE_HANDLER__ === 'function') {
-            listen('loggedin', ({ payload }) => {
-                setLoggingin(false);
-                setUser({ loggedin: true, username: payload.username, url: payload.url });
-            });
             init();
         }
     }, []);

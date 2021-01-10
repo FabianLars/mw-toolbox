@@ -8,8 +8,8 @@ mod cmd;
 use std::sync::Arc;
 
 use serde::Serialize;
-use tauri::{event::emit, Result};
-use wtools::{api, PathType, WikiClient};
+use tauri::Result;
+use wtools::{api, WikiClient};
 
 #[derive(Serialize)]
 struct Response<'a> {
