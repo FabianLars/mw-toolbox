@@ -2,7 +2,7 @@ import { promisified } from 'tauri/api/tauri';
 import { listen } from 'tauri/api/event';
 
 import React, { useEffect, useState } from 'react';
-import { Button, Checkbox, Flex, Input, Spacer, Text } from '@chakra-ui/react';
+import { Button, Checkbox, Flex, Input, Text, useToast } from '@chakra-ui/react';
 
 import Header from '../components/sections/Header';
 //({ wikiurl, loginname, password, is_persistent }: {wikiurl: string, loginname: string, password: string, is_persistant: boolean})
@@ -13,8 +13,8 @@ function Account() {
     const [lgpasswd, setLgpasswd] = useState('');
     const [logginin, setLoggingin] = useState(false);
     const [persistent, setPersistent] = useState(false);
-    const [loggedin, setLoggedin] = useState(false);
     const [user, setUser] = useState({ loggedin: false, username: '', url: '' });
+    const toast = useToast();
 
     function init() {
         promisified({
@@ -40,25 +40,33 @@ function Account() {
             wikiurl: wurl,
             is_persistent: persistent,
         })
-            .then((res) => console.log(res))
-            .catch((err) => console.error(err));
-    }
-
-    function list() {
-        promisified({
-            cmd: 'list',
-        })
-            .then((res) => console.log(res))
-            .catch((err) => console.error(err));
+            .then((res) => {
+                setLoggingin(false);
+                console.log(res);
+                setUser({ loggedin: true, username: res.username, url: res.url });
+            })
+            .catch((err) => {
+                setLoggingin(false);
+                console.error(err);
+                toast({
+                    title: "Can't log in!",
+                    description: 'Check your input!',
+                    status: 'error',
+                    duration: 9000,
+                    isClosable: true,
+                });
+            });
     }
 
     useEffect(() => {
-        listen('loggedin', ({ payload }) => {
-            setLoggingin(false);
-            setLoggedin(true);
-            setUser({ loggedin: true, username: payload.username, url: payload.url });
-        });
-        init();
+        // to enable gui development in browser
+        if (typeof window.__TAURI_INVOKE_HANDLER__ === 'function') {
+            listen('loggedin', ({ payload }) => {
+                setLoggingin(false);
+                setUser({ loggedin: true, username: payload.username, url: payload.url });
+            });
+            init();
+        }
     }, []);
 
     return (

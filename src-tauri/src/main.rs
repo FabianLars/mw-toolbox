@@ -17,9 +17,9 @@ struct Response<'a> {
 }
 
 #[derive(Serialize)]
-struct LoggedIn<'a> {
-    username: &'a str,
-    url: &'a str,
+struct LoggedIn {
+    username: String,
+    url: String,
 }
 
 fn main() {
@@ -54,50 +54,55 @@ fn main() {
                             callback,
                             error,
                         } => {
-                            // This blocks the ui, but works best for now
-                            // TODO: Handle malformed url rejections
-                            client = WikiClient::from(&wikiurl).unwrap();
+                            client.url(&wikiurl);
                             client.credentials(&loginname, &password);
-                            rt.block_on(client.login()).unwrap();
-                            state = SavedState {
-                                wikiurl: wikiurl.clone(),
-                                loginname: loginname.clone(),
-                                password: password.clone(),
-                                is_persistent,
+                            let callback_val = LoggedIn {
+                                username: loginname.clone(),
+                                url: wikiurl.clone(),
                             };
-                            if is_persistent {
-                                rt.block_on(
-                                    SavedState {
-                                        wikiurl,
-                                        loginname,
-                                        password,
-                                        is_persistent,
-                                    }
-                                    .save(),
-                                )
-                                .unwrap()
-                            } else {
-                                rt.block_on(
-                                    SavedState {
-                                        wikiurl,
-                                        loginname: String::new(),
-                                        password: String::new(),
-                                        is_persistent,
-                                    }
-                                    .save(),
-                                )
-                                .unwrap()
+                            // This blocks the ui, but works best for now
+                            let client_res = rt.block_on(client.login());
+
+                            if client_res.is_ok() {
+                                state = SavedState {
+                                    wikiurl: wikiurl.clone(),
+                                    loginname: loginname.clone(),
+                                    password: password.clone(),
+                                    is_persistent,
+                                }
                             }
-                            // TODO: remove this emit in favor of success_callback or sth
-                            emit(
-                                &mut _webview.as_mut(),
-                                "loggedin",
-                                Some(LoggedIn {
-                                    username: &state.loginname,
-                                    url: &state.wikiurl,
-                                }),
+
+                            let handle = rt.clone();
+                            let loginname = match is_persistent {
+                                true => loginname,
+                                false => String::new(),
+                            };
+                            let password = match is_persistent {
+                                true => password,
+                                false => String::new(),
+                            };
+                            tauri::execute_promise(
+                                _webview,
+                                move || {
+                                    if client_res.is_err() {
+                                        return Err(client_res.unwrap_err().into());
+                                    }
+                                    match handle.block_on(
+                                        SavedState {
+                                            wikiurl,
+                                            loginname,
+                                            password,
+                                            is_persistent,
+                                        }
+                                        .save(),
+                                    ) {
+                                        Ok(_) => Ok(callback_val),
+                                        Err(err) => Err(err),
+                                    }
+                                },
+                                callback,
+                                error,
                             )
-                            .unwrap();
                         }
                         List { callback, error } => {
                             let client = client.clone();
