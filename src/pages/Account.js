@@ -7,29 +7,26 @@ import { Button, Checkbox, Flex, Input, Text, useToast } from '@chakra-ui/react'
 import Header from '../components/sections/Header';
 //({ wikiurl, loginname, password, is_persistent }: {wikiurl: string, loginname: string, password: string, is_persistant: boolean})
 
-function Account() {
+function Account({ user, setUser }) {
     const [wurl, setWurl] = useState('https://leagueoflegends.fandom.com/de/api.php');
     const [lgname, setLgname] = useState('');
     const [lgpasswd, setLgpasswd] = useState('');
     const [logginin, setLoggingin] = useState(false);
     const [persistent, setPersistent] = useState(false);
-    const [user, setUser] = useState({ loggedin: false, username: '', url: '' });
     const toast = useToast();
 
-    //TODO: call this only on app startup, not on every mount
     function init() {
         promisified({
             cmd: 'init',
         })
             .then((res) => {
                 const { wikiurl, loginname, password, is_persistent } = res;
-                console.log(wikiurl, loginname, is_persistent);
                 if (wikiurl !== '') setWurl(res.wikiurl);
                 setLgname(loginname);
                 setLgpasswd(password);
                 setPersistent(is_persistent);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => console.error(err));
     }
 
     function login() {
@@ -43,7 +40,6 @@ function Account() {
         })
             .then((res) => {
                 setLoggingin(false);
-                console.log(res);
                 setUser({ loggedin: true, username: res.username, url: res.url });
             })
             .catch((err) => {
