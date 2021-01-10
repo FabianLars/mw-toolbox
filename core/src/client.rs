@@ -88,8 +88,6 @@ impl WikiClient {
     }
 
     pub async fn login(&mut self) -> Result<(), ClientError> {
-        if reqwest::Url::parse(&self.url).is_err() { return Err(ClientError::MalformedUrl(self.url.clone())) }
-
         let json: Value = self
             .get_into_json(&[("action", "query"), ("meta", "tokens"), ("type", "login")])
             .await?;
