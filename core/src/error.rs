@@ -37,6 +37,8 @@ pub enum ClientError {
     ReqwestError(#[from] reqwest::Error),
     #[error("Couldn't extract token from response json: {0}")]
     TokenNotFound(String),
+    #[error("malformed url: {0}")]
+    MalformedUrl(String),
 }
 
 #[derive(Error, Debug)]

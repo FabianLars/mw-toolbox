@@ -116,9 +116,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
 
     let cli = Cli::parse();
-    let mut client = WikiClient::from(&cli.url)?;
-    client.credentials(&cli.name, &cli.password);
-    client.login().await?;
+    let client = WikiClient::new_logged_in(&cli.url, &cli.name, &cli.password).await?;
 
     match cli.command {
         Subcommand::Delete { input } => {
