@@ -17,7 +17,12 @@ struct Response<'a> {
 }
 
 #[derive(Serialize)]
-struct LoggedIn {
+struct ListResponse {
+    list: Vec<String>,
+}
+
+#[derive(Serialize)]
+struct LoginResponse {
     username: String,
     url: String,
 }
@@ -55,7 +60,7 @@ fn main() {
                         } => {
                             client.url(&wikiurl);
                             client.credentials(&loginname, &password);
-                            let callback_val = LoggedIn {
+                            let callback_val = LoginResponse {
                                 username: loginname.clone(),
                                 url: wikiurl.clone(),
                             };
@@ -108,16 +113,9 @@ fn main() {
                             let handle = rt.clone();
                             tauri::execute_promise(
                                 _webview,
-                                move || {
-                                    println!(
-                                        "{:?}",
-                                        handle
-                                            .block_on(api::delete::delete_pages(client, &["Test"]))
-                                            .unwrap()
-                                    );
-                                    Ok(Response {
-                                        message: "ICH WEINE immernoch",
-                                    })
+                                move || match handle.block_on(api::list::allimages(client)) {
+                                    Ok(list) => Ok(ListResponse { list }),
+                                    Err(err) => Err(err.into()),
                                 },
                                 callback,
                                 error,
