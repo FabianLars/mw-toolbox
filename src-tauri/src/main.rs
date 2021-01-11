@@ -45,7 +45,6 @@ fn main() {
                             callback,
                             error,
                         ),
-                        // TODO: Delete previously saved password if is_persistent is false
                         Login {
                             loginname,
                             password,
