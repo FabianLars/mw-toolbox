@@ -4,9 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Flex, Input, Text, useToast } from '@chakra-ui/react';
 
 import Header from '../components/sections/Header';
-//({ wikiurl, loginname, password, is_persistent }: {wikiurl: string, loginname: string, password: string, is_persistant: boolean})
 
-function Account({ user, setUser }) {
+const Account = ({ user, setUser }) => {
     const [wurl, setWurl] = useState('https://leagueoflegends.fandom.com/de/api.php');
     const [lgname, setLgname] = useState('');
     const [lgpasswd, setLgpasswd] = useState('');
@@ -14,21 +13,29 @@ function Account({ user, setUser }) {
     const [persistent, setPersistent] = useState(false);
     const toast = useToast();
 
-    function init() {
-        promisified({
-            cmd: 'init',
-        })
-            .then((res) => {
-                const { wikiurl, loginname, password, is_persistent } = res;
-                if (wikiurl !== '') setWurl(res.wikiurl);
-                setLgname(loginname);
-                setLgpasswd(password);
-                setPersistent(is_persistent);
+    const init = () => {
+        if (user.loggedin) {
+            setLgname(user.username);
+            setPersistent(user.isPersistent);
+            setLgpasswd(user.password);
+            setWurl(user.url);
+        } else {
+            promisified({
+                cmd: 'init',
             })
-            .catch((err) => console.error(err));
-    }
+                .then((res) => {
+                    console.log(res);
+                    const { wikiurl, loginname, password, is_persistent } = res;
+                    if (wikiurl !== '') setWurl(res.wikiurl);
+                    setLgname(loginname);
+                    setLgpasswd(password);
+                    setPersistent(is_persistent);
+                })
+                .catch((err) => console.error(err));
+        }
+    };
 
-    function login() {
+    const login = () => {
         setLoggingin(true);
         promisified({
             cmd: 'login',
@@ -38,8 +45,15 @@ function Account({ user, setUser }) {
             is_persistent: persistent,
         })
             .then((res) => {
+                console.log(res);
                 setLoggingin(false);
-                setUser({ loggedin: true, username: res.username, url: res.url });
+                setUser({
+                    loggedin: true,
+                    isPersistent: persistent,
+                    username: res.username,
+                    password: lgpasswd,
+                    url: res.url,
+                });
             })
             .catch((err) => {
                 setLoggingin(false);
@@ -52,7 +66,7 @@ function Account({ user, setUser }) {
                     isClosable: true,
                 });
             });
-    }
+    };
 
     useEffect(() => {
         // make gui development in browser possible
@@ -114,6 +128,6 @@ function Account({ user, setUser }) {
             </Flex>
         </Flex>
     );
-}
+};
 
 export default Account;

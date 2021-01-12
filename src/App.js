@@ -4,7 +4,7 @@ import { Account, Delete, List, Move, Other } from './pages';
 import './App.css';
 
 const App = () => {
-    const [user, setUser] = useState({ loggedin: false, username: '', url: '' });
+    const [user, setUser] = useState({ loggedin: false, isPersistent: false, username: '', password: '', url: '' });
 
     return (
         <Router>
