@@ -1,5 +1,4 @@
 import { promisified } from 'tauri/api/tauri';
-import { listen } from 'tauri/api/event';
 
 import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Flex, Input, Text, useToast } from '@chakra-ui/react';
@@ -108,12 +107,10 @@ function Account({ user, setUser }) {
                     <Checkbox isChecked={persistent} onChange={(event) => setPersistent(event.target.checked)}>
                         Stay logged in
                     </Checkbox>
-                    <Button ml={2} isLoading={logginin} colorScheme="blue" onClick={login}>
+                    <Button ml={2} isLoading={logginin} onClick={login}>
                         Login
                     </Button>
                 </Flex>
-
-                {/* <button onClick={list}>list</button> */}
             </Flex>
         </Flex>
     );

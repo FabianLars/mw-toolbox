@@ -107,7 +107,9 @@ fn main() {
                                 error,
                             )
                         }
-                        List { callback, error } => {
+                        List {
+                            callback, error, ..
+                        } => {
                             let client = client.clone();
                             let handle = rt.clone();
                             tauri::execute_promise(
