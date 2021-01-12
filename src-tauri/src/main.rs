@@ -36,7 +36,6 @@ fn main() {
 
     let mut client = WikiClient::new().unwrap();
     tauri::AppBuilder::new()
-        //.setup(|webview, _source| {})
         .invoke_handler(move |_webview, arg| {
             use cmd::Cmd::*;
             let state_inner = state.clone();
@@ -128,7 +127,6 @@ fn main() {
         })
         .build()
         .run();
-    //});
 }
 
 #[derive(Clone, Debug, Serialize)]
