@@ -13,28 +13,6 @@ const Account = ({ user, setUser }) => {
     const [persistent, setPersistent] = useState(false);
     const toast = useToast();
 
-    const init = () => {
-        if (user.loggedin) {
-            setLgname(user.username);
-            setPersistent(user.isPersistent);
-            setLgpasswd(user.password);
-            setWurl(user.url);
-        } else {
-            promisified({
-                cmd: 'init',
-            })
-                .then((res) => {
-                    console.log(res);
-                    const { wikiurl, loginname, password, is_persistent } = res;
-                    if (wikiurl !== '') setWurl(res.wikiurl);
-                    setLgname(loginname);
-                    setLgpasswd(password);
-                    setPersistent(is_persistent);
-                })
-                .catch((err) => console.error(err));
-        }
-    };
-
     const login = () => {
         setLoggingin(true);
         promisified({
@@ -71,7 +49,25 @@ const Account = ({ user, setUser }) => {
     useEffect(() => {
         // make gui development in browser possible
         if (typeof window.__TAURI_INVOKE_HANDLER__ === 'function') {
-            init();
+            if (user.loggedin) {
+                setLgname(user.username);
+                setPersistent(user.isPersistent);
+                setLgpasswd(user.password);
+                setWurl(user.url);
+            } else {
+                promisified({
+                    cmd: 'init',
+                })
+                    .then((res) => {
+                        console.log(res);
+                        const { wikiurl, loginname, password, is_persistent } = res;
+                        if (wikiurl !== '') setWurl(res.wikiurl);
+                        setLgname(loginname);
+                        setLgpasswd(password);
+                        setPersistent(is_persistent);
+                    })
+                    .catch((err) => console.error(err));
+            }
         }
     }, []);
 
