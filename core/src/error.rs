@@ -39,6 +39,8 @@ pub enum ClientError {
     TokenNotFound(String),
     #[error("malformed url: {0}")]
     MalformedUrl(String),
+    #[error("Login failed! Reason: {0}")]
+    LoginFailed(String),
 }
 
 #[derive(Error, Debug)]

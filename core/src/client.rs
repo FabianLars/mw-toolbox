@@ -99,18 +99,34 @@ impl WikiClient {
             _ => return Err(ClientError::TokenNotFound(json.to_string())),
         };
 
-        log::info!(
-            "login request completed: {:?}",
-            self.post(&[
+        //"login request completed: {:?}",
+
+        let res: Value = self
+            .post(&[
                 ("action", "login"),
                 ("lgname", &self.loginname),
                 ("lgpassword", &self.password),
                 ("lgtoken", &token),
             ])
             .await?
-            .text()
-            .await?
-        );
+            .json()
+            .await?;
+
+        log::debug!("login request completed: {:?}", res.to_string());
+
+        match res["login"]["result"].as_str() {
+            Some(s) => {
+                if s == "Failed" {
+                    return Err(ClientError::LoginFailed(
+                        res["login"]["reason"]
+                            .as_str()
+                            .unwrap_or_else(|| "no reason provided")
+                            .to_string(),
+                    ));
+                }
+            }
+            None => return Err(ClientError::LoginFailed("unknown error".to_string())),
+        }
 
         self.request_csrf_token().await
     }
