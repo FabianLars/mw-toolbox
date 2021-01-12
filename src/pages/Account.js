@@ -35,12 +35,15 @@ const Account = ({ user, setUser }) => {
             })
             .catch((err) => {
                 setLoggingin(false);
+                setUser((user) => {
+                    return { loggedin: false, ...user };
+                });
                 console.error(err);
                 toast({
-                    title: "Can't log in!",
-                    description: 'Check your input!',
+                    title: "Couldn't log in!",
+                    description: err.split('Login failed! ')[1],
                     status: 'error',
-                    duration: 9000,
+                    duration: 10000,
                     isClosable: true,
                 });
             });
