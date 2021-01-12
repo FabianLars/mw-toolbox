@@ -76,7 +76,7 @@ const Account = ({ user, setUser }) => {
 
     return (
         <Flex direction="column" align="center" maxW={{ xl: '1240px' }} m="0 auto" h="100vh">
-            <Header />
+            <Header isDisabled={logginin} />
 
             <Flex
                 as="main"

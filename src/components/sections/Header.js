@@ -2,8 +2,8 @@ import React from 'react';
 import { Link as ReactLink, useLocation } from 'react-router-dom';
 import { Flex, Link } from '@chakra-ui/react';
 
-const MenuItems = (props) => {
-    const { children, isLast, to = '/', ...rest } = props;
+const MenuItem = (props) => {
+    const { children, isDisabled, isLast, to = '/', ...rest } = props;
     const location = useLocation().pathname;
     return (
         <Link
@@ -15,6 +15,8 @@ const MenuItems = (props) => {
             display="block"
             p={6}
             borderRadius={5}
+            color={isDisabled ? 'red.700' : ''}
+            style={{ pointerEvents: isDisabled ? 'none' : '' }}
             {...rest}
             _hover={{ bg: 'gray.700' }}
         >
@@ -23,7 +25,7 @@ const MenuItems = (props) => {
     );
 };
 
-const Header = () => {
+const Header = ({ isDisabled }) => {
     return (
         <Flex
             as="nav"
@@ -35,14 +37,22 @@ const Header = () => {
             mb={8}
             borderBottom="1px solid #deb992;"
         >
-            <MenuItems to="/">Account</MenuItems>
-            <MenuItems to="/Delete">Delete</MenuItems>
+            <MenuItem isDisabled={isDisabled} to="/">
+                Account
+            </MenuItem>
+            <MenuItem isDisabled={isDisabled} to="/Delete">
+                Delete
+            </MenuItem>
             {/* <MenuItems to="/Edit">Edit</MenuItems> */}
-            <MenuItems to="/List">List</MenuItems>
-            <MenuItems to="/Move">Move</MenuItems>
-            <MenuItems to="/Other" isLast>
+            <MenuItem isDisabled={isDisabled} to="/List">
+                List
+            </MenuItem>
+            <MenuItem isDisabled={isDisabled} to="/Move">
+                Move
+            </MenuItem>
+            <MenuItem isDisabled={isDisabled} to="/Other" isLast>
                 Other
-            </MenuItems>
+            </MenuItem>
         </Flex>
     );
 };
