@@ -108,15 +108,65 @@ fn main() {
                             )
                         }
                         List {
-                            callback, error, ..
+                            callback,
+                            error,
+                            listtype,
                         } => {
                             let client = client.clone();
                             let handle = rt.clone();
+
                             tauri::execute_promise(
                                 _webview,
-                                move || match handle.block_on(api::list::allimages(client)) {
-                                    Ok(list) => Ok(ListResponse { list }),
-                                    Err(err) => Err(err.into()),
+                                move || {
+                                    let res = match listtype.as_str() {
+                                        "allimages" => {
+                                            handle.block_on(api::list::allimages(&client))
+                                        }
+                                        "allpages" => {
+                                            handle.block_on(api::list::allpages(&client, None))
+                                        }
+                                        "alllinks" => handle.block_on(api::list::alllinks(&client)),
+                                        "allcategories" => {
+                                            handle.block_on(api::list::allcategories(&client))
+                                        }
+                                        "backlinks" => {
+                                            handle.block_on(api::list::backlinks(&client, None))
+                                        }
+                                        "categorymembers" => handle
+                                            .block_on(api::list::categorymembers(&client, None)),
+                                        "embeddedin" => {
+                                            handle.block_on(api::list::embeddedin(&client, None))
+                                        }
+                                        "imageusage" => {
+                                            handle.block_on(api::list::imageusage(&client, None))
+                                        }
+                                        "iwbacklinks" => {
+                                            handle.block_on(api::list::iwbacklinks(&client, None))
+                                        }
+                                        "langbacklinks" => {
+                                            handle.block_on(api::list::langbacklinks(&client, None))
+                                        }
+                                        "search" => {
+                                            handle.block_on(api::list::search(&client, None))
+                                        }
+                                        "protectedtitles" => {
+                                            handle.block_on(api::list::protectedtitles(&client))
+                                        }
+                                        "querypage" => {
+                                            handle.block_on(api::list::querypage(&client, None))
+                                        }
+                                        "wkpoppages" => {
+                                            handle.block_on(api::list::wkpoppages(&client))
+                                        }
+                                        "allinfoboxes" => {
+                                            handle.block_on(api::list::allinfoboxes(&client))
+                                        }
+                                        _ => handle.block_on(api::list::allimages(&client)),
+                                    };
+                                    match res {
+                                        Ok(list) => Ok(ListResponse { list }),
+                                        Err(err) => Err(err.into()),
+                                    }
                                 },
                                 callback,
                                 error,
