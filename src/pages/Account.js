@@ -47,7 +47,6 @@ const Account = ({ user, setUser }) => {
     };
 
     useEffect(() => {
-        // make gui development in browser possible
         if (typeof window.__TAURI_INVOKE_HANDLER__ === 'function') {
             if (user.loggedin) {
                 setLgname(user.username);
@@ -69,6 +68,7 @@ const Account = ({ user, setUser }) => {
                     .catch((err) => console.error(err));
             }
         }
+        // eslint-disable-next-line
     }, []);
 
     return (
