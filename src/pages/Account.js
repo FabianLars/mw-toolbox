@@ -23,7 +23,6 @@ const Account = ({ user, setUser }) => {
             is_persistent: persistent,
         })
             .then((res) => {
-                console.log(res);
                 setLoggingin(false);
                 setUser({
                     loggedin: true,
@@ -61,7 +60,6 @@ const Account = ({ user, setUser }) => {
                     cmd: 'init',
                 })
                     .then((res) => {
-                        console.log(res);
                         const { wikiurl, loginname, password, is_persistent } = res;
                         if (wikiurl !== '') setWurl(res.wikiurl);
                         setLgname(loginname);

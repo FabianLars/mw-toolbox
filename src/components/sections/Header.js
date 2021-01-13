@@ -34,7 +34,7 @@ const Header = ({ isDisabled }) => {
             wrap="wrap"
             w="100%"
             p={2}
-            mb={8}
+            mb={4}
             borderBottom="1px solid #deb992;"
         >
             <MenuItem isDisabled={isDisabled} to="/">
