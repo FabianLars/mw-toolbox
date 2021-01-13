@@ -37,7 +37,7 @@ const List = () => {
     return (
         <Flex direction="column" align="center" maxW={{ xl: '1240px' }} m="0 auto" h="100vh">
             <Header isDisabled={loading} />
-            <Flex mb={8} direction="row">
+            <Flex mb={4} direction="row">
                 <Select
                     ml={2}
                     mr={2}
