@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { promisified } from 'tauri/api/tauri';
-import { Button, Flex, Select, Textarea } from '@chakra-ui/react';
+import { Button, Flex, Select, Textarea, useToast } from '@chakra-ui/react';
 
 import Header from '../components/sections/Header';
 
@@ -9,6 +9,7 @@ const List = () => {
     const [loading, setLoading] = useState(false);
     const [listOutput, setListOutput] = useState('');
     const [listType, setListType] = useState('');
+    const toast = useToast();
 
     const getList = () => {
         if (listType !== '') {
@@ -26,6 +27,13 @@ const List = () => {
                 .catch((err) => {
                     console.error(err);
                     setLoading(false);
+                    toast({
+                        title: 'Request failed!',
+                        description: err,
+                        status: 'error',
+                        duration: 10000,
+                        isClosable: true,
+                    });
                 });
         }
     };
