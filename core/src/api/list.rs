@@ -45,7 +45,10 @@ pub async fn allpages<C: AsRef<WikiClient>>(
             )
             .await;
         } else {
-            panic!(format!("Unknown namespace given: {}", param));
+            return Err(ApiError::InvalidInput(format!(
+                "Unknown namespace given: {}",
+                param
+            )));
         }
     }
     get_from_api(client, "allpages", "ap", None).await
@@ -64,7 +67,9 @@ pub async fn backlinks<C: AsRef<WikiClient>>(
     parameter: Option<&str>,
 ) -> Result<Vec<String>> {
     if parameter.is_none() {
-        panic!("Missing btitle (Title to search)")
+        return Err(ApiError::InvalidInput(
+            "Missing btitle: Title to search".to_string(),
+        ));
     }
     get_from_api(client.as_ref(), "backlinks", "bl", parameter).await
 }
@@ -74,7 +79,10 @@ pub async fn categorymembers<C: AsRef<WikiClient>>(
     parameter: Option<&str>,
 ) -> Result<Vec<String>> {
     if parameter.is_none() {
-        panic!("missing cmtitle (Which category to enumerate (must include 'Category:' prefix))")
+        return Err(ApiError::InvalidInput(
+            "Missing cmtitle (Which category to enumerate (must include 'Category:' prefix))"
+                .to_string(),
+        ));
     }
     get_from_api(client.as_ref(), "categorymembers", "cm", parameter).await
 }
@@ -84,7 +92,9 @@ pub async fn embeddedin<C: AsRef<WikiClient>>(
     parameter: Option<&str>,
 ) -> Result<Vec<String>> {
     if parameter.is_none() {
-        panic!("missing eititle: Title to search")
+        return Err(ApiError::InvalidInput(
+            "Missing eititle: Title to search".to_string(),
+        ));
     }
     get_from_api(client.as_ref(), "embeddedin", "ei", parameter).await
 }
@@ -94,7 +104,9 @@ pub async fn imageusage<C: AsRef<WikiClient>>(
     parameter: Option<&str>,
 ) -> Result<Vec<String>> {
     if parameter.is_none() {
-        panic!("missing iutitle: Title to search")
+        return Err(ApiError::InvalidInput(
+            "Missing iutitle: Title to search".to_string(),
+        ));
     }
     get_from_api(client.as_ref(), "imageusage", "iu", parameter).await
 }
@@ -104,7 +116,9 @@ pub async fn iwbacklinks<C: AsRef<WikiClient>>(
     parameter: Option<&str>,
 ) -> Result<Vec<String>> {
     if parameter.is_none() {
-        panic!("missing iwblprefix: Prefix for the interwiki")
+        return Err(ApiError::InvalidInput(
+            "Missing iwblprefix: Prefix for the interwiki".to_string(),
+        ));
     }
     get_from_api(client.as_ref(), "iwbacklinks", "iwbl", parameter).await
 }
@@ -114,7 +128,9 @@ pub async fn langbacklinks<C: AsRef<WikiClient>>(
     parameter: Option<&str>,
 ) -> Result<Vec<String>> {
     if parameter.is_none() {
-        panic!("missing lbllang: Language for the language link")
+        return Err(ApiError::InvalidInput(
+            "Missing lbllang: Language for the language link".to_string(),
+        ));
     }
     get_from_api(client.as_ref(), "langbacklinks", "lbl", parameter).await
 }
@@ -124,7 +140,10 @@ pub async fn search<C: AsRef<WikiClient>>(
     parameter: Option<&str>,
 ) -> Result<Vec<String>> {
     if parameter.is_none() {
-        panic!("missing srsearch: Search for all page titles (or content) that has this value")
+        return Err(ApiError::InvalidInput(
+            "Missing srsearch: Search for all page titles (or content) that has this value"
+                .to_string(),
+        ));
     }
     get_from_api(client.as_ref(), "search", "sr", parameter).await
 }
@@ -153,7 +172,10 @@ pub async fn querypage<C: AsRef<WikiClient>>(
     parameter: Option<&str>,
 ) -> Result<Vec<String>> {
     if parameter.is_none() {
-        panic!("missing qppage: The name of the special page. Note, this is case sensitive")
+        return Err(ApiError::InvalidInput(
+            "Missing qppage: The name of the special page. Note, this is case sensitive"
+                .to_string(),
+        ));
     }
     get_from_api(client.as_ref(), "querypage", "qp", parameter).await
 }
