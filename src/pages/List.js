@@ -38,6 +38,11 @@ const List = ({ isOnline }) => {
         }
     };
 
+    const clearOutput = () => {
+        window.sessionStorage.setItem('list-cache', '');
+        setListOutput('');
+    };
+
     useEffect(() => {
         setListOutput(window.sessionStorage.getItem('list-cache') ?? '');
     }, []);
@@ -71,6 +76,9 @@ const List = ({ isOnline }) => {
                 </Select>
                 <Button ml={2} mr={2} onClick={getList} isLoading={loading}>
                     Get List
+                </Button>
+                <Button ml={2} mr={2} onClick={clearOutput}>
+                    Clear Output
                 </Button>
             </Flex>
             <Textarea value={listOutput} isReadOnly placeholder="Output will be displayed here" h="100%" mb={4} />
