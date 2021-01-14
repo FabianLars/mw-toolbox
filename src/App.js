@@ -4,16 +4,16 @@ import { Account, Delete, List, Move, Other } from './pages';
 import './App.css';
 
 const App = () => {
-    const [user, setUser] = useState({ loggedin: false, isPersistent: false, username: '', password: '', url: '' });
+    const [user, setUser] = useState({ isOnline: false, isPersistent: false, username: '', password: '', url: '' });
 
     return (
         <Router>
             <Routes>
                 <Route path="/" element={<Account user={user} setUser={setUser} />} />
-                <Route path="/Delete" element={<Delete isOnline={user.loggedin} />} />
-                <Route path="/List" element={<List isOnline={user.loggedin} />} />
-                <Route path="/Move" element={<Move isOnline={user.loggedin} />} />
-                <Route path="/Other" element={<Other isOnline={user.loggedin} />} />
+                <Route path="/Delete" element={<Delete isOnline={user.isOnline} />} />
+                <Route path="/List" element={<List isOnline={user.isOnline} />} />
+                <Route path="/Move" element={<Move isOnline={user.isOnline} />} />
+                <Route path="/Other" element={<Other isOnline={user.isOnline} />} />
             </Routes>
         </Router>
     );

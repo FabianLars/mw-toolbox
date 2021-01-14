@@ -25,7 +25,7 @@ const Account = ({ user, setUser }) => {
             .then((res) => {
                 setLoggingin(false);
                 setUser({
-                    loggedin: true,
+                    isOnline: true,
                     isPersistent: persistent,
                     username: res.username,
                     password: lgpasswd,
@@ -35,7 +35,7 @@ const Account = ({ user, setUser }) => {
             .catch((err) => {
                 setLoggingin(false);
                 setUser((user) => {
-                    return { loggedin: false, ...user };
+                    return { isOnline: false, ...user };
                 });
                 console.error(err);
                 toast({
@@ -51,7 +51,7 @@ const Account = ({ user, setUser }) => {
     useEffect(() => {
         console.log(user);
         if (typeof window.__TAURI_INVOKE_HANDLER__ === 'function') {
-            if (user.loggedin) {
+            if (user.isOnline) {
                 setLgname(user.username);
                 setPersistent(user.isPersistent);
                 setLgpasswd(user.password);
@@ -75,7 +75,7 @@ const Account = ({ user, setUser }) => {
 
     return (
         <Flex direction="column" align="center" maxW={{ xl: '1240px' }} m="0 auto" h="100vh">
-            <Header isDisabled={logginin} isOnline={user.loggedin} />
+            <Header isDisabled={logginin} isOnline={user.isOnline} />
 
             <Flex
                 as="main"
@@ -88,10 +88,10 @@ const Account = ({ user, setUser }) => {
                 justify="center"
             >
                 <Text fontSize="xl" align="center">
-                    {user.loggedin ? user.username : ''}
+                    {user.isOnline ? user.username : ''}
                 </Text>
                 <Text fontSize="xl" mb={2} align="center">
-                    {user.loggedin ? user.url : 'Not logged in!'}
+                    {user.isOnline ? user.url : 'Not logged in!'}
                 </Text>
                 <Input
                     mb={2}
