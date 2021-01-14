@@ -10,10 +10,10 @@ const App = () => {
         <Router>
             <Routes>
                 <Route path="/" element={<Account user={user} setUser={setUser} />} />
-                <Route path="/Delete" element={<Delete />} />
-                <Route path="/List" element={<List />} />
-                <Route path="/Move" element={<Move />} />
-                <Route path="/Other" element={<Other />} />
+                <Route path="/Delete" element={<Delete isOnline={user.loggedin} />} />
+                <Route path="/List" element={<List isOnline={user.loggedin} />} />
+                <Route path="/Move" element={<Move isOnline={user.loggedin} />} />
+                <Route path="/Other" element={<Other isOnline={user.loggedin} />} />
             </Routes>
         </Router>
     );

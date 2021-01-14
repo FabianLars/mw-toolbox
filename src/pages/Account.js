@@ -49,6 +49,7 @@ const Account = ({ user, setUser }) => {
     };
 
     useEffect(() => {
+        console.log(user);
         if (typeof window.__TAURI_INVOKE_HANDLER__ === 'function') {
             if (user.loggedin) {
                 setLgname(user.username);
@@ -74,7 +75,7 @@ const Account = ({ user, setUser }) => {
 
     return (
         <Flex direction="column" align="center" maxW={{ xl: '1240px' }} m="0 auto" h="100vh">
-            <Header isDisabled={logginin} />
+            <Header isDisabled={logginin} isOnline={user.loggedin} />
 
             <Flex
                 as="main"

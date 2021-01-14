@@ -5,7 +5,7 @@ import { Button, Flex, Select, Textarea, useToast } from '@chakra-ui/react';
 
 import Header from '../components/sections/Header';
 
-const List = () => {
+const List = ({ isOnline }) => {
     const [loading, setLoading] = useState(false);
     const [listOutput, setListOutput] = useState('');
     const [listType, setListType] = useState('');
@@ -44,7 +44,7 @@ const List = () => {
 
     return (
         <Flex direction="column" align="center" maxW={{ xl: '1240px' }} m="0 auto" h="100vh">
-            <Header isDisabled={loading} />
+            <Header isDisabled={loading} isOnline={isOnline} />
             <Flex mb={4} direction="row">
                 <Select
                     ml={2}

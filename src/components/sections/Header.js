@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link as ReactLink, useLocation } from 'react-router-dom';
-import { Box, Flex, Link, Spacer, Spinner } from '@chakra-ui/react';
+import { Badge, Flex, Link, Spacer, Spinner } from '@chakra-ui/react';
 
 const MenuItem = (props) => {
     const { children, isDisabled, isLast, to = '/', ...rest } = props;
@@ -25,7 +25,7 @@ const MenuItem = (props) => {
     );
 };
 
-const Header = ({ isDisabled }) => {
+const Header = ({ isDisabled, isOnline }) => {
     return (
         <Flex
             as="nav"
@@ -54,9 +54,12 @@ const Header = ({ isDisabled }) => {
                 Other
             </MenuItem>
             <Spacer />
-            <Box pr={4} pt={2} display={isDisabled ? 'show' : 'none'}>
-                <Spinner color="red.700" />
-            </Box>
+            <Flex justify="center" h="100%" align="center">
+                <Spinner display={isDisabled ? 'show' : 'none'} color="red.700" />
+                <Badge m={2} colorScheme={isOnline ? 'green' : 'red'}>
+                    {isOnline ? 'Online' : 'Offline'}
+                </Badge>
+            </Flex>
         </Flex>
     );
 };
