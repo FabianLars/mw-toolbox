@@ -6,7 +6,7 @@ import { Button, Checkbox, Divider, Flex, FormControl, FormLabel, Input, Text, u
 import Header from '../components/sections/Header';
 
 const Account = ({ user, setUser }) => {
-    const [wurl, setWurl] = useState('https://leagueoflegends.fandom.com/de/api.php');
+    const [apiUrl, setApiUrl] = useState('https://leagueoflegends.fandom.com/de/api.php');
     const [lgname, setLgname] = useState('');
     const [lgpasswd, setLgpasswd] = useState('');
     const [logginin, setLoggingin] = useState(false);
@@ -19,7 +19,7 @@ const Account = ({ user, setUser }) => {
             cmd: 'login',
             loginname: lgname,
             password: lgpasswd,
-            wikiurl: wurl,
+            wikiurl: apiUrl,
             is_persistent: persistent,
         })
             .then((res) => {
@@ -54,14 +54,14 @@ const Account = ({ user, setUser }) => {
                 setLgname(user.username);
                 setPersistent(user.isPersistent);
                 setLgpasswd(user.password);
-                setWurl(user.url);
+                setApiUrl(user.url);
             } else {
                 promisified({
                     cmd: 'init',
                 })
                     .then((res) => {
                         const { wikiurl, loginname, password, is_persistent } = res;
-                        if (wikiurl !== '') setWurl(res.wikiurl);
+                        if (wikiurl !== '') setApiUrl(res.wikiurl);
                         setLgname(loginname);
                         setLgpasswd(password);
                         setPersistent(is_persistent);
@@ -88,8 +88,8 @@ const Account = ({ user, setUser }) => {
                     <FormLabel htmlFor="api-url">API URL</FormLabel>
                     <Input
                         id="api-url"
-                        value={wurl}
-                        onChange={(event) => setWurl(event.target.value)}
+                        value={apiUrl}
+                        onChange={(event) => setApiUrl(event.target.value)}
                         placeholder="Full URL pointing to api.php)"
                     />
                 </FormControl>
