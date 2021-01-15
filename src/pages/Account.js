@@ -86,7 +86,7 @@ const Account = ({ user, setUser }) => {
         } else {
             setLgnameInvalid(false);
         }
-        if (/\W/.test(lgpasswd)) {
+        if (/\W/.test(lgpasswd) || lgpasswd.length <= 16) {
             setLgpasswdInvalid(true);
         } else {
             setLgpasswdInvalid(false);
