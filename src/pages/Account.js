@@ -49,7 +49,6 @@ const Account = ({ user, setUser }) => {
     };
 
     useEffect(() => {
-        console.log(user);
         if (typeof window.__TAURI_INVOKE_HANDLER__ === 'function') {
             if (user.isOnline) {
                 setLgname(user.username);
@@ -117,10 +116,10 @@ const Account = ({ user, setUser }) => {
                 />
                 <Flex direction="row" w="100%" justify="flex-end">
                     <Checkbox isChecked={persistent} onChange={(event) => setPersistent(event.target.checked)}>
-                        Stay logged in
+                        Remember me
                     </Checkbox>
                     <Button ml={2} isLoading={logginin} onClick={login}>
-                        Login
+                        Log in
                     </Button>
                 </Flex>
             </Flex>
