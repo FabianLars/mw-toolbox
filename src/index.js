@@ -2,7 +2,6 @@ import 'react-app-polyfill/ie11';
 import 'react-app-polyfill/stable';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { extendTheme, ChakraProvider } from '@chakra-ui/react';
@@ -12,7 +11,15 @@ const config = {
     initialColorMode: 'dark',
 };
 
-const customTheme = extendTheme({ config });
+const styles = {
+    global: {
+        button: {
+            minWidth: 'unset !important',
+        },
+    },
+};
+
+const customTheme = extendTheme({ config, styles });
 
 ReactDOM.render(
     <React.StrictMode>

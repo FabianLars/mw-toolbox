@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Account, Delete, List, Move, Other } from './pages';
-import './App.css';
 
 const App = () => {
     // useRef to make useEffect skip the change from useState
