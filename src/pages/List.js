@@ -48,7 +48,7 @@ const List = ({ isOnline }) => {
     }, []);
 
     return (
-        <Flex direction="column" align="center" maxW={{ xl: '1240px' }} m="0 auto" h="100vh">
+        <Flex direction="column" align="center" m="0 1rem" h="100vh">
             <Header isDisabled={loading} isOnline={isOnline} />
             <Flex mb={4} direction="row">
                 <Select

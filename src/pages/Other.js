@@ -2,9 +2,9 @@ import { Flex } from '@chakra-ui/react';
 import React from 'react';
 import Header from '../components/sections/Header';
 
-const Other = (isOnline) => {
+const Other = ({ isOnline }) => {
     return (
-        <Flex direction="column" align="center" maxW={{ xl: '1240px' }} m="0 auto" h="100vh">
+        <Flex direction="column" align="center" m="0 1rem" h="100vh">
             <Header isOnline={isOnline} />
         </Flex>
     );
