@@ -1,7 +1,7 @@
 import { promisified } from 'tauri/api/tauri';
 
 import React, { useEffect, useState } from 'react';
-import { Button, Checkbox, Flex, Input, Text, useToast } from '@chakra-ui/react';
+import { Button, Checkbox, Divider, Flex, FormControl, FormLabel, Input, Text, useToast } from '@chakra-ui/react';
 
 import Header from '../components/sections/Header';
 
@@ -73,52 +73,53 @@ const Account = ({ user, setUser }) => {
     }, []);
 
     return (
-        <Flex direction="column" align="center" maxW={{ xl: '1240px' }} m="0 auto" h="100vh">
+        <Flex direction="column" align="center" m="0 1rem" h="100vh">
             <Header isDisabled={logginin} isOnline={user.isOnline} />
 
-            <Flex
-                as="main"
-                direction="column"
-                align="center"
-                maxW={{ xl: '1200px' }}
-                m="0 auto"
-                w="50%"
-                h="100%"
-                justify="center"
-            >
+            <Flex as="main" direction="column" align="center" m="0 auto" w="50%" h="100%" justify="center">
                 <Text fontSize="xl" align="center">
                     {user.isOnline ? user.username : ''}
                 </Text>
-                <Text fontSize="xl" mb={2} align="center">
+                <Text fontSize="xl" align="center">
                     {user.isOnline ? user.url : 'Not logged in!'}
                 </Text>
-                <Input
-                    mb={2}
-                    value={wurl}
-                    onChange={(event) => setWurl(event.target.value)}
-                    placeholder="Wiki URL (pointing to api.php => 'https://leagueoflegends.fandom.com/api.php')"
-                    isRequired
-                />
-                <Input
-                    mb={2}
-                    value={lgname}
-                    onChange={(event) => setLgname(event.target.value)}
-                    placeholder="Loginname via S:BotPasswords"
-                    isRequired
-                />
-                <Input
-                    mb={2}
-                    value={lgpasswd}
-                    onChange={(event) => setLgpasswd(event.target.value)}
-                    type="password"
-                    placeholder="Password via S:BotPasswords"
-                    isRequired
-                />
-                <Flex direction="row" w="100%" justify="flex-end">
+                <Divider my={2} />
+                <FormControl isRequired>
+                    <FormLabel htmlFor="api-url">API URL</FormLabel>
+                    <Input
+                        id="api-url"
+                        value={wurl}
+                        onChange={(event) => setWurl(event.target.value)}
+                        placeholder="Full URL pointing to api.php)"
+                    />
+                </FormControl>
+                <Divider my={2} />
+                <FormControl isRequired>
+                    <FormLabel htmlFor="loginname">Bot Loginname</FormLabel>
+                    <Input
+                        id="loginname"
+                        value={lgname}
+                        onChange={(event) => setLgname(event.target.value)}
+                        placeholder="Generated via Special:BotPasswords"
+                    />
+                </FormControl>
+                <Divider my={2} />
+                <FormControl isRequired>
+                    <FormLabel htmlFor="password">Bot Password</FormLabel>
+                    <Input
+                        id="password"
+                        value={lgpasswd}
+                        onChange={(event) => setLgpasswd(event.target.value)}
+                        type="password"
+                        placeholder="Generated via Special:BotPasswords"
+                    />
+                </FormControl>
+                <Flex direction="row" w="100%" justify="flex-end" mt={2}>
                     <Checkbox isChecked={persistent} onChange={(event) => setPersistent(event.target.checked)}>
                         Remember me
                     </Checkbox>
-                    <Button ml={2} isLoading={logginin} onClick={login}>
+                    <Divider orientation="vertical" mx={2} />
+                    <Button isLoading={logginin} onClick={login}>
                         Log in
                     </Button>
                 </Flex>
