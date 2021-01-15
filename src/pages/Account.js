@@ -11,6 +11,9 @@ const Account = ({ user, setUser }) => {
     const [lgpasswd, setLgpasswd] = useState('');
     const [logginin, setLoggingin] = useState(false);
     const [persistent, setPersistent] = useState(false);
+    const [apiUrlInvalid, setApiUrlInvalid] = useState(false);
+    const [lgnameInvalid, setLgnameInvalid] = useState(false);
+    const [lgpasswdInvalid, setLgpasswdInvalid] = useState(false);
     const toast = useToast();
 
     const login = () => {
@@ -72,6 +75,24 @@ const Account = ({ user, setUser }) => {
         // eslint-disable-next-line
     }, []);
 
+    useEffect(() => {
+        if (!apiUrl.endsWith('api.php') || apiUrl.startsWith('http://') === apiUrl.startsWith('https://')) {
+            setApiUrlInvalid(true);
+        } else {
+            setApiUrlInvalid(false);
+        }
+        if (!lgname.includes('@')) {
+            setLgnameInvalid(true);
+        } else {
+            setLgnameInvalid(false);
+        }
+        if (/\W/.test(lgpasswd)) {
+            setLgpasswdInvalid(true);
+        } else {
+            setLgpasswdInvalid(false);
+        }
+    }, [apiUrl, lgname, lgpasswd]);
+
     return (
         <Flex direction="column" align="center" m="0 1rem" h="100vh">
             <Header isDisabled={logginin} isOnline={user.isOnline} />
@@ -84,7 +105,7 @@ const Account = ({ user, setUser }) => {
                     {user.isOnline ? user.url : 'Not logged in!'}
                 </Text>
                 <Divider my={2} />
-                <FormControl isRequired>
+                <FormControl isRequired isInvalid={apiUrlInvalid}>
                     <FormLabel htmlFor="api-url">API URL</FormLabel>
                     <Input
                         id="api-url"
@@ -94,7 +115,7 @@ const Account = ({ user, setUser }) => {
                     />
                 </FormControl>
                 <Divider my={2} />
-                <FormControl isRequired>
+                <FormControl isRequired isInvalid={lgnameInvalid}>
                     <FormLabel htmlFor="loginname">Bot Loginname</FormLabel>
                     <Input
                         id="loginname"
@@ -104,7 +125,7 @@ const Account = ({ user, setUser }) => {
                     />
                 </FormControl>
                 <Divider my={2} />
-                <FormControl isRequired>
+                <FormControl isRequired isInvalid={lgpasswdInvalid}>
                     <FormLabel htmlFor="password">Bot Password</FormLabel>
                     <Input
                         id="password"
@@ -119,7 +140,11 @@ const Account = ({ user, setUser }) => {
                         Remember me
                     </Checkbox>
                     <Divider orientation="vertical" mx={2} />
-                    <Button isLoading={logginin} onClick={login}>
+                    <Button
+                        isDisabled={apiUrlInvalid || lgnameInvalid || lgpasswdInvalid}
+                        isLoading={logginin}
+                        onClick={login}
+                    >
                         Log in
                     </Button>
                 </Flex>
