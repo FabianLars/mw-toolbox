@@ -39,7 +39,9 @@
             "exceptionDomain": ""
         },
         "allowlist": {
-            "all": true
+            "all": false,
+            "event": true,
+            "openDialog": true
         },
         "window": {
             "title": "wtools by FabianLars",
