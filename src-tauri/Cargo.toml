@@ -19,7 +19,7 @@ pretty_env_logger = "0.4"
 serde = { version = "1", features = [ "derive" ] }
 serde_json = "1"
 storage = { path = "../../wtools/core", git = "https://github.com/FabianLars/wtools" }
-tauri = { version = "0.11", features = [ "event", "open-dialog" ] }
+tauri = { version = "0.11", features = [ "event" ] }
 tokio = { version = "1", features = [ "rt-multi-thread" ] }
 wtools = { path = "../../wtools/core", git = "https://github.com/FabianLars/wtools" }
 

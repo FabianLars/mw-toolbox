@@ -74,7 +74,14 @@ const List = ({ isOnline }) => {
                     <option value="wkpoppages">wkpoppages</option>
                     <option value="allinfoboxes">allinfoboxes</option>
                 </Select>
-                <Button ml={2} mr={2} onClick={getList} isLoading={loading}>
+                <Button
+                    ml={2}
+                    mr={2}
+                    onClick={getList}
+                    isLoading={loading}
+                    isDisabled={!isOnline}
+                    title={!isOnline ? 'Please login first!' : 'This might take a while!'}
+                >
                     Get List
                 </Button>
                 <Button ml={2} mr={2} onClick={clearOutput}>
