@@ -87,8 +87,8 @@ fn main() {
                             tauri::execute_promise(
                                 _webview,
                                 move || {
-                                    if client_res.is_err() {
-                                        return Err(client_res.unwrap_err().into());
+                                    if let Err(e) = client_res {
+                                        return Err(e.into());
                                     }
                                     match handle.block_on(
                                         SavedState {
