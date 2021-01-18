@@ -71,7 +71,7 @@ pub async fn backlinks<C: AsRef<WikiClient>>(
 ) -> Result<Vec<String>> {
     if parameter.is_none() {
         return Err(ApiError::InvalidInput(
-            "Missing btitle: Title to search".to_string(),
+            "Missing bltitle: Title to search".to_string(),
         ));
     }
     get_from_api(client.as_ref(), "backlinks", "bl", parameter).await
