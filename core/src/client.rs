@@ -142,7 +142,7 @@ impl WikiClient {
     pub async fn get(&self, parameters: &[(&str, &str)]) -> Result<Response, ClientError> {
         self.client
             .get(&self.url)
-            .query(&[("format", "json")])
+            .query(&[("format", "json"), ("formatversion", "2")])
             .query(parameters)
             .send()
             .await
@@ -177,7 +177,7 @@ impl WikiClient {
 
         self.client
             .post(&self.url)
-            .query(&[("format", "json")])
+            .query(&[("format", "json"), ("formatversion", "2")])
             .form(&parameters)
             .send()
             .await

@@ -62,6 +62,7 @@ pub async fn upload<C: AsRef<WikiClient>>(client: C, path: PathType) -> Result<(
                         ("action", "upload"),
                         ("text", "{{Dateienkategorisierung}}"),
                         ("format", "json"),
+                        ("formatversion", "2"),
                         ("filename", &file_name),
                         ("ignorewarnings", "1"),
                     ],

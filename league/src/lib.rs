@@ -721,10 +721,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let document = Document::from(resp.as_str());
 
     let champdata = resp2?;
-    let champdata: String = champdata["parse"]["wikitext"]["*"]
-        .as_str()
-        .unwrap()
-        .to_string();
+    let champdata: String = champdata["parse"]["wikitext"].as_str().unwrap().to_string();
     let champdata_regex = Regex::new("(?m)\\[\"op_positions\"] *= .+,$")?;
     let champdata_iter = champdata_regex.split(&champdata);
 

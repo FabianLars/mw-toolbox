@@ -198,7 +198,7 @@ async fn get_from_api(
     let mut continue_from = String::new();
     let mut results: Vec<String> = Vec::new();
     let getter = match short {
-        "ac" => "*",
+        "ac" => "category",
         _ => "title",
     };
     let param = match parameter {
