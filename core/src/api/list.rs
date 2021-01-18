@@ -14,41 +14,44 @@ pub async fn allpages<C: AsRef<WikiClient>>(
     client: C,
     parameter: Option<&str>,
 ) -> Result<Vec<String>> {
-    let namespaces = vec![
-        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-        "110", "111", "1200", "1201", "1202", "2000", "2001", "2002", "500", "501", "502", "503",
-        "828", "829",
-    ];
     let client = client.as_ref();
 
     if let Some(param) = parameter {
         if param == "all" {
             let mut temp: Vec<String> = Vec::new();
-            for ns in namespaces {
-                temp.append(
-                    &mut get_from_api(
-                        client,
-                        "allpages",
-                        "ap",
-                        Some(&format!("apnamespace={}", ns)),
-                    )
-                    .await?,
-                );
+            let ns_res = client
+                .get_into_json(&[
+                    ("action", "query"),
+                    ("meta", "siteinfo"),
+                    ("siprop", "namespaces"),
+                ])
+                .await?;
+            if let Some(namespaces) = ns_res["query"]["namespaces"].as_object() {
+                for ns in namespaces.keys() {
+                    temp.append(
+                        &mut get_from_api(
+                            client,
+                            "allpages",
+                            "ap",
+                            Some(&format!("apnamespace={}", ns)),
+                        )
+                        .await?,
+                    );
+                }
+                return Ok(temp);
+            } else {
+                return Err(ApiError::InvalidJsonOperation(
+                    "Not able to get wiki namespaces".to_string(),
+                ));
             }
-            return Ok(temp);
-        } else if namespaces.iter().any(|x| *x == param) {
+        } else {
             return get_from_api(
                 client,
                 "allpages",
                 "ap",
-                Some(&format!("apnamepsace={}", param)),
+                Some(&format!("apnamespace={}", param)),
             )
             .await;
-        } else {
-            return Err(ApiError::InvalidInput(format!(
-                "Unknown namespace given: {}",
-                param
-            )));
         }
     }
     get_from_api(client, "allpages", "ap", None).await
