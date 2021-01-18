@@ -65,13 +65,10 @@ const List = ({ isOnline }) => {
                     <option value="categorymembers">categorymembers</option>
                     <option value="embeddedin">embeddedin</option>
                     <option value="imageusage">imageusage</option>
-                    <option value="iwbacklinks">iwbacklinks</option>
-                    <option value="langbacklinks">langbacklinks</option>
                     <option value="search">search</option>
                     <option value="exturlusage">exturlusage</option>
                     <option value="protectedtitles">protectedtitles</option>
                     <option value="querypage">querypage</option>
-                    <option value="wkpoppages">wkpoppages</option>
                     <option value="allinfoboxes">allinfoboxes</option>
                 </Select>
                 <Button

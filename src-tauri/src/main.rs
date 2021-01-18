@@ -140,12 +140,6 @@ fn main() {
                                         "imageusage" => {
                                             handle.block_on(api::list::imageusage(&client, None))
                                         }
-                                        "iwbacklinks" => {
-                                            handle.block_on(api::list::iwbacklinks(&client, None))
-                                        }
-                                        "langbacklinks" => {
-                                            handle.block_on(api::list::langbacklinks(&client, None))
-                                        }
                                         "search" => {
                                             handle.block_on(api::list::search(&client, None))
                                         }
@@ -154,9 +148,6 @@ fn main() {
                                         }
                                         "querypage" => {
                                             handle.block_on(api::list::querypage(&client, None))
-                                        }
-                                        "wkpoppages" => {
-                                            handle.block_on(api::list::wkpoppages(&client))
                                         }
                                         "allinfoboxes" => {
                                             handle.block_on(api::list::allinfoboxes(&client))
