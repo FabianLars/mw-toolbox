@@ -17,6 +17,7 @@ pub enum Cmd {
     },
     List {
         listtype: String,
+        param: Option<String>,
         callback: String,
         error: String,
     },

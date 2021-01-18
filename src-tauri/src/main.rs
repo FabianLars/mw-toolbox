@@ -108,9 +108,10 @@ fn main() {
                             )
                         }
                         List {
+                            listtype,
+                            param,
                             callback,
                             error,
-                            listtype,
                         } => {
                             let client = client.clone();
                             let handle = rt.clone();
@@ -122,33 +123,38 @@ fn main() {
                                         "allimages" => {
                                             handle.block_on(api::list::allimages(&client))
                                         }
-                                        "allpages" => {
-                                            handle.block_on(api::list::allpages(&client, None))
-                                        }
+                                        "allpages" => handle.block_on(api::list::allpages(
+                                            &client,
+                                            param.as_deref(),
+                                        )),
                                         "alllinks" => handle.block_on(api::list::alllinks(&client)),
                                         "allcategories" => {
                                             handle.block_on(api::list::allcategories(&client))
                                         }
-                                        "backlinks" => {
-                                            handle.block_on(api::list::backlinks(&client, None))
-                                        }
-                                        "categorymembers" => handle
-                                            .block_on(api::list::categorymembers(&client, None)),
-                                        "embeddedin" => {
-                                            handle.block_on(api::list::embeddedin(&client, None))
-                                        }
-                                        "imageusage" => {
-                                            handle.block_on(api::list::imageusage(&client, None))
-                                        }
-                                        "search" => {
-                                            handle.block_on(api::list::search(&client, None))
-                                        }
+                                        "backlinks" => handle.block_on(api::list::backlinks(
+                                            &client,
+                                            param.as_deref(),
+                                        )),
+                                        "categorymembers" => handle.block_on(
+                                            api::list::categorymembers(&client, param.as_deref()),
+                                        ),
+                                        "embeddedin" => handle.block_on(api::list::embeddedin(
+                                            &client,
+                                            param.as_deref(),
+                                        )),
+                                        "imageusage" => handle.block_on(api::list::imageusage(
+                                            &client,
+                                            param.as_deref(),
+                                        )),
+                                        "search" => handle
+                                            .block_on(api::list::search(&client, param.as_deref())),
                                         "protectedtitles" => {
                                             handle.block_on(api::list::protectedtitles(&client))
                                         }
-                                        "querypage" => {
-                                            handle.block_on(api::list::querypage(&client, None))
-                                        }
+                                        "querypage" => handle.block_on(api::list::querypage(
+                                            &client,
+                                            param.as_deref(),
+                                        )),
                                         "allinfoboxes" => {
                                             handle.block_on(api::list::allinfoboxes(&client))
                                         }

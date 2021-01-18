@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { promisified } from 'tauri/api/tauri';
-import { Button, Flex, Select, Textarea, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, FormLabel, Input, Select, Textarea, useToast } from '@chakra-ui/react';
 
 import Header from '../components/sections/Header';
 
@@ -9,6 +9,8 @@ const List = ({ isOnline }) => {
     const [loading, setLoading] = useState(false);
     const [listOutput, setListOutput] = useState('');
     const [listType, setListType] = useState('');
+    const [paramInfo, setParamInfo] = useState('');
+    const [paramInput, setParamInput] = useState('');
     const toast = useToast();
 
     const getList = () => {
@@ -17,6 +19,7 @@ const List = ({ isOnline }) => {
             promisified({
                 cmd: 'list',
                 listtype: listType,
+                param: paramInput !== '' ? paramInput : null,
             })
                 .then((res) => {
                     const output = res.list.join('\n') ?? '';
@@ -47,33 +50,77 @@ const List = ({ isOnline }) => {
         setListOutput(window.sessionStorage.getItem('list-cache') ?? '');
     }, []);
 
+    useEffect(() => {
+        setParamInput('');
+        switch (listType) {
+            case 'allpages':
+                setParamInfo("Namespace id or 'all'");
+                break;
+            case 'backlinks':
+                setParamInfo('Title to search');
+                break;
+            case 'categorymembers':
+                setParamInfo("Category (incl. 'Category:' prefix)");
+                break;
+            case 'embeddedin':
+                setParamInfo("Template to search (incl. 'Template:' prefix)");
+                break;
+            case 'imagesearch':
+                setParamInfo("Image to search (incl. 'File:' prefix)");
+                break;
+            case 'querypage':
+                setParamInfo('Title to special page');
+                break;
+            case 'search':
+                setParamInfo('Search');
+                break;
+            default:
+                setParamInfo('');
+        }
+    }, [listType]);
+
     return (
         <Flex direction="column" align="center" m="0 1rem" h="100vh">
             <Header isDisabled={loading} isOnline={isOnline} />
-            <Flex mb={4} direction="row">
-                <Select
-                    ml={2}
-                    mr={2}
-                    placeholder="Select type of list"
-                    onChange={({ target: { value } }) => setListType(value)}
-                >
-                    <option value="allimages">allimages</option>
-                    <option value="allpages">allpages</option>
-                    <option value="alllinks">alllinks</option>
-                    <option value="allcategories">allcategories</option>
-                    <option value="backlinks">backlinks</option>
-                    <option value="categorymembers">categorymembers</option>
-                    <option value="embeddedin">embeddedin</option>
-                    <option value="imageusage">imageusage</option>
-                    <option value="search">search</option>
-                    <option value="exturlusage">exturlusage</option>
-                    <option value="protectedtitles">protectedtitles</option>
-                    <option value="querypage">querypage</option>
-                    <option value="allinfoboxes">allinfoboxes</option>
-                </Select>
+            <Flex w="100%" mb={4} direction="row" align="center">
+                {paramInfo === '' ? (
+                    <Box mx={2} w="100%"></Box>
+                ) : (
+                    <FormControl mx={2} isRequired visibility={paramInfo === '' ? 'hidden' : ''}>
+                        <FormLabel htmlFor="parameter-input">Required Parameter</FormLabel>
+                        <Input
+                            id="parameter-input"
+                            placeholder={paramInfo}
+                            title={paramInfo}
+                            value={paramInput}
+                            onChange={(event) => setParamInput(event.target.value)}
+                        />
+                    </FormControl>
+                )}
+                <FormControl mx={2} isRequired>
+                    <FormLabel htmlFor="listtype-dropdown">API Endpoint</FormLabel>
+                    <Select
+                        id="listtype-dropdown"
+                        placeholder="Select type of list"
+                        onChange={({ target: { value } }) => setListType(value)}
+                    >
+                        <option value="allcategories">allcategories</option>
+                        <option value="allimages">allimages</option>
+                        <option value="allinfoboxes">allinfoboxes</option>
+                        <option value="alllinks">alllinks</option>
+                        <option value="allpages">allpages</option>
+                        <option value="backlinks">backlinks</option>
+                        <option value="categorymembers">categorymembers</option>
+                        <option value="embeddedin">embeddedin</option>
+                        <option value="exturlusage">exturlusage</option>
+                        <option value="imageusage">imageusage</option>
+                        <option value="protectedtitles">protectedtitles</option>
+                        <option value="querypage">querypage</option>
+                        <option value="search">search</option>
+                    </Select>
+                </FormControl>
                 <Button
-                    ml={2}
-                    mr={2}
+                    mx={2}
                     onClick={getList}
                     isLoading={loading}
                     isDisabled={!isOnline}
@@ -81,7 +128,7 @@ const List = ({ isOnline }) => {
                 >
                     Get List
                 </Button>
-                <Button ml={2} mr={2} onClick={clearOutput}>
+                <Button mx={2} onClick={clearOutput}>
                     Clear Output
                 </Button>
             </Flex>
