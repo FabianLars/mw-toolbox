@@ -158,18 +158,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     ListType::Imageusage => {
                         api::list::imageusage(&client, parameter.as_deref()).await?
                     }
-                    ListType::Iwbacklinks => {
-                        api::list::iwbacklinks(&client, parameter.as_deref()).await?
-                    }
-                    ListType::Langbacklinks => {
-                        api::list::langbacklinks(&client, parameter.as_deref()).await?
-                    }
                     ListType::Search => api::list::search(&client, parameter.as_deref()).await?,
                     ListType::Protectedtitles => api::list::protectedtitles(&client).await?,
                     ListType::Querypage => {
                         api::list::querypage(&client, parameter.as_deref()).await?
                     }
-                    ListType::Wkpoppages => api::list::wkpoppages(&client).await?,
                     ListType::Allinfoboxes => api::list::allinfoboxes(&client).await?,
                     _ => vec![String::new()],
                 };

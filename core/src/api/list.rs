@@ -111,30 +111,6 @@ pub async fn imageusage<C: AsRef<WikiClient>>(
     get_from_api(client.as_ref(), "imageusage", "iu", parameter).await
 }
 
-pub async fn iwbacklinks<C: AsRef<WikiClient>>(
-    client: C,
-    parameter: Option<&str>,
-) -> Result<Vec<String>> {
-    if parameter.is_none() {
-        return Err(ApiError::InvalidInput(
-            "Missing iwblprefix: Prefix for the interwiki".to_string(),
-        ));
-    }
-    get_from_api(client.as_ref(), "iwbacklinks", "iwbl", parameter).await
-}
-
-pub async fn langbacklinks<C: AsRef<WikiClient>>(
-    client: C,
-    parameter: Option<&str>,
-) -> Result<Vec<String>> {
-    if parameter.is_none() {
-        return Err(ApiError::InvalidInput(
-            "Missing lbllang: Language for the language link".to_string(),
-        ));
-    }
-    get_from_api(client.as_ref(), "langbacklinks", "lbl", parameter).await
-}
-
 pub async fn search<C: AsRef<WikiClient>>(
     client: C,
     parameter: Option<&str>,
@@ -178,10 +154,6 @@ pub async fn querypage<C: AsRef<WikiClient>>(
         ));
     }
     get_from_api(client.as_ref(), "querypage", "qp", parameter).await
-}
-
-pub async fn wkpoppages<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
-    get_from_api(client.as_ref(), "wkpoppages", "wk", None).await
 }
 
 pub async fn allinfoboxes<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
