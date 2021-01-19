@@ -1,9 +1,9 @@
 use crate::error::ApiError;
 use crate::WikiClient;
 
-pub async fn delete_pages<C: AsRef<WikiClient>>(
+pub async fn delete_pages<C: AsRef<WikiClient>, S: AsRef<str>>(
     client: C,
-    titles: &[&str],
+    titles: &[S],
 ) -> Result<(), ApiError> {
     let client = client.as_ref();
 
@@ -14,7 +14,7 @@ pub async fn delete_pages<C: AsRef<WikiClient>>(
                 .post_into_json(&[
                     ("action", "delete"),
                     ("reason", "automated action"),
-                    ("title", title),
+                    ("title", title.as_ref()),
                 ])
                 .await?
         );
