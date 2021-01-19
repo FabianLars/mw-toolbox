@@ -15,6 +15,11 @@ pub enum Cmd {
         callback: String,
         error: String,
     },
+    Delete {
+        pages: Vec<String>,
+        callback: String,
+        error: String,
+    },
     List {
         listtype: String,
         param: Option<String>,

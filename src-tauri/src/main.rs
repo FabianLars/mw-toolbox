@@ -107,6 +107,27 @@ fn main() {
                                 error,
                             )
                         }
+                        Delete {
+                            pages,
+                            callback,
+                            error,
+                        } => {
+                            let client = client.clone();
+                            let handle = rt.clone();
+                            tauri::execute_promise(
+                                _webview,
+                                move || match handle
+                                    .block_on(api::delete::delete_pages(&client, &pages[..]))
+                                {
+                                    Ok(_) => Ok(Response {
+                                        message: "Delete successful!",
+                                    }),
+                                    Err(err) => Err(err.into()),
+                                },
+                                callback,
+                                error,
+                            )
+                        }
                         List {
                             listtype,
                             param,
