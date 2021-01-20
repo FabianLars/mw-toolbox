@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Textarea, toast, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { promisified } from 'tauri/api/tauri';
 import Header from '../components/sections/Header';
