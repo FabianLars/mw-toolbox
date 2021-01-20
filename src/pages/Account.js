@@ -3,7 +3,7 @@ import { promisified } from 'tauri/api/tauri';
 import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Divider, Flex, FormControl, FormLabel, Input, Text, useToast } from '@chakra-ui/react';
 
-import Header from '../components/sections/Header';
+import Header from '../components/Header';
 
 const Account = ({ user, setUser }) => {
     const [apiUrl, setApiUrl] = useState('https://leagueoflegends.fandom.com/de/api.php');

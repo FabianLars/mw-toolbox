@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { promisified } from 'tauri/api/tauri';
-import Header from '../components/sections/Header';
+import Header from '../components/Header';
 
 const Delete = ({ isOnline }) => {
     const [areaValue, setAreaValue] = useState('');
@@ -47,7 +47,7 @@ const Delete = ({ isOnline }) => {
                 mb={4}
             />
             <Box mb={4}>
-                <Button isLoading={isLoading} onClick={deletePages} loadingText="Deleting">
+                <Button isLoading={isLoading} isDisabled={!isOnline} onClick={deletePages} loadingText="Deleting">
                     Delete all
                 </Button>
             </Box>

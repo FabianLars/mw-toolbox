@@ -26,4 +26,10 @@ pub enum Cmd {
         callback: String,
         error: String,
     },
+    Purge {
+        is_nulledit: bool,
+        pages: Vec<String>,
+        callback: String,
+        error: String,
+    },
 }

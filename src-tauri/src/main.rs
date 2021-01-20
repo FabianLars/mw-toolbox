@@ -7,6 +7,7 @@ mod cmd;
 
 use std::sync::Arc;
 
+use api::purge;
 use serde::Serialize;
 use tauri::Result;
 use wtools::{api, WikiClient};
@@ -185,6 +186,36 @@ fn main() {
                                         Ok(list) => Ok(ListResponse { list }),
                                         Err(err) => Err(err.into()),
                                     }
+                                },
+                                callback,
+                                error,
+                            )
+                        }
+                        Purge {
+                            is_nulledit,
+                            pages,
+                            callback,
+                            error,
+                        } => {
+                            let client = client.clone();
+                            let handle = rt.clone();
+
+                            tauri::execute_promise(
+                                _webview,
+                                move || match match is_nulledit {
+                                    true => handle.block_on(api::purge::purge(
+                                        &client,
+                                        &pages[..],
+                                        true,
+                                    )),
+                                    false => {
+                                        handle.block_on(api::edit::nulledit(&client, &pages[..]))
+                                    }
+                                } {
+                                    Ok(_) => Ok(Response {
+                                        message: "Purge successful!",
+                                    }),
+                                    Err(err) => Err(err.into()),
                                 },
                                 callback,
                                 error,
