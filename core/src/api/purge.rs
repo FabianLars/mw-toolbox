@@ -1,8 +1,8 @@
 use crate::{error::ApiError, WikiClient};
 
-pub async fn purge<C: AsRef<WikiClient>>(
+pub async fn purge<C: AsRef<WikiClient>, S: AsRef<str>>(
     client: C,
-    titles: &[&str],
+    titles: &[S],
     recursive: bool,
 ) -> Result<(), ApiError> {
     let client = client.as_ref();
@@ -14,7 +14,7 @@ pub async fn purge<C: AsRef<WikiClient>>(
                 ("action", "purge"),
                 ("forcelinkupdate", "true"),
                 ("forcerecursivelinkupdate", &recursive.to_string()),
-                ("titles", title),
+                ("titles", title.as_ref()),
             ])
             .await?;
         tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;

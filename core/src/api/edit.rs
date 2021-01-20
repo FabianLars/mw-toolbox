@@ -1,7 +1,10 @@
 use crate::error::ApiError;
 use crate::WikiClient;
 
-pub async fn nulledit<C: AsRef<WikiClient>>(client: C, titles: &[&str]) -> Result<(), ApiError> {
+pub async fn nulledit<C: AsRef<WikiClient>, S: AsRef<str>>(
+    client: C,
+    titles: &[S],
+) -> Result<(), ApiError> {
     let client = client.as_ref();
 
     for title in titles {
@@ -11,7 +14,7 @@ pub async fn nulledit<C: AsRef<WikiClient>>(client: C, titles: &[&str]) -> Resul
                 ("summary", "Nulledit (broken if visible in RecentChanges)"),
                 ("notminor", "true"),
                 ("prependtext", ""),
-                ("title", title),
+                ("title", title.as_ref()),
             ])
             .await?;
         tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
