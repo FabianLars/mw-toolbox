@@ -3,6 +3,16 @@
     "version": "0.1.0",
     "description": "",
     "private": true,
+    "author": "",
+    "license": "MIT",
+    "main": "index.js",
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject",
+        "tauri": "tauri"
+    },
     "dependencies": {
         "@chakra-ui/icons": "^1.0.3",
         "@chakra-ui/react": "^1.1.5",
@@ -21,13 +31,6 @@
         "react-scripts": "4.0.1",
         "tauri": "^0.14.0"
     },
-    "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject",
-        "tauri": "tauri"
-    },
     "eslintConfig": {
         "extends": [
             "react-app",
@@ -45,8 +48,5 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
-    },
-    "main": "index.js",
-    "author": "",
-    "license": "MIT"
+    }
 }

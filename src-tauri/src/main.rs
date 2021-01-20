@@ -7,7 +7,6 @@ mod cmd;
 
 use std::sync::Arc;
 
-use api::purge;
 use serde::Serialize;
 use tauri::Result;
 use wtools::{api, WikiClient};
