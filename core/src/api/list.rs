@@ -19,7 +19,7 @@ pub async fn allpages<C: AsRef<WikiClient>>(
     if let Some(param) = parameter {
         if param == "all" {
             let mut temp: Vec<String> = Vec::new();
-            let ns_res = client
+            let ns_res: Value = client
                 .get_into_json(&[
                     ("action", "query"),
                     ("meta", "siteinfo"),
