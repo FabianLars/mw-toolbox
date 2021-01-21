@@ -3,7 +3,7 @@ use serde::de::DeserializeOwned;
 
 use crate::{
     error::ClientError,
-    response::login::{Login, Token},
+    response::{login::Login, token::Token},
 };
 
 #[derive(Clone, Debug, Default)]
@@ -115,17 +115,12 @@ impl WikiClient {
 
         match res {
             Login::Login { .. } => {}
-            Login::Error { code, info } => {
-                return Err(ClientError::LoginFailed(format!(
-                    "Code: {}\nInfo: {}",
-                    code, info
-                )))
+            Login::LoginError { error } => return Err(ClientError::LoginFailed(error.reason)),
+            Login::Error { errors } => {
+                return Err(ClientError::LoginFailed(format!("{:?}", errors)))
             }
-            Login::Warnings {} => {
-                return Err(ClientError::LoginFailed(
-                    "wiki returned a warning instead of an error. This can't be handled."
-                        .to_string(),
-                ))
+            Login::Warnings { warnings } => {
+                return Err(ClientError::LoginFailed(format!("{:?}", warnings)))
             }
         }
 
@@ -143,7 +138,11 @@ impl WikiClient {
     pub async fn get(&self, parameters: &[(&str, &str)]) -> Result<Response, ClientError> {
         self.client
             .get(&self.url)
-            .query(&[("format", "json"), ("formatversion", "2")])
+            .query(&[
+                ("format", "json"),
+                ("formatversion", "2"),
+                ("errorformat", "plaintext"),
+            ])
             .query(parameters)
             .send()
             .await
@@ -181,7 +180,11 @@ impl WikiClient {
 
         self.client
             .post(&self.url)
-            .query(&[("format", "json"), ("formatversion", "2")])
+            .query(&[
+                ("format", "json"),
+                ("formatversion", "2"),
+                ("errorformat", "plaintext"),
+            ])
             .form(&parameters)
             .send()
             .await
