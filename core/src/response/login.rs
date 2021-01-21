@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
-pub(crate) enum LoginRes {
+pub(crate) enum Login {
     #[serde(rename = "login")]
     Login {
         result: String,

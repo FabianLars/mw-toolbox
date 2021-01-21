@@ -3,7 +3,7 @@ use serde::de::DeserializeOwned;
 
 use crate::{
     error::ClientError,
-    response::login::{LoginRes, Token},
+    response::login::{Login, Token},
 };
 
 #[derive(Clone, Debug, Default)]
@@ -102,7 +102,7 @@ impl WikiClient {
             None => return Err(ClientError::TokenNotFound(format!("{:?}", json))),
         };
 
-        let res: LoginRes = self
+        let res: Login = self
             .post_into_json(&[
                 ("action", "login"),
                 ("lgname", &self.loginname),
@@ -114,14 +114,14 @@ impl WikiClient {
         log::debug!("login request completed: {:?}", res);
 
         match res {
-            LoginRes::Login { .. } => {}
-            LoginRes::Error { code, info } => {
+            Login::Login { .. } => {}
+            Login::Error { code, info } => {
                 return Err(ClientError::LoginFailed(format!(
                     "Code: {}\nInfo: {}",
                     code, info
                 )))
             }
-            LoginRes::Warnings {} => {
+            Login::Warnings {} => {
                 return Err(ClientError::LoginFailed(
                     "wiki returned a warning instead of an error. This can't be handled."
                         .to_string(),
