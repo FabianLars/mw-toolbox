@@ -6,8 +6,20 @@ use crate::{error::ApiError, WikiClient};
 
 type Result<T, E = ApiError> = core::result::Result<T, E>;
 
+pub async fn allcategories<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
+    get_from_api(client.as_ref(), "allcategories", "ac", None).await
+}
+
 pub async fn allimages<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
     get_from_api(client.as_ref(), "allimages", "ai", None).await
+}
+
+pub async fn allinfoboxes<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
+    get_from_api(client.as_ref(), "allinfoboxes", "", None).await
+}
+
+pub async fn alllinks<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
+    get_from_api(client.as_ref(), "alllinks", "al", None).await
 }
 
 pub async fn allpages<C: AsRef<WikiClient>>(
@@ -57,14 +69,6 @@ pub async fn allpages<C: AsRef<WikiClient>>(
     get_from_api(client, "allpages", "ap", None).await
 }
 
-pub async fn alllinks<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
-    get_from_api(client.as_ref(), "alllinks", "al", None).await
-}
-
-pub async fn allcategories<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
-    get_from_api(client.as_ref(), "allcategories", "ac", None).await
-}
-
 pub async fn backlinks<C: AsRef<WikiClient>>(
     client: C,
     parameter: Option<&str>,
@@ -102,31 +106,6 @@ pub async fn embeddedin<C: AsRef<WikiClient>>(
     get_from_api(client.as_ref(), "embeddedin", "ei", parameter).await
 }
 
-pub async fn imageusage<C: AsRef<WikiClient>>(
-    client: C,
-    parameter: Option<&str>,
-) -> Result<Vec<String>> {
-    if parameter.is_none() {
-        return Err(ApiError::InvalidInput(
-            "Missing iutitle: Title to search".to_string(),
-        ));
-    }
-    get_from_api(client.as_ref(), "imageusage", "iu", parameter).await
-}
-
-pub async fn search<C: AsRef<WikiClient>>(
-    client: C,
-    parameter: Option<&str>,
-) -> Result<Vec<String>> {
-    if parameter.is_none() {
-        return Err(ApiError::InvalidInput(
-            "Missing srsearch: Search for all page titles (or content) that has this value"
-                .to_string(),
-        ));
-    }
-    get_from_api(client.as_ref(), "search", "sr", parameter).await
-}
-
 pub async fn exturlusage<C: AsRef<WikiClient>>(client: C) -> Result<HashMap<String, Vec<String>>> {
     let api_res = get_from_api(client.as_ref(), "exturlusage", "eu", None).await?;
     let mut results: HashMap<String, Vec<String>> = HashMap::new();
@@ -140,6 +119,18 @@ pub async fn exturlusage<C: AsRef<WikiClient>>(client: C) -> Result<HashMap<Stri
     }
 
     Ok(results)
+}
+
+pub async fn imageusage<C: AsRef<WikiClient>>(
+    client: C,
+    parameter: Option<&str>,
+) -> Result<Vec<String>> {
+    if parameter.is_none() {
+        return Err(ApiError::InvalidInput(
+            "Missing iutitle: Title to search".to_string(),
+        ));
+    }
+    get_from_api(client.as_ref(), "imageusage", "iu", parameter).await
 }
 
 pub async fn protectedtitles<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
@@ -159,8 +150,17 @@ pub async fn querypage<C: AsRef<WikiClient>>(
     get_from_api(client.as_ref(), "querypage", "qp", parameter).await
 }
 
-pub async fn allinfoboxes<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
-    get_from_api(client.as_ref(), "allinfoboxes", "", None).await
+pub async fn search<C: AsRef<WikiClient>>(
+    client: C,
+    parameter: Option<&str>,
+) -> Result<Vec<String>> {
+    if parameter.is_none() {
+        return Err(ApiError::InvalidInput(
+            "Missing srsearch: Search for all page titles (or content) that has this value"
+                .to_string(),
+        ));
+    }
+    get_from_api(client.as_ref(), "search", "sr", parameter).await
 }
 
 async fn get_from_api(
