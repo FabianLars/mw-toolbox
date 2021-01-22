@@ -99,7 +99,6 @@ pub async fn categorymembers<C: AsRef<WikiClient>>(
     get_from_api(client.as_ref(), "categorymembers", "cm", parameter).await
 }
 
-// TODO: (fix this) Returns Error if no page embedds page. Do other functions do the same?
 pub async fn embeddedin<C: AsRef<WikiClient>>(
     client: C,
     parameter: Option<&str>,
