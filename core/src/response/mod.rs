@@ -6,16 +6,9 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct Error {
-    code: String,
-    text: String,
-    module: String,
-}
-
-#[derive(Debug, Deserialize)]
-pub(crate) struct Warning {
-    code: String,
-    text: String,
-    module: String,
+    pub(crate) code: String,
+    pub(crate) text: String,
+    pub(crate) module: String,
 }
 
 pub(crate) fn deserialize_string_from_number<'de, D>(deserializer: D) -> Result<String, D::Error>

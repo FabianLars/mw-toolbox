@@ -3,13 +3,17 @@ use std::collections::HashMap;
 use super::deserialize_string_from_number;
 use serde::Deserialize;
 
-//TODO: Error Handling like in Login responses
-
 #[derive(Debug, Deserialize)]
-pub(crate) struct List {
-    #[serde(rename = "continue")]
-    pub(crate) querycontinue: Option<Continue>,
-    pub(crate) query: Query,
+#[serde(untagged)]
+pub(crate) enum List {
+    Succes {
+        #[serde(rename = "continue")]
+        querycontinue: Option<Continue>,
+        query: Query,
+    },
+    Failure {
+        errors: Vec<super::Error>,
+    },
 }
 
 #[derive(Debug, Deserialize)]

@@ -16,7 +16,7 @@ pub(crate) enum Login {
     },
     // This can't actually happen
     Warnings {
-        warnings: Vec<super::Warning>,
+        warnings: Vec<super::Error>,
     },
 }
 
