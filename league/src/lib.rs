@@ -67,7 +67,7 @@ struct StoreChamp {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct ItemReq {
-    inventory_type: String,
+    //inventory_type: String,
     item_id: i32,
 }
 
@@ -81,7 +81,7 @@ struct Sale {
 
 #[derive(Deserialize)]
 struct Price {
-    cost: i32,
+    //cost: i32,
     currency: String,
     discount: f32,
 }
