@@ -13,90 +13,88 @@ use tokio::{fs::File, io::AsyncWriteExt};
 
 use wtools::{PathType, WikiClient};
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ChampSrc {
-    pub id: i32,
-    pub name: String,
+struct ChampSrc {
+    id: i32,
+    name: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct SummaryEntry {
-    pub id: i32,
-    pub name: String,
-    pub alias: String,
-    pub square_portrait_path: String,
-    pub roles: Vec<String>,
+struct SummaryEntry {
+    id: i32,
+    name: String,
+    alias: String,
+    //square_portrait_path: String,
+    //roles: Vec<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Champ {
-    pub name: String,
-    pub codename: String,
-    pub alias: String,
-    pub id: i32,
-    pub skins: Vec<Skin>,
+#[derive(Deserialize, Serialize)]
+struct Champ {
+    name: String,
+    codename: String,
+    alias: String,
+    id: i32,
+    skins: Vec<Skin>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Skin {
-    pub id: i32,
-    pub id_long: i32,
-    pub name: String,
+#[derive(Deserialize, Serialize)]
+struct Skin {
+    id: i32,
+    id_long: i32,
+    name: String,
 }
 
 #[cfg(feature = "riot-api")]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct Rotations {
     free_champion_ids: Vec<i32>,
     free_champion_ids_for_new_players: Vec<i32>,
-    max_new_player_level: i32,
+    //max_new_player_level: i32,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct StoreChamp {
-    pub inventory_type: String,
-    pub item_id: i32,
-    pub item_requirements: Option<Vec<ItemReq>>,
-    pub sale: Option<Sale>,
+struct StoreChamp {
+    inventory_type: String,
+    item_id: i32,
+    item_requirements: Option<Vec<ItemReq>>,
+    sale: Option<Sale>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ItemReq {
-    pub inventory_type: String,
-    pub item_id: i32,
+struct ItemReq {
+    inventory_type: String,
+    item_id: i32,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Sale {
-    pub end_date: String,
-    pub prices: Vec<Price>,
-    pub start_date: String,
+struct Sale {
+    end_date: String,
+    prices: Vec<Price>,
+    start_date: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Price {
-    pub cost: i32,
-    pub currency: String,
-    pub discount: f32,
+#[derive(Deserialize)]
+struct Price {
+    cost: i32,
+    currency: String,
+    discount: f32,
 }
 
-#[derive(Debug, Eq, PartialEq)]
 struct Angebot {
     champ: String,
     skin: Option<String>,
     discount: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
 struct Parse {
-    title: String,
+    //title: String,
     wikitext: String,
 }
 
