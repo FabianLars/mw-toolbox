@@ -186,12 +186,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let mut from: Vec<String> = Vec::new();
             let mut to: Vec<String> = Vec::new();
             file.lines().for_each(|l| {
-                let parts: Vec<String> = l.split(',').map(|x| x.to_string()).collect();
+                let parts: Vec<String> = l.split(';').map(|x| x.to_string()).collect();
                 from.push(parts[0].clone());
                 if parts.len() > 1 && !parts[1].is_empty() {
                     to.push(parts[1].clone());
                 }
             });
+
             let to = match to.is_empty() {
                 true => match replace {
                     None => None,
