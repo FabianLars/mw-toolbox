@@ -48,7 +48,9 @@ pub(crate) struct Query {
         alias = "embeddedimages",
         alias = "imageusage",
         alias = "exturlusage",
-        alias = "search"
+        alias = "search",
+        default,
+        skip_serializing_if = "Vec::is_empty"
     )]
     pub(crate) pages: Vec<Page>,
 }
