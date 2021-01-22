@@ -11,7 +11,7 @@ pub async fn delete_pages<C: AsRef<WikiClient>, S: AsRef<str>>(
         log::debug!(
             "{:?}",
             client
-                .post_into_json(&[
+                .post_into_text(&[
                     ("action", "delete"),
                     ("reason", "automated action"),
                     ("title", title.as_ref()),

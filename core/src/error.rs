@@ -2,8 +2,8 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum ApiError {
-    #[error("Invalid Operation on serde_json::Value {0}")]
-    InvalidJsonOperation(String),
+    #[error("API returned an error: {0}")]
+    MediaWikiError(String),
     #[error(transparent)]
     ClientError(#[from] ClientError),
     #[error(transparent)]

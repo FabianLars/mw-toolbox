@@ -1,7 +1,10 @@
 use reqwest::{Client, Response};
-use serde_json::Value;
+use serde::de::DeserializeOwned;
 
-use crate::error::ClientError;
+use crate::{
+    error::ClientError,
+    response::{login::Login, token::Token},
+};
 
 #[derive(Clone, Debug, Default)]
 pub struct WikiClient {
@@ -88,44 +91,37 @@ impl WikiClient {
     }
 
     pub async fn login(&mut self) -> Result<(), ClientError> {
-        let json: Value = self
+        let json: Token = self
             .get_into_json(&[("action", "query"), ("meta", "tokens"), ("type", "login")])
             .await?;
 
         log::debug!("this should contain the requested login token: {:?}", &json);
 
-        let token = match json["query"]["tokens"]["logintoken"].as_str() {
-            Some(s) => s.to_string(),
-            _ => return Err(ClientError::TokenNotFound(json.to_string())),
+        let token = match json.query.tokens.logintoken {
+            Some(t) => t,
+            None => return Err(ClientError::TokenNotFound(format!("{:?}", json))),
         };
 
-        //"login request completed: {:?}",
-
-        let res: Value = self
-            .post(&[
+        let res: Login = self
+            .post_into_json(&[
                 ("action", "login"),
                 ("lgname", &self.loginname),
                 ("lgpassword", &self.password),
                 ("lgtoken", &token),
             ])
-            .await?
-            .json()
             .await?;
 
-        log::debug!("login request completed: {:?}", res.to_string());
+        log::debug!("login request completed: {:?}", res);
 
-        match res["login"]["result"].as_str() {
-            Some(s) => {
-                if s == "Failed" {
-                    return Err(ClientError::LoginFailed(
-                        res["login"]["reason"]
-                            .as_str()
-                            .unwrap_or_else(|| "no reason provided")
-                            .to_string(),
-                    ));
-                }
+        match res {
+            Login::Login { .. } => {}
+            Login::LoginError { error } => return Err(ClientError::LoginFailed(error.reason)),
+            Login::Error { errors } => {
+                return Err(ClientError::LoginFailed(format!("{:?}", errors)))
             }
-            None => return Err(ClientError::LoginFailed("unknown error".to_string())),
+            Login::Warnings { warnings } => {
+                return Err(ClientError::LoginFailed(format!("{:?}", warnings)))
+            }
         }
 
         self.request_csrf_token().await
@@ -142,7 +138,11 @@ impl WikiClient {
     pub async fn get(&self, parameters: &[(&str, &str)]) -> Result<Response, ClientError> {
         self.client
             .get(&self.url)
-            .query(&[("format", "json"), ("formatversion", "2")])
+            .query(&[
+                ("format", "json"),
+                ("formatversion", "2"),
+                ("errorformat", "plaintext"),
+            ])
             .query(parameters)
             .send()
             .await
@@ -157,7 +157,10 @@ impl WikiClient {
             .map_err(|source| ClientError::TextConversionFailed { source })
     }
 
-    pub async fn get_into_json(&self, parameters: &[(&str, &str)]) -> Result<Value, ClientError> {
+    pub async fn get_into_json<T: DeserializeOwned>(
+        &self,
+        parameters: &[(&str, &str)],
+    ) -> Result<T, ClientError> {
         self.get(parameters)
             .await?
             .json()
@@ -177,7 +180,11 @@ impl WikiClient {
 
         self.client
             .post(&self.url)
-            .query(&[("format", "json"), ("formatversion", "2")])
+            .query(&[
+                ("format", "json"),
+                ("formatversion", "2"),
+                ("errorformat", "plaintext"),
+            ])
             .form(&parameters)
             .send()
             .await
@@ -192,7 +199,10 @@ impl WikiClient {
             .map_err(|source| ClientError::TextConversionFailed { source })
     }
 
-    pub async fn post_into_json(&self, parameters: &[(&str, &str)]) -> Result<Value, ClientError> {
+    pub async fn post_into_json<T: DeserializeOwned>(
+        &self,
+        parameters: &[(&str, &str)],
+    ) -> Result<T, ClientError> {
         self.post(parameters)
             .await?
             .json()
@@ -201,22 +211,22 @@ impl WikiClient {
     }
 
     async fn request_csrf_token(&mut self) -> Result<(), ClientError> {
-        let res = self
+        let res: Token = self
             .get_into_json(&[("action", "query"), ("meta", "tokens"), ("type", "csrf")])
             .await?;
 
         log::debug!("this should contain the requested csrf token: {:?}", &res);
 
-        let token = res["query"]["tokens"]["csrftoken"]
-            .as_str()
-            .ok_or_else(|| ClientError::TokenNotFound(res.to_string()))?;
-
-        if token == "+\\\\" {
-            return Err(ClientError::TokenNotFound(
-                "token was '+\\\\' aka empty".to_string(),
-            ));
+        if let Some(token) = res.query.tokens.csrftoken {
+            if token.as_str() == "+\\\\" {
+                return Err(ClientError::TokenNotFound(
+                    "token was '+\\\\' aka empty".to_string(),
+                ));
+            }
+            self.csrf_token = token.to_string();
+        } else {
+            return Err(ClientError::TokenNotFound(format!("{:?}", res)));
         }
-        self.csrf_token = token.to_string();
 
         Ok(())
     }

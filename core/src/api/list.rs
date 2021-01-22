@@ -1,13 +1,27 @@
 use std::collections::HashMap;
 
-use serde_json::Value;
-
-use crate::{error::ApiError, WikiClient};
+use crate::{
+    error::ApiError,
+    response::list::{List, Namespaces, Querypage},
+    WikiClient,
+};
 
 type Result<T, E = ApiError> = core::result::Result<T, E>;
 
+pub async fn allcategories<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
+    get_from_api(client.as_ref(), "allcategories", "ac", None).await
+}
+
 pub async fn allimages<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
     get_from_api(client.as_ref(), "allimages", "ai", None).await
+}
+
+pub async fn allinfoboxes<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
+    get_from_api(client.as_ref(), "allinfoboxes", "", None).await
+}
+
+pub async fn alllinks<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
+    get_from_api(client.as_ref(), "alllinks", "al", None).await
 }
 
 pub async fn allpages<C: AsRef<WikiClient>>(
@@ -19,31 +33,34 @@ pub async fn allpages<C: AsRef<WikiClient>>(
     if let Some(param) = parameter {
         if param == "all" {
             let mut temp: Vec<String> = Vec::new();
-            let ns_res = client
+            let ns_res: Namespaces = client
                 .get_into_json(&[
                     ("action", "query"),
                     ("meta", "siteinfo"),
                     ("siprop", "namespaces"),
                 ])
                 .await?;
-            if let Some(namespaces) = ns_res["query"]["namespaces"].as_object() {
-                for ns in namespaces.keys() {
-                    temp.append(
-                        &mut get_from_api(
-                            client,
-                            "allpages",
-                            "ap",
-                            Some(&format!("apnamespace={}", ns)),
-                        )
-                        .await?,
-                    );
+            for ns in ns_res.query.namespaces.keys() {
+                let num = ns.parse::<i32>();
+                match num {
+                    Ok(i) => {
+                        if i < 0 {
+                            continue;
+                        }
+                    }
+                    Err(_) => {}
                 }
-                return Ok(temp);
-            } else {
-                return Err(ApiError::InvalidJsonOperation(
-                    "Not able to get wiki namespaces".to_string(),
-                ));
+                temp.append(
+                    &mut get_from_api(
+                        client,
+                        "allpages",
+                        "ap",
+                        Some(&format!("apnamespace={}", ns)),
+                    )
+                    .await?,
+                );
             }
+            return Ok(temp);
         } else {
             return get_from_api(
                 client,
@@ -55,14 +72,6 @@ pub async fn allpages<C: AsRef<WikiClient>>(
         }
     }
     get_from_api(client, "allpages", "ap", None).await
-}
-
-pub async fn alllinks<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
-    get_from_api(client.as_ref(), "alllinks", "al", None).await
-}
-
-pub async fn allcategories<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
-    get_from_api(client.as_ref(), "allcategories", "ac", None).await
 }
 
 pub async fn backlinks<C: AsRef<WikiClient>>(
@@ -102,31 +111,6 @@ pub async fn embeddedin<C: AsRef<WikiClient>>(
     get_from_api(client.as_ref(), "embeddedin", "ei", parameter).await
 }
 
-pub async fn imageusage<C: AsRef<WikiClient>>(
-    client: C,
-    parameter: Option<&str>,
-) -> Result<Vec<String>> {
-    if parameter.is_none() {
-        return Err(ApiError::InvalidInput(
-            "Missing iutitle: Title to search".to_string(),
-        ));
-    }
-    get_from_api(client.as_ref(), "imageusage", "iu", parameter).await
-}
-
-pub async fn search<C: AsRef<WikiClient>>(
-    client: C,
-    parameter: Option<&str>,
-) -> Result<Vec<String>> {
-    if parameter.is_none() {
-        return Err(ApiError::InvalidInput(
-            "Missing srsearch: Search for all page titles (or content) that has this value"
-                .to_string(),
-        ));
-    }
-    get_from_api(client.as_ref(), "search", "sr", parameter).await
-}
-
 pub async fn exturlusage<C: AsRef<WikiClient>>(client: C) -> Result<HashMap<String, Vec<String>>> {
     let api_res = get_from_api(client.as_ref(), "exturlusage", "eu", None).await?;
     let mut results: HashMap<String, Vec<String>> = HashMap::new();
@@ -140,6 +124,18 @@ pub async fn exturlusage<C: AsRef<WikiClient>>(client: C) -> Result<HashMap<Stri
     }
 
     Ok(results)
+}
+
+pub async fn imageusage<C: AsRef<WikiClient>>(
+    client: C,
+    parameter: Option<&str>,
+) -> Result<Vec<String>> {
+    if parameter.is_none() {
+        return Err(ApiError::InvalidInput(
+            "Missing iutitle: Title to search".to_string(),
+        ));
+    }
+    get_from_api(client.as_ref(), "imageusage", "iu", parameter).await
 }
 
 pub async fn protectedtitles<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
@@ -159,8 +155,17 @@ pub async fn querypage<C: AsRef<WikiClient>>(
     get_from_api(client.as_ref(), "querypage", "qp", parameter).await
 }
 
-pub async fn allinfoboxes<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
-    get_from_api(client.as_ref(), "allinfoboxes", "", None).await
+pub async fn search<C: AsRef<WikiClient>>(
+    client: C,
+    parameter: Option<&str>,
+) -> Result<Vec<String>> {
+    if parameter.is_none() {
+        return Err(ApiError::InvalidInput(
+            "Missing srsearch: Search for all page titles (or content) that has this value"
+                .to_string(),
+        ));
+    }
+    get_from_api(client.as_ref(), "search", "sr", parameter).await
 }
 
 async fn get_from_api(
@@ -172,9 +177,9 @@ async fn get_from_api(
     let mut has_next: bool = true;
     let mut continue_from = String::new();
     let mut results: Vec<String> = Vec::new();
-    let getter = match short {
-        "ac" => "category",
-        _ => "title",
+    let cont = match short {
+        "qp" | "sr" => "offset",
+        _ => "continue",
     };
     let param = match parameter {
         Some(p) => {
@@ -184,83 +189,77 @@ async fn get_from_api(
         None => ("", ""),
     };
 
-    while has_next {
-        let json: Value = api
-            .get_into_json(&[
-                ("action", "query"),
-                ("list", long),
-                (&format!("{}limit", short), "5000"),
-                (
-                    &format!(
-                        "{}continue",
-                        if continue_from.is_empty() { "" } else { short }
-                    ),
-                    &continue_from,
-                ),
-                param,
-            ])
-            .await?;
-        if json["query"][long].is_object() {
-            for (_, x) in json["query"][long]
-                .as_object()
-                .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
-                .iter()
-            {
-                results.push(
-                    x[getter]
-                        .as_str()
-                        .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
-                        .to_string(),
-                )
-            }
-        } else if json["query"][long].is_array() {
-            match short {
-                "eu" => {
-                    for x in json["query"][long]
-                        .as_array()
-                        .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
-                        .iter()
-                    {
-                        results.push(format!(
-                            "{}~URL~{}",
-                            x["title"]
-                                .as_str()
-                                .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
-                                .to_string(),
-                            x["url"]
-                                .as_str()
-                                .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
-                                .to_string()
-                        ))
-                    }
+    match short {
+        "qp" => {
+            while has_next {
+                let json: Querypage = api
+                    .get_into_json(&[
+                        ("action", "query"),
+                        ("list", long),
+                        ("qplimit", "500"),
+                        ("qpoffset", &continue_from),
+                        param,
+                    ])
+                    .await?;
+
+                for page in json.query.querypage.results {
+                    results.push(page.title);
                 }
-                _ => {
-                    for x in json["query"][long]
-                        .as_array()
-                        .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
-                        .iter()
-                    {
-                        results.push(
-                            x[getter]
-                                .as_str()
-                                .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
-                                .to_string(),
-                        );
-                    }
-                }
+
+                if let Some(c) = json.querycontinue {
+                    continue_from = c.from
+                } else {
+                    has_next = false
+                };
             }
         }
+        _ => {
+            while has_next {
+                let json: List = api
+                    .get_into_json(&[
+                        ("action", "query"),
+                        ("list", long),
+                        (&format!("{}limit", short), "5000"),
+                        (
+                            &format!(
+                                "{}{}",
+                                if continue_from.is_empty() { "" } else { short },
+                                cont
+                            ),
+                            &continue_from,
+                        ),
+                        param,
+                    ])
+                    .await?;
 
-        match json.get("continue") {
-            None => has_next = false,
-            Some(_) => {
-                continue_from = match json["continue"][format!("{}continue", short)].as_str() {
-                    Some(x) => x.to_string(),
-                    None => json["continue"][format!("{}continue", short)]
-                        .as_i64()
-                        .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
-                        .to_string(),
-                };
+                match json {
+                    List::Succes {
+                        querycontinue,
+                        query,
+                    } => {
+                        for page in query.pages {
+                            match short {
+                                "eu" => {
+                                    results.push(format!(
+                                        "{}~URL~{}",
+                                        page.title,
+                                        page.url.unwrap()
+                                    ));
+                                }
+                                _ => results.push(page.title),
+                            }
+                        }
+
+                        if let Some(c) = querycontinue {
+                            continue_from = c.from
+                        } else {
+                            has_next = false
+                        };
+                    }
+                    List::Failure { errors } => {
+                        return Err(ApiError::MediaWikiError(errors[0].code.clone()))
+                    }
+                }
             }
         }
     }

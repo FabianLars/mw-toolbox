@@ -9,90 +9,93 @@ use reqwest::header::{HeaderMap, ACCEPT, AUTHORIZATION};
 use reqwest::Client;
 use select::{document::Document, predicate::Class};
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use tokio::{fs::File, io::AsyncWriteExt};
 
 use wtools::{PathType, WikiClient};
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ChampSrc {
-    pub id: i32,
-    pub name: String,
+struct ChampSrc {
+    id: i32,
+    name: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct SummaryEntry {
-    pub id: i32,
-    pub name: String,
-    pub alias: String,
-    pub square_portrait_path: String,
-    pub roles: Vec<String>,
+struct SummaryEntry {
+    id: i32,
+    name: String,
+    alias: String,
+    //square_portrait_path: String,
+    //roles: Vec<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Champ {
-    pub name: String,
-    pub codename: String,
-    pub alias: String,
-    pub id: i32,
-    pub skins: Vec<Skin>,
+#[derive(Deserialize, Serialize)]
+struct Champ {
+    name: String,
+    codename: String,
+    alias: String,
+    id: i32,
+    skins: Vec<Skin>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Skin {
-    pub id: i32,
-    pub id_long: i32,
-    pub name: String,
+#[derive(Deserialize, Serialize)]
+struct Skin {
+    id: i32,
+    id_long: i32,
+    name: String,
 }
 
 #[cfg(feature = "riot-api")]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct Rotations {
     free_champion_ids: Vec<i32>,
     free_champion_ids_for_new_players: Vec<i32>,
-    max_new_player_level: i32,
+    //max_new_player_level: i32,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct StoreChamp {
-    pub inventory_type: String,
-    pub item_id: i32,
-    pub item_requirements: Option<Vec<ItemReq>>,
-    pub sale: Option<Sale>,
+struct StoreChamp {
+    inventory_type: String,
+    item_id: i32,
+    item_requirements: Option<Vec<ItemReq>>,
+    sale: Option<Sale>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ItemReq {
-    pub inventory_type: String,
-    pub item_id: i32,
+struct ItemReq {
+    //inventory_type: String,
+    item_id: i32,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Sale {
-    pub end_date: String,
-    pub prices: Vec<Price>,
-    pub start_date: String,
+struct Sale {
+    end_date: String,
+    prices: Vec<Price>,
+    start_date: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Price {
-    pub cost: i32,
-    pub currency: String,
-    pub discount: f32,
+#[derive(Deserialize)]
+struct Price {
+    //cost: i32,
+    currency: String,
+    discount: f32,
 }
 
-#[derive(Debug, Eq, PartialEq)]
 struct Angebot {
     champ: String,
     skin: Option<String>,
     discount: String,
+}
+
+#[derive(Deserialize)]
+struct Parse {
+    //title: String,
+    wikitext: String,
 }
 
 pub async fn champs() -> Result<()> {
@@ -466,17 +469,16 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         Ok::<(), Error>(())
     }.map_err(|_| anyhow!("Can't get universes.json"));
     let fut_champion = async {
-        let res: Value = ext_client
+        let patches: Vec<String> = ext_client
             .get("https://ddragon.leagueoflegends.com/api/versions.json")
             .send()
             .await?
             .json()
             .await?;
-        let patch_id = res.get(0).unwrap().as_str().unwrap();
         champion = ext_client
             .get(&format!(
                 "http://ddragon.leagueoflegends.com/cdn/{}/data/de_DE/champion.json",
-                patch_id
+                patches[0]
             ))
             .send()
             .await?
@@ -720,10 +722,10 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let resp = resp?.text().await?;
     let document = Document::from(resp.as_str());
 
-    let champdata = resp2?;
-    let champdata: String = champdata["parse"]["wikitext"].as_str().unwrap().to_string();
+    let champdata: HashMap<String, Parse> = resp2?;
+    let champdata = &champdata.get("parse").unwrap().wikitext;
     let champdata_regex = Regex::new("(?m)\\[\"op_positions\"] *= .+,$")?;
-    let champdata_iter = champdata_regex.split(&champdata);
+    let champdata_iter = champdata_regex.split(champdata);
 
     for node in document.find(Class("champion-index__champion-item")) {
         let mut temp_positions: Vec<String> = Vec::new();

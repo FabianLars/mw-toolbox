@@ -1,4 +1,4 @@
-use crate::{error::ApiError, WikiClient};
+use crate::{error::ApiError, response::rename::Rename, WikiClient};
 
 pub async fn rename<C: AsRef<WikiClient>>(
     client: C,
@@ -51,23 +51,31 @@ pub async fn rename<C: AsRef<WikiClient>>(
     }
 
     for (x, y) in from.iter().zip(actual_destination.iter()) {
-        // TODO: Handle response
-        println!("{} => MOVED TO => {}", x, y);
+        let response: Rename = client
+            .post_into_json(&[
+                ("action", "move"),
+                ("from", x),
+                ("to", y),
+                ("reason", "automated action"),
+                ("movetalk", "1"),
+                ("movesubpages", "1"),
+                ("ignorewarnings", "1"),
+            ])
+            .await?;
 
-        log::debug!(
-            "{:?}",
-            client
-                .post_into_text(&[
-                    ("action", "move"),
-                    ("from", x),
-                    ("to", y),
-                    ("reason", "automated action"),
-                    ("movetalk", "1"),
-                    ("movesubpages", "1"),
-                    //("ignorewarnings", ""),
-                ])
-                .await?
-        );
+        log::debug!("{:?}", response);
+
+        match response {
+            Rename::Succes { moved } => {
+                println!("{} => MOVED TO => {}", moved.from, moved.to);
+            }
+            Rename::Failure { errors } => {
+                println!(
+                    "Error moving {} to {}: {}\nProceeding with next pages...",
+                    x, y, errors[0].code
+                );
+            }
+        }
 
         tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
     }
@@ -75,6 +83,7 @@ pub async fn rename<C: AsRef<WikiClient>>(
     Ok(())
 }
 
+#[derive(Debug)]
 pub enum Destination {
     Plain(Vec<String>),
     Replace((String, String)),
