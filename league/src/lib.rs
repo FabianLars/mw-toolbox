@@ -9,7 +9,6 @@ use reqwest::header::{HeaderMap, ACCEPT, AUTHORIZATION};
 use reqwest::Client;
 use select::{document::Document, predicate::Class};
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use tokio::{fs::File, io::AsyncWriteExt};
 
 use wtools::{PathType, WikiClient};
@@ -466,17 +465,16 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         Ok::<(), Error>(())
     }.map_err(|_| anyhow!("Can't get universes.json"));
     let fut_champion = async {
-        let res: Value = ext_client
+        let patches: Vec<String> = ext_client
             .get("https://ddragon.leagueoflegends.com/api/versions.json")
             .send()
             .await?
             .json()
             .await?;
-        let patch_id = res.get(0).unwrap().as_str().unwrap();
         champion = ext_client
             .get(&format!(
                 "http://ddragon.leagueoflegends.com/cdn/{}/data/de_DE/champion.json",
-                patch_id
+                patches[0]
             ))
             .send()
             .await?
@@ -702,6 +700,12 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     Ok(())
 }
 
+#[derive(Debug, Deserialize)]
+struct Parse {
+    title: String,
+    wikitext: String,
+}
+
 pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let client = client.as_ref();
     let opgg = "https://euw.op.gg/champion/statistics";
@@ -720,10 +724,10 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let resp = resp?.text().await?;
     let document = Document::from(resp.as_str());
 
-    let champdata: Value = resp2?;
-    let champdata: String = champdata["parse"]["wikitext"].as_str().unwrap().to_string();
+    let champdata: HashMap<String, Parse> = resp2?;
+    let champdata = &champdata.get("parse").unwrap().wikitext;
     let champdata_regex = Regex::new("(?m)\\[\"op_positions\"] *= .+,$")?;
-    let champdata_iter = champdata_regex.split(&champdata);
+    let champdata_iter = champdata_regex.split(champdata);
 
     for node in document.find(Class("champion-index__champion-item")) {
         let mut temp_positions: Vec<String> = Vec::new();
