@@ -94,6 +94,12 @@ struct Angebot {
     discount: String,
 }
 
+#[derive(Debug, Deserialize)]
+struct Parse {
+    title: String,
+    wikitext: String,
+}
+
 pub async fn champs() -> Result<()> {
     let client = Client::new();
 
@@ -698,12 +704,6 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     )?;
 
     Ok(())
-}
-
-#[derive(Debug, Deserialize)]
-struct Parse {
-    title: String,
-    wikitext: String,
 }
 
 pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
