@@ -1,8 +1,10 @@
 use std::collections::HashMap;
 
-use serde_json::Value;
-
-use crate::{error::ApiError, WikiClient};
+use crate::{
+    error::ApiError,
+    response::list::{List, Namespaces, Querypage},
+    WikiClient,
+};
 
 type Result<T, E = ApiError> = core::result::Result<T, E>;
 
@@ -31,31 +33,34 @@ pub async fn allpages<C: AsRef<WikiClient>>(
     if let Some(param) = parameter {
         if param == "all" {
             let mut temp: Vec<String> = Vec::new();
-            let ns_res: Value = client
+            let ns_res: Namespaces = client
                 .get_into_json(&[
                     ("action", "query"),
                     ("meta", "siteinfo"),
                     ("siprop", "namespaces"),
                 ])
                 .await?;
-            if let Some(namespaces) = ns_res["query"]["namespaces"].as_object() {
-                for ns in namespaces.keys() {
-                    temp.append(
-                        &mut get_from_api(
-                            client,
-                            "allpages",
-                            "ap",
-                            Some(&format!("apnamespace={}", ns)),
-                        )
-                        .await?,
-                    );
+            for ns in ns_res.query.namespaces.keys() {
+                let num = ns.parse::<i32>();
+                match num {
+                    Ok(i) => {
+                        if i < 0 {
+                            continue;
+                        }
+                    }
+                    Err(_) => {}
                 }
-                return Ok(temp);
-            } else {
-                return Err(ApiError::InvalidJsonOperation(
-                    "Not able to get wiki namespaces".to_string(),
-                ));
+                temp.append(
+                    &mut get_from_api(
+                        client,
+                        "allpages",
+                        "ap",
+                        Some(&format!("apnamespace={}", ns)),
+                    )
+                    .await?,
+                );
             }
+            return Ok(temp);
         } else {
             return get_from_api(
                 client,
@@ -94,6 +99,7 @@ pub async fn categorymembers<C: AsRef<WikiClient>>(
     get_from_api(client.as_ref(), "categorymembers", "cm", parameter).await
 }
 
+// TODO: (fix this) Returns Error if no page embedds page. Do other functions do the same?
 pub async fn embeddedin<C: AsRef<WikiClient>>(
     client: C,
     parameter: Option<&str>,
@@ -172,9 +178,9 @@ async fn get_from_api(
     let mut has_next: bool = true;
     let mut continue_from = String::new();
     let mut results: Vec<String> = Vec::new();
-    let getter = match short {
-        "ac" => "category",
-        _ => "title",
+    let cont = match short {
+        "qp" | "sr" => "offset",
+        _ => "continue",
     };
     let param = match parameter {
         Some(p) => {
@@ -184,82 +190,62 @@ async fn get_from_api(
         None => ("", ""),
     };
 
-    while has_next {
-        let json: Value = api
-            .get_into_json(&[
-                ("action", "query"),
-                ("list", long),
-                (&format!("{}limit", short), "5000"),
-                (
-                    &format!(
-                        "{}continue",
-                        if continue_from.is_empty() { "" } else { short }
-                    ),
-                    &continue_from,
-                ),
-                param,
-            ])
-            .await?;
-        if json["query"][long].is_object() {
-            for (_, x) in json["query"][long]
-                .as_object()
-                .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
-                .iter()
-            {
-                results.push(
-                    x[getter]
-                        .as_str()
-                        .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
-                        .to_string(),
-                )
-            }
-        } else if json["query"][long].is_array() {
-            match short {
-                "eu" => {
-                    for x in json["query"][long]
-                        .as_array()
-                        .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
-                        .iter()
-                    {
-                        results.push(format!(
-                            "{}~URL~{}",
-                            x["title"]
-                                .as_str()
-                                .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
-                                .to_string(),
-                            x["url"]
-                                .as_str()
-                                .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
-                                .to_string()
-                        ))
-                    }
+    match short {
+        "qp" => {
+            while has_next {
+                let json: Querypage = api
+                    .get_into_json(&[
+                        ("action", "query"),
+                        ("list", long),
+                        ("qplimit", "500"),
+                        ("qpoffset", &continue_from),
+                        param,
+                    ])
+                    .await?;
+
+                for page in json.query.querypage.results {
+                    results.push(page.title);
                 }
-                _ => {
-                    for x in json["query"][long]
-                        .as_array()
-                        .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
-                        .iter()
-                    {
-                        results.push(
-                            x[getter]
-                                .as_str()
-                                .ok_or_else(|| ApiError::InvalidJsonOperation(x.to_string()))?
-                                .to_string(),
-                        );
-                    }
-                }
+
+                if let Some(c) = json.querycontinue {
+                    continue_from = c.from
+                } else {
+                    has_next = false
+                };
             }
         }
+        _ => {
+            while has_next {
+                let json: List = api
+                    .get_into_json(&[
+                        ("action", "query"),
+                        ("list", long),
+                        (&format!("{}limit", short), "5000"),
+                        (
+                            &format!(
+                                "{}{}",
+                                if continue_from.is_empty() { "" } else { short },
+                                cont
+                            ),
+                            &continue_from,
+                        ),
+                        param,
+                    ])
+                    .await?;
 
-        match json.get("continue") {
-            None => has_next = false,
-            Some(_) => {
-                continue_from = match json["continue"][format!("{}continue", short)].as_str() {
-                    Some(x) => x.to_string(),
-                    None => json["continue"][format!("{}continue", short)]
-                        .as_i64()
-                        .ok_or_else(|| ApiError::InvalidJsonOperation(json.to_string()))?
-                        .to_string(),
+                for page in json.query.pages {
+                    match short {
+                        "eu" => {
+                            results.push(format!("{}~URL~{}", page.title, page.url.unwrap()));
+                        }
+                        _ => results.push(page.title),
+                    }
+                }
+
+                if let Some(c) = json.querycontinue {
+                    continue_from = c.from
+                } else {
+                    has_next = false
                 };
             }
         }

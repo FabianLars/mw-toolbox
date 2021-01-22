@@ -2,7 +2,7 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum ApiError {
-    #[error("Invalid Operation on serde_json::Value {0}")]
+    #[error("Invalid serde/json Operation: {0}")]
     InvalidJsonOperation(String),
     #[error(transparent)]
     ClientError(#[from] ClientError),
