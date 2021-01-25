@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Account, Delete, List, Move, Other } from './pages';
+import { Account, Delete, List, Move, Purge } from './pages';
 
 const App = () => {
     // useRef to make useEffect skip the change from useState
@@ -33,7 +33,7 @@ const App = () => {
                 <Route path="/Delete" element={<Delete isOnline={user.isOnline} />} />
                 <Route path="/List" element={<List isOnline={user.isOnline} />} />
                 <Route path="/Move" element={<Move isOnline={user.isOnline} />} />
-                <Route path="/Other" element={<Other isOnline={user.isOnline} />} />
+                <Route path="/Purge" element={<Purge isOnline={user.isOnline} />} />
             </Routes>
         </Router>
     );

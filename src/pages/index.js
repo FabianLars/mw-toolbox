@@ -2,6 +2,6 @@ import Account from './Account';
 import Delete from './Delete';
 import List from './List';
 import Move from './Move';
-import Other from './Other';
+import Purge from './Purge';
 
-export { Account, Delete, List, Move, Other }
+export { Account, Delete, List, Move, Purge };
