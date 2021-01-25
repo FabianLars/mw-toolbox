@@ -3,9 +3,14 @@ use std::path::PathBuf;
 use crate::WikiClient;
 use crate::{error::ApiError, PathType};
 
-pub async fn upload<C: AsRef<WikiClient>>(client: C, path: PathType) -> Result<(), ApiError> {
+pub async fn upload<C: AsRef<WikiClient>>(
+    client: C,
+    path: PathType,
+    text: Option<String>,
+) -> Result<(), ApiError> {
     let client = client.as_ref();
     let mut files: Vec<PathBuf> = Vec::new();
+    let text = text.unwrap_or_else(|| "".to_string());
 
     match path {
         PathType::File(x) => {
@@ -60,7 +65,7 @@ pub async fn upload<C: AsRef<WikiClient>>(client: C, path: PathType) -> Result<(
                 .send_multipart(
                     &[
                         ("action", "upload"),
-                        ("text", "{{Dateienkategorisierung}}"),
+                        ("text", &text),
                         ("format", "json"),
                         ("formatversion", "2"),
                         ("filename", &file_name),

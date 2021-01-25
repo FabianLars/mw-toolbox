@@ -50,6 +50,9 @@ enum Subcommand {
     Upload {
         #[clap(parse(from_os_str))]
         input: PathBuf,
+
+        #[clap(short, long)]
+        text: Option<String>,
     },
 
     #[cfg(feature = "league-wiki")]
@@ -212,8 +215,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let titles: Vec<&str> = contents.lines().collect();
             api::purge::purge(&client, &titles, recursive).await?
         }
-        Subcommand::Upload { input } => {
-            api::upload::upload(&client, PathType::from(input)?).await?
+        Subcommand::Upload { input, text } => {
+            api::upload::upload(&client, PathType::from(input)?, text).await?
         }
         #[cfg(feature = "league-wiki")]
         Subcommand::League { league_type, path } => match league_type {
