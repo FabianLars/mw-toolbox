@@ -58,7 +58,7 @@ const Purge = ({ isOnline }) => {
                     isDisabled={!isOnline}
                     onClick={() => purgePages(false)}
                     loadingText="Purging"
-                    title="Clear server caches"
+                    title={!isOnline ? 'Please login first!' : 'Clear server caches. This might take a while!'}
                     mx={2}
                 >
                     Purge all
@@ -68,7 +68,7 @@ const Purge = ({ isOnline }) => {
                     isDisabled={!isOnline}
                     onClick={() => purgePages(true)}
                     loadingText="Saving nulledits"
-                    title="Do a nulledit on every page. This might take a while!"
+                    title={!isOnline ? 'Please login first!' : 'Do a nulledit on every page. This might take a while!'}
                     mx={2}
                 >
                     Nulledit all

@@ -47,7 +47,13 @@ const Delete = ({ isOnline }) => {
                 mb={4}
             />
             <Box mb={4}>
-                <Button isLoading={isLoading} isDisabled={!isOnline} onClick={deletePages} loadingText="Deleting">
+                <Button
+                    isLoading={isLoading}
+                    isDisabled={!isOnline}
+                    onClick={deletePages}
+                    loadingText="Deleting"
+                    title={!isOnline ? 'Please login first!' : 'This might take a while!'}
+                >
                     Delete all
                 </Button>
             </Box>
