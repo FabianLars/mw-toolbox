@@ -41,8 +41,11 @@ const Header = ({ isDisabled, isOnline }) => {
             <MenuItem isDisabled={isDisabled} to="/Move">
                 Move
             </MenuItem>
-            <MenuItem isDisabled={isDisabled} to="/Purge" isLast>
+            <MenuItem isDisabled={isDisabled} to="/Purge">
                 Purge
+            </MenuItem>
+            <MenuItem isDisabled={isDisabled} to="/Upload" isLast>
+                Upload
             </MenuItem>
             <Spacer />
             <Flex justify="center" h="100%" align="center">
