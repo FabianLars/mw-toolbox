@@ -1,40 +1,21 @@
-use std::path::PathBuf;
+use std::path::Path;
 
+use crate::error::ApiError;
 use crate::WikiClient;
-use crate::{error::ApiError, PathType};
 
-pub async fn upload<C: AsRef<WikiClient>>(
+pub async fn upload<C: AsRef<WikiClient>, P: AsRef<Path>>(
     client: C,
-    path: PathType,
+    files: Vec<P>,
     text: Option<String>,
 ) -> Result<(), ApiError> {
     let client = client.as_ref();
-    let mut files: Vec<PathBuf> = Vec::new();
     let text = text.unwrap_or_else(|| "".to_string());
 
-    match path {
-        PathType::File(x) => {
-            files.push(x);
-        }
-        PathType::Files(v) => files = v,
-        PathType::Folder(x) => {
-            let mut entries = tokio::fs::read_dir(x).await?;
-            while let Some(entry) = entries.next_entry().await? {
-                files.push(entry.path());
-            }
-        }
-    }
+    for file in files {
+        let file = file.as_ref();
+        let file_name = file.display().to_string();
 
-    for f in files {
-        let file_name = f
-            .file_name()
-            .unwrap()
-            .to_os_string()
-            .to_str()
-            .unwrap()
-            .to_string();
-
-        let mime = match f.extension().unwrap().to_str().unwrap() {
+        let mime = match file.extension().unwrap().to_str().unwrap() {
             "png" => "image/png",
             "gif" => "image/gif",
             "jpg" | "jpeg" => "image/jpeg",
@@ -53,7 +34,7 @@ pub async fn upload<C: AsRef<WikiClient>>(
             "ogv" => "video/ogg",
             _ => "image/png",
         };
-        let contents = tokio::fs::read(f).await?;
+        let contents = tokio::fs::read(file).await?;
         let part = reqwest::multipart::Part::bytes(contents)
             .file_name(file_name.clone())
             .mime_str(mime)?;

@@ -6,7 +6,7 @@ use api::rename::Destination;
 use clap::Clap;
 use tokio::{fs, io::AsyncWriteExt};
 
-use wtools::{api, PathType, WikiClient};
+use wtools::{api, WikiClient};
 
 #[derive(Clap, Debug, PartialEq)]
 enum Subcommand {
@@ -216,7 +216,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             api::purge::purge(&client, &titles, recursive).await?
         }
         Subcommand::Upload { input, text } => {
-            api::upload::upload(&client, PathType::from(input)?, text).await?
+            let mut files: Vec<PathBuf> = Vec::new();
+            if input.is_file() {
+                files.push(input);
+            } else if input.is_dir() {
+                for entry in input.read_dir().expect("read_dir call failed") {
+                    match entry {
+                        Ok(entry) => files.push(entry.path()),
+                        Err(err) => println!("Invalid path in dir: {:?}\nProceeding...", err),
+                    }
+                }
+            } else {
+                panic!(format!("Invalid path given!: {}", input.display()))
+            }
+            api::upload::upload(&client, files, text).await?
         }
         #[cfg(feature = "league-wiki")]
         Subcommand::League { league_type, path } => match league_type {
@@ -224,9 +237,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             LeagueType::Discount | LeagueType::Discounts => {
                 league::discounts(
                     &client,
-                    PathType::from(path.unwrap_or(PathBuf::from(
+                    path.unwrap_or(PathBuf::from(
                         "E:/Spiele/Riot Games/League of Legends/lockfile",
-                    )))?,
+                    )),
                 )
                 .await?
             }

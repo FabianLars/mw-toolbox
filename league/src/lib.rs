@@ -1,6 +1,6 @@
 #![forbid(unsafe_code)]
 
-use std::collections::HashMap;
+use std::{collections::HashMap, path::PathBuf};
 
 use anyhow::{anyhow, Error, Result};
 use futures::{join, prelude::*, try_join};
@@ -11,7 +11,7 @@ use select::{document::Document, predicate::Class};
 use serde::{Deserialize, Serialize};
 use tokio::{fs::File, io::AsyncWriteExt};
 
-use wtools::{PathType, WikiClient};
+use wtools::WikiClient;
 
 #[derive(Default, Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -152,9 +152,9 @@ pub async fn champs() -> Result<()> {
     Ok(())
 }
 
-pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathType) -> Result<()> {
+pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result<()> {
     let client = client.as_ref();
-    let lockfile = std::fs::read_to_string(path.file_path()?).unwrap();
+    let lockfile = std::fs::read_to_string(path).unwrap();
     // 0: "LeagueClient", 1: PID, 2: Port, 3: Auth, 4: Protocol
     let contents = lockfile.split(':').collect::<Vec<_>>();
     let port = contents[2];
