@@ -234,8 +234,9 @@ impl WikiClient {
     pub async fn send_multipart(
         &self,
         parameters: &[(&str, &str)],
-        form: reqwest::multipart::Form,
+        file_part: reqwest::multipart::Part,
     ) -> Result<Response, ClientError> {
+        let mut form = reqwest::multipart::Form::new().part("file", file_part);
         let parameters = [
             parameters,
             &[
@@ -246,9 +247,11 @@ impl WikiClient {
             ],
         ]
         .concat();
+        for (k, v) in parameters {
+            form = form.text(k.to_string(), v.to_string());
+        }
         self.client
             .post(&self.url)
-            .form(&parameters)
             .multipart(form)
             .send()
             .await

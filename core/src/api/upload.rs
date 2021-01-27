@@ -46,7 +46,6 @@ pub async fn upload<C: AsRef<WikiClient>, P: AsRef<Path>>(
         let part = reqwest::multipart::Part::bytes(contents)
             .file_name(file_name.clone())
             .mime_str(mime)?;
-        let form = reqwest::multipart::Form::new().part("file", part);
 
         log::info!(
             "{:?}",
@@ -58,7 +57,7 @@ pub async fn upload<C: AsRef<WikiClient>, P: AsRef<Path>>(
                         ("filename", &file_name),
                         ("ignorewarnings", "1"),
                     ],
-                    form,
+                    part,
                 )
                 .await?
                 .text()
