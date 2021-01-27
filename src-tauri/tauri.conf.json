@@ -5,7 +5,10 @@
         "beforeDevCommand": "",
         "beforeBuildCommand": ""
     },
-    "ctx": {},
+    "ctx": {
+        "debug": false,
+        "exitOnPanic": true
+    },
     "tauri": {
         "embeddedServer": {
             "active": true
