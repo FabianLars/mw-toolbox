@@ -55,8 +55,6 @@ pub async fn upload<C: AsRef<WikiClient>, P: AsRef<Path>>(
                     &[
                         ("action", "upload"),
                         ("text", &text),
-                        ("format", "json"),
-                        ("formatversion", "2"),
                         ("filename", &file_name),
                         ("ignorewarnings", "1"),
                     ],

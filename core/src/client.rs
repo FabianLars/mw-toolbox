@@ -238,6 +238,12 @@ impl WikiClient {
     ) -> Result<Response, ClientError> {
         self.client
             .post(&self.url)
+            .query(&[
+                ("format", "json"),
+                ("formatversion", "2"),
+                ("errorformat", "plaintext"),
+                ("token", &self.csrf_token),
+            ])
             .query(paramters)
             .multipart(form)
             .send()
