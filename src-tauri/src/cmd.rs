@@ -32,4 +32,13 @@ pub enum Cmd {
         callback: String,
         error: String,
     },
+    UploadDialog {
+        callback: String,
+        error: String,
+    },
+    Upload {
+        text: Option<String>,
+        callback: String,
+        error: String,
+    },
 }

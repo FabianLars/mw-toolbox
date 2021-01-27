@@ -5,7 +5,10 @@
 
 mod cmd;
 
-use std::sync::Arc;
+use std::{
+    path::PathBuf,
+    sync::{Arc, Mutex},
+};
 
 use serde::Serialize;
 use tauri::Result;
@@ -27,15 +30,29 @@ struct LoginResponse {
     url: String,
 }
 
-fn main() {
-    let rt = Arc::new(tokio::runtime::Runtime::new().unwrap());
+#[derive(Serialize)]
+struct UploadDialogResponse {
+    files: Vec<String>,
+}
 
+fn main() {
     pretty_env_logger::init();
 
+    let rt = Arc::new(tokio::runtime::Runtime::new().unwrap());
+    let files: Arc<Mutex<Vec<PathBuf>>> = Arc::new(Mutex::new(Vec::new()));
+    let files_handle = files.clone();
     let mut state = rt.block_on(SavedState::load()).unwrap();
-
     let mut client = WikiClient::new().unwrap();
+
     tauri::AppBuilder::new()
+        .setup(move |_webview, _source| {
+            let f = files_handle.clone();
+            tauri::event::listen("clear-files", move |_| {
+                if let Ok(mut x) = f.lock() {
+                    x.clear();
+                }
+            })
+        })
         .invoke_handler(move |_webview, arg| {
             use cmd::Cmd::*;
             let state_inner = state.clone();
@@ -63,7 +80,7 @@ fn main() {
                                 username: loginname.clone(),
                                 url: wikiurl.clone(),
                             };
-                            // This blocks the ui, but works best for now
+                            // This kinda blocks the ui, but works best for now
                             let client_res = rt.block_on(client.login());
 
                             if client_res.is_ok() {
@@ -215,6 +232,58 @@ fn main() {
                                         message: "Purge successful!",
                                     }),
                                     Err(err) => Err(err.into()),
+                                },
+                                callback,
+                                error,
+                            )
+                        }
+                        UploadDialog { callback, error } => {
+                            let files = files.clone();
+                            tauri::execute_promise(
+                                _webview,
+                                move || {
+                                    let result =
+                                        native_dialog::FileDialog::new().show_open_multiple_file();
+                                    match result {
+                                        Ok(f) => {
+                                            let arr: Vec<String> = match files.lock() {
+                                                Ok(mut x) => {
+                                                    *x = f;
+                                                    x.iter()
+                                                        .map(|x| x.display().to_string())
+                                                        .collect()
+                                                }
+                                                Err(_) => panic!("Mutex poisoned"),
+                                            };
+                                            Ok(UploadDialogResponse { files: arr })
+                                        }
+                                        Err(e) => Err(e.into()),
+                                    }
+                                },
+                                callback,
+                                error,
+                            )
+                        }
+                        Upload {
+                            text,
+                            callback,
+                            error,
+                        } => {
+                            let client = client.clone();
+                            let handle = rt.clone();
+                            let files = files.clone().lock().expect("Mutex poisoned").clone();
+                            // WebView2 forces us to use Mutex & execute_promise instead of sth simpler
+                            // Otherwise, every file dialog crate results in the same type of crash
+                            // Linux & Mac (& WebView1?) seem to be uneffected
+                            tauri::execute_promise(
+                                _webview,
+                                move || match handle
+                                    .block_on(api::upload::upload(&client, files, text))
+                                {
+                                    Ok(_) => Ok(Response {
+                                        message: "Upload successful!",
+                                    }),
+                                    Err(e) => Err(e.into()),
                                 },
                                 callback,
                                 error,
