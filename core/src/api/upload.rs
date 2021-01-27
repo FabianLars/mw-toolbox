@@ -13,7 +13,15 @@ pub async fn upload<C: AsRef<WikiClient>, P: AsRef<Path>>(
 
     for file in files {
         let file = file.as_ref();
-        let file_name = file.display().to_string();
+        let file_name = match file.file_name() {
+            Some(name) => (name.to_string_lossy().to_string()),
+            None => {
+                return Err(ApiError::InvalidInput(format!(
+                    "Invalid file_name: {:?}",
+                    file.display()
+                )))
+            }
+        };
 
         let mime = match file.extension().unwrap().to_str().unwrap() {
             "png" => "image/png",
