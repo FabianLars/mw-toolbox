@@ -233,18 +233,22 @@ impl WikiClient {
 
     pub async fn send_multipart(
         &self,
-        paramters: &[(&str, &str)],
+        parameters: &[(&str, &str)],
         form: reqwest::multipart::Form,
     ) -> Result<Response, ClientError> {
-        self.client
-            .post(&self.url)
-            .query(&[
+        let parameters = [
+            parameters,
+            &[
                 ("format", "json"),
                 ("formatversion", "2"),
                 ("errorformat", "plaintext"),
                 ("token", &self.csrf_token),
-            ])
-            .form(paramters)
+            ],
+        ]
+        .concat();
+        self.client
+            .post(&self.url)
+            .form(&parameters)
             .multipart(form)
             .send()
             .await
