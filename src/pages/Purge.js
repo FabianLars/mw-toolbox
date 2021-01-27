@@ -33,7 +33,6 @@ const Purge = ({ isOnline }) => {
             .catch((err) => {
                 setIsPurging(false);
                 setIsNulling(false);
-                console.error(err);
                 toast({
                     title: 'Something went wrong!',
                     description: err,

@@ -10,6 +10,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
+use api::rename;
 use serde::Serialize;
 use tauri::Result;
 use wtools::{api, WikiClient};
@@ -202,6 +203,33 @@ fn main() {
                                         Ok(list) => Ok(ListResponse { list }),
                                         Err(err) => Err(err.into()),
                                     }
+                                },
+                                callback,
+                                error,
+                            )
+                        }
+                        Move {
+                            from,
+                            to,
+                            callback,
+                            error,
+                        } => {
+                            let client = client.clone();
+                            let handle = rt.clone();
+
+                            tauri::execute_promise(
+                                _webview,
+                                move || match handle.block_on(api::rename::rename(
+                                    &client,
+                                    from,
+                                    Some(api::rename::Destination::Plain(to)),
+                                    None,
+                                    None,
+                                )) {
+                                    Ok(_) => Ok(Response {
+                                        message: "Successfully moved pages.",
+                                    }),
+                                    Err(err) => Err(err.into()),
                                 },
                                 callback,
                                 error,

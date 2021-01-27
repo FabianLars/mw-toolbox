@@ -25,7 +25,6 @@ const Delete = ({ isOnline }) => {
             })
             .catch((err) => {
                 setIsLoading(false);
-                console.error(err);
                 toast({
                     title: 'Something went wrong!',
                     description: err,
@@ -51,7 +50,7 @@ const Delete = ({ isOnline }) => {
                     isLoading={isLoading}
                     isDisabled={!isOnline}
                     onClick={deletePages}
-                    loadingText="Deleting"
+                    loadingText="Deleting..."
                     title={!isOnline ? 'Please login first!' : 'This might take a while!'}
                 >
                     Delete all

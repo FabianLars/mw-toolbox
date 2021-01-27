@@ -28,7 +28,6 @@ const List = ({ isOnline }) => {
                     setLoading(false);
                 })
                 .catch((err) => {
-                    console.error(err);
                     setLoading(false);
                     toast({
                         title: 'Request failed!',

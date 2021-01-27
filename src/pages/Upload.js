@@ -18,22 +18,18 @@ const Upload = ({ isOnline }) => {
     };
 
     const openDialog = () => {
-        console.log('Start');
         setIsWaiting(true);
         promisified({
             cmd: 'uploadDialog',
         })
             .then((res) => {
-                console.log('enter .then');
                 const files = res.files.join('\n') ?? '';
                 setFiles(files);
                 window.sessionStorage.setItem('uploadtext-cache', uploadtext);
                 window.sessionStorage.setItem('files-cache', files);
                 setIsWaiting(false);
-                console.log('exit .then');
             })
             .catch((err) => {
-                console.error(err);
                 setIsWaiting(false);
                 toast({
                     title: 'Something went wrong!',
@@ -52,24 +48,21 @@ const Upload = ({ isOnline }) => {
             text: uploadtext,
         })
             .then((res) => {
-                console.log(res);
                 setIsUploading(false);
                 toast({
                     title: 'Upload complete!',
                     description: res.message,
                     status: 'success',
-                    duration: 5000,
                     isClosable: true,
                 });
             })
             .catch((err) => {
-                console.error(err);
                 setIsWaiting(false);
                 toast({
                     title: 'Something went wrong!',
                     description: err,
                     status: 'error',
-                    duration: 5000,
+                    duration: 10000,
                     isClosable: true,
                 });
             });

@@ -40,7 +40,6 @@ const Account = ({ user, setUser }) => {
                 setUser((user) => {
                     return { isOnline: false, ...user };
                 });
-                console.error(err);
                 toast({
                     title: "Couldn't log in!",
                     description: err.split('Login failed! ')[1],
