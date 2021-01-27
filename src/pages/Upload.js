@@ -85,7 +85,7 @@ const Upload = ({ isOnline }) => {
             <Header isDisabled={isWaiting || isUploading} isOnline={isOnline} />
             <Flex direction="row" justify="center" align="center" w="75%" mb={4}>
                 <FormControl mx={2}>
-                    <FormLabel htmlFor="uploadtext-input">Text for Filepages</FormLabel>
+                    <FormLabel htmlFor="uploadtext-input">Text for newly created file pages</FormLabel>
                     <Input
                         id="uploadtext-input"
                         value={uploadtext}
