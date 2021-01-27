@@ -244,7 +244,7 @@ impl WikiClient {
                 ("errorformat", "plaintext"),
                 ("token", &self.csrf_token),
             ])
-            .query(paramters)
+            .form(paramters)
             .multipart(form)
             .send()
             .await
