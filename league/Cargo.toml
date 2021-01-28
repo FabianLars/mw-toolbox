@@ -9,7 +9,7 @@ version = "0.1.0"
 riot-api = []
 
 [dependencies]
-wtools = {path = "../core"}
+mw-toolbox = {path = "../core"}
 
 anyhow = "1.0"
 base64 = "0.13"

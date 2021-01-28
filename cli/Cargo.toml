@@ -1,8 +1,8 @@
 [package]
 authors = ["FabianLars <fabianlars@fabianlars.de>"]
-default-run = "cli"
+default-run = "mw-cli"
 edition = "2018"
-name = "cli"
+name = "mw-cli"
 publish = false
 version = "0.1.0"
 
@@ -14,7 +14,7 @@ riot-api = ["league/riot-api"]
 
 [dependencies]
 league = {path = "../league", optional = true}
-wtools = {path = "../core"}
+mw-toolbox = {path = "../core"}
 
 clap = "3.0.0-beta.2"
 env_logger = "0.8"

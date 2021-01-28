@@ -6,7 +6,7 @@ use api::rename::Destination;
 use clap::Clap;
 use tokio::{fs, io::AsyncWriteExt};
 
-use wtools::{api, WikiClient};
+use mw_toolbox::{api, WikiClient};
 
 #[derive(Clap, Debug, PartialEq)]
 enum Subcommand {

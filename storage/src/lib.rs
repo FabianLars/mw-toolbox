@@ -10,13 +10,13 @@ use tokio::{fs::File, io::AsyncWriteExt};
 
 fn path() -> std::path::PathBuf {
     let mut path =
-        if let Some(project_dirs) = directories::ProjectDirs::from("de", "FabianLars", "wtools") {
+        if let Some(project_dirs) = directories::ProjectDirs::from("de", "FabianLars", "mw-toolbox") {
             project_dirs.data_dir().into()
         } else {
             std::env::current_dir().unwrap()
         };
 
-    path.push("wtools");
+    path.push("mw-toolbox");
 
     path
 }
