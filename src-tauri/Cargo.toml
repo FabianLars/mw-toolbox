@@ -1,5 +1,5 @@
 [package]
-authors = [ "FabianLars <fabianlars@fabianlars.de>" ]
+authors = ["FabianLars <fabianlars@fabianlars.de>"]
 build = "src/build.rs"
 default-run = "wtools-tauri"
 description = "A Tauri App"
@@ -15,20 +15,20 @@ panic = "abort"
 
 [dependencies]
 futures = "0.3"
-native-dialog = { version = "0.5", features = [ "windows_dpi_awareness", "windows_visual_styles" ] }
+mw-toolbox = {git = "https://github.com/FabianLars/mw-toolbox"}
+native-dialog = {version = "0.5", features = ["windows_dpi_awareness", "windows_visual_styles"]}
 pretty_env_logger = "0.4"
-serde = { version = "1", features = [ "derive" ] }
+serde = {version = "1", features = ["derive"]}
 serde_json = "1"
-storage = { git = "https://github.com/FabianLars/wtools" }
-tauri = { version = "0.11", features = [ "event" ] }
-tokio = { version = "1", features = [ "rt-multi-thread" ] }
-wtools = { git = "https://github.com/FabianLars/wtools" }
+storage = {git = "https://github.com/FabianLars/mw-toolbox"}
+tauri = {version = "0.11", features = ["event"]}
+tokio = {version = "1", features = ["rt-multi-thread"]}
 
 [target."cfg(windows)".build-dependencies]
 winres = "0.1"
 
 [features]
-embedded-server = [ "tauri/embedded-server" ]
+embedded-server = ["tauri/embedded-server"]
 
 [[bin]]
 name = "wtools-tauri"

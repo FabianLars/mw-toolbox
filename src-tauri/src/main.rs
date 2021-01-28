@@ -10,9 +10,9 @@ use std::{
     sync::{Arc, Mutex},
 };
 
+use mw_toolbox::{api, WikiClient};
 use serde::Serialize;
 use tauri::Result;
-use wtools::{api, WikiClient};
 
 #[derive(Serialize)]
 struct Response<'a> {
