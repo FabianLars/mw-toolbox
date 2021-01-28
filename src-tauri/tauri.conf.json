@@ -2,8 +2,8 @@
     "build": {
         "distDir": "../build",
         "devPath": "http://localhost:3000",
-        "beforeDevCommand": "",
-        "beforeBuildCommand": ""
+        "beforeDevCommand": "yarn --cwd .. start",
+        "beforeBuildCommand": "yarn --cwd .. build"
     },
     "ctx": {
         "debug": false,

@@ -10,7 +10,6 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use api::rename;
 use serde::Serialize;
 use tauri::Result;
 use wtools::{api, WikiClient};
