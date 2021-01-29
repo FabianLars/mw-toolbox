@@ -6,6 +6,7 @@ name = "mw-toolbox"
 version = "0.1.0"
 
 [dependencies]
+directories = "3.0"
 log = "0.4"
 reqwest = {version = "0.11", features = ["json", "cookies", "multipart"]}
 serde = "1.0"

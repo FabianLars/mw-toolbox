@@ -7,8 +7,6 @@ pub enum ApiError {
     #[error(transparent)]
     ClientError(#[from] ClientError),
     #[error(transparent)]
-    PathTypeError(#[from] PathTypeError),
-    #[error(transparent)]
     IoError(#[from] std::io::Error),
     #[error(transparent)]
     ReqwestError(#[from] reqwest::Error),
@@ -41,14 +39,4 @@ pub enum ClientError {
     MalformedUrl(String),
     #[error("Login failed! Reason: {0}")]
     LoginFailed(String),
-}
-
-#[derive(Error, Debug)]
-pub enum PathTypeError {
-    #[error("PathType is not a File")]
-    NotAFile,
-    #[error(transparent)]
-    StdIoError(#[from] std::io::Error),
-    #[error("Unknown PathTypeError. Wtf is happening")]
-    Unknown,
 }
