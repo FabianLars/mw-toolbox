@@ -134,10 +134,32 @@ fn main() {
                             tauri::execute_promise(
                                 _webview,
                                 move || match handle
-                                    .block_on(api::delete::delete_pages(&client, &pages[..]))
+                                    .block_on(api::delete::delete(&client, &pages[..]))
                                 {
                                     Ok(_) => Ok(Response {
                                         message: "Delete successful!",
+                                    }),
+                                    Err(err) => Err(err.into()),
+                                },
+                                callback,
+                                error,
+                            )
+                        }
+                        Download {
+                            files,
+                            callback,
+                            error,
+                        } => {
+                            let client = client.clone();
+                            let handle = rt.clone();
+
+                            tauri::execute_promise(
+                                _webview,
+                                move || match handle
+                                    .block_on(api::download::download(client, &files))
+                                {
+                                    Ok(_) => Ok(Response {
+                                        message: "Download successful! Check your download folder.",
                                     }),
                                     Err(err) => Err(err.into()),
                                 },

@@ -20,6 +20,11 @@ pub enum Cmd {
         callback: String,
         error: String,
     },
+    Download {
+        files: Vec<String>,
+        callback: String,
+        error: String,
+    },
     List {
         listtype: String,
         param: Option<String>,
