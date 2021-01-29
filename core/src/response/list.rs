@@ -45,7 +45,7 @@ pub(crate) struct Query {
         alias = "allpages",
         alias = "backlinks",
         alias = "categorymembers",
-        alias = "embeddedimages",
+        alias = "embeddedin",
         alias = "imageusage",
         alias = "exturlusage",
         alias = "search",
@@ -59,7 +59,7 @@ pub(crate) struct Query {
 pub(crate) struct Page {
     #[serde(alias = "category")]
     pub(crate) title: String,
-    // For exturlusage
+    // For exturlusage and allimages
     pub(crate) url: Option<String>,
 }
 
