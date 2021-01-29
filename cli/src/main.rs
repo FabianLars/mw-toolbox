@@ -125,7 +125,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Subcommand::Delete { input } => {
             let contents = fs::read_to_string(input).await?;
             let titles: Vec<&str> = contents.lines().collect();
-            api::delete::delete_pages(&client, &titles).await?
+            api::delete::delete(&client, &titles).await?
         }
         Subcommand::List {
             list_type,

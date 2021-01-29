@@ -1,7 +1,7 @@
 use crate::error::ApiError;
 use crate::WikiClient;
 
-pub async fn delete_pages<C: AsRef<WikiClient>, S: AsRef<str>>(
+pub async fn delete<C: AsRef<WikiClient>, S: AsRef<str>>(
     client: C,
     titles: &[S],
 ) -> Result<(), ApiError> {
