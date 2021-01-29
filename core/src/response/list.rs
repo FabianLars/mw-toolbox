@@ -56,11 +56,13 @@ pub(crate) struct Query {
 }
 
 #[derive(Debug, Deserialize)]
-pub(crate) struct Page {
+pub struct Page {
     #[serde(alias = "category")]
-    pub(crate) title: String,
+    pub title: String,
+    pub ns: Option<u16>,
+    pub pageid: Option<u32>,
     // For exturlusage and allimages
-    pub(crate) url: Option<String>,
+    pub url: Option<String>,
 }
 
 // Special case Querypage...
