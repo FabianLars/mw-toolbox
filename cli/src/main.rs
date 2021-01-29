@@ -167,11 +167,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         api::list::querypage(&client, parameter.as_deref()).await?
                     }
                     ListType::Allinfoboxes => api::list::allinfoboxes(&client).await?,
-                    _ => unreachable!(),
-                }
-                .into_iter()
-                .map(|p| p.title)
-                .collect::<Vec<String>>();
+                    _ => vec![String::new()],
+                };
 
                 match output {
                     Some(o) => {
