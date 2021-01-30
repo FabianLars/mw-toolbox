@@ -102,7 +102,14 @@ const Upload = ({ isOnline }) => {
                     Upload
                 </Button>
             </Flex>
-            <Textarea value={files} isReadOnly placeholder="Selected files will be displayed here" h="100%" mb={4} />
+            <Textarea
+                resize="none"
+                value={files}
+                isReadOnly
+                placeholder="Selected files will be displayed here"
+                h="100%"
+                mb={4}
+            />
         </Flex>
     );
 };

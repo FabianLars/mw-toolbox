@@ -42,6 +42,7 @@ const Move = ({ isOnline }) => {
             <Header isOnline={isOnline} />
             <Flex direction="row" align="center" justify="center" h="100%" w="100%">
                 <Textarea
+                    resize="none"
                     value={areaFrom}
                     onChange={(e) => setAreaFrom(e.target.value)}
                     placeholder="Write exact names of pages to move. Seperated by newline."
@@ -49,6 +50,7 @@ const Move = ({ isOnline }) => {
                     mr={2}
                 />
                 <Textarea
+                    resize="none"
                     value={areaTo}
                     onChange={(e) => setAreaTo(e.target.value)}
                     placeholder="Write exact names of destinations. Seperated by newline."

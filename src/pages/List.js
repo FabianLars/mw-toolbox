@@ -131,7 +131,14 @@ const List = ({ isOnline }) => {
                     Clear Output
                 </Button>
             </Flex>
-            <Textarea value={listOutput} isReadOnly placeholder="Output will be displayed here" h="100%" mb={4} />
+            <Textarea
+                resize="none"
+                value={listOutput}
+                isReadOnly
+                placeholder="Output will be displayed here"
+                h="100%"
+                mb={4}
+            />
         </Flex>
     );
 };

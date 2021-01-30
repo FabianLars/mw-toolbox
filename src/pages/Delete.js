@@ -39,6 +39,7 @@ const Delete = ({ isOnline }) => {
         <Flex direction="column" align="center" m="0 1rem" h="100vh">
             <Header isOnline={isOnline} isDisabled={isLoading} />
             <Textarea
+                resize="none"
                 value={areaValue}
                 onChange={(e) => setAreaValue(e.target.value)}
                 placeholder="Write exact page names here. Separated by newline."

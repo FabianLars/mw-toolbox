@@ -48,6 +48,7 @@ const Purge = ({ isOnline }) => {
             <Header isOnline={isOnline} />
             <Flex w="100%" h="100%" direction="column">
                 <Textarea
+                    resize="none"
                     value={areaValue}
                     onChange={(e) => setAreaValue(e.target.value)}
                     placeholder="Write exact page names here. Separated by newline."
