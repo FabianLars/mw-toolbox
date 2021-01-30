@@ -37,7 +37,9 @@ const Header = ({ isDisabled, isOnline }) => {
             <MenuItem isDisabled={isDisabled} to="/Download">
                 Download
             </MenuItem>
-            {/* <MenuItems to="/Edit">Edit</MenuItems> */}
+            <MenuItem isDisabled={isDisabled} to="/Edit">
+                Edit
+            </MenuItem>
             <MenuItem isDisabled={isDisabled} to="/List">
                 List
             </MenuItem>

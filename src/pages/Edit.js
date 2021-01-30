@@ -1,0 +1,21 @@
+import { Flex, Grid, GridItem, Textarea } from '@chakra-ui/react';
+import Header from '../components/Header';
+
+const Edit = ({ isOnline }) => {
+    return (
+        <Flex direction="column" align="center" m="0 1rem" h="100vh">
+            <Header isOnline={isOnline} /* isDisabled={isLoading} */ />
+            <Grid h="100%" w="100%" templateRows="repeat(2, 1fr)" templateColumns="repeat(3, 1fr)" gap={4} mb={4}>
+                <GridItem rowSpan={2}>
+                    <Textarea h="100%" />
+                </GridItem>
+                <GridItem colSpan={2}>
+                    <Textarea h="100%" />
+                </GridItem>
+                <GridItem colSpan={2}>Controls</GridItem>
+            </Grid>
+        </Flex>
+    );
+};
+
+export default Edit;
