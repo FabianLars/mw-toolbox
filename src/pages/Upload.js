@@ -77,10 +77,9 @@ const Upload = ({ isOnline }) => {
         <Flex direction="column" align="center" m="0 1rem" h="100vh">
             <Header isDisabled={isWaiting || isUploading} isOnline={isOnline} />
             <Flex direction="row" justify="center" align="center" w="75%" mb={4}>
-                <FormControl mx={2}>
-                    <FormLabel htmlFor="uploadtext-input">Text for newly created file pages</FormLabel>
+                <FormControl id="uploadtext-input" mx={2}>
+                    <FormLabel>Text for newly created file pages</FormLabel>
                     <Input
-                        id="uploadtext-input"
                         value={uploadtext}
                         isDisabled={isUploading || isWaiting}
                         onChange={(event) => setUploadtext(event.target.value)}
