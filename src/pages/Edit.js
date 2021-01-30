@@ -7,10 +7,10 @@ const Edit = ({ isOnline }) => {
             <Header isOnline={isOnline} /* isDisabled={isLoading} */ />
             <Grid h="100%" w="100%" templateRows="repeat(2, 1fr)" templateColumns="repeat(3, 1fr)" gap={4} mb={4}>
                 <GridItem rowSpan={2}>
-                    <Textarea resize="none" h="100%" />
+                    <Textarea resize="none" h="100%" placeholder="List of pages to operate on. Seperated by newline." />
                 </GridItem>
                 <GridItem colSpan={2}>
-                    <Textarea resize="none" h="100%" />
+                    <Textarea resize="none" h="100%" placeholder="Page contents will be displayed here" />
                 </GridItem>
                 <GridItem colSpan={2}>Controls</GridItem>
             </Grid>
