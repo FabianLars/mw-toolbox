@@ -38,9 +38,9 @@ const Move = ({ isOnline }) => {
     };
 
     return (
-        <Flex direction="column" align="center" m="0 1rem" h="100vh">
+        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
             <Header isOnline={isOnline} />
-            <Flex direction="row" align="center" justify="center" h="100%" w="100%">
+            <Flex direction="row" align="center" justify="center" h="100%" w="100%" mb={4}>
                 <Textarea
                     resize="none"
                     value={areaFrom}
@@ -58,7 +58,7 @@ const Move = ({ isOnline }) => {
                     ml={2}
                 />
             </Flex>
-            <Box my={4}>
+            <Box>
                 <Button
                     isLoading={isLoading}
                     isDisabled={!isOnline}

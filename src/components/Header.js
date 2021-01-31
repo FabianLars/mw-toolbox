@@ -13,7 +13,7 @@ const MenuItem = (props) => {
             borderTop="1px solid transparent"
             borderTopColor={location === to ? 'gray.500' : 'transparent'}
             display="block"
-            p={6}
+            p="1rem 1.5rem"
             borderRadius={5}
             color={isDisabled ? 'red.700' : ''}
             style={{ pointerEvents: isDisabled ? 'none' : '' }}

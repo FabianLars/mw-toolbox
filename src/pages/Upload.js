@@ -74,7 +74,7 @@ const Upload = ({ isOnline }) => {
     }, []);
 
     return (
-        <Flex direction="column" align="center" m="0 1rem" h="100vh">
+        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
             <Header isDisabled={isWaiting || isUploading} isOnline={isOnline} />
             <Flex direction="row" justify="center" align="center" w="75%" mb={4}>
                 <FormControl id="uploadtext-input" mx={2}>
@@ -107,7 +107,6 @@ const Upload = ({ isOnline }) => {
                 isReadOnly
                 placeholder="Selected files will be displayed here"
                 h="100%"
-                mb={4}
             />
         </Flex>
     );

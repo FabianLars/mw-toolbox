@@ -93,7 +93,7 @@ const Account = ({ user, setUser }) => {
     }, [apiUrl, lgname, lgpasswd]);
 
     return (
-        <Flex direction="column" align="center" m="0 1rem" h="100vh">
+        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
             <Header isDisabled={logginin} isOnline={user.isOnline} />
 
             <Flex as="main" direction="column" align="center" m="0 auto" w="50%" h="100%" justify="center">

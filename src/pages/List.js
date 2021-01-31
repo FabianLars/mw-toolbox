@@ -79,7 +79,7 @@ const List = ({ isOnline }) => {
     }, [listType]);
 
     return (
-        <Flex direction="column" align="center" m="0 1rem" h="100vh">
+        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
             <Header isDisabled={loading} isOnline={isOnline} />
             <Flex w="100%" mb={4} direction="row" align="center">
                 {paramInfo === '' ? (
@@ -130,9 +130,8 @@ const List = ({ isOnline }) => {
                 resize="none"
                 value={listOutput}
                 isReadOnly
-                placeholder="Output will be displayed here"
+                placeholder="Output will be displayed here."
                 h="100%"
-                mb={4}
             />
         </Flex>
     );

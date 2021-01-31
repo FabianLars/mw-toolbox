@@ -44,7 +44,7 @@ const Purge = ({ isOnline }) => {
     };
 
     return (
-        <Flex direction="column" align="center" m="0 1rem" h="100vh">
+        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
             <Header isOnline={isOnline} />
             <Flex w="100%" h="100%" direction="column">
                 <Textarea
@@ -55,7 +55,7 @@ const Purge = ({ isOnline }) => {
                     h="100%"
                     mb={4}
                 />
-                <Flex direction="row" align="center" justify="center" mb={4}>
+                <Flex direction="row" align="center" justify="center">
                     <Button
                         isLoading={isPurging}
                         isDisabled={!isOnline}
