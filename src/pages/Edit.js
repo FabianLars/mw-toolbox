@@ -6,7 +6,7 @@ const Edit = ({ isOnline }) => {
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
             <Header isOnline={isOnline} /* isDisabled={isLoading} */ />
             <Grid h="100%" w="100%" templateRows="repeat(2, 1fr)" templateColumns="repeat(4, 1fr)" gap={4} mb={4}>
-                <GridItem rowSpan={2}>
+                <GridItem rowSpan={2} whiteSpace="nowrap">
                     <Textarea resize="none" h="100%" placeholder="List of pages to operate on. Seperated by newline." />
                 </GridItem>
                 <GridItem colSpan={3}>
