@@ -22,14 +22,14 @@ const Edit = ({ isOnline }) => {
     const getNextPage = () => {
         const pages = pageList
             .trim()
-            .replace(emptyLinePat, '')
             .split(/\r?\n/)
-            .map((el) => {
-                return el.trim();
-            });
+            .map((el) => el.trim())
+            .filter((el) => el);
         setCurrentPage(pages.shift());
         setPageList(pages.join('\n'));
     };
+
+    const save = () => {};
 
     return (
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
@@ -47,6 +47,7 @@ const Edit = ({ isOnline }) => {
                 </GridItem>
                 <GridItem colSpan={3} rowSpan={2}>
                     <Textarea
+                        isDisabled={isAuto}
                         resize="none"
                         h="100%"
                         placeholder="Page contents will be displayed here."
@@ -72,10 +73,10 @@ const Edit = ({ isOnline }) => {
                         >
                             Auto-Save
                         </Checkbox>
-                        <Button w="100%" isDisabled={!isRunning}>
+                        <Button w="100%" isDisabled={!isRunning || !currentPage} onClick={getNextPage}>
                             Skip
                         </Button>
-                        <Button w="100%" isDisabled={!isRunning}>
+                        <Button w="100%" isDisabled={!isRunning || !currentPage} onClick={save}>
                             Save
                         </Button>
                     </Flex>
