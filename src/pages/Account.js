@@ -51,7 +51,7 @@ const Account = ({ user, setUser }) => {
     };
 
     useEffect(() => {
-        if (typeof window.__TAURI_INVOKE_HANDLER__ === 'function') {
+        if (!!window.__TAURI__) {
             if (user.isOnline) {
                 setLgname(user.username);
                 setPersistent(user.isPersistent);
