@@ -12,7 +12,7 @@ pub async fn get_page_content<C: AsRef<WikiClient>, S: AsRef<str>>(
             ("action", "parse"),
             ("prop", "wikitext"),
             ("redirects", ""),
-            ("title", page.as_ref()),
+            ("page", page.as_ref()),
         ])
         .await?;
 
