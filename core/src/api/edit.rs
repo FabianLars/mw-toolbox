@@ -35,7 +35,7 @@ pub async fn edit<C: AsRef<WikiClient>, S: AsRef<str>>(
             ("action", "edit"),
             ("bot", ""),
             ("summary", "automated action"),
-            ("page", title.as_ref()),
+            ("title", title.as_ref()),
             ("text", content.as_ref()),
         ])
         .await?;
