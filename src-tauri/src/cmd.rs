@@ -25,6 +25,11 @@ pub enum Cmd {
         callback: String,
         error: String,
     },
+    GetPage {
+        page: String,
+        callback: String,
+        error: String,
+    },
     List {
         listtype: String,
         param: Option<String>,

@@ -1,18 +1,21 @@
-import { Button, Flex, FormControl, FormLabel, Grid, GridItem, Textarea, Switch, Checkbox } from '@chakra-ui/react';
+import { Button, Flex, Grid, GridItem, Textarea, Checkbox, useToast } from '@chakra-ui/react';
 import { useState } from 'react';
+import { promisified } from 'tauri/api/tauri';
 import Header from '../components/Header';
-
-const emptyLinePat = /^\s*[\r\n]/gm;
 
 const Edit = ({ isOnline }) => {
     const [isRunning, setIsRunning] = useState(false);
     const [isAuto, setIsAuto] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [pageList, setPageList] = useState('');
     const [pageContent, setPageContent] = useState('');
     const [currentPage, setCurrentPage] = useState('Not running!');
+    const toast = useToast();
 
     const startStop = () => {
         if (isRunning) {
+            setPageList((state) => currentPage + '\n' + state);
+            setPageContent('');
         } else {
             getNextPage();
         }
@@ -20,13 +23,39 @@ const Edit = ({ isOnline }) => {
     };
 
     const getNextPage = () => {
+        setPageContent('');
+        setIsLoading(true);
         const pages = pageList
             .trim()
             .split(/\r?\n/)
             .map((el) => el.trim())
             .filter((el) => el);
-        setCurrentPage(pages.shift());
+        const curr = pages.shift();
+        setCurrentPage(curr);
         setPageList(pages.join('\n'));
+        if (!curr) {
+            setIsRunning(false);
+            setIsLoading(false);
+        } else {
+            promisified({
+                cmd: 'getPage',
+                page: curr,
+            })
+                .then((res) => {
+                    setPageContent(res.content);
+                    setIsLoading(false);
+                })
+                .catch((err) => {
+                    setIsLoading(false);
+                    toast({
+                        title: 'Something went wrong!',
+                        description: err,
+                        status: 'error',
+                        duration: 10000,
+                        isClosable: true,
+                    });
+                });
+        }
     };
 
     const save = () => {};
@@ -47,7 +76,7 @@ const Edit = ({ isOnline }) => {
                 </GridItem>
                 <GridItem colSpan={3} rowSpan={2}>
                     <Textarea
-                        isDisabled={isAuto}
+                        isDisabled={isAuto || isLoading || !isRunning}
                         resize="none"
                         h="100%"
                         placeholder="Page contents will be displayed here."
@@ -61,8 +90,14 @@ const Edit = ({ isOnline }) => {
                         <Button
                             w="100%"
                             onClick={startStop}
-                            isDisabled={!isOnline}
-                            title={!isOnline ? 'Please login first!' : 'This might take a while!'}
+                            isDisabled={!isOnline || isLoading}
+                            title={
+                                !isOnline
+                                    ? 'Please login first!'
+                                    : isRunning
+                                    ? 'Skip all remaining pages'
+                                    : 'This might take a while!'
+                            }
                         >
                             {isRunning ? 'Stop' : 'Start'}
                         </Button>
@@ -73,10 +108,10 @@ const Edit = ({ isOnline }) => {
                         >
                             Auto-Save
                         </Checkbox>
-                        <Button w="100%" isDisabled={!isRunning || !currentPage} onClick={getNextPage}>
+                        <Button w="100%" isDisabled={!isRunning || !currentPage || isLoading} onClick={getNextPage}>
                             Skip
                         </Button>
-                        <Button w="100%" isDisabled={!isRunning || !currentPage} onClick={save}>
+                        <Button w="100%" isDisabled={!isRunning || !currentPage || isLoading} onClick={save}>
                             Save
                         </Button>
                     </Flex>
