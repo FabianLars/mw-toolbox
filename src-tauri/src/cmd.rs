@@ -25,6 +25,12 @@ pub enum Cmd {
         callback: String,
         error: String,
     },
+    Edit {
+        title: String,
+        content: String,
+        callback: String,
+        error: String,
+    },
     GetPage {
         page: String,
         callback: String,

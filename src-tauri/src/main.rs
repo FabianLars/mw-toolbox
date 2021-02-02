@@ -172,6 +172,27 @@ fn main() {
                                 error,
                             )
                         }
+                        Edit {
+                            title,
+                            content,
+                            callback,
+                            error,
+                        } => {
+                            let client = client.clone();
+                            let handle = rt.clone();
+
+                            tauri::execute_promise(
+                                _webview,
+                                move || match handle
+                                    .block_on(api::edit::edit(&client, title, content))
+                                {
+                                    Ok(s) => Ok(s),
+                                    Err(err) => Err(err.into()),
+                                },
+                                callback,
+                                error,
+                            )
+                        }
                         GetPage {
                             page,
                             callback,

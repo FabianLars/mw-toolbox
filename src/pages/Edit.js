@@ -58,7 +58,35 @@ const Edit = ({ isOnline }) => {
         }
     };
 
-    const save = () => {};
+    const save = () => {
+        const curr = currentPage;
+        const content = pageContent;
+        setIsLoading(true);
+        promisified({
+            cmd: 'edit',
+            title: curr,
+            content: content,
+        })
+            .then((res) => {
+                toast({
+                    title: 'Edit successful',
+                    description: res,
+                    status: 'success',
+                    duration: 1000,
+                    isClosable: true,
+                });
+            })
+            .catch((err) => {
+                toast({
+                    title: 'Something went wrong!',
+                    description: err,
+                    status: 'error',
+                    duration: 10000,
+                    isClosable: true,
+                });
+            });
+        getNextPage();
+    };
 
     return (
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
