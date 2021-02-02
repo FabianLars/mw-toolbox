@@ -318,7 +318,7 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result
             .post_into_text(&[
                 ("action", "edit"),
                 ("summary", "Nicht ganz so automatische Aktion"),
-                ("bot", "1"),
+                ("bot", ""),
                 ("title", "Vorlage:Aktuelle_Angebote"),
                 ("text", &full_template),
             ])
@@ -411,7 +411,7 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         .post(&[
             ("action", "edit"),
             ("summary", "automated action"),
-            ("bot", "1"),
+            ("bot", ""),
             ("title", "Vorlage:Aktuelle_Championrotation"),
             ("text", &template),
         ])
@@ -516,7 +516,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .post(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
-                ("bot", "1"),
+                ("bot", ""),
                 ("title", "Vorlage:Set/skins.json"),
                 ("text", &skin),
             ])
@@ -528,7 +528,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .post(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
-                ("bot", "1"),
+                ("bot", ""),
                 ("title", "Vorlage:Set/sets.json"),
                 ("text", &set),
             ])
@@ -540,7 +540,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .post(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
-                ("bot", "1"),
+                ("bot", ""),
                 ("title", "Vorlage:Set/universes.json"),
                 ("text", &universe),
             ])
@@ -552,7 +552,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .post(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
-                ("bot", "1"),
+                ("bot", ""),
                 ("title", "Vorlage:Set/icons.json"),
                 ("text", &icons),
             ])
@@ -564,7 +564,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .post(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
-                ("bot", "1"),
+                ("bot", ""),
                 ("title", "Vorlage:Set/iconsets.json"),
                 ("text", &iconsets),
             ])
@@ -576,7 +576,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .post(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
-                ("bot", "1"),
+                ("bot", ""),
                 ("title", "Vorlage:Set/champion.json"),
                 ("text", &champion),
             ])
@@ -588,7 +588,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .post(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
-                ("bot", "1"),
+                ("bot", ""),
                 ("title", "Vorlage:Set/TFT.json"),
                 ("text", &tft),
             ])
@@ -611,7 +611,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .post(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
-                ("bot", "1"),
+                ("bot", ""),
                 ("title", "Modul:Set/skins.src"),
                 ("text", &convert(skin)),
             ])
@@ -623,7 +623,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .post(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
-                ("bot", "1"),
+                ("bot", ""),
                 ("title", "Modul:Set/sets.src"),
                 ("text", &convert(set)),
             ])
@@ -635,7 +635,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .post(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
-                ("bot", "1"),
+                ("bot", ""),
                 ("title", "Modul:Set/universes.src"),
                 ("text", &convert(universe)),
             ])
@@ -647,7 +647,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .post(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
-                ("bot", "1"),
+                ("bot", ""),
                 ("title", "Modul:Set/icons.src"),
                 ("text", &convert(icons)),
             ])
@@ -659,7 +659,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .post(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
-                ("bot", "1"),
+                ("bot", ""),
                 ("title", "Modul:Set/iconsets.json"),
                 ("text", &convert(iconsets)),
             ])
@@ -671,7 +671,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .post(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
-                ("bot", "1"),
+                ("bot", ""),
                 ("title", "Modul:Set/champion.src"),
                 ("text", &convert(champion)),
             ])
@@ -683,7 +683,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             .post(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
-                ("bot", "1"),
+                ("bot", ""),
                 ("title", "Modul:Set/TFT.src"),
                 ("text", &convert(tft)),
             ])
@@ -783,7 +783,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         .post(&[
             ("action", "edit"),
             ("summary", "automated action"),
-            ("bot", "1"),
+            ("bot", ""),
             ("title", "Module:ChampionData/data"),
             ("text", &new_champdata.concat()),
         ])

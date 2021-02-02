@@ -57,9 +57,9 @@ pub async fn rename<C: AsRef<WikiClient>>(
                 ("from", x),
                 ("to", y),
                 ("reason", "automated action"),
-                ("movetalk", "1"),
-                ("movesubpages", "1"),
-                ("ignorewarnings", "1"),
+                ("movetalk", ""),
+                ("movesubpages", ""),
+                ("ignorewarnings", ""),
             ])
             .await?;
 
