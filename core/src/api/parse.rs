@@ -11,7 +11,6 @@ pub async fn get_page_content<C: AsRef<WikiClient>, S: AsRef<str>>(
         .get_into_json(&[
             ("action", "parse"),
             ("prop", "wikitext"),
-            ("redirects", ""),
             ("page", page.as_ref()),
         ])
         .await?;
