@@ -9,8 +9,8 @@ pub async fn get_page_content<C: AsRef<WikiClient>, S: AsRef<str>>(
 
     let res: Parse = client
         .get_into_json(&[
-            ("action", "delete"),
-            ("reason", "automated action"),
+            ("action", "parse"),
+            ("prop", "wikitext"),
             ("redirects", ""),
             ("page", page.as_ref()),
         ])
