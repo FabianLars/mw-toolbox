@@ -51,7 +51,7 @@ const Account = ({ user, setUser }) => {
     };
 
     useEffect(() => {
-        if (typeof window.__TAURI_INVOKE_HANDLER__ === 'function') {
+        if (!!window.__TAURI__) {
             if (user.isOnline) {
                 setLgname(user.username);
                 setPersistent(user.isPersistent);
@@ -93,7 +93,7 @@ const Account = ({ user, setUser }) => {
     }, [apiUrl, lgname, lgpasswd]);
 
     return (
-        <Flex direction="column" align="center" m="0 1rem" h="100vh">
+        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
             <Header isDisabled={logginin} isOnline={user.isOnline} />
 
             <Flex as="main" direction="column" align="center" m="0 auto" w="50%" h="100%" justify="center">
@@ -104,30 +104,27 @@ const Account = ({ user, setUser }) => {
                     {user.isOnline ? user.url : 'Not logged in!'}
                 </Text>
                 <Divider my={2} />
-                <FormControl isRequired isInvalid={apiUrlInvalid}>
-                    <FormLabel htmlFor="api-url">API URL</FormLabel>
+                <FormControl id="api-url" isRequired isInvalid={apiUrlInvalid}>
+                    <FormLabel>API URL</FormLabel>
                     <Input
-                        id="api-url"
                         value={apiUrl}
                         onChange={(event) => setApiUrl(event.target.value)}
                         placeholder="Full URL pointing to api.php)"
                     />
                 </FormControl>
                 <Divider my={2} />
-                <FormControl isRequired isInvalid={lgnameInvalid}>
-                    <FormLabel htmlFor="loginname">Bot Loginname</FormLabel>
+                <FormControl id="loginname" isRequired isInvalid={lgnameInvalid}>
+                    <FormLabel>Bot Loginname</FormLabel>
                     <Input
-                        id="loginname"
                         value={lgname}
                         onChange={(event) => setLgname(event.target.value)}
                         placeholder="Generated via Special:BotPasswords"
                     />
                 </FormControl>
                 <Divider my={2} />
-                <FormControl isRequired isInvalid={lgpasswdInvalid}>
-                    <FormLabel htmlFor="password">Bot Password</FormLabel>
+                <FormControl id="password" isRequired isInvalid={lgpasswdInvalid}>
+                    <FormLabel>Bot Password</FormLabel>
                     <Input
-                        id="password"
                         value={lgpasswd}
                         onChange={(event) => setLgpasswd(event.target.value)}
                         type="password"

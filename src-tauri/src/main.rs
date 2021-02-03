@@ -35,6 +35,11 @@ struct UploadDialogResponse {
     files: Vec<String>,
 }
 
+#[derive(Serialize)]
+struct GetPageResponse {
+    content: String,
+}
+
 fn main() {
     pretty_env_logger::init();
 
@@ -161,6 +166,47 @@ fn main() {
                                     Ok(_) => Ok(Response {
                                         message: "Download successful! Check your download folder.",
                                     }),
+                                    Err(err) => Err(err.into()),
+                                },
+                                callback,
+                                error,
+                            )
+                        }
+                        Edit {
+                            title,
+                            content,
+                            callback,
+                            error,
+                        } => {
+                            let client = client.clone();
+                            let handle = rt.clone();
+
+                            tauri::execute_promise(
+                                _webview,
+                                move || match handle
+                                    .block_on(api::edit::edit(&client, title, content))
+                                {
+                                    Ok(s) => Ok(s),
+                                    Err(err) => Err(err.into()),
+                                },
+                                callback,
+                                error,
+                            )
+                        }
+                        GetPage {
+                            page,
+                            callback,
+                            error,
+                        } => {
+                            let client = client.clone();
+                            let handle = rt.clone();
+
+                            tauri::execute_promise(
+                                _webview,
+                                move || match handle
+                                    .block_on(api::parse::get_page_content(&client, page))
+                                {
+                                    Ok(s) => Ok(GetPageResponse { content: s }),
                                     Err(err) => Err(err.into()),
                                 },
                                 callback,

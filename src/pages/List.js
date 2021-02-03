@@ -79,16 +79,15 @@ const List = ({ isOnline }) => {
     }, [listType]);
 
     return (
-        <Flex direction="column" align="center" m="0 1rem" h="100vh">
+        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
             <Header isDisabled={loading} isOnline={isOnline} />
             <Flex w="100%" mb={4} direction="row" align="center">
                 {paramInfo === '' ? (
                     <Box mx={2} w="100%"></Box>
                 ) : (
-                    <FormControl mx={2} isRequired visibility={paramInfo === '' ? 'hidden' : ''}>
-                        <FormLabel htmlFor="parameter-input">Required Parameter</FormLabel>
+                    <FormControl id="parameter-input" mx={2} isRequired visibility={paramInfo === '' ? 'hidden' : ''}>
+                        <FormLabel>Required Parameter</FormLabel>
                         <Input
-                            id="parameter-input"
                             placeholder={paramInfo}
                             title={paramInfo}
                             value={paramInput}
@@ -96,13 +95,9 @@ const List = ({ isOnline }) => {
                         />
                     </FormControl>
                 )}
-                <FormControl mx={2} isRequired>
-                    <FormLabel htmlFor="listtype-dropdown">API Endpoint</FormLabel>
-                    <Select
-                        id="listtype-dropdown"
-                        placeholder="Select type of list"
-                        onChange={({ target: { value } }) => setListType(value)}
-                    >
+                <FormControl id="listtype-dropdown" mx={2} isRequired>
+                    <FormLabel>API Endpoint</FormLabel>
+                    <Select placeholder="Select type of list" onChange={({ target: { value } }) => setListType(value)}>
                         <option value="allcategories">allcategories</option>
                         <option value="allimages">allimages</option>
                         <option value="allinfoboxes">allinfoboxes</option>
@@ -131,7 +126,13 @@ const List = ({ isOnline }) => {
                     Clear Output
                 </Button>
             </Flex>
-            <Textarea value={listOutput} isReadOnly placeholder="Output will be displayed here" h="100%" mb={4} />
+            <Textarea
+                resize="none"
+                value={listOutput}
+                isReadOnly
+                placeholder="Output will be displayed here."
+                h="100%"
+            />
         </Flex>
     );
 };
