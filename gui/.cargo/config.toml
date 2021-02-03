@@ -1,0 +1,3 @@
+[build]
+# To make tauri work in a workspace
+target-dir = "src-tauri/target"
