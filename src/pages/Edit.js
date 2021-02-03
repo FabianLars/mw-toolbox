@@ -1,6 +1,6 @@
 import { Button, Flex, Grid, GridItem, Textarea, Checkbox, useToast } from '@chakra-ui/react';
 import { useState } from 'react';
-import { promisified } from 'tauri/api/tauri';
+import { invoke, promisified } from 'tauri/api/tauri';
 import Header from '../components/Header';
 
 const Edit = ({ isOnline }) => {
@@ -47,6 +47,7 @@ const Edit = ({ isOnline }) => {
                 })
                 .catch((err) => {
                     setIsLoading(false);
+                    startStop();
                     toast({
                         title: 'Something went wrong!',
                         description: err,
@@ -59,13 +60,14 @@ const Edit = ({ isOnline }) => {
     };
 
     const save = () => {
-        const curr = currentPage;
-        const content = pageContent;
         setIsLoading(true);
         promisified({
             cmd: 'edit',
-            title: curr,
-            content: content,
+            title: currentPage,
+            content: pageContent
+                .replace(/[\u007F-\u009F\u200B]/g, '')
+                .replaceAll('…', '...')
+                .trim(),
         })
             .then((res) => {
                 toast({
@@ -75,6 +77,7 @@ const Edit = ({ isOnline }) => {
                     duration: 1000,
                     isClosable: true,
                 });
+                getNextPage();
             })
             .catch((err) => {
                 toast({
@@ -85,7 +88,6 @@ const Edit = ({ isOnline }) => {
                     isClosable: true,
                 });
             });
-        getNextPage();
     };
 
     return (
