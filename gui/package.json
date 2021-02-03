@@ -1,0 +1,54 @@
+{
+    "name": "wtools",
+    "version": "0.1.0",
+    "description": "",
+    "private": true,
+    "author": "",
+    "license": "MIT",
+    "main": "index.js",
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject",
+        "tauri": "tauri",
+        "tauri-dev": "tauri dev",
+        "tauri-build": "tauri build"
+    },
+    "dependencies": {
+        "@chakra-ui/icons": "^1.0.4",
+        "@chakra-ui/react": "^1.2.1",
+        "@emotion/react": "^11.1.4",
+        "@emotion/styled": "^11.0.0",
+        "@testing-library/jest-dom": "^5.11.9",
+        "@testing-library/react": "^11.2.5",
+        "@testing-library/user-event": "^12.6.3",
+        "framer-motion": "^3.2.1",
+        "history": "^5.0.0",
+        "react": "^17.0.1",
+        "react-app-polyfill": "^2.0.0",
+        "react-dom": "^17.0.1",
+        "react-router": "^6.0.0-beta.0",
+        "react-router-dom": "^6.0.0-beta.0",
+        "react-scripts": "4.0.1",
+        "tauri": "^0.14.1"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
+}
