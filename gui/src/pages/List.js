@@ -19,7 +19,7 @@ const List = ({ isOnline }) => {
             promisified({
                 cmd: 'list',
                 listtype: listType,
-                param: paramInput !== '' ? paramInput : null,
+                param: paramInput || null,
             })
                 .then((res) => {
                     const output = res.list.join('\n') ?? '';

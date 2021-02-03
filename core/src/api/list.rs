@@ -78,37 +78,58 @@ pub async fn backlinks<C: AsRef<WikiClient>>(
     client: C,
     parameter: Option<&str>,
 ) -> Result<Vec<String>> {
-    if parameter.is_none() {
-        return Err(ApiError::InvalidInput(
+    if let Some(p) = parameter {
+        get_from_api(
+            client.as_ref(),
+            "backlinks",
+            "bl",
+            Some(&format!("bltitle={}", p)),
+        )
+        .await
+    } else {
+        Err(ApiError::InvalidInput(
             "Missing bltitle: Title to search".to_string(),
-        ));
+        ))
     }
-    get_from_api(client.as_ref(), "backlinks", "bl", parameter).await
 }
 
 pub async fn categorymembers<C: AsRef<WikiClient>>(
     client: C,
     parameter: Option<&str>,
 ) -> Result<Vec<String>> {
-    if parameter.is_none() {
-        return Err(ApiError::InvalidInput(
+    if let Some(p) = parameter {
+        get_from_api(
+            client.as_ref(),
+            "categorymembers",
+            "cm",
+            Some(&format!("cmtitle={}", p)),
+        )
+        .await
+    } else {
+        Err(ApiError::InvalidInput(
             "Missing cmtitle (Which category to enumerate (must include 'Category:' prefix))"
                 .to_string(),
-        ));
+        ))
     }
-    get_from_api(client.as_ref(), "categorymembers", "cm", parameter).await
 }
 
 pub async fn embeddedin<C: AsRef<WikiClient>>(
     client: C,
     parameter: Option<&str>,
 ) -> Result<Vec<String>> {
-    if parameter.is_none() {
-        return Err(ApiError::InvalidInput(
+    if let Some(p) = parameter {
+        get_from_api(
+            client.as_ref(),
+            "embeddedin",
+            "ei",
+            Some(&format!("eititle={}", p)),
+        )
+        .await
+    } else {
+        Err(ApiError::InvalidInput(
             "Missing eititle: Title to search".to_string(),
-        ));
+        ))
     }
-    get_from_api(client.as_ref(), "embeddedin", "ei", parameter).await
 }
 
 pub async fn exturlusage<C: AsRef<WikiClient>>(client: C) -> Result<HashMap<String, Vec<String>>> {
@@ -130,12 +151,19 @@ pub async fn imageusage<C: AsRef<WikiClient>>(
     client: C,
     parameter: Option<&str>,
 ) -> Result<Vec<String>> {
-    if parameter.is_none() {
-        return Err(ApiError::InvalidInput(
+    if let Some(p) = parameter {
+        get_from_api(
+            client.as_ref(),
+            "imageusage",
+            "iu",
+            Some(&format!("iutitle={}", p)),
+        )
+        .await
+    } else {
+        Err(ApiError::InvalidInput(
             "Missing iutitle: Title to search".to_string(),
-        ));
+        ))
     }
-    get_from_api(client.as_ref(), "imageusage", "iu", parameter).await
 }
 
 pub async fn protectedtitles<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
@@ -146,26 +174,40 @@ pub async fn querypage<C: AsRef<WikiClient>>(
     client: C,
     parameter: Option<&str>,
 ) -> Result<Vec<String>> {
-    if parameter.is_none() {
-        return Err(ApiError::InvalidInput(
+    if let Some(p) = parameter {
+        get_from_api(
+            client.as_ref(),
+            "querypage",
+            "qp",
+            Some(&format!("qppage={}", p)),
+        )
+        .await
+    } else {
+        Err(ApiError::InvalidInput(
             "Missing qppage: The name of the special page. Note, this is case sensitive"
                 .to_string(),
-        ));
+        ))
     }
-    get_from_api(client.as_ref(), "querypage", "qp", parameter).await
 }
 
 pub async fn search<C: AsRef<WikiClient>>(
     client: C,
     parameter: Option<&str>,
 ) -> Result<Vec<String>> {
-    if parameter.is_none() {
-        return Err(ApiError::InvalidInput(
+    if let Some(p) = parameter {
+        get_from_api(
+            client.as_ref(),
+            "search",
+            "sr",
+            Some(&format!("srsearch={}", p)),
+        )
+        .await
+    } else {
+        Err(ApiError::InvalidInput(
             "Missing srsearch: Search for all page titles (or content) that has this value"
                 .to_string(),
-        ));
+        ))
     }
-    get_from_api(client.as_ref(), "search", "sr", parameter).await
 }
 
 async fn get_from_api(

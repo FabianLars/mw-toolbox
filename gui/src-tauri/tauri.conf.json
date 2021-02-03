@@ -28,8 +28,8 @@
             "externalBin": [],
             "copyright": "",
             "category": "DeveloperTool",
-            "shortDescription": "",
-            "longDescription": "",
+            "shortDescription": "mw-toolbox GUI",
+            "longDescription": "mw-toolbox GUI",
             "deb": {
                 "depends": [],
                 "useBootstrapper": false
