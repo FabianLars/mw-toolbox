@@ -1,6 +1,6 @@
 import { Button, Flex, Grid, GridItem, Textarea, Checkbox, useToast } from '@chakra-ui/react';
 import { useState } from 'react';
-import { invoke, promisified } from 'tauri/api/tauri';
+import { promisified } from 'tauri/api/tauri';
 import Header from '../components/Header';
 
 const Edit = ({ isOnline }) => {
@@ -138,10 +138,15 @@ const Edit = ({ isOnline }) => {
                         >
                             Auto-Save
                         </Checkbox>
-                        <Button w="100%" isDisabled={!isRunning || !currentPage || isLoading} onClick={getNextPage}>
+                        <Button
+                            w="100%"
+                            isDisabled={!isRunning || !currentPage}
+                            isLoading={isLoading}
+                            onClick={getNextPage}
+                        >
                             Skip
                         </Button>
-                        <Button w="100%" isDisabled={!isRunning || !currentPage || isLoading} onClick={save}>
+                        <Button w="100%" isDisabled={!isRunning || !currentPage} isLoading={isLoading} onClick={save}>
                             Save
                         </Button>
                     </Flex>
