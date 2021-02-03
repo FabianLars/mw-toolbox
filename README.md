@@ -6,8 +6,10 @@ Interaction with Riot's API only via CLI + feature flag "riot-api" (just "update
 
 Input files need to be formatted with newline seperation (eg 1 wiki article per line)
 
--   GUIs:
-    -   see README inside gui directory
+-   GUI usage:
+    -   cd into gui subdir
+    -   run "yarn" or "yarn install"
+    -   run "yarn tauri dev"
 -   CLI usage:
     -   run via "[cargo run|cli] \<command\> (\<args if needed\>)"
         -   these commands need FANDOM_BOT_NAME, FANDOM_BOT_PASSWORD and/or RIOT_API_KEY (depends on command) environment variables as of now
@@ -22,4 +24,4 @@ This project isn’t endorsed by Riot Games and doesn’t reflect the views or o
 or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are
 trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.
 
-Same for Fandom btw...
+Same for Fandom and MediaWiki btw...
