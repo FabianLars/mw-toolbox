@@ -46,7 +46,7 @@
             "event": true
         },
         "window": {
-            "title": "wtools by FabianLars",
+            "title": "mw-toolbox by FabianLars",
             "width": 1280,
             "height": 720,
             "resizable": false,
