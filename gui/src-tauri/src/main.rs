@@ -15,29 +15,9 @@ use serde::Serialize;
 use tauri::Result;
 
 #[derive(Serialize)]
-struct Response<'a> {
-    message: &'a str,
-}
-
-#[derive(Serialize)]
-struct ListResponse {
-    list: Vec<String>,
-}
-
-#[derive(Serialize)]
 struct LoginResponse {
     username: String,
     url: String,
-}
-
-#[derive(Serialize)]
-struct UploadDialogResponse {
-    files: Vec<String>,
-}
-
-#[derive(Serialize)]
-struct GetPageResponse {
-    content: String,
 }
 
 fn main() {
@@ -141,9 +121,7 @@ fn main() {
                                 move || match handle
                                     .block_on(api::delete::delete(&client, &pages[..]))
                                 {
-                                    Ok(_) => Ok(Response {
-                                        message: "Delete successful!",
-                                    }),
+                                    Ok(_) => Ok("Delete successful!"),
                                     Err(err) => Err(err.into()),
                                 },
                                 callback,
@@ -163,9 +141,7 @@ fn main() {
                                 move || match handle
                                     .block_on(api::download::download(client, &files))
                                 {
-                                    Ok(_) => Ok(Response {
-                                        message: "Download successful! Check your download folder.",
-                                    }),
+                                    Ok(_) => Ok("Download successful! Check your download folder."),
                                     Err(err) => Err(err.into()),
                                 },
                                 callback,
@@ -206,7 +182,7 @@ fn main() {
                                 move || match handle
                                     .block_on(api::parse::get_page_content(&client, page))
                                 {
-                                    Ok(s) => Ok(GetPageResponse { content: s }),
+                                    Ok(s) => Ok(s),
                                     Err(err) => Err(err.into()),
                                 },
                                 callback,
@@ -267,7 +243,7 @@ fn main() {
                                         _ => handle.block_on(api::list::allimages(&client)),
                                     };
                                     match res {
-                                        Ok(list) => Ok(ListResponse { list }),
+                                        Ok(list) => Ok(list),
                                         Err(err) => Err(err.into()),
                                     }
                                 },
@@ -293,9 +269,7 @@ fn main() {
                                     None,
                                     None,
                                 )) {
-                                    Ok(_) => Ok(Response {
-                                        message: "Successfully moved pages.",
-                                    }),
+                                    Ok(_) => Ok("Successfully moved pages."),
                                     Err(err) => Err(err.into()),
                                 },
                                 callback,
@@ -323,9 +297,7 @@ fn main() {
                                         handle.block_on(api::edit::nulledit(&client, &pages[..]))
                                     }
                                 } {
-                                    Ok(_) => Ok(Response {
-                                        message: "Purge successful!",
-                                    }),
+                                    Ok(_) => Ok("Purge successful!"),
                                     Err(err) => Err(err.into()),
                                 },
                                 callback,
@@ -350,7 +322,7 @@ fn main() {
                                                 }
                                                 Err(_) => panic!("Mutex poisoned"),
                                             };
-                                            Ok(UploadDialogResponse { files: arr })
+                                            Ok(arr)
                                         }
                                         Err(e) => Err(e.into()),
                                     }
@@ -375,9 +347,7 @@ fn main() {
                                 move || match handle
                                     .block_on(api::upload::upload(&client, files, text))
                                 {
-                                    Ok(_) => Ok(Response {
-                                        message: "Upload successful!",
-                                    }),
+                                    Ok(_) => Ok("Upload successful!"),
                                     Err(e) => Err(e.into()),
                                 },
                                 callback,

@@ -25,7 +25,7 @@ const Purge = ({ isOnline }) => {
                 setIsNulling(false);
                 toast({
                     title: (isNulledit ? 'Nulledit' : 'Purge') + ' successful',
-                    description: res.message,
+                    description: res,
                     status: 'success',
                     isClosable: true,
                 });

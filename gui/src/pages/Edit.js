@@ -42,7 +42,7 @@ const Edit = ({ isOnline }) => {
                 page: curr,
             })
                 .then((res) => {
-                    setPageContent(res.content);
+                    setPageContent(res);
                     setIsLoading(false);
                 })
                 .catch((err) => {

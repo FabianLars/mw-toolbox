@@ -18,7 +18,7 @@ const Delete = ({ isOnline }) => {
                 setIsLoading(false);
                 toast({
                     title: 'Delete successful',
-                    description: res.message,
+                    description: res,
                     status: 'success',
                     isClosable: true,
                 });

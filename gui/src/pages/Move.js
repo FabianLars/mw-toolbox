@@ -20,7 +20,7 @@ const Move = ({ isOnline }) => {
                 setIsLoading(false);
                 toast({
                     title: 'Successfully moved pages',
-                    description: res.message,
+                    description: res,
                     status: 'success',
                     isClosable: true,
                 });

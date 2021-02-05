@@ -18,7 +18,7 @@ const Download = ({ isOnline }) => {
                 setIsLoading(false);
                 toast({
                     title: 'Download successful',
-                    description: res.message,
+                    description: res,
                     status: 'success',
                     isClosable: true,
                 });

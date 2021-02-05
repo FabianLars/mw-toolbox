@@ -23,7 +23,7 @@ const Upload = ({ isOnline }) => {
             cmd: 'uploadDialog',
         })
             .then((res) => {
-                const files = res.files.join('\n') ?? '';
+                const files = res.join('\n') ?? '';
                 setFiles(files);
                 window.sessionStorage.setItem('uploadtext-cache', uploadtext);
                 window.sessionStorage.setItem('files-cache', files);
@@ -51,7 +51,7 @@ const Upload = ({ isOnline }) => {
                 setIsUploading(false);
                 toast({
                     title: 'Upload complete!',
-                    description: res.message,
+                    description: res,
                     status: 'success',
                     isClosable: true,
                 });

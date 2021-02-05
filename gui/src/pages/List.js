@@ -22,7 +22,7 @@ const List = ({ isOnline }) => {
                 param: paramInput || null,
             })
                 .then((res) => {
-                    const output = res.list.join('\n') ?? '';
+                    const output = res.join('\n') ?? '';
                     setListOutput(output);
                     window.sessionStorage.setItem('list-cache', output);
                     setLoading(false);
