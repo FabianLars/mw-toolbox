@@ -109,7 +109,7 @@ const Account = ({ user, setUser }) => {
                     <Input
                         value={apiUrl}
                         onChange={(event) => setApiUrl(event.target.value)}
-                        placeholder="Full URL pointing to api.php)"
+                        placeholder="Full URL pointing to api.php"
                     />
                 </FormControl>
                 <Divider my={2} />
