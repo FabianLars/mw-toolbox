@@ -23,7 +23,7 @@ const Upload = ({ isOnline }) => {
             cmd: 'uploadDialog',
         })
             .then((res) => {
-                const files = res.join('\n') ?? '';
+                const files = res.join('\n');
                 setFiles(files);
                 window.sessionStorage.setItem('uploadtext-cache', uploadtext);
                 window.sessionStorage.setItem('files-cache', files);
