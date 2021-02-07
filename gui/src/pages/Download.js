@@ -14,11 +14,11 @@ const Download = ({ isOnline }) => {
             cmd: 'download',
             files: areaValue.split(/\r?\n/),
         })
-            .then((res) => {
+            .then(() => {
                 setIsLoading(false);
                 toast({
                     title: 'Download successful',
-                    description: res,
+                    description: 'Download successful! Check your download folder.',
                     status: 'success',
                     isClosable: true,
                 });

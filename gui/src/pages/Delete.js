@@ -14,11 +14,11 @@ const Delete = ({ isOnline }) => {
             cmd: 'delete',
             pages: areaValue.split(/\r?\n/),
         })
-            .then((res) => {
+            .then(() => {
                 setIsLoading(false);
                 toast({
                     title: 'Delete successful',
-                    description: res,
+                    description: 'Delete successful',
                     status: 'success',
                     isClosable: true,
                 });

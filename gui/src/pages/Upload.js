@@ -47,11 +47,11 @@ const Upload = ({ isOnline }) => {
             cmd: 'upload',
             text: uploadtext,
         })
-            .then((res) => {
+            .then(() => {
                 setIsUploading(false);
                 toast({
                     title: 'Upload complete!',
-                    description: res,
+                    description: 'Upload complete!',
                     status: 'success',
                     isClosable: true,
                 });

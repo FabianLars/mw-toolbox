@@ -20,12 +20,12 @@ const Purge = ({ isOnline }) => {
             pages: areaValue.split(/\r?\n/),
             is_nulledit: isNulledit,
         })
-            .then((res) => {
+            .then(() => {
                 setIsPurging(false);
                 setIsNulling(false);
                 toast({
                     title: (isNulledit ? 'Nulledit' : 'Purge') + ' successful',
-                    description: res,
+                    description: (isNulledit ? 'Nulledit' : 'Purge') + ' successful',
                     status: 'success',
                     isClosable: true,
                 });

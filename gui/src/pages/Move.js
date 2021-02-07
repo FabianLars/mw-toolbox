@@ -16,11 +16,11 @@ const Move = ({ isOnline }) => {
             from: areaFrom.split(/\r?\n/),
             to: areaTo.split(/\r?\n/),
         })
-            .then((res) => {
+            .then(() => {
                 setIsLoading(false);
                 toast({
                     title: 'Successfully moved pages',
-                    description: res,
+                    description: 'Successfully moved pages.',
                     status: 'success',
                     isClosable: true,
                 });

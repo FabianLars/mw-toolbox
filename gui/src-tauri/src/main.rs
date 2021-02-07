@@ -121,7 +121,7 @@ fn main() {
                                 move || match handle
                                     .block_on(api::delete::delete(&client, &pages[..]))
                                 {
-                                    Ok(_) => Ok("Delete successful!"),
+                                    Ok(_) => Ok(()),
                                     Err(err) => Err(err.into()),
                                 },
                                 callback,
@@ -141,7 +141,7 @@ fn main() {
                                 move || match handle
                                     .block_on(api::download::download(client, &files))
                                 {
-                                    Ok(_) => Ok("Download successful! Check your download folder."),
+                                    Ok(_) => Ok(()),
                                     Err(err) => Err(err.into()),
                                 },
                                 callback,
@@ -269,7 +269,7 @@ fn main() {
                                     None,
                                     None,
                                 )) {
-                                    Ok(_) => Ok("Successfully moved pages."),
+                                    Ok(_) => Ok(()),
                                     Err(err) => Err(err.into()),
                                 },
                                 callback,
@@ -297,7 +297,7 @@ fn main() {
                                         handle.block_on(api::edit::nulledit(&client, &pages[..]))
                                     }
                                 } {
-                                    Ok(_) => Ok("Purge successful!"),
+                                    Ok(_) => Ok(()),
                                     Err(err) => Err(err.into()),
                                 },
                                 callback,
@@ -347,7 +347,7 @@ fn main() {
                                 move || match handle
                                     .block_on(api::upload::upload(&client, files, text))
                                 {
-                                    Ok(_) => Ok("Upload successful!"),
+                                    Ok(_) => Ok(()),
                                     Err(e) => Err(e.into()),
                                 },
                                 callback,
