@@ -38,7 +38,8 @@ const Account = ({ user, setUser }) => {
             .catch((err) => {
                 setLoggingin(false);
                 setUser((user) => {
-                    return { isOnline: false, ...user };
+                    user.isOnline = false;
+                    return user;
                 });
                 toast({
                     title: "Couldn't log in!",
