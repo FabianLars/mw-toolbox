@@ -11,7 +11,6 @@ const MenuItem = ({ children, isDisabled, isLast, to = '/' }) => {
             mr={isLast ? 0 : 4}
             borderTop="1px solid transparent"
             borderTopColor={location === to ? 'gray.500' : 'transparent'}
-            display="block"
             p="1rem 1.5rem"
             borderRadius={5}
             color={isDisabled ? 'red.700' : ''}
