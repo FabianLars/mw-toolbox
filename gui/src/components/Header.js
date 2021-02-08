@@ -2,8 +2,7 @@ import React from 'react';
 import { Link as ReactLink, useLocation } from 'react-router-dom';
 import { Badge, Flex, Link, Spacer, Spinner } from '@chakra-ui/react';
 
-const MenuItem = (props) => {
-    const { children, isDisabled, isLast, to = '/', ...rest } = props;
+const MenuItem = ({ children, isDisabled, isLast, to = '/' }) => {
     const location = useLocation().pathname;
     return (
         <Link
@@ -17,7 +16,6 @@ const MenuItem = (props) => {
             borderRadius={5}
             color={isDisabled ? 'red.700' : ''}
             style={{ pointerEvents: isDisabled ? 'none' : '' }}
-            {...rest}
             _hover={{ bg: 'gray.700' }}
         >
             {children}
