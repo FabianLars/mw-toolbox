@@ -113,18 +113,22 @@ const List = ({ isOnline }) => {
                         <option value="search">search</option>
                     </Select>
                 </FormControl>
-                <Button
-                    mx={2}
-                    onClick={getList}
-                    isLoading={loading}
-                    isDisabled={!isOnline}
-                    title={!isOnline ? 'Please login first!' : 'This might take a while!'}
-                >
-                    Get List
-                </Button>
-                <Button mx={2} onClick={clearOutput}>
-                    Clear Output
-                </Button>
+                <Box>
+                    <Button
+                        mx={2}
+                        onClick={getList}
+                        isLoading={loading}
+                        isDisabled={!isOnline}
+                        title={!isOnline ? 'Please login first!' : 'This might take a while!'}
+                    >
+                        Get List
+                    </Button>
+                </Box>
+                <Box>
+                    <Button mx={2} onClick={clearOutput}>
+                        Clear Output
+                    </Button>
+                </Box>
             </Flex>
             <Textarea
                 resize="none"

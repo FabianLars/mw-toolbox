@@ -1,4 +1,4 @@
-import { Button, Flex, FormControl, FormLabel, Input, Textarea, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, FormLabel, Input, Textarea, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { promisified } from 'tauri/api/tauri';
 import { emit } from 'tauri/api/event';
@@ -85,21 +85,27 @@ const Upload = ({ isOnline }) => {
                         onChange={(event) => setUploadtext(event.target.value)}
                     />
                 </FormControl>
-                <Button mx={2} isLoading={isWaiting} isDisabled={isUploading} onClick={openDialog}>
-                    Select File(s)
-                </Button>
-                <Button mx={2} isLoading={isWaiting} isDisabled={isUploading} onClick={clearList}>
-                    Clear Filelist
-                </Button>
-                <Button
-                    mx={2}
-                    isDisabled={isWaiting || !isOnline}
-                    isLoading={isUploading}
-                    onClick={startUpload}
-                    title={!isOnline ? 'Please login first!' : 'This might take a while!'}
-                >
-                    Upload
-                </Button>
+                <Box>
+                    <Button mx={2} isLoading={isWaiting} isDisabled={isUploading} onClick={openDialog}>
+                        Select File(s)
+                    </Button>
+                </Box>
+                <Box>
+                    <Button mx={2} isLoading={isWaiting} isDisabled={isUploading} onClick={clearList}>
+                        Clear Filelist
+                    </Button>
+                </Box>
+                <Box>
+                    <Button
+                        mx={2}
+                        isDisabled={isWaiting || !isOnline}
+                        isLoading={isUploading}
+                        onClick={startUpload}
+                        title={!isOnline ? 'Please login first!' : 'This might take a while!'}
+                    >
+                        Upload
+                    </Button>
+                </Box>
             </Flex>
             <Textarea
                 resize="none"
