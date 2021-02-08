@@ -114,42 +114,51 @@ const Edit = ({ isOnline }) => {
                         onChange={(e) => setPageContent(e.target.value)}
                     />
                 </GridItem>
-                <GridItem colSpan={3} display="flex" direction="row" justifyContent="space-between">
-                    Current page: {currentPage}
-                    <Flex direction="column" align="center" justify="space-between" h="100%">
-                        <Button
-                            w="100%"
-                            onClick={startStop}
-                            isDisabled={!isOnline || isLoading}
-                            title={
-                                !isOnline
-                                    ? 'Please login first!'
-                                    : isRunning
-                                    ? 'Skip all remaining pages'
-                                    : 'This might take a while!'
-                            }
-                        >
-                            {isRunning ? 'Stop' : 'Start'}
-                        </Button>
-                        <Checkbox
-                            isChecked={isAuto}
-                            onChange={(event) => setIsAuto(event.target.checked)}
-                            isDisabled={true /* TODO */}
-                        >
-                            Auto-Save
-                        </Checkbox>
-                        <Button
-                            w="100%"
-                            isDisabled={!isRunning || !currentPage}
-                            isLoading={isLoading}
-                            onClick={getNextPage}
-                        >
-                            Skip
-                        </Button>
-                        <Button w="100%" isDisabled={!isRunning || !currentPage} isLoading={isLoading} onClick={save}>
-                            Save
-                        </Button>
-                    </Flex>
+                <GridItem colSpan={3}>
+                    <Grid templateColumns="repeat(8, 1fr)" templateRows="repeat(4, 1fr)" h="100%">
+                        <GridItem colSpan={4}>Current page: {currentPage}</GridItem>
+                        <GridItem rowSpan={4} colStart={8}>
+                            <Flex direction="column" align="center" justify="space-between" h="100%">
+                                <Button
+                                    w="100%"
+                                    onClick={startStop}
+                                    isDisabled={!isOnline || isLoading}
+                                    title={
+                                        !isOnline
+                                            ? 'Please login first!'
+                                            : isRunning
+                                            ? 'Skip all remaining pages'
+                                            : 'This might take a while!'
+                                    }
+                                >
+                                    {isRunning ? 'Stop' : 'Start'}
+                                </Button>
+                                <Checkbox
+                                    isChecked={isAuto}
+                                    onChange={(event) => setIsAuto(event.target.checked)}
+                                    isDisabled={true /* TODO */}
+                                >
+                                    Auto-Save
+                                </Checkbox>
+                                <Button
+                                    w="100%"
+                                    isDisabled={!isRunning || !currentPage}
+                                    isLoading={isLoading}
+                                    onClick={getNextPage}
+                                >
+                                    Skip
+                                </Button>
+                                <Button
+                                    w="100%"
+                                    isDisabled={!isRunning || !currentPage}
+                                    isLoading={isLoading}
+                                    onClick={save}
+                                >
+                                    Save
+                                </Button>
+                            </Flex>
+                        </GridItem>
+                    </Grid>
                 </GridItem>
             </Grid>
         </Flex>

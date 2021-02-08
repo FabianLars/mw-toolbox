@@ -105,7 +105,7 @@ const Upload = ({ isOnline }) => {
                 resize="none"
                 value={files}
                 isReadOnly
-                placeholder="Selected files will be displayed here"
+                placeholder="Selected files will be displayed here."
                 h="100%"
             />
         </Flex>
