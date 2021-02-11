@@ -28,6 +28,7 @@ pub enum Cmd {
     Edit {
         title: String,
         content: String,
+        summary: Option<String>,
         callback: String,
         error: String,
     },

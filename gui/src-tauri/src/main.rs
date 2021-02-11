@@ -151,6 +151,7 @@ fn main() {
                         Edit {
                             title,
                             content,
+                            summary,
                             callback,
                             error,
                         } => {
@@ -160,7 +161,7 @@ fn main() {
                             tauri::execute_promise(
                                 _webview,
                                 move || match handle
-                                    .block_on(api::edit::edit(&client, title, content))
+                                    .block_on(api::edit::edit(&client, title, content, summary))
                                 {
                                     Ok(s) => Ok(s),
                                     Err(err) => Err(err.into()),

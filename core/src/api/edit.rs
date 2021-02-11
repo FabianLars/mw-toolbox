@@ -27,14 +27,19 @@ pub async fn edit<C: AsRef<WikiClient>, S: AsRef<str>>(
     client: C,
     title: S,
     content: S,
+    summary: Option<S>,
 ) -> Result<String, ApiError> {
     let client = client.as_ref();
+    let summary = match summary {
+        Some(s) => s.as_ref().to_string(),
+        None => "automated action".to_string(),
+    };
 
     let res: Edit = client
         .post_into_json(&[
             ("action", "edit"),
             ("bot", ""),
-            ("summary", "automated action"),
+            ("summary", &summary),
             ("title", title.as_ref()),
             ("text", content.as_ref()),
         ])

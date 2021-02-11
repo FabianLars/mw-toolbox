@@ -1,4 +1,4 @@
-import { Button, Flex, Grid, GridItem, Textarea, Checkbox, useToast } from '@chakra-ui/react';
+import { Button, Flex, Grid, GridItem, Textarea, Checkbox, useToast, Input } from '@chakra-ui/react';
 import { useState } from 'react';
 import { promisified } from 'tauri/api/tauri';
 import Header from '../components/Header';
@@ -10,6 +10,7 @@ const Edit = ({ isOnline }) => {
     const [pageList, setPageList] = useState('');
     const [pageContent, setPageContent] = useState('');
     const [currentPage, setCurrentPage] = useState('Not running!');
+    const [editSummary, setEditSummary] = useState('');
     const toast = useToast();
 
     const startStop = () => {
@@ -68,6 +69,7 @@ const Edit = ({ isOnline }) => {
                 .replace(/[\u007F-\u009F\u200B]/g, '')
                 .replaceAll('…', '...')
                 .trim(),
+            summary: editSummary || null,
         })
             .then((res) => {
                 toast({
@@ -116,7 +118,16 @@ const Edit = ({ isOnline }) => {
                 </GridItem>
                 <GridItem colSpan={3}>
                     <Grid templateColumns="repeat(8, 1fr)" templateRows="repeat(4, 1fr)" h="100%">
-                        <GridItem colSpan={4}>Current page: {currentPage}</GridItem>
+                        <GridItem colSpan={4} mt={2}>
+                            Current page: {currentPage}
+                        </GridItem>
+                        <GridItem colSpan={3} mr={4}>
+                            <Input
+                                placeholder="Edit summary"
+                                value={editSummary}
+                                onChange={(event) => setEditSummary(event.target.value)}
+                            />
+                        </GridItem>
                         <GridItem rowSpan={4} colStart={8}>
                             <Flex direction="column" align="center" justify="space-between" h="100%">
                                 <Button
