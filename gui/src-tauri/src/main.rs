@@ -1,7 +1,4 @@
-#![cfg_attr(
-    all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
-)]
+#![windows_subsystem = "windows"]
 
 mod cmd;
 
@@ -10,7 +7,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use mw_toolbox::{api, WikiClient};
+use mw_tools::{api, WikiClient};
 use serde::Serialize;
 use tauri::Result;
 

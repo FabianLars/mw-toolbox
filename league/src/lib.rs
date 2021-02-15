@@ -11,7 +11,7 @@ use select::{document::Document, predicate::Class};
 use serde::{Deserialize, Serialize};
 use tokio::{fs::File, io::AsyncWriteExt};
 
-use mw_toolbox::WikiClient;
+use mw_tools::WikiClient;
 
 #[derive(Default, Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]

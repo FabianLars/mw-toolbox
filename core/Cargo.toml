@@ -2,7 +2,7 @@
 authors = ["FabianLars <fabianlars@fabianlars.de>"]
 edition = "2018"
 license = "MIT"
-name = "mw-toolbox"
+name = "mw-tools"
 version = "0.1.0"
 
 [dependencies]

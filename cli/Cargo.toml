@@ -14,7 +14,7 @@ riot-api = ["league/riot-api"]
 
 [dependencies]
 league = {path = "../league", optional = true}
-mw-toolbox = {path = "../core"}
+mw-tools = {path = "../core"}
 
 clap = "3.0.0-beta.2"
 env_logger = "0.8"

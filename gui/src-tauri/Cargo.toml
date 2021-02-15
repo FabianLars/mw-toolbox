@@ -4,12 +4,12 @@ build = "src/build.rs"
 description = "mw-toolbox GUI"
 edition = "2018"
 license = "MIT"
-name = "mw-gui"
+name = "mw-toolbox"
 version = "0.1.0"
 
 [dependencies]
 futures = "0.3"
-mw-toolbox = { path = "../../core" }
+mw-tools = { path = "../../core" }
 native-dialog = { version = "0.5", features = [ "windows_dpi_awareness", "windows_visual_styles" ] }
 pretty_env_logger = "0.4"
 serde = { version = "1", features = [ "derive" ] }
@@ -23,3 +23,7 @@ winres = "0.1"
 
 [features]
 embedded-server = [ "tauri/embedded-server" ]
+
+[[bin]]
+name = "mw-toolbox"
+path = "src/main.rs"
