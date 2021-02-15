@@ -289,14 +289,14 @@ fn main() {
                             tauri::execute_promise(
                                 _webview,
                                 move || match match is_nulledit {
-                                    true => handle.block_on(api::purge::purge(
+                                    true => {
+                                        handle.block_on(api::edit::nulledit(&client, &pages[..]))
+                                    }
+                                    false => handle.block_on(api::purge::purge(
                                         &client,
                                         &pages[..],
                                         true,
                                     )),
-                                    false => {
-                                        handle.block_on(api::edit::nulledit(&client, &pages[..]))
-                                    }
                                 } {
                                     Ok(_) => Ok(()),
                                     Err(err) => Err(err.into()),
