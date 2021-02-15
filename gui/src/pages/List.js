@@ -21,22 +21,21 @@ const List = ({ isOnline }) => {
                 listtype: listType,
                 param: paramInput || null,
             })
-                .then((res) => {
+                .then(res => {
                     const output = res.join('\n');
                     setListOutput(output);
                     window.sessionStorage.setItem('list-cache', output);
-                    setLoading(false);
                 })
-                .catch((err) => {
-                    setLoading(false);
+                .catch(err =>
                     toast({
                         title: 'Request failed!',
                         description: err,
                         status: 'error',
                         duration: 10000,
                         isClosable: true,
-                    });
-                });
+                    })
+                )
+                .finally(() => setLoading(false));
         }
     };
 
@@ -91,13 +90,13 @@ const List = ({ isOnline }) => {
                             placeholder={paramInfo}
                             title={paramInfo}
                             value={paramInput}
-                            onChange={(event) => setParamInput(event.target.value)}
+                            onChange={event => setParamInput(event.target.value)}
                         />
                     </FormControl>
                 )}
                 <FormControl id="listtype-dropdown" mx={2} isRequired>
                     <FormLabel>API Endpoint</FormLabel>
-                    <Select placeholder="Select type of list" onChange={({ target: { value } }) => setListType(value)}>
+                    <Select placeholder="Select type of list" onChange={event => setListType(event.target.value)}>
                         <option value="allcategories">allcategories</option>
                         <option value="allimages">allimages</option>
                         <option value="allinfoboxes">allinfoboxes</option>

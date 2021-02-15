@@ -22,23 +22,22 @@ const Upload = ({ isOnline }) => {
         promisified({
             cmd: 'uploadDialog',
         })
-            .then((res) => {
+            .then(res => {
                 const files = res.join('\n');
                 setFiles(files);
                 window.sessionStorage.setItem('uploadtext-cache', uploadtext);
                 window.sessionStorage.setItem('files-cache', files);
-                setIsWaiting(false);
             })
-            .catch((err) => {
-                setIsWaiting(false);
+            .catch(err =>
                 toast({
                     title: 'Something went wrong!',
                     description: err,
                     status: 'error',
                     duration: 5000,
                     isClosable: true,
-                });
-            });
+                })
+            )
+            .finally(() => setIsWaiting(false));
     };
 
     const startUpload = () => {
@@ -47,25 +46,24 @@ const Upload = ({ isOnline }) => {
             cmd: 'upload',
             text: uploadtext,
         })
-            .then(() => {
-                setIsUploading(false);
+            .then(() =>
                 toast({
                     title: 'Upload complete!',
                     description: 'Upload complete!',
                     status: 'success',
                     isClosable: true,
-                });
-            })
-            .catch((err) => {
-                setIsWaiting(false);
+                })
+            )
+            .catch(err =>
                 toast({
                     title: 'Something went wrong!',
                     description: err,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
-                });
-            });
+                })
+            )
+            .finally(() => setIsUploading(false));
     };
 
     useEffect(() => {
@@ -82,7 +80,7 @@ const Upload = ({ isOnline }) => {
                     <Input
                         value={uploadtext}
                         isDisabled={isUploading || isWaiting}
-                        onChange={(event) => setUploadtext(event.target.value)}
+                        onChange={event => setUploadtext(event.target.value)}
                     />
                 </FormControl>
                 <Box>

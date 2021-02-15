@@ -16,25 +16,24 @@ const Move = ({ isOnline }) => {
             from: areaFrom.split(/\r?\n/),
             to: areaTo.split(/\r?\n/),
         })
-            .then(() => {
-                setIsLoading(false);
+            .then(() =>
                 toast({
                     title: 'Successfully moved pages',
                     description: 'Successfully moved pages.',
                     status: 'success',
                     isClosable: true,
-                });
-            })
-            .catch((err) => {
-                setIsLoading(false);
+                })
+            )
+            .catch(err =>
                 toast({
                     title: 'Something went wrong!',
                     description: err,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
-                });
-            });
+                })
+            )
+            .finally(() => setIsLoading(false));
     };
 
     return (
@@ -44,7 +43,7 @@ const Move = ({ isOnline }) => {
                 <Textarea
                     resize="none"
                     value={areaFrom}
-                    onChange={(e) => setAreaFrom(e.target.value)}
+                    onChange={event => setAreaFrom(event.target.value)}
                     placeholder="Write exact names of pages to move. Seperated by newline."
                     h="100%"
                     mr={2}
@@ -52,7 +51,7 @@ const Move = ({ isOnline }) => {
                 <Textarea
                     resize="none"
                     value={areaTo}
-                    onChange={(e) => setAreaTo(e.target.value)}
+                    onChange={event => setAreaTo(event.target.value)}
                     placeholder="Write exact names of destinations. Seperated by newline."
                     h="100%"
                     ml={2}

@@ -9,7 +9,7 @@ const Purge = ({ isOnline }) => {
     const [areaValue, setAreaValue] = useState('');
     const toast = useToast();
 
-    const purgePages = (isNulledit) => {
+    const purgePages = isNulledit => {
         if (isNulledit) {
             setIsNulling(true);
         } else {
@@ -20,26 +20,26 @@ const Purge = ({ isOnline }) => {
             pages: areaValue.split(/\r?\n/),
             is_nulledit: isNulledit,
         })
-            .then(() => {
-                setIsPurging(false);
-                setIsNulling(false);
+            .then(() =>
                 toast({
                     title: (isNulledit ? 'Nulledit' : 'Purge') + ' successful',
                     description: (isNulledit ? 'Nulledit' : 'Purge') + ' successful',
                     status: 'success',
                     isClosable: true,
-                });
-            })
-            .catch((err) => {
-                setIsPurging(false);
-                setIsNulling(false);
+                })
+            )
+            .catch(err =>
                 toast({
                     title: 'Something went wrong!',
                     description: err,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
-                });
+                })
+            )
+            .finally(() => {
+                setIsPurging(false);
+                setIsNulling(false);
             });
     };
 
@@ -50,7 +50,7 @@ const Purge = ({ isOnline }) => {
                 <Textarea
                     resize="none"
                     value={areaValue}
-                    onChange={(e) => setAreaValue(e.target.value)}
+                    onChange={event => setAreaValue(event.target.value)}
                     placeholder="Write exact page names here. Separated by newline."
                     h="100%"
                     mb={4}

@@ -14,25 +14,24 @@ const Download = ({ isOnline }) => {
             cmd: 'download',
             files: areaValue.split(/\r?\n/),
         })
-            .then(() => {
-                setIsLoading(false);
+            .then(() =>
                 toast({
                     title: 'Download successful',
                     description: 'Download successful! Check your download folder.',
                     status: 'success',
                     isClosable: true,
-                });
-            })
-            .catch((err) => {
-                setIsLoading(false);
+                })
+            )
+            .catch(err =>
                 toast({
                     title: 'Something went wrong!',
                     description: err,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
-                });
-            });
+                })
+            )
+            .finally(() => setIsLoading(false));
     };
 
     return (
@@ -41,7 +40,7 @@ const Download = ({ isOnline }) => {
             <Textarea
                 resize="none"
                 value={areaValue}
-                onChange={(e) => setAreaValue(e.target.value)}
+                onChange={event => setAreaValue(event.target.value)}
                 placeholder="Write exact page names here. Separated by newline. Inclusive 'File:' Prefix. Saved in your download folder."
                 h="100%"
                 mb={4}

@@ -15,12 +15,12 @@ const Edit = ({ isOnline }) => {
 
     const startStop = () => {
         if (isRunning) {
-            setPageList((state) => currentPage + '\n' + state);
+            setPageList(state => currentPage + '\n' + state);
             setPageContent('');
         } else {
             getNextPage();
         }
-        setIsRunning((state) => !state);
+        setIsRunning(state => !state);
     };
 
     const getNextPage = () => {
@@ -29,8 +29,8 @@ const Edit = ({ isOnline }) => {
         const pages = pageList
             .trim()
             .split(/\r?\n/)
-            .map((el) => el.trim())
-            .filter((el) => el);
+            .map(el => el.trim())
+            .filter(el => el);
         const curr = pages.shift();
         setCurrentPage(curr);
         setPageList(pages.join('\n'));
@@ -42,12 +42,8 @@ const Edit = ({ isOnline }) => {
                 cmd: 'getPage',
                 page: curr,
             })
-                .then((res) => {
-                    setPageContent(res);
-                    setIsLoading(false);
-                })
-                .catch((err) => {
-                    setIsLoading(false);
+                .then(setPageContent)
+                .catch(err => {
                     startStop();
                     toast({
                         title: 'Something went wrong!',
@@ -56,7 +52,8 @@ const Edit = ({ isOnline }) => {
                         duration: 10000,
                         isClosable: true,
                     });
-                });
+                })
+                .finally(() => setIsLoading(false));
         }
     };
 
@@ -71,7 +68,7 @@ const Edit = ({ isOnline }) => {
                 .trim(),
             summary: editSummary || null,
         })
-            .then((res) => {
+            .then(res => {
                 toast({
                     title: 'Edit successful',
                     description: res,
@@ -81,7 +78,8 @@ const Edit = ({ isOnline }) => {
                 });
                 getNextPage();
             })
-            .catch((err) => {
+            .catch(err => {
+                setIsLoading(false);
                 toast({
                     title: 'Something went wrong!',
                     description: err,
@@ -103,7 +101,7 @@ const Edit = ({ isOnline }) => {
                         h="100%"
                         placeholder="List of pages to operate on. Seperated by newline."
                         value={pageList}
-                        onChange={(e) => setPageList(e.target.value)}
+                        onChange={event => setPageList(event.target.value)}
                     />
                 </GridItem>
                 <GridItem colSpan={3} rowSpan={2}>
@@ -113,7 +111,7 @@ const Edit = ({ isOnline }) => {
                         h="100%"
                         placeholder="Page contents will be displayed here."
                         value={pageContent}
-                        onChange={(e) => setPageContent(e.target.value)}
+                        onChange={event => setPageContent(event.target.value)}
                     />
                 </GridItem>
                 <GridItem colSpan={3}>
@@ -125,7 +123,7 @@ const Edit = ({ isOnline }) => {
                             <Input
                                 placeholder="Edit summary"
                                 value={editSummary}
-                                onChange={(event) => setEditSummary(event.target.value)}
+                                onChange={event => setEditSummary(event.target.value)}
                             />
                         </GridItem>
                         <GridItem rowSpan={4} colStart={8}>
@@ -146,7 +144,7 @@ const Edit = ({ isOnline }) => {
                                 </Button>
                                 <Checkbox
                                     isChecked={isAuto}
-                                    onChange={(event) => setIsAuto(event.target.checked)}
+                                    onChange={event => setIsAuto(event.target.checked)}
                                     isDisabled={true /* TODO */}
                                 >
                                     Auto-Save

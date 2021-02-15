@@ -14,25 +14,24 @@ const Delete = ({ isOnline }) => {
             cmd: 'delete',
             pages: areaValue.split(/\r?\n/),
         })
-            .then(() => {
-                setIsLoading(false);
+            .then(() =>
                 toast({
                     title: 'Delete successful',
                     description: 'Delete successful',
                     status: 'success',
                     isClosable: true,
-                });
-            })
-            .catch((err) => {
-                setIsLoading(false);
+                })
+            )
+            .catch(err =>
                 toast({
                     title: 'Something went wrong!',
                     description: err,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
-                });
-            });
+                })
+            )
+            .finally(() => setIsLoading(false));
     };
 
     return (
@@ -41,7 +40,7 @@ const Delete = ({ isOnline }) => {
             <Textarea
                 resize="none"
                 value={areaValue}
-                onChange={(e) => setAreaValue(e.target.value)}
+                onChange={event => setAreaValue(event.target.value)}
                 placeholder="Write exact page names here. Separated by newline."
                 h="100%"
                 mb={4}

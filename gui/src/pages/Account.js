@@ -25,8 +25,7 @@ const Account = ({ user, setUser }) => {
             wikiurl: apiUrl,
             is_persistent: persistent,
         })
-            .then((res) => {
-                setLoggingin(false);
+            .then(res => {
                 setUser({
                     isOnline: true,
                     isPersistent: persistent,
@@ -35,9 +34,8 @@ const Account = ({ user, setUser }) => {
                     url: res.url,
                 });
             })
-            .catch((err) => {
-                setLoggingin(false);
-                setUser((user) => {
+            .catch(err => {
+                setUser(user => {
                     user.isOnline = false;
                     return user;
                 });
@@ -48,7 +46,8 @@ const Account = ({ user, setUser }) => {
                     duration: 10000,
                     isClosable: true,
                 });
-            });
+            })
+            .finally(() => setLoggingin(false));
     };
 
     useEffect(() => {
@@ -62,14 +61,13 @@ const Account = ({ user, setUser }) => {
                 promisified({
                     cmd: 'init',
                 })
-                    .then((res) => {
-                        const { wikiurl, loginname, password, is_persistent } = res;
-                        if (wikiurl !== '') setApiUrl(res.wikiurl);
+                    .then(({ wikiurl, loginname, password, is_persistent }) => {
+                        if (wikiurl !== '') setApiUrl(wikiurl);
                         setLgname(loginname);
                         setLgpasswd(password);
                         setPersistent(is_persistent);
                     })
-                    .catch((err) => console.error(err));
+                    .catch(console.error);
             }
         }
         // eslint-disable-next-line
@@ -109,7 +107,7 @@ const Account = ({ user, setUser }) => {
                     <FormLabel>API URL</FormLabel>
                     <Input
                         value={apiUrl}
-                        onChange={(event) => setApiUrl(event.target.value)}
+                        onChange={event => setApiUrl(event.target.value)}
                         placeholder="Full URL pointing to api.php"
                     />
                 </FormControl>
@@ -118,7 +116,7 @@ const Account = ({ user, setUser }) => {
                     <FormLabel>Bot Loginname</FormLabel>
                     <Input
                         value={lgname}
-                        onChange={(event) => setLgname(event.target.value)}
+                        onChange={event => setLgname(event.target.value)}
                         placeholder="Generated via Special:BotPasswords"
                     />
                 </FormControl>
@@ -127,13 +125,13 @@ const Account = ({ user, setUser }) => {
                     <FormLabel>Bot Password</FormLabel>
                     <Input
                         value={lgpasswd}
-                        onChange={(event) => setLgpasswd(event.target.value)}
+                        onChange={event => setLgpasswd(event.target.value)}
                         type="password"
                         placeholder="Generated via Special:BotPasswords"
                     />
                 </FormControl>
                 <Flex direction="row" w="100%" justify="flex-end" mt={2}>
-                    <Checkbox isChecked={persistent} onChange={(event) => setPersistent(event.target.checked)}>
+                    <Checkbox isChecked={persistent} onChange={event => setPersistent(event.target.checked)}>
                         Remember me
                     </Checkbox>
                     <Divider orientation="vertical" mx={2} />
