@@ -43,7 +43,8 @@
         },
         "allowlist": {
             "all": false,
-            "event": true
+            "event": true,
+            "notification": true
         },
         "window": {
             "title": "mw-toolbox by FabianLars",
