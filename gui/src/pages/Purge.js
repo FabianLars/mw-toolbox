@@ -58,7 +58,7 @@ const Purge = ({ isOnline }) => {
                 <Flex direction="row" align="center" justify="center">
                     <Button
                         isLoading={isPurging}
-                        isDisabled={!isOnline}
+                        isDisabled={!isOnline || isNulling}
                         onClick={() => purgePages(false)}
                         loadingText="Purging"
                         title={!isOnline ? 'Please login first!' : 'Clear server caches. This might take a while!'}
@@ -68,7 +68,7 @@ const Purge = ({ isOnline }) => {
                     </Button>
                     <Button
                         isLoading={isNulling}
-                        isDisabled={!isOnline}
+                        isDisabled={!isOnline || isPurging}
                         onClick={() => purgePages(true)}
                         loadingText="Saving nulledits"
                         title={
