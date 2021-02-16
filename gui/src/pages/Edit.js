@@ -28,8 +28,8 @@ const Edit = ({ isOnline }) => {
     const [pageContent, setPageContent] = useState('');
     const [currentPage, setCurrentPage] = useState('Not running!');
     const [editSummary, setEditSummary] = useState('');
-    const [searches, setSearches] = useState([{}]);
-    const [oldSearches, setOldSearches] = useState([{}]);
+    const [patterns, setPatterns] = useState([{}]);
+    const [oldPatterns, setOldPatterns] = useState([{}]);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
 
@@ -61,6 +61,7 @@ const Edit = ({ isOnline }) => {
             promisified({
                 cmd: 'getPage',
                 page: curr,
+                patterns: patterns,
             })
                 .then(setPageContent)
                 .catch(err => {
@@ -111,14 +112,15 @@ const Edit = ({ isOnline }) => {
     };
 
     const onModalClose = () => {
-        const arr = oldSearches.map(obj => Object.assign({}, obj));
-        setSearches(arr);
+        const arr = oldPatterns.map(obj => Object.assign({}, obj));
+        setPatterns(arr);
         onClose();
     };
 
     const onModalSave = () => {
-        const arr = searches.map(obj => Object.assign({}, obj));
-        setOldSearches(arr);
+        const arr = patterns.map(obj => Object.assign({}, obj));
+        setOldPatterns(arr);
+        console.log(arr);
         onClose();
     };
 
@@ -157,8 +159,9 @@ const Edit = ({ isOnline }) => {
                                     mt={2}
                                     title="This will be processed before contents get displayed!"
                                     onClick={onOpen}
+                                    isDisabled={isLoading}
                                 >
-                                    Setup Search & Replace
+                                    Setup Find & Replace
                                 </Button>
                             </GridItem>
                             <GridItem colSpan={3} mr={4}>
@@ -217,22 +220,22 @@ const Edit = ({ isOnline }) => {
             <Modal onClose={onModalClose} isOpen={isOpen} isCentered size="xl">
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Search & Replace</ModalHeader>
+                    <ModalHeader>Find & Replace</ModalHeader>
                     <ModalBody>
                         <Flex direction="column" h="100%" w="100%">
-                            {searches.map((_, index) => (
+                            {patterns.map((_, index) => (
                                 <Flex key={index}>
                                     <Input
                                         m={1}
-                                        placeholder="Search"
-                                        value={searches[index][0] || ''}
+                                        placeholder="Find"
+                                        value={patterns[index]['find'] || ''}
                                         onKeyDown={e => {
                                             if (e.key === 'Enter') onModalSave();
                                         }}
                                         onChange={event =>
-                                            setSearches(oldArr => {
+                                            setPatterns(oldArr => {
                                                 const values = [...oldArr];
-                                                values[index][0] = event.target.value;
+                                                values[index]['find'] = event.target.value;
                                                 return values;
                                             })
                                         }
@@ -240,14 +243,14 @@ const Edit = ({ isOnline }) => {
                                     <Input
                                         m={1}
                                         placeholder="Replace"
-                                        value={searches[index][1] || ''}
+                                        value={patterns[index]['replace'] || ''}
                                         onKeyDown={e => {
                                             if (e.key === 'Enter') onModalSave();
                                         }}
                                         onChange={event =>
-                                            setSearches(oldArr => {
+                                            setPatterns(oldArr => {
                                                 const values = [...oldArr];
-                                                values[index][1] = event.target.value;
+                                                values[index]['replace'] = event.target.value;
                                                 return values;
                                             })
                                         }
@@ -260,13 +263,13 @@ const Edit = ({ isOnline }) => {
                         <Button
                             mr={2}
                             onClick={() => {
-                                if (searches.length < 10) setSearches(old => old.concat({}));
+                                if (patterns.length < 10) setPatterns(old => old.concat({}));
                             }}
-                            isDisabled={searches.length >= 10}
+                            isDisabled={patterns.length >= 10}
                         >
                             Add Row
                         </Button>
-                        <Button colorScheme="red" onClick={() => setSearches([{}])}>
+                        <Button colorScheme="red" title="Press 'Save' to apply." onClick={() => setPatterns([{}])}>
                             Clear all
                         </Button>
                         <Spacer />

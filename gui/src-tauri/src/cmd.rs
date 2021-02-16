@@ -1,6 +1,12 @@
 use serde::Deserialize;
 
 #[derive(Deserialize)]
+pub struct FindReplace {
+    pub find: Option<String>,
+    pub replace: Option<String>,
+}
+
+#[derive(Deserialize)]
 #[serde(tag = "cmd", rename_all = "camelCase")]
 pub enum Cmd {
     Init {
@@ -34,6 +40,7 @@ pub enum Cmd {
     },
     GetPage {
         page: String,
+        patterns: Vec<FindReplace>,
         callback: String,
         error: String,
     },

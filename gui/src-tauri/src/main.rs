@@ -172,6 +172,7 @@ fn main() {
                         }
                         GetPage {
                             page,
+                            patterns,
                             callback,
                             error,
                         } => {
@@ -183,7 +184,16 @@ fn main() {
                                 move || match handle
                                     .block_on(api::parse::get_page_content(&client, page))
                                 {
-                                    Ok(s) => Ok(s),
+                                    Ok(s) => {
+                                        let mut s = s;
+                                        for pat in patterns {
+                                            s = s.replace(
+                                                &pat.find.unwrap_or_else(|| "".to_string()),
+                                                &pat.replace.unwrap_or_else(|| "".to_string()),
+                                            );
+                                        }
+                                        Ok(s)
+                                    }
                                     Err(err) => Err(err.into()),
                                 },
                                 callback,
