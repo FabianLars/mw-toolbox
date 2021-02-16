@@ -6,16 +6,16 @@ pub(crate) enum Login {
     Login {
         login: Success,
     },
-    LoginError {
+    Error {
         #[serde(rename = "login")]
         error: Failure,
     },
     // This can't actually happen
-    Error {
+    ErrorUnreachable {
         errors: Vec<super::Error>,
     },
     // This can't actually happen
-    Warnings {
+    WarningsUnreachable {
         warnings: Vec<super::Error>,
     },
 }

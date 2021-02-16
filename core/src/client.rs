@@ -115,11 +115,11 @@ impl WikiClient {
 
         match res {
             Login::Login { .. } => {}
-            Login::LoginError { error } => return Err(ClientError::LoginFailed(error.reason)),
-            Login::Error { errors } => {
+            Login::Error { error } => return Err(ClientError::LoginFailed(error.reason)),
+            Login::ErrorUnreachable { errors } => {
                 return Err(ClientError::LoginFailed(format!("{:?}", errors)))
             }
-            Login::Warnings { warnings } => {
+            Login::WarningsUnreachable { warnings } => {
                 return Err(ClientError::LoginFailed(format!("{:?}", warnings)))
             }
         }
@@ -223,7 +223,7 @@ impl WikiClient {
                     "token was '+\\\\' aka empty".to_string(),
                 ));
             }
-            self.csrf_token = token.to_string();
+            self.csrf_token = token;
         } else {
             return Err(ClientError::TokenNotFound(format!("{:?}", res)));
         }

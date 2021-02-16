@@ -33,7 +33,7 @@ pub async fn download<C: AsRef<WikiClient>, S: AsRef<str>>(
             .bytes()
             .await?;
 
-        path.push(f.split_at(f.find(':').unwrap_or_else(|| 0) + 1).1);
+        path.push(f.split_at(f.find(':').unwrap_or(0) + 1).1);
 
         let mut file = File::create(&path).expect("Couldn't create file");
         file.write_all(&file_contents)?;

@@ -42,13 +42,10 @@ pub async fn allpages<C: AsRef<WikiClient>>(
                 .await?;
             for ns in ns_res.query.namespaces.keys() {
                 let num = ns.parse::<i32>();
-                match num {
-                    Ok(i) => {
-                        if i < 0 {
-                            continue;
-                        }
+                if let Ok(i) = num {
+                    if i < 0 {
+                        continue;
                     }
-                    Err(_) => {}
                 }
                 temp.append(
                     &mut get_from_api(

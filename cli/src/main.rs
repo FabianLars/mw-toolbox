@@ -237,9 +237,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             LeagueType::Discount | LeagueType::Discounts => {
                 league::discounts(
                     &client,
-                    path.unwrap_or(PathBuf::from(
-                        "E:/Spiele/Riot Games/League of Legends/lockfile",
-                    )),
+                    path.unwrap_or_else(|| {
+                        PathBuf::from("E:/Spiele/Riot Games/League of Legends/lockfile")
+                    }),
                 )
                 .await?
             }
