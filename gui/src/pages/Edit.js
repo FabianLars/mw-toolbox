@@ -38,7 +38,7 @@ const Edit = ({ isOnline }) => {
 
     const startStop = () => {
         if (isRunning) {
-            setPageList(state => currentPage ?? '' + '\n' + state ?? '');
+            setPageList(state => (currentPage || '') + '\n' + (state || ''));
             setPageContent('');
         } else {
             getNextPage();
@@ -184,7 +184,7 @@ const Edit = ({ isOnline }) => {
                                             !isOnline
                                                 ? 'Please login first!'
                                                 : isRunning
-                                                ? 'Skip all remaining pages'
+                                                ? ''
                                                 : 'This might take a while!'
                                         }
                                     >
