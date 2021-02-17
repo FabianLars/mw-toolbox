@@ -4,6 +4,8 @@ use serde::Deserialize;
 pub struct FindReplace {
     pub find: Option<String>,
     pub replace: Option<String>,
+    #[serde(rename = "isRegex")]
+    pub is_regex: Option<bool>,
 }
 
 #[derive(Deserialize)]

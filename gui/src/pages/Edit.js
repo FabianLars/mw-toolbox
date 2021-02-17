@@ -6,6 +6,7 @@ import {
     Textarea,
     Checkbox,
     useToast,
+    Link,
     Input,
     useDisclosure,
     Modal,
@@ -15,7 +16,9 @@ import {
     ModalHeader,
     ModalFooter,
     Spacer,
+    IconButton,
 } from '@chakra-ui/react';
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 import { promisified } from 'tauri/api/tauri';
 import Header from '../components/Header';
@@ -26,7 +29,7 @@ const Edit = ({ isOnline }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [pageList, setPageList] = useState('');
     const [pageContent, setPageContent] = useState('');
-    const [currentPage, setCurrentPage] = useState('Not running!');
+    const [currentPage, setCurrentPage] = useState('');
     const [editSummary, setEditSummary] = useState('');
     const [patterns, setPatterns] = useState([{}]);
     const [oldPatterns, setOldPatterns] = useState([{}]);
@@ -35,7 +38,7 @@ const Edit = ({ isOnline }) => {
 
     const startStop = () => {
         if (isRunning) {
-            setPageList(state => currentPage + '\n' + state);
+            setPageList(state => currentPage ?? '' + '\n' + state ?? '');
             setPageContent('');
         } else {
             getNextPage();
@@ -152,7 +155,7 @@ const Edit = ({ isOnline }) => {
                     <GridItem colSpan={3}>
                         <Grid templateColumns="repeat(8, 1fr)" templateRows="repeat(4, 1fr)" h="100%">
                             <GridItem colSpan={4} mt={2}>
-                                Current page: {currentPage}
+                                Current page: {isRunning ? currentPage : 'Not running!'}
                             </GridItem>
                             <GridItem rowStart={4} colSpan={2}>
                                 <Button
@@ -224,7 +227,7 @@ const Edit = ({ isOnline }) => {
                     <ModalBody>
                         <Flex direction="column" h="100%" w="100%">
                             {patterns.map((_, index) => (
-                                <Flex key={index}>
+                                <Flex key={index} align="center">
                                     <Input
                                         m={1}
                                         placeholder="Find"
@@ -255,6 +258,28 @@ const Edit = ({ isOnline }) => {
                                             })
                                         }
                                     />
+                                    <Checkbox
+                                        verticalAlign="center"
+                                        m={1}
+                                        isChecked={patterns[index]['isRegex']}
+                                        onChange={event =>
+                                            setPatterns(oldArr => {
+                                                const values = [...oldArr];
+                                                values[index]['isRegex'] = event.target.checked;
+                                                return values;
+                                            })
+                                        }
+                                    >
+                                        Regex
+                                    </Checkbox>
+                                    <Link href="https://docs.rs/regex/" isExternal title="Open Regex Documentation">
+                                        <IconButton
+                                            mt={2}
+                                            arial-label="Infos about Regular Expressions"
+                                            icon={<InfoOutlineIcon />}
+                                            variant="link"
+                                        />
+                                    </Link>
                                 </Flex>
                             ))}
                         </Flex>

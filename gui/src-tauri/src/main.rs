@@ -187,10 +187,22 @@ fn main() {
                                     Ok(s) => {
                                         let mut s = s;
                                         for pat in patterns {
-                                            s = s.replace(
-                                                &pat.find.unwrap_or_else(|| "".to_string()),
-                                                &pat.replace.unwrap_or_else(|| "".to_string()),
-                                            );
+                                            if pat.is_regex.unwrap_or(false) && pat.find.is_some() {
+                                                let re = regex::Regex::new(&pat.find.unwrap())?;
+                                                s = re
+                                                    .replace_all(
+                                                        &s,
+                                                        &*pat
+                                                            .replace
+                                                            .unwrap_or_else(|| "".to_string()),
+                                                    )
+                                                    .to_string();
+                                            } else {
+                                                s = s.replace(
+                                                    &pat.find.unwrap_or_else(|| "".to_string()),
+                                                    &pat.replace.unwrap_or_else(|| "".to_string()),
+                                                );
+                                            }
                                         }
                                         Ok(s)
                                     }
