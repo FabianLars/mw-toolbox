@@ -329,25 +329,27 @@ fn main() {
                         }
                         UploadDialog { callback, error } => {
                             let files = files.clone();
+                            let handle = rt.clone();
                             tauri::execute_promise(
                                 _webview,
                                 move || {
                                     let result =
-                                        native_dialog::FileDialog::new().show_open_multiple_file();
-                                    match result {
-                                        Ok(f) => {
-                                            let arr: Vec<String> = match files.lock() {
-                                                Ok(mut x) => {
-                                                    *x = f;
-                                                    x.iter()
-                                                        .map(|x| x.display().to_string())
-                                                        .collect()
-                                                }
-                                                Err(_) => panic!("Mutex poisoned"),
-                                            };
-                                            Ok(arr)
-                                        }
-                                        Err(e) => Err(e.into()),
+                                        handle.block_on(rfd::AsyncFileDialog::new().pick_files());
+
+                                    if let Some(selected_files) = result {
+                                        let arr: Vec<String> = match files.lock() {
+                                            Ok(mut x) => {
+                                                *x = selected_files
+                                                    .iter()
+                                                    .map(|f| f.path().to_path_buf())
+                                                    .collect();
+                                                x.iter().map(|x| x.display().to_string()).collect()
+                                            }
+                                            Err(_) => panic!("Mutex poisoned!"),
+                                        };
+                                        Ok(arr)
+                                    } else {
+                                        Err(anyhow::anyhow!("No files selected"))
                                     }
                                 },
                                 callback,
