@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { promisified } from 'tauri/api/tauri';
-import Header from '../components/Header';
+import { Header } from '../../components';
 
 const Download = ({ isOnline }) => {
     const [areaValue, setAreaValue] = useState('');

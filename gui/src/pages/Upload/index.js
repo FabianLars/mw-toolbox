@@ -2,7 +2,7 @@ import { Box, Button, Flex, FormControl, FormLabel, Input, Textarea, useToast } 
 import React, { useEffect, useState } from 'react';
 import { promisified } from 'tauri/api/tauri';
 import { emit } from 'tauri/api/event';
-import Header from '../components/Header';
+import { Header } from '../../components';
 
 const Upload = ({ isOnline }) => {
     const [isUploading, setIsUploading] = useState(false);

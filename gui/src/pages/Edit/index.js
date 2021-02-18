@@ -21,7 +21,7 @@ import {
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 import { promisified } from 'tauri/api/tauri';
-import Header from '../components/Header';
+import { Header } from '../../components';
 
 const Edit = ({ isOnline }) => {
     const [isRunning, setIsRunning] = useState(false);
@@ -123,7 +123,6 @@ const Edit = ({ isOnline }) => {
     const onModalSave = () => {
         const arr = patterns.map(obj => Object.assign({}, obj));
         setOldPatterns(arr);
-        console.log(arr);
         onClose();
     };
 

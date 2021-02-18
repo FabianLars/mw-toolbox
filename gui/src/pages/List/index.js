@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { promisified } from 'tauri/api/tauri';
 import { Box, Button, Flex, FormControl, FormLabel, Input, Select, Textarea, useToast } from '@chakra-ui/react';
 
-import Header from '../components/Header';
+import { Header } from '../../components';
 
 const List = ({ isOnline }) => {
     const [loading, setLoading] = useState(false);

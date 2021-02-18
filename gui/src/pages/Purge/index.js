@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import { promisified } from 'tauri/api/tauri';
-import Header from '../components/Header';
+import { Header } from '../../components';
 
 const Purge = ({ isOnline }) => {
     const [isPurging, setIsPurging] = useState(false);
