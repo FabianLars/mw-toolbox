@@ -1,27 +1,8 @@
-import {
-    Button,
-    Flex,
-    Grid,
-    GridItem,
-    Textarea,
-    Checkbox,
-    useToast,
-    Link,
-    Input,
-    useDisclosure,
-    Modal,
-    ModalBody,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    Spacer,
-    IconButton,
-} from '@chakra-ui/react';
-import { InfoOutlineIcon } from '@chakra-ui/icons';
+import { Button, Flex, Grid, GridItem, Textarea, Checkbox, useToast, Input, useDisclosure } from '@chakra-ui/react';
 import { useState } from 'react';
 import { promisified } from 'tauri/api/tauri';
 import { Header } from '../../components';
+import FindReplaceModal from './FindReplaceModal';
 
 const Edit = ({ isOnline }) => {
     const [isRunning, setIsRunning] = useState(false);
@@ -32,7 +13,6 @@ const Edit = ({ isOnline }) => {
     const [currentPage, setCurrentPage] = useState('');
     const [editSummary, setEditSummary] = useState('');
     const [patterns, setPatterns] = useState([{}]);
-    const [oldPatterns, setOldPatterns] = useState([{}]);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
 
@@ -112,18 +92,6 @@ const Edit = ({ isOnline }) => {
                     isClosable: true,
                 });
             });
-    };
-
-    const onModalClose = () => {
-        const arr = oldPatterns.map(obj => Object.assign({}, obj));
-        setPatterns(arr);
-        onClose();
-    };
-
-    const onModalSave = () => {
-        const arr = patterns.map(obj => Object.assign({}, obj));
-        setOldPatterns(arr);
-        onClose();
     };
 
     return (
@@ -219,91 +187,7 @@ const Edit = ({ isOnline }) => {
                 </Grid>
             </Flex>
 
-            <Modal onClose={onModalClose} isOpen={isOpen} isCentered size="xl">
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>Find & Replace</ModalHeader>
-                    <ModalBody>
-                        <Flex direction="column" h="100%" w="100%">
-                            {patterns.map((_, index) => (
-                                <Flex key={index} align="center">
-                                    <Input
-                                        m={1}
-                                        placeholder="Find"
-                                        value={patterns[index]['find'] || ''}
-                                        onKeyDown={e => {
-                                            if (e.key === 'Enter') onModalSave();
-                                        }}
-                                        onChange={event =>
-                                            setPatterns(oldArr => {
-                                                const values = [...oldArr];
-                                                values[index]['find'] = event.target.value;
-                                                return values;
-                                            })
-                                        }
-                                    />
-                                    <Input
-                                        m={1}
-                                        placeholder="Replace"
-                                        value={patterns[index]['replace'] || ''}
-                                        onKeyDown={e => {
-                                            if (e.key === 'Enter') onModalSave();
-                                        }}
-                                        onChange={event =>
-                                            setPatterns(oldArr => {
-                                                const values = [...oldArr];
-                                                values[index]['replace'] = event.target.value;
-                                                return values;
-                                            })
-                                        }
-                                    />
-                                    <Checkbox
-                                        verticalAlign="center"
-                                        m={1}
-                                        isChecked={patterns[index]['isRegex']}
-                                        onChange={event =>
-                                            setPatterns(oldArr => {
-                                                const values = [...oldArr];
-                                                values[index]['isRegex'] = event.target.checked;
-                                                return values;
-                                            })
-                                        }
-                                    >
-                                        Regex
-                                    </Checkbox>
-                                    <Link href="https://docs.rs/regex/" isExternal title="Open Regex Documentation">
-                                        <IconButton
-                                            mt={2}
-                                            arial-label="Infos about Regular Expressions"
-                                            icon={<InfoOutlineIcon />}
-                                            variant="link"
-                                        />
-                                    </Link>
-                                </Flex>
-                            ))}
-                        </Flex>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button
-                            mr={2}
-                            onClick={() => {
-                                if (patterns.length < 10) setPatterns(old => old.concat({}));
-                            }}
-                            isDisabled={patterns.length >= 10}
-                        >
-                            Add Row
-                        </Button>
-                        <Button colorScheme="red" title="Press 'Save' to apply." onClick={() => setPatterns([{}])}>
-                            Clear all
-                        </Button>
-                        <Spacer />
-                        <Button colorScheme="blue" mr={2} onClick={onModalSave}>
-                            Save
-                        </Button>
-                        <Button onClick={onModalClose}>Cancel</Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
+            <FindReplaceModal isOpen={isOpen} onClose={onClose} patterns={patterns} setPatterns={setPatterns} />
         </>
     );
 };
