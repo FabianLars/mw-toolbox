@@ -6,6 +6,7 @@
 mod cmd;
 
 use std::{
+    collections::HashMap,
     path::PathBuf,
     sync::{Arc, Mutex},
 };
@@ -24,6 +25,7 @@ fn main() {
     pretty_env_logger::init();
 
     let rt = Arc::new(tokio::runtime::Runtime::new().unwrap());
+    let mut session_cache: HashMap<String, serde_json::Value> = HashMap::new();
     let files: Arc<Mutex<Vec<PathBuf>>> = Arc::new(Mutex::new(Vec::new()));
     let files_handle = files.clone();
     let mut state = rt.block_on(SavedState::load()).unwrap();
@@ -108,6 +110,28 @@ fn main() {
                                 callback,
                                 error,
                             )
+                        }
+                        CacheGet {
+                            key,
+                            callback,
+                            error,
+                        } => {
+                            let val = session_cache.get(&key);
+                            if let Some(v) = val {
+                                let v = v.to_owned();
+                                println!("{:?}", v);
+                                tauri::execute_promise(_webview, move || Ok(v), callback, error)
+                            }
+                        }
+                        CacheSet {
+                            key,
+                            value,
+                            callback,
+                            error,
+                        } => {
+                            println!("{:?} - {:?}", &key, &value);
+                            let updated = session_cache.insert(key, value).is_some();
+                            tauri::execute_promise(_webview, move || Ok(updated), callback, error)
                         }
                         Delete {
                             pages,

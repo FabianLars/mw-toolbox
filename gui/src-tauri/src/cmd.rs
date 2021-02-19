@@ -23,6 +23,21 @@ pub enum Cmd {
         callback: String,
         error: String,
     },
+
+    /* Cache (used to be window.sessionstorage) */
+    CacheGet {
+        key: String,
+        callback: String,
+        error: String,
+    },
+    CacheSet {
+        key: String,
+        value: serde_json::Value,
+        callback: String,
+        error: String,
+    },
+
+    /* Page commands */
     Delete {
         pages: Vec<String>,
         callback: String,
@@ -40,6 +55,7 @@ pub enum Cmd {
         callback: String,
         error: String,
     },
+    // Get Page content for Edit-tab
     GetPage {
         page: String,
         patterns: Vec<FindReplace>,
@@ -64,10 +80,12 @@ pub enum Cmd {
         callback: String,
         error: String,
     },
+    // Call File dialog
     UploadDialog {
         callback: String,
         error: String,
     },
+    // Upload rust-side stored files
     Upload {
         text: Option<String>,
         callback: String,

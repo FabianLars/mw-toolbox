@@ -13,7 +13,7 @@ const Upload = ({ isOnline }) => {
 
     const clearList = () => {
         emit('clear-files');
-        window.sessionStorage.setItem('files-cache', '');
+        promisified({ cmd: 'cacheSet', key: 'files-cache', value: '' });
         setFiles('');
     };
 
@@ -25,8 +25,6 @@ const Upload = ({ isOnline }) => {
             .then(res => {
                 const files = res.join('\n');
                 setFiles(files);
-                window.sessionStorage.setItem('uploadtext-cache', uploadtext);
-                window.sessionStorage.setItem('files-cache', files);
             })
             .catch(err =>
                 toast({
@@ -67,8 +65,8 @@ const Upload = ({ isOnline }) => {
     };
 
     useEffect(() => {
-        setFiles(window.sessionStorage.getItem('files-cache') ?? '');
-        setUploadtext(window.sessionStorage.getItem('uploadtext-cache') ?? '');
+        promisified({ cmd: 'cacheGet', key: 'files-cache' }).then(setFiles);
+        promisified({ cmd: 'cacheGet', key: 'uploadtext-cache' }).then(setUploadtext);
     }, []);
 
     return (
@@ -81,6 +79,7 @@ const Upload = ({ isOnline }) => {
                         value={uploadtext}
                         isDisabled={isUploading || isWaiting}
                         onChange={event => setUploadtext(event.target.value)}
+                        onBlur={() => promisified({ cmd: 'cacheSet', key: 'uploadtext-cache', value: uploadtext })}
                     />
                 </FormControl>
                 <Box>

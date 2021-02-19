@@ -24,7 +24,7 @@ const List = ({ isOnline }) => {
                 .then(res => {
                     const output = res.join('\n');
                     setListOutput(output);
-                    window.sessionStorage.setItem('list-cache', output);
+                    promisified({ cmd: 'cacheSet', key: 'list-cache', value: output });
                 })
                 .catch(err =>
                     toast({
@@ -40,12 +40,12 @@ const List = ({ isOnline }) => {
     };
 
     const clearOutput = () => {
-        window.sessionStorage.setItem('list-cache', '');
+        promisified({ cmd: 'cacheSet', key: 'list-cache', value: '' });
         setListOutput('');
     };
 
     useEffect(() => {
-        setListOutput(window.sessionStorage.getItem('list-cache') ?? '');
+        promisified({ cmd: 'cacheGet', key: 'list-cache' }).then(setListOutput);
     }, []);
 
     useEffect(() => {
