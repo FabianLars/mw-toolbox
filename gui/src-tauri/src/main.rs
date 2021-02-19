@@ -119,7 +119,6 @@ fn main() {
                             let val = session_cache.get(&key);
                             if let Some(v) = val {
                                 let v = v.to_owned();
-                                println!("{:?}", v);
                                 tauri::execute_promise(_webview, move || Ok(v), callback, error)
                             }
                         }
@@ -129,7 +128,6 @@ fn main() {
                             callback,
                             error,
                         } => {
-                            println!("{:?} - {:?}", &key, &value);
                             let updated = session_cache.insert(key, value).is_some();
                             tauri::execute_promise(_webview, move || Ok(updated), callback, error)
                         }
