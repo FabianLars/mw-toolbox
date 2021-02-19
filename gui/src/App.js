@@ -1,26 +1,43 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { promisified } from 'tauri/api/tauri';
 import { Account, Delete, Download, Edit, List, Move, Purge, Upload } from './pages';
 
 const App = () => {
     // useRef to make useEffect skip the change from useState
     const mounted = useRef(false);
-    // Init user state with sessionstorage or default
-    const [user, setUser] = useState(
-        () =>
-            JSON.parse(window.sessionStorage.getItem('userObj')) ?? {
-                isOnline: false,
-                isPersistent: false,
-                username: '',
-                password: '',
-                url: '',
-            }
-    );
+    // Init dummy object to prevent errors on startup
+    const [user, setUser] = useState({});
 
-    // Update sessionStorage on every user object change
+    // Init user state from cache or default
+    // This exists to handle reloads
+    useEffect(() => {
+        if (!!window.__TAURI__) {
+            promisified({
+                cmd: 'cacheGet',
+                key: 'userObj',
+            }).then(({ isOnline = false, isPersistent = false, username = '', password = '', url = '' }) => {
+                setUser({
+                    isOnline,
+                    isPersistent,
+                    username,
+                    password,
+                    url,
+                });
+            });
+        }
+        // eslint-disable-next-line
+    }, []);
+
+    // Update cache on every user object change
+    // This exists to handle reloads
     useEffect(() => {
         if (mounted.current) {
-            window.sessionStorage.setItem('userObj', JSON.stringify(user));
+            promisified({
+                cmd: 'cacheSet',
+                key: 'userObj',
+                value: user,
+            });
         } else {
             mounted.current = true;
         }
