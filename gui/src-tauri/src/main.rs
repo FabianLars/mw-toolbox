@@ -182,9 +182,12 @@ fn main() {
 
                             tauri::execute_promise(
                                 _webview,
-                                move || match handle
-                                    .block_on(api::edit::edit(&client, title, content, summary))
-                                {
+                                move || match handle.block_on(api::edit::edit(
+                                    &client,
+                                    title,
+                                    content,
+                                    Some(summary),
+                                )) {
                                     Ok(s) => Ok(s),
                                     Err(err) => Err(err.into()),
                                 },
@@ -209,21 +212,15 @@ fn main() {
                                     Ok(s) => {
                                         let mut s = s;
                                         for pat in patterns {
-                                            if pat.is_regex.unwrap_or(false) && pat.find.is_some() {
-                                                let re = regex::Regex::new(&pat.find.unwrap())?;
-                                                s = re
-                                                    .replace_all(
-                                                        &s,
-                                                        &*pat
-                                                            .replace
-                                                            .unwrap_or_else(|| "".to_string()),
-                                                    )
-                                                    .to_string();
-                                            } else {
-                                                s = s.replace(
-                                                    &pat.find.unwrap_or_else(|| "".to_string()),
-                                                    &pat.replace.unwrap_or_else(|| "".to_string()),
-                                                );
+                                            if !pat.find.is_empty() {
+                                                if pat.is_regex {
+                                                    let re = regex::Regex::new(&pat.find)?;
+                                                    s = re
+                                                        .replace_all(&s, pat.replace.as_str())
+                                                        .to_string();
+                                                } else {
+                                                    s = s.replace(&pat.find, &pat.replace);
+                                                }
                                             }
                                         }
                                         Ok(s)
@@ -391,9 +388,11 @@ fn main() {
                             // Linux & Mac (& WebView1?) seem to be uneffected
                             tauri::execute_promise(
                                 _webview,
-                                move || match handle
-                                    .block_on(api::upload::upload(&client, files, text))
-                                {
+                                move || match handle.block_on(api::upload::upload(
+                                    &client,
+                                    files,
+                                    Some(text),
+                                )) {
                                     Ok(_) => Ok(()),
                                     Err(e) => Err(e.into()),
                                 },

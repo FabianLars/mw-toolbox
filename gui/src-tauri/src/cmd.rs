@@ -2,10 +2,12 @@ use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct FindReplace {
-    pub find: Option<String>,
-    pub replace: Option<String>,
-    #[serde(rename = "isRegex")]
-    pub is_regex: Option<bool>,
+    #[serde(default)]
+    pub find: String,
+    #[serde(default)]
+    pub replace: String,
+    #[serde(rename = "isRegex", default)]
+    pub is_regex: bool,
 }
 
 #[derive(Deserialize)]
@@ -51,7 +53,8 @@ pub enum Cmd {
     Edit {
         title: String,
         content: String,
-        summary: Option<String>,
+        #[serde(default)]
+        summary: String,
         callback: String,
         error: String,
     },
@@ -75,6 +78,7 @@ pub enum Cmd {
         error: String,
     },
     Purge {
+        #[serde(default)]
         is_nulledit: bool,
         pages: Vec<String>,
         callback: String,
@@ -87,7 +91,8 @@ pub enum Cmd {
     },
     // Upload rust-side stored files
     Upload {
-        text: Option<String>,
+        #[serde(default)]
+        text: String,
         callback: String,
         error: String,
     },
