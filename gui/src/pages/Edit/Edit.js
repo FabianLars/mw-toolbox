@@ -68,7 +68,7 @@ const Edit = ({ isOnline }) => {
             title: currentPage,
             content: pageContent
                 .replace(/[\u007F-\u009F\u200B]/g, '')
-                .replaceAll('…', '...')
+                .replace(/…/g, '...')
                 .trim(),
             summary: editSummary || null,
         })

@@ -43,7 +43,12 @@
         "production": [
             ">0.2%",
             "not dead",
-            "not op_mini all"
+            "not op_mini all",
+            "not ie 11",
+            "not chrome 49",
+            "not samsung < 20",
+            "not ios_saf < 20",
+            "not and_uc < 20"
         ],
         "development": [
             "last 1 chrome version",
