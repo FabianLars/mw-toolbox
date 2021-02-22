@@ -2986,10 +2986,10 @@
     "@babel/runtime" "^7.12.5"
     "@testing-library/dom" "^7.28.1"
 
-"@testing-library/user-event@^12.7.1":
-  version "12.7.1"
-  resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-12.7.1.tgz#e1ce931c04a1c65faf28618442d56ba8da887f2c"
-  integrity sha512-COfCkYgcxc+P9+pEAIGlmBuIDjO91Chf9GOBHI8AhIiMyaoOrKVPQny1uf0HIAYNoHKL5slhkqOPP2ZyNaVQGw==
+"@testing-library/user-event@^12.7.2":
+  version "12.7.2"
+  resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-12.7.2.tgz#78749eadc8324009b428bdb8d7edc64b63c3e86c"
+  integrity sha512-6uUYor7b0+JAcanK0rmCEZGo6t0n2F4WUKXL9toQg495a9YE2MHlJ8GWzfCgsUPyVHw8SNaMN8UrZoHABf+oOg==
   dependencies:
     "@babel/runtime" "^7.12.5"
 
@@ -7238,23 +7238,23 @@ fragment-cache@^0.2.1:
   dependencies:
     map-cache "^0.2.2"
 
-framer-motion@^3.6.2:
-  version "3.6.2"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-3.6.2.tgz#f3190eddcd9e4e41dc31c9bb8cc8bdef03adba96"
-  integrity sha512-PMmybIGmIZVOb422NbUPIu919Rqm6MEKYyoOInExWdVFBsY+isbbu7/R60TZ+ru2eewLq3uTwntrYX04MxnAhg==
+framer-motion@^3.6.5:
+  version "3.6.5"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-3.6.5.tgz#a9fc73fc36c843ce906ae3425fe05a497e94689d"
+  integrity sha512-xIF4xDhT9tipwEQaH1wl3mDfKlzUj5LwyzdRzbEkRsP1ss07NL9Y17o5ejX+QgyWOf6KgSsit8LP09o5rjQD6w==
   dependencies:
-    framesync "^5.0.0"
+    framesync "^5.1.0"
     hey-listen "^1.0.8"
-    popmotion "^9.1.0"
+    popmotion "9.2.0"
     style-value-types "^4.0.1"
     tslib "^1.10.0"
   optionalDependencies:
     "@emotion/is-prop-valid" "^0.8.2"
 
-framesync@5.0.0, framesync@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/framesync/-/framesync-5.0.0.tgz#7de8caedf53ac441118e79680f1beb7391c328b6"
-  integrity sha512-wd8t+JsQGisluSv1twiEeDv0aNGpavGb9q7xgIk9fGbcIWkNXF/KVtrjnOrCwBWJuiXxlJfNkcvGudsI32FxYA==
+framesync@5.1.0, framesync@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/framesync/-/framesync-5.1.0.tgz#b22639be6e83cf170e5cb3d0497e3e50100a01ef"
+  integrity sha512-31sDH8LxSFoLKDYENzKdI+YJD4vV8sMBpwcAW0/6Es2jZBQBdlqbFnqrYczpsnzpqG+y6EqYPvgFMI2ZDdlnyQ==
 
 fresh@0.5.2:
   version "0.5.2"
@@ -11081,12 +11081,12 @@ pnp-webpack-plugin@1.6.4:
   dependencies:
     ts-pnp "^1.1.6"
 
-popmotion@^9.1.0:
-  version "9.1.0"
-  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-9.1.0.tgz#4360d06bd18ce8baa8f9284ecec7d55344af6325"
-  integrity sha512-+J7pzzBy5kk2qsP8ilowKs/CH+HoZa3kOGEBNCleCvsPXEF3nKHdfAR3SboMyPvdpIrofaT7ZIy/xWgz446Azw==
+popmotion@9.2.0:
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-9.2.0.tgz#366a1646ac73c482f37cf225beb56aac160f7a97"
+  integrity sha512-5wHP5tsQNjWQC3JKDJ0qAadISstU86/pCgeS2yGDNgYVS3qNviQQ3fnXvMea4z5XdR61dfBmHRhJvxoKEvtL+A==
   dependencies:
-    framesync "5.0.0"
+    framesync "5.1.0"
     hey-listen "^1.0.8"
     style-value-types "^4.0.1"
     tslib "^1.10.0"
