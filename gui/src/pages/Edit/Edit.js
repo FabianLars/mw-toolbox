@@ -1,5 +1,5 @@
 import { Button, Flex, Grid, GridItem, Textarea, Checkbox, useToast, Input, useDisclosure } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { promisified } from 'tauri/api/tauri';
 import { Header } from '../../components';
 import FindReplaceModal from './FindReplaceModal';
@@ -18,7 +18,7 @@ const Edit = ({ isOnline }) => {
 
     const startStop = () => {
         if (isRunning) {
-            setPageList(state => (currentPage || '') + '\n' + (state || ''));
+            setPageList(state => (currentPage || '') + (currentPage || state ? '\n' : '') + (state || ''));
             setPageContent('');
         } else {
             getNextPage();
@@ -94,6 +94,13 @@ const Edit = ({ isOnline }) => {
             });
     };
 
+    useEffect(() => {
+        if (isAuto && pageContent !== '') {
+            save();
+        }
+        // eslint-disable-next-line
+    }, [pageContent]);
+
     return (
         <>
             <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
@@ -160,7 +167,7 @@ const Edit = ({ isOnline }) => {
                                     <Checkbox
                                         isChecked={isAuto}
                                         onChange={event => setIsAuto(event.target.checked)}
-                                        isDisabled={true /* TODO */}
+                                        isDisabled={isRunning}
                                     >
                                         Auto-Save
                                     </Checkbox>
