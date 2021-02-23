@@ -25,7 +25,7 @@ type Pattern = {
 type Props = {
     isOpen: boolean;
     onClose: () => void;
-    patterns: [Pattern];
+    patterns: Pattern[];
     setPatterns: React.Dispatch<React.SetStateAction<Pattern[]>>;
 };
 
