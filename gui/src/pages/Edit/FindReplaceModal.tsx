@@ -16,8 +16,21 @@ import {
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 
-const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }) => {
-    const [localPatterns, setLocalPatterns] = useState([{}]);
+type Pattern = {
+    find: string;
+    replace: string;
+    isRegex: boolean;
+};
+
+type Props = {
+    isOpen: boolean;
+    onClose: () => void;
+    patterns: [Pattern];
+    setPatterns: React.Dispatch<React.SetStateAction<Pattern[]>>;
+};
+
+const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => {
+    const [localPatterns, setLocalPatterns] = useState<Pattern[]>(patterns);
 
     const onModalClose = () => {
         const arr = patterns.map(obj => Object.assign({}, obj));
@@ -38,7 +51,7 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }) => {
                 <ModalHeader>Find & Replace</ModalHeader>
                 <ModalBody>
                     <Flex direction="column" h="100%" w="100%">
-                        {patterns.map((_, index) => (
+                        {localPatterns.map((_, index) => (
                             <Flex key={index} align="center">
                                 <Input
                                     m={1}
@@ -87,9 +100,9 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }) => {
                                 <Link href="https://docs.rs/regex/" isExternal title="Open Regex Documentation">
                                     <IconButton
                                         mt={2}
-                                        arial-label="Infos about Regular Expressions"
-                                        icon={<InfoOutlineIcon />}
                                         variant="link"
+                                        icon={<InfoOutlineIcon />}
+                                        aria-label="Infos about Regular Expressions"
                                     />
                                 </Link>
                             </Flex>
@@ -100,13 +113,18 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }) => {
                     <Button
                         mr={2}
                         onClick={() => {
-                            if (localPatterns.length < 10) setLocalPatterns(old => old.concat({}));
+                            if (localPatterns.length < 10)
+                                setLocalPatterns(old => old.concat({ find: '', replace: '', isRegex: false }));
                         }}
                         isDisabled={localPatterns.length >= 10}
                     >
                         Add Row
                     </Button>
-                    <Button colorScheme="red" title="Press 'Save' to apply." onClick={() => setLocalPatterns([{}])}>
+                    <Button
+                        colorScheme="red"
+                        title="Press 'Save' to apply."
+                        onClick={() => setLocalPatterns([{ find: '', replace: '', isRegex: false }])}
+                    >
                         Clear all
                     </Button>
                     <Spacer />
