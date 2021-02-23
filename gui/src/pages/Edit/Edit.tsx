@@ -24,7 +24,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
 
     const startStop = () => {
         if (isRunning) {
-            setPageList(state => (currentPage || '') + (currentPage || state ? '\n' : '') + (state || ''));
+            setPageList(state => [currentPage, state].filter(Boolean).join('\n'));
             setPageContent('');
         } else {
             getNextPage();
