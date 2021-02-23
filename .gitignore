@@ -1,4 +1,3 @@
 target/
 movelist.txt
 Cargo.lock
-*.json
