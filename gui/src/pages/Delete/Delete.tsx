@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { promisified } from 'tauri/api/tauri';
 import { Header } from '../../components';
 
-const Delete = ({ isOnline }) => {
+const Delete = ({ isOnline }: { isOnline: boolean }) => {
     const [areaValue, setAreaValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const toast = useToast();

@@ -3,13 +3,13 @@ import { Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import { promisified } from 'tauri/api/tauri';
 import { Header } from '../../components';
 
-const Purge = ({ isOnline }) => {
+const Purge = ({ isOnline }: { isOnline: boolean }) => {
     const [isPurging, setIsPurging] = useState(false);
     const [isNulling, setIsNulling] = useState(false);
     const [areaValue, setAreaValue] = useState('');
     const toast = useToast();
 
-    const purgePages = isNulledit => {
+    const purgePages = (isNulledit: boolean) => {
         if (isNulledit) {
             setIsNulling(true);
         } else {
@@ -45,7 +45,7 @@ const Purge = ({ isOnline }) => {
 
     return (
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
-            <Header isOnline={isOnline} />
+            <Header isOnline={isOnline} isDisabled={isNulling || isPurging} />
             <Flex w="100%" h="100%" direction="column">
                 <Textarea
                     resize="none"

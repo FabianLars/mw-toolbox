@@ -4,7 +4,7 @@ import { promisified } from 'tauri/api/tauri';
 import { emit } from 'tauri/api/event';
 import { Header } from '../../components';
 
-const Upload = ({ isOnline }) => {
+const Upload = ({ isOnline }: { isOnline: boolean }) => {
     const [isUploading, setIsUploading] = useState(false);
     const [isWaiting, setIsWaiting] = useState(false);
     const [uploadtext, setUploadtext] = useState('');
@@ -19,9 +19,9 @@ const Upload = ({ isOnline }) => {
 
     const openDialog = () => {
         setIsWaiting(true);
-        promisified({
+        (promisified({
             cmd: 'uploadDialog',
-        })
+        }) as Promise<string[]>)
             .then(res => {
                 const files = res.join('\n');
                 setFiles(files);
@@ -65,8 +65,8 @@ const Upload = ({ isOnline }) => {
     };
 
     useEffect(() => {
-        promisified({ cmd: 'cacheGet', key: 'files-cache' }).then(setFiles);
-        promisified({ cmd: 'cacheGet', key: 'uploadtext-cache' }).then(setUploadtext);
+        (promisified({ cmd: 'cacheGet', key: 'files-cache' }) as Promise<string>).then(setFiles);
+        (promisified({ cmd: 'cacheGet', key: 'uploadtext-cache' }) as Promise<string>).then(setUploadtext);
     }, []);
 
     return (
