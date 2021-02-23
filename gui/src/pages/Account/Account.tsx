@@ -5,7 +5,20 @@ import { Button, Checkbox, Divider, Flex, FormControl, FormLabel, Input, Text, u
 
 import { Header } from '../../components';
 
-const Account = ({ user, setUser }) => {
+type User = {
+    username: string;
+    password: string;
+    url: string;
+    isPersistent: boolean;
+    isOnline: boolean;
+};
+
+type Props = {
+    user: User;
+    setUser: React.Dispatch<React.SetStateAction<User>>;
+};
+
+const Account = ({ user, setUser }: Props) => {
     const [apiUrl, setApiUrl] = useState('https://leagueoflegends.fandom.com/de/api.php');
     const [lgname, setLgname] = useState('');
     const [lgpasswd, setLgpasswd] = useState('');
@@ -18,13 +31,13 @@ const Account = ({ user, setUser }) => {
 
     const login = () => {
         setLoggingin(true);
-        promisified({
+        (promisified({
             cmd: 'login',
             loginname: lgname,
             password: lgpasswd,
             wikiurl: apiUrl,
             is_persistent: persistent,
-        })
+        }) as Promise<{ username: string; url: string }>)
             .then(res => {
                 setUser({
                     isOnline: true,
@@ -51,6 +64,7 @@ const Account = ({ user, setUser }) => {
     };
 
     useEffect(() => {
+        // @ts-ignore
         if (!!window.__TAURI__) {
             if (user.isOnline) {
                 setLgname(user.username);
@@ -58,9 +72,9 @@ const Account = ({ user, setUser }) => {
                 setLgpasswd(user.password);
                 setApiUrl(user.url);
             } else {
-                promisified({
+                (promisified({
                     cmd: 'init',
-                })
+                }) as Promise<{ wikiurl: string; loginname: string; password: string; is_persistent: boolean }>)
                     .then(({ wikiurl, loginname, password, is_persistent }) => {
                         if (wikiurl !== '') setApiUrl(wikiurl);
                         setLgname(loginname);
