@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { promisified } from 'tauri/api/tauri';
 import { Header } from '../../components';
 
-const Move = ({ isOnline }) => {
+const Move = ({ isOnline }: { isOnline: boolean }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [areaFrom, setAreaFrom] = useState('');
     const [areaTo, setAreaTo] = useState('');
@@ -38,7 +38,7 @@ const Move = ({ isOnline }) => {
 
     return (
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
-            <Header isOnline={isOnline} />
+            <Header isOnline={isOnline} isDisabled={isLoading} />
             <Flex direction="row" align="center" justify="center" h="100%" w="100%" mb={4}>
                 <Textarea
                     resize="none"

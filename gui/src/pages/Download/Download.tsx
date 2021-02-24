@@ -3,21 +3,21 @@ import React, { useState } from 'react';
 import { promisified } from 'tauri/api/tauri';
 import { Header } from '../../components';
 
-const Delete = ({ isOnline }) => {
+const Download = ({ isOnline }: { isOnline: boolean }) => {
     const [areaValue, setAreaValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const toast = useToast();
 
-    const deletePages = () => {
+    const downloadFiles = () => {
         setIsLoading(true);
         promisified({
-            cmd: 'delete',
-            pages: areaValue.split(/\r?\n/),
+            cmd: 'download',
+            files: areaValue.split(/\r?\n/),
         })
             .then(() =>
                 toast({
-                    title: 'Delete successful',
-                    description: 'Delete successful',
+                    title: 'Download successful',
+                    description: 'Download successful! Check your download folder.',
                     status: 'success',
                     isClosable: true,
                 })
@@ -41,7 +41,7 @@ const Delete = ({ isOnline }) => {
                 resize="none"
                 value={areaValue}
                 onChange={event => setAreaValue(event.target.value)}
-                placeholder="Write exact page names here. Separated by newline."
+                placeholder="Write exact page names here. Separated by newline. Inclusive 'File:' Prefix. Saved in your download folder."
                 h="100%"
                 mb={4}
             />
@@ -49,15 +49,15 @@ const Delete = ({ isOnline }) => {
                 <Button
                     isLoading={isLoading}
                     isDisabled={!isOnline}
-                    onClick={deletePages}
-                    loadingText="Deleting..."
+                    onClick={downloadFiles}
+                    loadingText="Downloading..."
                     title={!isOnline ? 'Please login first!' : 'This might take a while!'}
                 >
-                    Delete all
+                    Download all
                 </Button>
             </Box>
         </Flex>
     );
 };
 
-export default Delete;
+export default Download;

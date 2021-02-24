@@ -4,7 +4,13 @@ import { promisified } from 'tauri/api/tauri';
 import { Header } from '../../components';
 import FindReplaceModal from './FindReplaceModal';
 
-const Edit = ({ isOnline }) => {
+type Pattern = {
+    find: string;
+    replace: string;
+    isRegex: boolean;
+};
+
+const Edit = ({ isOnline }: { isOnline: boolean }) => {
     const [isRunning, setIsRunning] = useState(false);
     const [isAuto, setIsAuto] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -12,13 +18,13 @@ const Edit = ({ isOnline }) => {
     const [pageContent, setPageContent] = useState('');
     const [currentPage, setCurrentPage] = useState('');
     const [editSummary, setEditSummary] = useState('');
-    const [patterns, setPatterns] = useState([{}]);
+    const [patterns, setPatterns] = useState<Pattern[]>([{ find: '', replace: '', isRegex: false }]);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
 
     const startStop = () => {
         if (isRunning) {
-            setPageList(state => (currentPage || '') + (currentPage || state ? '\n' : '') + (state || ''));
+            setPageList(state => [currentPage, state].filter(Boolean).join('\n'));
             setPageContent('');
         } else {
             getNextPage();
@@ -35,17 +41,17 @@ const Edit = ({ isOnline }) => {
             .map(el => el.trim())
             .filter(el => el);
         const curr = pages.shift();
-        setCurrentPage(curr);
+        setCurrentPage(curr ?? '');
         setPageList(pages.join('\n'));
         if (!curr) {
             setIsRunning(false);
             setIsLoading(false);
         } else {
-            promisified({
+            (promisified({
                 cmd: 'getPage',
                 page: curr,
                 patterns: patterns,
-            })
+            }) as Promise<string>)
                 .then(setPageContent)
                 .catch(err => {
                     startStop();
@@ -63,7 +69,7 @@ const Edit = ({ isOnline }) => {
 
     const save = () => {
         setIsLoading(true);
-        promisified({
+        (promisified({
             cmd: 'edit',
             title: currentPage,
             content: pageContent
@@ -71,7 +77,7 @@ const Edit = ({ isOnline }) => {
                 .replace(/…/g, '...')
                 .trim(),
             summary: editSummary || null,
-        })
+        }) as Promise<string>)
             .then(res => {
                 toast({
                     title: 'Edit successful',

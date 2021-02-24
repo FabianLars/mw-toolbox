@@ -2,7 +2,19 @@ import React from 'react';
 import { Link as ReactLink, useLocation } from 'react-router-dom';
 import { Badge, Flex, Link, Spacer, Spinner } from '@chakra-ui/react';
 
-const MenuItem = ({ children, isDisabled, isLast, to = '/' }) => {
+type MenuProps = {
+    children: string;
+    isDisabled: boolean;
+    isLast?: boolean;
+    to: string;
+};
+
+type HeaderProps = {
+    isDisabled: boolean;
+    isOnline: boolean;
+};
+
+const MenuItem = ({ children, isDisabled, isLast, to = '/' }: MenuProps) => {
     const location = useLocation().pathname;
     return (
         <Link
@@ -14,7 +26,7 @@ const MenuItem = ({ children, isDisabled, isLast, to = '/' }) => {
             p="1rem 1.5rem"
             borderRadius={5}
             color={isDisabled ? 'red.700' : ''}
-            style={{ pointerEvents: isDisabled ? 'none' : '' }}
+            pointerEvents={isDisabled ? 'none' : undefined}
             _hover={{ bg: 'gray.700' }}
         >
             {children}
@@ -22,7 +34,7 @@ const MenuItem = ({ children, isDisabled, isLast, to = '/' }) => {
     );
 };
 
-const Header = ({ isDisabled, isOnline }) => {
+const Header = ({ isDisabled, isOnline }: HeaderProps) => {
     return (
         <Flex as="nav" align="center" justify="left" w="100%" p={2} mb={4} borderBottom="1px solid #deb992;">
             <MenuItem isDisabled={isDisabled} to="/">

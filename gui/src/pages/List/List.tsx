@@ -5,7 +5,7 @@ import { Box, Button, Flex, FormControl, FormLabel, Input, Select, Textarea, use
 
 import { Header } from '../../components';
 
-const List = ({ isOnline }) => {
+const List = ({ isOnline }: { isOnline: boolean }) => {
     const [loading, setLoading] = useState(false);
     const [listOutput, setListOutput] = useState('');
     const [listType, setListType] = useState('');
@@ -16,11 +16,11 @@ const List = ({ isOnline }) => {
     const getList = () => {
         if (listType !== '') {
             setLoading(true);
-            promisified({
+            (promisified({
                 cmd: 'list',
                 listtype: listType,
                 param: paramInput || null,
-            })
+            }) as Promise<string[]>)
                 .then(res => {
                     const output = res.join('\n');
                     setListOutput(output);
@@ -45,7 +45,7 @@ const List = ({ isOnline }) => {
     };
 
     useEffect(() => {
-        promisified({ cmd: 'cacheGet', key: 'list-cache' }).then(setListOutput);
+        (promisified({ cmd: 'cacheGet', key: 'list-cache' }) as Promise<string>).then(setListOutput);
     }, []);
 
     useEffect(() => {
@@ -84,7 +84,12 @@ const List = ({ isOnline }) => {
                 {paramInfo === '' ? (
                     <Box mx={2} w="100%"></Box>
                 ) : (
-                    <FormControl id="parameter-input" mx={2} isRequired visibility={paramInfo === '' ? 'hidden' : ''}>
+                    <FormControl
+                        id="parameter-input"
+                        mx={2}
+                        isRequired
+                        visibility={paramInfo === '' ? 'hidden' : undefined}
+                    >
                         <FormLabel>Required Parameter</FormLabel>
                         <Input
                             placeholder={paramInfo}
