@@ -10,7 +10,7 @@ pub async fn download<C: AsRef<WikiClient>, S: AsRef<str>>(
 ) -> Result<(), ApiError> {
     let client = client.as_ref();
 
-    let mut path = directories::UserDirs::new()
+    let mut path = directories_next::UserDirs::new()
         .expect("Couldn't get home dir from system")
         .download_dir()
         .expect("Couldn't get download dir from system")
