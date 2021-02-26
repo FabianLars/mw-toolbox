@@ -388,7 +388,7 @@ fn main() {
                             // Linux & Mac (& WebView1?) seem to be uneffected
                             tauri::execute_promise(
                                 _webview,
-                                move || match handle.block_on(api::upload::upload(
+                                move || match handle.block_on(api::upload::upload_multiple(
                                     &client,
                                     files,
                                     Some(text),

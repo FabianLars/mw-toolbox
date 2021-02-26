@@ -2,6 +2,8 @@ use std::{fs::File, io::Write};
 
 use crate::{error::ApiError, response::download::Imageinfo, WikiClient};
 
+// TODO: download_multiple() with concurrent downloads. download() for single file
+
 pub async fn download<C: AsRef<WikiClient>, S: AsRef<str>>(
     client: C,
     files: &[S],

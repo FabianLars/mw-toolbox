@@ -5,6 +5,7 @@ pub(crate) mod login;
 pub(crate) mod parse;
 pub(crate) mod rename;
 pub(crate) mod token;
+pub(crate) mod upload;
 
 use serde::Deserialize;
 
