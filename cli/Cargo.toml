@@ -13,8 +13,8 @@ league-wiki = ["league"]
 riot-api = ["league/riot-api"]
 
 [dependencies]
-league = {path = "../league", optional = true}
-mw-tools = {path = "../core"}
+league = {path = "../crates/league", optional = true}
+mw-tools = {path = "../crates/mw-tools"}
 
 clap = "3.0.0-beta.2"
 env_logger = "0.8"

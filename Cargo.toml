@@ -2,10 +2,10 @@
 
 [workspace]
 members = [
-  "core",
   "cli",
-  "league",
-  "storage",
+  "crates/mw-tools",
+  "crates/league",
+  "crates/storage",
   "gui/src-tauri",
 ]
 # resolver = "2"
