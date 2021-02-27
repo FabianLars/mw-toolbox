@@ -29,6 +29,6 @@ pub(crate) struct Success {
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct Failure {
-    #[serde(rename = "result")]
-    pub(crate) reason: String,
+    pub(crate) result: String,
+    pub(crate) reason: super::Error,
 }

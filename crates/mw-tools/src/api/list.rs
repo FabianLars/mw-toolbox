@@ -295,8 +295,8 @@ async fn get_from_api(
                             has_next = false
                         };
                     }
-                    List::Failure { errors } => {
-                        return Err(ToolsError::MediaWikiError(errors[0].code.clone()))
+                    List::Failure { mut errors } => {
+                        return Err(ToolsError::MediaWikiError(errors.remove(0)))
                     }
                 }
             }

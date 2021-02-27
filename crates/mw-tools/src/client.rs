@@ -112,12 +112,14 @@ impl WikiClient {
 
         match res {
             Login::Login { .. } => {}
-            Login::Error { error } => return Err(ToolsError::LoginFailed(error.reason)),
-            Login::ErrorUnreachable { errors } => {
-                return Err(ToolsError::LoginFailed(format!("{:?}", errors)))
+            Login::Error { error } => {
+                return Err(ToolsError::LoginFailed(error.reason.description))
             }
-            Login::WarningsUnreachable { warnings } => {
-                return Err(ToolsError::LoginFailed(format!("{:?}", warnings)))
+            Login::ErrorUnreachable { mut errors } => {
+                return Err(ToolsError::LoginFailed(errors.remove(0).description))
+            }
+            Login::WarningsUnreachable { mut warnings } => {
+                return Err(ToolsError::LoginFailed(warnings.remove(0).description))
             }
         }
 

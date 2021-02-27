@@ -2,8 +2,8 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum ToolsError {
-    #[error("API returned an error: {0}")]
-    MediaWikiError(String),
+    #[error(transparent)]
+    MediaWikiError(#[from] super::response::Error),
 
     #[error(transparent)]
     IoError(#[from] std::io::Error),
@@ -21,7 +21,7 @@ pub enum ToolsError {
 
     #[error("Couldn't extract token from response json: {0}")]
     TokenNotFound(String),
-    #[error("Login failed! Reason: {0}")]
+    #[error("Login failed! API returned: '{0}'")]
     LoginFailed(String),
 
     #[error("Invalid Input: {0}")]
