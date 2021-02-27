@@ -1,4 +1,4 @@
-use crate::{error::ApiError, response::rename::Rename, WikiClient};
+use crate::{error::ToolsError, response::rename::Rename, WikiClient};
 
 pub async fn rename<C: AsRef<WikiClient>>(
     client: C,
@@ -6,7 +6,7 @@ pub async fn rename<C: AsRef<WikiClient>>(
     to: Option<Destination>,
     prepend: Option<String>,
     append: Option<String>,
-) -> Result<(), ApiError> {
+) -> Result<(), ToolsError> {
     let client = client.as_ref();
 
     let mut actual_destination: Vec<String> = Vec::new();
@@ -15,7 +15,7 @@ pub async fn rename<C: AsRef<WikiClient>>(
         Some(inner_to) => match inner_to {
             Destination::Plain(dest) => {
                 if from.len() != dest.len() {
-                    return Err(ApiError::InvalidInput(
+                    return Err(ToolsError::InvalidInput(
                         "amount of from/to pages is not the same".to_string(),
                     ));
                 }
@@ -29,7 +29,7 @@ pub async fn rename<C: AsRef<WikiClient>>(
         },
         None => {
             if prepend.is_none() && append.is_none() {
-                return Err(ApiError::InvalidInput(
+                return Err(ToolsError::InvalidInput(
                     "at least one of 'to', 'prepend' or 'append' needed".to_string(),
                 ));
             }

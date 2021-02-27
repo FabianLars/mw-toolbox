@@ -1,10 +1,10 @@
-use crate::{error::ApiError, WikiClient};
+use crate::{error::ToolsError, WikiClient};
 
 pub async fn purge<C: AsRef<WikiClient>, S: AsRef<str>>(
     client: C,
     titles: &[S],
     recursive: bool,
-) -> Result<(), ApiError> {
+) -> Result<(), ToolsError> {
     let client = client.as_ref();
     let titles: Vec<&str> = titles.iter().map(|s| s.as_ref()).collect();
 

@@ -1,10 +1,10 @@
 use crate::WikiClient;
-use crate::{error::ApiError, response::parse::Parse};
+use crate::{error::ToolsError, response::parse::Parse};
 
 pub async fn get_page_content<C: AsRef<WikiClient>, S: AsRef<str>>(
     client: C,
     page: S,
-) -> Result<String, ApiError> {
+) -> Result<String, ToolsError> {
     let client = client.as_ref();
 
     let res: Parse = client
@@ -17,6 +17,6 @@ pub async fn get_page_content<C: AsRef<WikiClient>, S: AsRef<str>>(
 
     match res {
         Parse::Succes { parse } => Ok(parse.wikitext),
-        Parse::Failure { errors } => Err(ApiError::MediaWikiError(errors[0].code.clone())),
+        Parse::Failure { errors } => Err(ToolsError::MediaWikiError(errors[0].code.clone())),
     }
 }

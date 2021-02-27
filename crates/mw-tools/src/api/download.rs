@@ -1,13 +1,13 @@
 use std::{fs::File, io::Write};
 
-use crate::{error::ApiError, response::download::Imageinfo, WikiClient};
+use crate::{error::ToolsError, response::download::Imageinfo, WikiClient};
 
 // TODO: download_multiple() with concurrent downloads. download() for single file
 
 pub async fn download<C: AsRef<WikiClient>, S: AsRef<str>>(
     client: C,
     files: &[S],
-) -> Result<(), ApiError> {
+) -> Result<(), ToolsError> {
     let client = client.as_ref();
 
     let mut path = directories_next::UserDirs::new()

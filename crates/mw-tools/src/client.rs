@@ -2,7 +2,7 @@ use reqwest::{Client, Response};
 use serde::de::DeserializeOwned;
 
 use crate::{
-    error::ClientError,
+    error::ToolsError,
     response::{login::Login, token::Token},
 };
 
@@ -22,7 +22,7 @@ impl AsRef<WikiClient> for WikiClient {
 }
 
 impl WikiClient {
-    pub fn new() -> Result<Self, ClientError> {
+    pub fn new() -> Result<Self, ToolsError> {
         Ok(Self {
             client: Client::builder()
                 .cookie_store(true)
@@ -32,8 +32,7 @@ impl WikiClient {
                     env!("CARGO_PKG_VERSION"),
                     " using rust/reqwest",
                 ))
-                .build()
-                .map_err(|source| ClientError::BuildFailed { source })?,
+                .build()?,
             ..Self::default()
         })
     }
@@ -42,7 +41,7 @@ impl WikiClient {
         url: S,
         loginname: S,
         password: S,
-    ) -> Result<Self, ClientError> {
+    ) -> Result<Self, ToolsError> {
         let mut client = Self {
             client: Client::builder()
                 .cookie_store(true)
@@ -52,8 +51,7 @@ impl WikiClient {
                     env!("CARGO_PKG_VERSION"),
                     " using rust/reqwest",
                 ))
-                .build()
-                .map_err(|source| ClientError::BuildFailed { source })?,
+                .build()?,
             url: url.into(),
             loginname: loginname.into(),
             password: password.into(),
@@ -64,7 +62,7 @@ impl WikiClient {
     }
 
     // TODO: Validate URL
-    pub fn from<S: Into<String>>(url: S) -> Result<Self, ClientError> {
+    pub fn from<S: Into<String>>(url: S) -> Result<Self, ToolsError> {
         Ok(Self {
             client: Client::builder()
                 .cookie_store(true)
@@ -74,8 +72,7 @@ impl WikiClient {
                     env!("CARGO_PKG_VERSION"),
                     " using rust/reqwest",
                 ))
-                .build()
-                .map_err(|source| ClientError::BuildFailed { source })?,
+                .build()?,
             url: url.into(),
             ..Self::default()
         })
@@ -90,7 +87,7 @@ impl WikiClient {
         self.password = password.into();
     }
 
-    pub async fn login(&mut self) -> Result<(), ClientError> {
+    pub async fn login(&mut self) -> Result<(), ToolsError> {
         let json: Token = self
             .get_into_json(&[("action", "query"), ("meta", "tokens"), ("type", "login")])
             .await?;
@@ -99,7 +96,7 @@ impl WikiClient {
 
         let token = match json.query.tokens.logintoken {
             Some(t) => t,
-            None => return Err(ClientError::TokenNotFound(format!("{:?}", json))),
+            None => return Err(ToolsError::TokenNotFound(format!("{:?}", json))),
         };
 
         let res: Login = self
@@ -115,12 +112,12 @@ impl WikiClient {
 
         match res {
             Login::Login { .. } => {}
-            Login::Error { error } => return Err(ClientError::LoginFailed(error.reason)),
+            Login::Error { error } => return Err(ToolsError::LoginFailed(error.reason)),
             Login::ErrorUnreachable { errors } => {
-                return Err(ClientError::LoginFailed(format!("{:?}", errors)))
+                return Err(ToolsError::LoginFailed(format!("{:?}", errors)))
             }
             Login::WarningsUnreachable { warnings } => {
-                return Err(ClientError::LoginFailed(format!("{:?}", warnings)))
+                return Err(ToolsError::LoginFailed(format!("{:?}", warnings)))
             }
         }
 
@@ -135,7 +132,7 @@ impl WikiClient {
         !self.csrf_token.is_empty()
     }
 
-    pub async fn get(&self, parameters: &[(&str, &str)]) -> Result<Response, ClientError> {
+    pub async fn get(&self, parameters: &[(&str, &str)]) -> Result<Response, ToolsError> {
         self.client
             .get(&self.url)
             .query(&[
@@ -146,29 +143,29 @@ impl WikiClient {
             .query(parameters)
             .send()
             .await
-            .map_err(|source| ClientError::RequestFailed { source })
+            .map_err(|source| ToolsError::RequestFailed { source })
     }
 
-    pub async fn get_into_text(&self, parameters: &[(&str, &str)]) -> Result<String, ClientError> {
+    pub async fn get_into_text(&self, parameters: &[(&str, &str)]) -> Result<String, ToolsError> {
         self.get(parameters)
             .await?
             .text()
             .await
-            .map_err(|source| ClientError::TextConversionFailed { source })
+            .map_err(|source| ToolsError::TextConversionFailed { source })
     }
 
     pub async fn get_into_json<T: DeserializeOwned>(
         &self,
         parameters: &[(&str, &str)],
-    ) -> Result<T, ClientError> {
+    ) -> Result<T, ToolsError> {
         self.get(parameters)
             .await?
             .json()
             .await
-            .map_err(|source| ClientError::JsonConversionFailed { source })
+            .map_err(|source| ToolsError::JsonConversionFailed { source })
     }
 
-    pub async fn post(&self, parameters: &[(&str, &str)]) -> Result<Response, ClientError> {
+    pub async fn post(&self, parameters: &[(&str, &str)]) -> Result<Response, ToolsError> {
         let parameters = if parameters
             .iter()
             .any(|(x, y)| *x == "action" && ["delete", "edit", "move", "upload"].contains(y))
@@ -188,29 +185,29 @@ impl WikiClient {
             .form(&parameters)
             .send()
             .await
-            .map_err(|source| ClientError::RequestFailed { source })
+            .map_err(|source| ToolsError::RequestFailed { source })
     }
 
-    pub async fn post_into_text(&self, parameters: &[(&str, &str)]) -> Result<String, ClientError> {
+    pub async fn post_into_text(&self, parameters: &[(&str, &str)]) -> Result<String, ToolsError> {
         self.post(parameters)
             .await?
             .text()
             .await
-            .map_err(|source| ClientError::TextConversionFailed { source })
+            .map_err(|source| ToolsError::TextConversionFailed { source })
     }
 
     pub async fn post_into_json<T: DeserializeOwned>(
         &self,
         parameters: &[(&str, &str)],
-    ) -> Result<T, ClientError> {
+    ) -> Result<T, ToolsError> {
         self.post(parameters)
             .await?
             .json()
             .await
-            .map_err(|source| ClientError::JsonConversionFailed { source })
+            .map_err(|source| ToolsError::JsonConversionFailed { source })
     }
 
-    async fn request_csrf_token(&mut self) -> Result<(), ClientError> {
+    async fn request_csrf_token(&mut self) -> Result<(), ToolsError> {
         let res: Token = self
             .get_into_json(&[("action", "query"), ("meta", "tokens"), ("type", "csrf")])
             .await?;
@@ -219,13 +216,13 @@ impl WikiClient {
 
         if let Some(token) = res.query.tokens.csrftoken {
             if token.as_str() == "+\\\\" {
-                return Err(ClientError::TokenNotFound(
+                return Err(ToolsError::TokenNotFound(
                     "token was '+\\\\' aka empty".to_string(),
                 ));
             }
             self.csrf_token = token;
         } else {
-            return Err(ClientError::TokenNotFound(format!("{:?}", res)));
+            return Err(ToolsError::TokenNotFound(format!("{:?}", res)));
         }
 
         Ok(())
@@ -235,7 +232,7 @@ impl WikiClient {
         &self,
         parameters: &[(&str, &str)],
         file_part: reqwest::multipart::Part,
-    ) -> Result<Response, ClientError> {
+    ) -> Result<Response, ToolsError> {
         let mut form = reqwest::multipart::Form::new().part("file", file_part);
         let parameters = [
             parameters,
@@ -255,6 +252,6 @@ impl WikiClient {
             .multipart(form)
             .send()
             .await
-            .map_err(|source| ClientError::RequestFailed { source })
+            .map_err(|source| ToolsError::RequestFailed { source })
     }
 }

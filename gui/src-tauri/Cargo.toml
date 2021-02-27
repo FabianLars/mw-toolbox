@@ -1,5 +1,5 @@
 [package]
-authors = ["FabianLars <fabianlars@fabianlars.de>"]
+authors = [ "FabianLars <fabianlars@fabianlars.de>" ]
 build = "src/build.rs"
 description = "mw-toolbox GUI"
 edition = "2018"
@@ -10,21 +10,21 @@ version = "0.1.0"
 [dependencies]
 anyhow = "1"
 futures = "0.3"
-mw-tools = {path = "../../crates/mw-tools"}
+mw-tools = { path = "../../crates/mw-tools" }
 pretty_env_logger = "0.4"
 regex = "1.4"
 rfd = "0.2"
-serde = {version = "1", features = ["derive"]}
+serde = { version = "1", features = [ "derive" ] }
 serde_json = "1"
-storage = {path = "../../crates/storage"}
-tauri = {version = "0.11", features = ["event"]}
-tokio = {version = "1", features = ["rt-multi-thread"]}
+storage = { path = "../../crates/storage" }
+tauri = { version = "0.11", features = [ "event" ] }
+tokio = { version = "1", features = [ "rt-multi-thread" ] }
 
 [target."cfg(windows)".build-dependencies]
 winres = "0.1"
 
 [features]
-embedded-server = ["tauri/embedded-server"]
+embedded-server = [ "tauri/embedded-server" ]
 
 [[bin]]
 name = "mw-toolbox"

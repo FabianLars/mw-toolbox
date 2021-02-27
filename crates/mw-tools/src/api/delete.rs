@@ -1,10 +1,10 @@
-use crate::error::ApiError;
+use crate::error::ToolsError;
 use crate::WikiClient;
 
 pub async fn delete<C: AsRef<WikiClient>, S: AsRef<str>>(
     client: C,
     titles: &[S],
-) -> Result<(), ApiError> {
+) -> Result<(), ToolsError> {
     let client = client.as_ref();
 
     for title in titles {

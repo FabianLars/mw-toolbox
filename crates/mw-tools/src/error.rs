@@ -1,40 +1,31 @@
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum ApiError {
+pub enum ToolsError {
     #[error("API returned an error: {0}")]
     MediaWikiError(String),
-    #[error(transparent)]
-    ClientError(#[from] ClientError),
+
     #[error(transparent)]
     IoError(#[from] std::io::Error),
-    #[error(transparent)]
-    ReqwestError(#[from] reqwest::Error),
-    #[error("Invalid Input: {0}")]
-    InvalidInput(String),
-    #[error("Provied input file is empty")]
-    EmptyInput,
-    #[error("unknown api error")]
-    Unknown,
-}
 
-#[derive(Error, Debug)]
-pub enum ClientError {
-    #[error("Building inner Reqwest Client failed.")]
-    BuildFailed { source: reqwest::Error },
+    /* #[error("Building inner Reqwest Client failed.")]
+    BuildFailed { source: reqwest::Error }, */
     #[error("Error executing request.")]
     RequestFailed { source: reqwest::Error },
     #[error("Error extracting body as text.")]
     TextConversionFailed { source: reqwest::Error },
-    #[error("Error extracting body as text.")]
+    #[error("Error extracting body as json.")]
     JsonConversionFailed { source: reqwest::Error },
-    // Represents all other cases of Reqwests Errors
     #[error(transparent)]
     ReqwestError(#[from] reqwest::Error),
+
     #[error("Couldn't extract token from response json: {0}")]
     TokenNotFound(String),
-    #[error("malformed url: {0}")]
-    MalformedUrl(String),
     #[error("Login failed! Reason: {0}")]
     LoginFailed(String),
+
+    #[error("Invalid Input: {0}")]
+    InvalidInput(String),
+    #[error("Provided input is empty")]
+    EmptyInput,
 }

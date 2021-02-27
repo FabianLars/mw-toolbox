@@ -1,10 +1,10 @@
 use crate::WikiClient;
-use crate::{error::ApiError, response::edit::Edit};
+use crate::{error::ToolsError, response::edit::Edit};
 
 pub async fn nulledit<C: AsRef<WikiClient>, S: AsRef<str>>(
     client: C,
     titles: &[S],
-) -> Result<(), ApiError> {
+) -> Result<(), ToolsError> {
     let client = client.as_ref();
 
     for title in titles {
@@ -28,7 +28,7 @@ pub async fn edit<C: AsRef<WikiClient>, S: AsRef<str>>(
     title: S,
     content: S,
     summary: Option<S>,
-) -> Result<String, ApiError> {
+) -> Result<String, ToolsError> {
     let client = client.as_ref();
     let summary = match summary {
         Some(s) => s.as_ref().to_string(),
@@ -47,6 +47,6 @@ pub async fn edit<C: AsRef<WikiClient>, S: AsRef<str>>(
 
     match res {
         Edit::Succes { edit } => Ok(edit.result),
-        Edit::Failure { errors } => Err(ApiError::MediaWikiError(errors[0].code.clone())),
+        Edit::Failure { errors } => Err(ToolsError::MediaWikiError(errors[0].code.clone())),
     }
 }

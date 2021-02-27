@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 
 use crate::{
-    error::ApiError,
+    error::ToolsError,
     response::list::{List, Namespaces, Querypage},
     WikiClient,
 };
 
-type Result<T, E = ApiError> = core::result::Result<T, E>;
+type Result<T, E = ToolsError> = core::result::Result<T, E>;
 
 pub async fn allcategories<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
     get_from_api(client.as_ref(), "allcategories", "ac", None).await
@@ -84,7 +84,7 @@ pub async fn backlinks<C: AsRef<WikiClient>>(
         )
         .await
     } else {
-        Err(ApiError::InvalidInput(
+        Err(ToolsError::InvalidInput(
             "Missing bltitle: Title to search".to_string(),
         ))
     }
@@ -103,7 +103,7 @@ pub async fn categorymembers<C: AsRef<WikiClient>>(
         )
         .await
     } else {
-        Err(ApiError::InvalidInput(
+        Err(ToolsError::InvalidInput(
             "Missing cmtitle (Which category to enumerate (must include 'Category:' prefix))"
                 .to_string(),
         ))
@@ -123,7 +123,7 @@ pub async fn embeddedin<C: AsRef<WikiClient>>(
         )
         .await
     } else {
-        Err(ApiError::InvalidInput(
+        Err(ToolsError::InvalidInput(
             "Missing eititle: Title to search".to_string(),
         ))
     }
@@ -157,7 +157,7 @@ pub async fn imageusage<C: AsRef<WikiClient>>(
         )
         .await
     } else {
-        Err(ApiError::InvalidInput(
+        Err(ToolsError::InvalidInput(
             "Missing iutitle: Title to search".to_string(),
         ))
     }
@@ -180,7 +180,7 @@ pub async fn querypage<C: AsRef<WikiClient>>(
         )
         .await
     } else {
-        Err(ApiError::InvalidInput(
+        Err(ToolsError::InvalidInput(
             "Missing qppage: The name of the special page. Note, this is case sensitive"
                 .to_string(),
         ))
@@ -200,7 +200,7 @@ pub async fn search<C: AsRef<WikiClient>>(
         )
         .await
     } else {
-        Err(ApiError::InvalidInput(
+        Err(ToolsError::InvalidInput(
             "Missing srsearch: Search for all page titles (or content) that has this value"
                 .to_string(),
         ))
@@ -296,7 +296,7 @@ async fn get_from_api(
                         };
                     }
                     List::Failure { errors } => {
-                        return Err(ApiError::MediaWikiError(errors[0].code.clone()))
+                        return Err(ToolsError::MediaWikiError(errors[0].code.clone()))
                     }
                 }
             }
