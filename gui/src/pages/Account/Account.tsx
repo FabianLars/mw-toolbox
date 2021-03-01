@@ -48,10 +48,10 @@ const Account = ({ user, setUser }: Props) => {
                 });
             })
             .catch(err => {
-                setUser(user => {
-                    user.isOnline = false;
-                    return user;
-                });
+                setUser(u => ({
+                    ...u,
+                    isOnline: false,
+                }));
                 toast({
                     title: "Couldn't log in!",
                     description: err,
@@ -61,6 +61,19 @@ const Account = ({ user, setUser }: Props) => {
                 });
             })
             .finally(() => setLoggingin(false));
+    };
+
+    const logout = () => {
+        setLoggingin(true);
+        (promisified({
+            cmd: 'logout',
+        }) as Promise<any>).finally(() => {
+            setLoggingin(false);
+            setUser(u => ({
+                ...u,
+                isOnline: false,
+            }));
+        });
     };
 
     useEffect(() => {
@@ -122,6 +135,7 @@ const Account = ({ user, setUser }: Props) => {
                     <Input
                         value={apiUrl}
                         onChange={event => setApiUrl(event.target.value)}
+                        isDisabled={user.isOnline}
                         placeholder="Full URL pointing to api.php"
                     />
                 </FormControl>
@@ -131,6 +145,7 @@ const Account = ({ user, setUser }: Props) => {
                     <Input
                         value={lgname}
                         onChange={event => setLgname(event.target.value)}
+                        isDisabled={user.isOnline}
                         placeholder="Generated via Special:BotPasswords"
                     />
                 </FormControl>
@@ -140,6 +155,7 @@ const Account = ({ user, setUser }: Props) => {
                     <Input
                         value={lgpasswd}
                         onChange={event => setLgpasswd(event.target.value)}
+                        isDisabled={user.isOnline}
                         type="password"
                         placeholder="Generated via Special:BotPasswords"
                     />
@@ -152,9 +168,9 @@ const Account = ({ user, setUser }: Props) => {
                     <Button
                         isDisabled={apiUrlInvalid || lgnameInvalid || lgpasswdInvalid}
                         isLoading={logginin}
-                        onClick={login}
+                        onClick={user.isOnline ? logout : login}
                     >
-                        Log in
+                        {user.isOnline ? 'Log out' : 'Log in'}
                     </Button>
                 </Flex>
             </Flex>

@@ -25,6 +25,10 @@ pub enum Cmd {
         callback: String,
         error: String,
     },
+    Logout {
+        callback: String,
+        error: String,
+    },
 
     /* Cache (used to be window.sessionstorage) */
     CacheGet {

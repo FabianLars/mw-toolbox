@@ -111,6 +111,16 @@ fn main() {
                                 error,
                             )
                         }
+                        Logout { callback, error } => {
+                            let handle = rt.clone();
+                            let mut client = client.clone();
+                            tauri::execute_promise(
+                                _webview,
+                                move || handle.block_on(client.logout()).map_err(|e| e.into()),
+                                callback,
+                                error,
+                            )
+                        }
                         CacheGet {
                             key,
                             callback,

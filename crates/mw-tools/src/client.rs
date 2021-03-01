@@ -126,6 +126,18 @@ impl WikiClient {
         self.request_csrf_token().await
     }
 
+    pub async fn logout(&mut self) -> Result<(), ToolsError> {
+        log::debug!(
+            "logout request completed: {:?}",
+            self.post_into_text(&[("action", "logout"), ("token", &self.csrf_token),])
+                .await?
+        );
+
+        self.csrf_token = "".to_string();
+
+        Ok(())
+    }
+
     pub fn client(&self) -> &Client {
         &self.client
     }
