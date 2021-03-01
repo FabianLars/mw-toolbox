@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { promisified } from 'tauri/api/tauri';
 import { Account, Delete, Download, Edit, List, Move, Purge, Upload } from './pages';
 
-type User = {
+export type User = {
     username: string;
     password: string;
     url: string;

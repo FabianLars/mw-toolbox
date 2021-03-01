@@ -4,14 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Divider, Flex, FormControl, FormLabel, Input, Text, useToast } from '@chakra-ui/react';
 
 import { Header } from '../../components';
-
-type User = {
-    username: string;
-    password: string;
-    url: string;
-    isPersistent: boolean;
-    isOnline: boolean;
-};
+import { User } from '../../App';
 
 type Props = {
     user: User;
