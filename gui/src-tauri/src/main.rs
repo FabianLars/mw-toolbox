@@ -33,9 +33,8 @@ fn main() {
     pretty_env_logger::init();
 
     let rt = Arc::new(tokio::runtime::Runtime::new().unwrap());
-    rt.block_on(async {
-        *SAVED_STATE.lock().expect("Couldn't lock State Mutex") = SavedState::load().await.unwrap()
-    });
+    *SAVED_STATE.lock().expect("Couldn't lock State Mutex") =
+        rt.block_on(SavedState::load()).unwrap();
 
     tauri::AppBuilder::new()
         .setup(move |_webview, _source| {
