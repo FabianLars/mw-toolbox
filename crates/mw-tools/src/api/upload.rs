@@ -49,7 +49,7 @@ pub async fn upload<C: AsRef<WikiClient>, P: AsRef<Path>, S: Into<String>>(
 
 pub async fn upload_multiple<C: AsRef<WikiClient>, P: AsRef<Path>>(
     client: C,
-    files: Vec<P>,
+    files: &[P],
     text: Option<String>,
 ) -> Result<(), ToolsError> {
     for file in files {

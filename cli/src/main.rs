@@ -229,7 +229,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             } else {
                 panic!(format!("Invalid path given!: {}", input.display()))
             }
-            api::upload::upload_multiple(&client, files, text).await?
+            api::upload::upload_multiple(&client, &files, text).await?
         }
         #[cfg(feature = "league-wiki")]
         Subcommand::League { league_type, path } => match league_type {
