@@ -5,21 +5,55 @@
 
 mod cmd;
 
-use std::{
-    collections::HashMap,
-    path::PathBuf,
-    sync::{Arc, Mutex},
-};
+use std::{collections::HashMap, path::PathBuf, sync::Arc};
 
 use mw_tools::{api, WikiClient};
 use once_cell::sync::Lazy;
 use serde::Serialize;
-use tauri::Result;
+use tokio::sync::{mpsc, oneshot, Mutex};
 
-#[derive(Serialize)]
-pub struct LoginResponse {
-    username: String,
-    url: String,
+#[derive(tauri::FromTauriContext)]
+struct Context;
+
+#[derive(Debug)]
+pub enum ClientCommand {
+    Delete(Vec<String>),
+    Download(Vec<String>),
+    Edit {
+        title: String,
+        content: String,
+        summary: String,
+    },
+    GetPage {
+        page: String,
+        patterns: Vec<cmd::FindReplace>,
+    },
+    List {
+        listtype: String,
+        param: Option<String>,
+    },
+    Login {
+        loginname: String,
+        password: String,
+        wikiurl: String,
+        is_persistent: bool,
+    },
+    Logout,
+    Move {
+        from: Vec<String>,
+        to: Vec<String>,
+    },
+    Purge,
+}
+
+#[derive(Debug)]
+pub enum ClientResponse {
+    Ok,
+    String(String),
+    Vec(Vec<String>),
+    LoginResponse(cmd::LoginResponse),
+    None,
+    Error(String),
 }
 
 // There is nothing we can do if init fails, so let's panic in the disco.
@@ -28,419 +62,217 @@ static CACHE: Lazy<Mutex<HashMap<String, serde_json::Value>>> =
     Lazy::new(|| Mutex::new(HashMap::new()));
 static FILES_HELPER: Lazy<Mutex<Vec<PathBuf>>> = Lazy::new(|| Mutex::new(Vec::new()));
 static SAVED_STATE: Lazy<Mutex<SavedState>> = Lazy::new(|| Mutex::new(SavedState::default()));
+static MPSC: Lazy<
+    Mutex<(
+        mpsc::Sender<(ClientCommand, oneshot::Sender<ClientResponse>)>,
+        mpsc::Receiver<(ClientCommand, oneshot::Sender<ClientResponse>)>,
+    )>,
+> = Lazy::new(|| {
+    Mutex::new(mpsc::channel::<(
+        ClientCommand,
+        oneshot::Sender<ClientResponse>,
+    )>(100))
+});
 
 fn main() {
     pretty_env_logger::init();
+    let rt = tokio::runtime::Runtime::new().unwrap();
 
-    let rt = Arc::new(tokio::runtime::Runtime::new().unwrap());
-    *SAVED_STATE.lock().expect("Couldn't lock State Mutex") =
-        rt.block_on(SavedState::load()).unwrap();
+    tauri::AppBuilder::<Context>::new()
+        .setup(|_| async move {
+            let saved_state = SavedState::load().await.unwrap_or_default();
+            *SAVED_STATE.lock().await = saved_state;
 
-    tauri::AppBuilder::new()
-        .setup(move |_webview, _source| {
-            tauri::event::listen("clear-files", move |_| {
-                if let Ok(mut x) = FILES_HELPER.lock() {
-                    x.clear();
-                }
-            })
-        })
-        .invoke_handler(move |_webview, arg| {
-            use cmd::Cmd::*;
-            match serde_json::from_str(arg) {
-                Err(e) => Err(e.to_string()),
-                Ok(command) => {
-                    match command {
-                        Init { callback, error } => tauri::execute_promise(
-                            _webview,
-                            move || {
-                                Ok(SAVED_STATE
-                                    .lock()
-                                    .expect("Couldn't lock State Mutex")
-                                    .clone())
-                            },
-                            callback,
-                            error,
-                        ),
-                        Login {
-                            loginname,
-                            password,
-                            wikiurl,
-                            is_persistent,
-                            callback,
-                            error,
-                        } => {
-                            let mut client = CLIENT.lock().expect("Couldn't lock Client Mutex");
-                            client.url(&wikiurl);
-                            client.credentials(&loginname, &password);
-                            let callback_val = LoginResponse {
-                                username: loginname.clone(),
-                                url: wikiurl.clone(),
-                            };
-                            // This kinda blocks the ui, but works best for now
-                            let client_res = rt.block_on(client.login());
+            /*
+            let mut client = WikiClient::new().unwrap();
 
-                            if client_res.is_ok() {
-                                *SAVED_STATE.lock().expect("Couldn't lock State Mutex") =
-                                    SavedState {
-                                        wikiurl: wikiurl.clone(),
-                                        loginname: loginname.clone(),
-                                        password: password.clone(),
-                                        is_persistent,
-                                    }
-                            }
-
-                            let handle = rt.clone();
-                            let loginname = match is_persistent {
-                                true => loginname,
-                                false => String::new(),
-                            };
-                            let password = match is_persistent {
-                                true => password,
-                                false => String::new(),
-                            };
-                            tauri::execute_promise(
-                                _webview,
-                                move || {
-                                    if let Err(e) = client_res {
-                                        return Err(e.into());
-                                    }
-                                    match handle.block_on(
-                                        SavedState {
-                                            wikiurl,
-                                            loginname,
-                                            password,
-                                            is_persistent,
-                                        }
-                                        .save(),
-                                    ) {
-                                        Ok(_) => Ok(callback_val),
-                                        Err(err) => Err(err),
-                                    }
-                                },
-                                callback,
-                                error,
-                            )
-                        }
-                        Logout { callback, error } => {
-                            let handle = rt.clone();
-                            tauri::execute_promise(
-                                _webview,
-                                move || {
-                                    handle
-                                        .block_on(
-                                            CLIENT
-                                                .lock()
-                                                .expect("Couldn't lock Client Mutex")
-                                                .logout(),
-                                        )
-                                        .map_err(|e| e.into())
-                                },
-                                callback,
-                                error,
-                            )
-                        }
-                        CacheGet {
-                            key,
-                            callback,
-                            error,
-                        } => {
-                            if let Some(v) =
-                                CACHE.lock().expect("Couldn't lock Cache Mutex").get(&key)
-                            {
-                                let v = v.to_owned();
-                                tauri::execute_promise(_webview, move || Ok(v), callback, error)
-                            }
-                        }
-                        CacheSet {
-                            key,
-                            value,
-                            callback,
-                            error,
-                        } => {
-                            let updated = CACHE
-                                .lock()
-                                .expect("Couldn't lock Cache Mutex")
-                                .insert(key, value)
-                                .is_some();
-                            tauri::execute_promise(_webview, move || Ok(updated), callback, error)
-                        }
-                        Delete {
-                            pages,
-                            callback,
-                            error,
-                        } => {
-                            let handle = rt.clone();
-                            tauri::execute_promise(
-                                _webview,
-                                move || match handle.block_on(api::delete::delete(
-                                    &*CLIENT.lock().expect("Couldn't lock Client Mutex"),
-                                    &pages[..],
-                                )) {
-                                    Ok(_) => Ok(()),
-                                    Err(err) => Err(err.into()),
-                                },
-                                callback,
-                                error,
-                            )
-                        }
-                        Download {
-                            files,
-                            callback,
-                            error,
-                        } => {
-                            let handle = rt.clone();
-
-                            tauri::execute_promise(
-                                _webview,
-                                move || match handle.block_on(api::download::download(
-                                    &*CLIENT.lock().expect("Couldn't lock Client Mutex"),
-                                    &files,
-                                )) {
-                                    Ok(_) => Ok(()),
-                                    Err(err) => Err(err.into()),
-                                },
-                                callback,
-                                error,
-                            )
-                        }
-                        Edit {
-                            title,
-                            content,
-                            summary,
-                            callback,
-                            error,
-                        } => {
-                            let handle = rt.clone();
-
-                            tauri::execute_promise(
-                                _webview,
-                                move || match handle.block_on(api::edit::edit(
-                                    &*CLIENT.lock().expect("Couldn't lock Client Mutex"),
-                                    title,
-                                    content,
-                                    Some(summary),
-                                )) {
-                                    Ok(s) => Ok(s),
-                                    Err(err) => Err(err.into()),
-                                },
-                                callback,
-                                error,
-                            )
-                        }
-                        GetPage {
-                            page,
-                            patterns,
-                            callback,
-                            error,
-                        } => {
-                            let handle = rt.clone();
-
-                            tauri::execute_promise(
-                                _webview,
-                                move || match handle.block_on(api::parse::get_page_content(
-                                    &*CLIENT.lock().expect("Couldn't lock Client Mutex"),
-                                    page,
-                                )) {
-                                    Ok(s) => {
-                                        let mut s = s;
-                                        for pat in patterns {
-                                            if !pat.find.is_empty() {
-                                                if pat.is_regex {
-                                                    let re = regex::Regex::new(&pat.find)?;
+            while let Some((cmd, response)) = MPSC.lock().await.1.recv().await {
+                match cmd {
+                    ClientCommand::Delete(pages) => {
+                        match api::delete::delete(&client, &pages[..]).await {
+                            Ok(_) => response.send(ClientResponse::Ok).unwrap(),
+                            Err(err) => response
+                                .send(ClientResponse::Error(err.to_string()))
+                                .unwrap(),
+                        };
+                    }
+                    ClientCommand::Download(files) => {
+                        match api::download::download(&client, &files).await {
+                            Ok(_) => response.send(ClientResponse::Ok).unwrap(),
+                            Err(err) => response
+                                .send(ClientResponse::Error(err.to_string()))
+                                .unwrap(),
+                        };
+                    }
+                    ClientCommand::Edit {
+                        title,
+                        content,
+                        summary,
+                    } => {
+                        match api::edit::edit(&client, title, content, Some(summary)).await {
+                            Ok(_) => response.send(ClientResponse::Ok).unwrap(),
+                            Err(err) => response
+                                .send(ClientResponse::Error(err.to_string()))
+                                .unwrap(),
+                        };
+                    }
+                    ClientCommand::GetPage { page, patterns } => {
+                        match api::parse::get_page_content(&client, page).await {
+                            Ok(s) => {
+                                let mut s = s;
+                                for pat in patterns {
+                                    if !pat.find.is_empty() {
+                                        if pat.is_regex {
+                                            match regex::Regex::new(&pat.find)
+                                                .map_err(|err| err.to_string())
+                                            {
+                                                Ok(re) => {
                                                     s = re
                                                         .replace_all(&s, pat.replace.as_str())
                                                         .to_string();
-                                                } else {
-                                                    s = s.replace(&pat.find, &pat.replace);
                                                 }
+                                                Err(err) => response
+                                                    .send(ClientResponse::Error(err))
+                                                    .unwrap(),
                                             }
+                                        } else {
+                                            s = s.replace(&pat.find, &pat.replace);
                                         }
-                                        Ok(s)
                                     }
-                                    Err(err) => Err(err.into()),
-                                },
-                                callback,
-                                error,
-                            )
-                        }
-                        List {
-                            listtype,
-                            param,
-                            callback,
-                            error,
-                        } => {
-                            let handle = rt.clone();
-
-                            tauri::execute_promise(
-                                _webview,
-                                move || {
-                                    let client = CLIENT.lock().expect("Couldn't lock Client Mutex");
-                                    let res = match listtype.as_str() {
-                                        "allimages" => {
-                                            handle.block_on(api::list::allimages(&*client))
-                                        }
-                                        "allpages" => handle.block_on(api::list::allpages(
-                                            &*client,
-                                            param.as_deref(),
-                                        )),
-                                        "alllinks" => {
-                                            handle.block_on(api::list::alllinks(&*client))
-                                        }
-                                        "allcategories" => {
-                                            handle.block_on(api::list::allcategories(&*client))
-                                        }
-                                        "backlinks" => handle.block_on(api::list::backlinks(
-                                            &*client,
-                                            param.as_deref(),
-                                        )),
-                                        "categorymembers" => handle.block_on(
-                                            api::list::categorymembers(&*client, param.as_deref()),
-                                        ),
-                                        "embeddedin" => handle.block_on(api::list::embeddedin(
-                                            &*client,
-                                            param.as_deref(),
-                                        )),
-                                        "imageusage" => handle.block_on(api::list::imageusage(
-                                            &*client,
-                                            param.as_deref(),
-                                        )),
-                                        "search" => handle.block_on(api::list::search(
-                                            &*client,
-                                            param.as_deref(),
-                                        )),
-                                        "protectedtitles" => {
-                                            handle.block_on(api::list::protectedtitles(&*client))
-                                        }
-                                        "querypage" => handle.block_on(api::list::querypage(
-                                            &*client,
-                                            param.as_deref(),
-                                        )),
-                                        "allinfoboxes" => {
-                                            handle.block_on(api::list::allinfoboxes(&*client))
-                                        }
-                                        _ => handle.block_on(api::list::allimages(&*client)),
-                                    };
-                                    match res {
-                                        Ok(list) => Ok(list),
-                                        Err(err) => Err(err.into()),
-                                    }
-                                },
-                                callback,
-                                error,
-                            )
-                        }
-                        Move {
-                            from,
-                            to,
-                            callback,
-                            error,
-                        } => {
-                            let handle = rt.clone();
-
-                            tauri::execute_promise(
-                                _webview,
-                                move || match handle.block_on(api::rename::rename(
-                                    &*CLIENT.lock().expect("Couldn't lock Client Mutex"),
-                                    from,
-                                    Some(api::rename::Destination::Plain(to)),
-                                    None,
-                                    None,
-                                )) {
-                                    Ok(_) => Ok(()),
-                                    Err(err) => Err(err.into()),
-                                },
-                                callback,
-                                error,
-                            )
-                        }
-                        Purge {
-                            is_nulledit,
-                            pages,
-                            callback,
-                            error,
-                        } => {
-                            let handle = rt.clone();
-
-                            tauri::execute_promise(
-                                _webview,
-                                move || {
-                                    let client = CLIENT.lock().expect("Couldn't lock Client Mutex");
-                                    match match is_nulledit {
-                                        true => handle
-                                            .block_on(api::edit::nulledit(&*client, &pages[..])),
-                                        false => handle.block_on(api::purge::purge(
-                                            &*client,
-                                            &pages[..],
-                                            true,
-                                        )),
-                                    } {
-                                        Ok(_) => Ok(()),
-                                        Err(err) => Err(err.into()),
-                                    }
-                                },
-                                callback,
-                                error,
-                            )
-                        }
-                        UploadDialog { callback, error } => {
-                            let handle = rt.clone();
-                            tauri::execute_promise(
-                                _webview,
-                                move || {
-                                    let result =
-                                        handle.block_on(rfd::AsyncFileDialog::new().pick_files());
-
-                                    if let Some(selected_files) = result {
-                                        let arr: Vec<String> = match FILES_HELPER.lock() {
-                                            Ok(mut x) => {
-                                                *x = selected_files
-                                                    .iter()
-                                                    .map(|f| f.path().to_path_buf())
-                                                    .collect();
-                                                x.iter().map(|x| x.display().to_string()).collect()
-                                            }
-                                            Err(_) => panic!("Mutex poisoned!"),
-                                        };
-                                        Ok(arr)
-                                    } else {
-                                        Err(anyhow::anyhow!("No files selected"))
-                                    }
-                                },
-                                callback,
-                                error,
-                            )
-                        }
-                        Upload {
-                            text,
-                            callback,
-                            error,
-                        } => {
-                            let handle = rt.clone();
-                            tauri::execute_promise(
-                                _webview,
-                                move || match handle.block_on(api::upload::upload_multiple(
-                                    &*CLIENT.lock().expect("Couldn't lock Client Mutex"),
-                                    &*FILES_HELPER.lock().expect("Couldn't lock Files Mutex"),
-                                    Some(text),
-                                )) {
-                                    Ok(_) => Ok(()),
-                                    Err(e) => Err(e.into()),
-                                },
-                                callback,
-                                error,
-                            )
+                                }
+                                response.send(ClientResponse::String(s)).unwrap();
+                            }
+                            Err(err) => response
+                                .send(ClientResponse::Error(err.to_string()))
+                                .unwrap(),
                         }
                     }
-                    Ok(())
-                }
-            }
+                    ClientCommand::List { listtype, param } => {
+                        let res = match listtype.as_str() {
+                            "allimages" => api::list::allimages(&client).await,
+                            "allpages" => api::list::allpages(&client, param.as_deref()).await,
+                            "alllinks" => api::list::alllinks(&client).await,
+                            "allcategories" => api::list::allcategories(&client).await,
+                            "backlinks" => api::list::backlinks(&client, param.as_deref()).await,
+                            "categorymembers" => {
+                                api::list::categorymembers(&client, param.as_deref()).await
+                            }
+                            "embeddedin" => api::list::embeddedin(&client, param.as_deref()).await,
+                            "imageusage" => api::list::imageusage(&client, param.as_deref()).await,
+                            "search" => api::list::search(&client, param.as_deref()).await,
+                            "protectedtitles" => api::list::protectedtitles(&client).await,
+                            "querypage" => api::list::querypage(&client, param.as_deref()).await,
+                            "allinfoboxes" => api::list::allinfoboxes(&client).await,
+                            _ => api::list::allimages(&client).await,
+                        };
+                        match res {
+                            Ok(list) => response.send(ClientResponse::Vec(list)).unwrap(),
+                            Err(err) => response
+                                .send(ClientResponse::Error(err.to_string()))
+                                .unwrap(),
+                        }
+                    }
+                    ClientCommand::Login {
+                        loginname,
+                        password,
+                        wikiurl,
+                        is_persistent,
+                    } => {
+                        client.url(&wikiurl);
+                        client.credentials(&loginname, &password);
+                        let callback_val = cmd::LoginResponse {
+                            username: loginname.clone(),
+                            url: wikiurl.clone(),
+                        };
+                        // This kinda blocks the ui, but works best for now
+                        let client_res = client.login().await;
+
+                        if client_res.is_ok() {
+                            *SAVED_STATE.lock().await = SavedState {
+                                wikiurl: wikiurl.clone(),
+                                loginname: loginname.clone(),
+                                password: password.clone(),
+                                is_persistent,
+                            }
+                        }
+
+                        let loginname = match is_persistent {
+                            true => loginname,
+                            false => String::new(),
+                        };
+                        let password = match is_persistent {
+                            true => password,
+                            false => String::new(),
+                        };
+
+                        let save_res = SavedState {
+                            wikiurl,
+                            loginname,
+                            password,
+                            is_persistent,
+                        }
+                        .save()
+                        .await;
+
+                        match save_res {
+                            Ok(_) => response
+                                .send(ClientResponse::LoginResponse(callback_val))
+                                .unwrap(),
+                            Err(err) => response
+                                .send(ClientResponse::Error(err.to_string()))
+                                .unwrap(),
+                        }
+                    }
+                    ClientCommand::Logout => {
+                        match client.logout().await {
+                            Ok(_) => response.send(ClientResponse::Ok).unwrap(),
+                            Err(err) => response
+                                .send(ClientResponse::Error(err.to_string()))
+                                .unwrap(),
+                        };
+                    }
+                    ClientCommand::Move { from, to } => {
+                        match api::rename::rename(
+                            &client,
+                            from,
+                            Some(api::rename::Destination::Plain(to)),
+                            None,
+                            None,
+                        )
+                        .await
+                        {
+                            Ok(_) => {}
+                            Err(_) => {}
+                        }
+                    }
+                    ClientCommand::Purge => {}
+                };
+            } */
         })
+        .invoke_handler(tauri::generate_handler![
+            cmd::cache_get,
+            cmd::cache_set,
+            cmd::clear_files,
+            //cmd::delete,
+            //cmd::download,
+            //cmd::edit,
+            /*cmd::get_page,
+            cmd::init,
+            cmd::list,
+            cmd::login,
+            cmd::logout,
+            cmd::r#move,
+            cmd::purge,
+            cmd::upload_dialog,
+            cmd::upload */
+        ])
         .build()
+        .unwrap()
         .run();
 }
 
 #[derive(Clone, Debug, Default, Serialize)]
-struct SavedState {
+pub struct SavedState {
     wikiurl: String,
     loginname: String,
     password: String,
@@ -448,7 +280,7 @@ struct SavedState {
 }
 
 impl SavedState {
-    async fn load() -> Result<SavedState> {
+    async fn load() -> Result<SavedState, ()> {
         let loginname = storage::get_secure("b9c95dde").await.unwrap_or_default();
         let password = storage::get_secure("d7f0942b").await.unwrap_or_default();
         let wikiurl = storage::get("wikiurl").await.unwrap_or_default();
@@ -467,7 +299,7 @@ impl SavedState {
         Ok(s)
     }
 
-    async fn save(self) -> Result<()> {
+    async fn save(self) -> Result<(), anyhow::Error> {
         storage::insert_multiple(&[
             ("b9c95dde", storage::encrypt(&self.loginname)?.as_slice()),
             ("d7f0942b", storage::encrypt(&self.password)?.as_slice()),

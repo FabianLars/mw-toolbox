@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import { useState } from 'react';
-import { promisified } from 'tauri/api/tauri';
+import { invoke } from '@tauri-apps/api/tauri';
 import { Header } from '../../components';
 
 const Download = ({ isOnline }: { isOnline: boolean }) => {

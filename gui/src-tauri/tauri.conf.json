@@ -5,14 +5,7 @@
         "beforeDevCommand": "",
         "beforeBuildCommand": "yarn --cwd .. build"
     },
-    "ctx": {
-        "debug": false,
-        "exitOnPanic": true
-    },
     "tauri": {
-        "embeddedServer": {
-            "active": true
-        },
         "bundle": {
             "active": true,
             "targets": "all",
@@ -38,25 +31,22 @@
                 "frameworks": [],
                 "minimumSystemVersion": "",
                 "useBootstrapper": false
-            },
-            "exceptionDomain": ""
+            }
         },
         "allowlist": {
-            "all": false,
-            "event": true
+            "all": false
         },
-        "window": {
-            "title": "mw-toolbox by FabianLars",
-            "width": 1280,
-            "height": 720,
-            "resizable": false,
-            "fullscreen": false
-        },
+        "windows": [
+            {
+                "title": "mw-toolbox by FabianLars",
+                "minWidth": 1280,
+                "minHeight": 720,
+                "resizable": false,
+                "fullscreen": false
+            }
+        ],
         "security": {
             "csp": "default-src blob: data: filesystem: ws: http: https: 'unsafe-eval' 'unsafe-inline'"
-        },
-        "inliner": {
-            "active": true
         }
     }
 }

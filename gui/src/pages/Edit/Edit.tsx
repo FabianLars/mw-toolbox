@@ -1,6 +1,6 @@
 import { Button, Flex, Grid, GridItem, Textarea, Checkbox, useToast, Input, useDisclosure } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { promisified } from 'tauri/api/tauri';
+import { invoke } from '@tauri-apps/api/tauri';
 import { Header } from '../../components';
 import FindReplaceModal from './FindReplaceModal';
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Flex, Textarea, useToast } from '@chakra-ui/react';
-import { promisified } from 'tauri/api/tauri';
+import { invoke } from '@tauri-apps/api/tauri';
 import { Header } from '../../components';
 
 const Purge = ({ isOnline }: { isOnline: boolean }) => {

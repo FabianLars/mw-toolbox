@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { promisified } from 'tauri/api/tauri';
+import { invoke } from '@tauri-apps/api/tauri';
 import { Box, Button, Flex, FormControl, FormLabel, Input, Select, Textarea, useToast } from '@chakra-ui/react';
 
 import { Header } from '../../components';
