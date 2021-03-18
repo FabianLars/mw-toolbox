@@ -13,15 +13,13 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
 
     const clearList = () => {
         emit('clear-files');
-        invoke({ cmd: 'cacheSet', key: 'files-cache', value: '' });
+        invoke('cacheSet', { key: 'files-cache', value: '' });
         setFiles('');
     };
 
     const openDialog = () => {
         setIsWaiting(true);
-        (invoke({
-            cmd: 'uploadDialog',
-        }) as Promise<string[]>)
+        (invoke('uploadDialog') as Promise<string[]>)
             .then(res => {
                 const files = res.join('\n');
                 setFiles(files);
@@ -40,8 +38,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
 
     const startUpload = () => {
         setIsUploading(true);
-        (invoke({
-            cmd: 'upload',
+        (invoke('upload', {
             text: uploadtext,
         }) as Promise<any>)
             .then(() =>
@@ -65,8 +62,8 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     useEffect(() => {
-        (invoke({ cmd: 'cacheGet', key: 'files-cache' }) as Promise<string>).then(setFiles);
-        (invoke({ cmd: 'cacheGet', key: 'uploadtext-cache' }) as Promise<string>).then(setUploadtext);
+        (invoke('cacheGet', { key: 'files-cache' }) as Promise<string>).then(setFiles);
+        (invoke('cacheGet', { key: 'uploadtext-cache' }) as Promise<string>).then(setUploadtext);
     }, []);
 
     return (
@@ -79,7 +76,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
                         value={uploadtext}
                         isDisabled={isUploading || isWaiting}
                         onChange={event => setUploadtext(event.target.value)}
-                        onBlur={() => invoke({ cmd: 'cacheSet', key: 'uploadtext-cache', value: uploadtext })}
+                        onBlur={() => invoke('cacheSet', { key: 'uploadtext-cache', value: uploadtext })}
                     />
                 </FormControl>
                 <Box>

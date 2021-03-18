@@ -11,8 +11,7 @@ const Move = ({ isOnline }: { isOnline: boolean }) => {
 
     const movePages = () => {
         setIsLoading(true);
-        promisified({
-            cmd: 'move',
+        invoke('move', {
             from: areaFrom.split(/\r?\n/),
             to: areaTo.split(/\r?\n/),
         })

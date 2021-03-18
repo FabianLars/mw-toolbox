@@ -15,8 +15,7 @@ const Purge = ({ isOnline }: { isOnline: boolean }) => {
         } else {
             setIsPurging(true);
         }
-        promisified({
-            cmd: 'purge',
+        invoke('purge', {
             pages: areaValue.split(/\r?\n/),
             is_nulledit: isNulledit,
         })

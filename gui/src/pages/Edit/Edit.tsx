@@ -47,8 +47,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
             setIsRunning(false);
             setIsLoading(false);
         } else {
-            (promisified({
-                cmd: 'getPage',
+            (invoke('getPage', {
                 page: curr,
                 patterns: patterns,
             }) as Promise<string>)
@@ -69,8 +68,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
 
     const save = () => {
         setIsLoading(true);
-        (promisified({
-            cmd: 'edit',
+        (invoke('edit', {
             title: currentPage,
             content: pageContent
                 .replace(/[\u007F-\u009F\u200B]/g, '')

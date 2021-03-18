@@ -10,8 +10,7 @@ const Delete = ({ isOnline }: { isOnline: boolean }) => {
 
     const deletePages = () => {
         setIsLoading(true);
-        promisified({
-            cmd: 'delete',
+        invoke('delete', {
             pages: areaValue.split(/\r?\n/),
         })
             .then(() =>

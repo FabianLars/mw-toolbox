@@ -10,8 +10,7 @@ const Download = ({ isOnline }: { isOnline: boolean }) => {
 
     const downloadFiles = () => {
         setIsLoading(true);
-        promisified({
-            cmd: 'download',
+        invoke('download', {
             files: areaValue.split(/\r?\n/),
         })
             .then(() =>

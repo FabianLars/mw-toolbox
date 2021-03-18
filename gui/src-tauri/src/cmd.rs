@@ -1,4 +1,4 @@
-use mw_tools::{api, error::ToolsError};
+use mw_tools::api;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::command;
@@ -20,6 +20,8 @@ pub struct FindReplace {
     #[serde(rename = "isRegex", default)]
     pub is_regex: bool,
 }
+
+// TODO: Use actual errors instead of error strings
 
 #[command]
 pub async fn cache_get(key: String) -> Option<Value> {

@@ -16,15 +16,14 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
     const getList = () => {
         if (listType !== '') {
             setLoading(true);
-            (promisified({
-                cmd: 'list',
+            (invoke('list', {
                 listtype: listType,
                 param: paramInput || null,
             }) as Promise<string[]>)
                 .then(res => {
                     const output = res.join('\n');
                     setListOutput(output);
-                    promisified({ cmd: 'cacheSet', key: 'list-cache', value: output });
+                    invoke('cacheSet', { key: 'list-cache', value: output });
                 })
                 .catch(err =>
                     toast({
@@ -40,12 +39,12 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     const clearOutput = () => {
-        promisified({ cmd: 'cacheSet', key: 'list-cache', value: '' });
+        invoke('cacheSet', { key: 'list-cache', value: '' });
         setListOutput('');
     };
 
     useEffect(() => {
-        (promisified({ cmd: 'cacheGet', key: 'list-cache' }) as Promise<string>).then(setListOutput);
+        (invoke('cacheSet', { key: 'list-cache' }) as Promise<string>).then(setListOutput);
     }, []);
 
     useEffect(() => {

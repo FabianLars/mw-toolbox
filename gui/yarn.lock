@@ -2892,7 +2892,7 @@
     "@svgr/plugin-svgo" "^5.5.0"
     loader-utils "^2.0.0"
 
-"@tauri-apps/api@link:../../tauri/tauri/api":
+"@tauri-apps/api@link:./../../tauri/api":
   version "0.0.0"
   uid ""
 

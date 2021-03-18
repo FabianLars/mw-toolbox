@@ -28,8 +28,7 @@ const App = () => {
     useEffect(() => {
         // @ts-ignore
         if (!!window.__TAURI__) {
-            (promisified({
-                cmd: 'cacheGet',
+            (invoke('cacheGet', {
                 key: 'userObj',
             }) as Promise<User>).then(
                 ({ isOnline = false, isPersistent = false, username = '', password = '', url = '' }) => {
@@ -50,8 +49,7 @@ const App = () => {
     // This exists to handle reloads
     useEffect(() => {
         if (mounted.current) {
-            promisified({
-                cmd: 'cacheSet',
+            invoke('cacheSet', {
                 key: 'userObj',
                 value: user,
             });
