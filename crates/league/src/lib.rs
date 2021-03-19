@@ -369,7 +369,7 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         .collect();
     rotation.sort();
     new_players.sort();
-    let rotation: String = rotation.iter().map(|x| "|".to_owned() + x).collect();
+    let rotation_str: String = rotation.iter().map(|x| "|".to_owned() + x).collect();
     let new_players: String = new_players.iter().map(|x| "|".to_owned() + x).collect();
 
     let template = format!(
@@ -404,8 +404,28 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
 |lastchecked      = {}
 {}}}}}
 </tabber><noinclude>{{{{Dokumentation}}}}<noinclude>"#,
-        rotation, curr_date, curr_date, new_players
+        rotation_str, curr_date, curr_date, new_players
     );
+
+    let sql = format!(
+        "INSERT INTO rotations(start_date, end_date, champions) VALUES ('{}', '{}', ARRAY[{}]) ON CONFLICT DO NOTHING;",
+        chrono::Utc::today()
+            .format_localized("%Y-%m-%d", chrono::Locale::de_DE)
+            .to_string(),
+        std::ops::Add::add(chrono::Utc::today(), chrono::Duration::days(7))
+            .format_localized("%Y-%m-%d", chrono::Locale::de_DE)
+            .to_string(),
+        rotation
+            .iter()
+            .map(|x| format!("'{}'", x.replace("'", "''")))
+            .collect::<Vec<String>>()
+            .join(",")
+    );
+
+    File::create("new_rotation.sql")
+        .await?
+        .write_all(sql.as_bytes())
+        .await?;
 
     client
         .post(&[
