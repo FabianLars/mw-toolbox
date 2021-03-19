@@ -179,7 +179,7 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result
 
     let champions_wapi: HashMap<i32, Champ> = client
         .client()
-        .get("https://api.fabianlars.de/v1/wiki/champions")
+        .get("https://api.fabianlars.de/v1/lol/champions")
         .send()
         .await?
         .json()
@@ -342,7 +342,7 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
 
     let champions: HashMap<i32, Champ> = client
         .client()
-        .get("https://api.fabianlars.de/v1/wiki/champions")
+        .get("https://api.fabianlars.de/v1/lol/champions")
         .send()
         .await?
         .json()
