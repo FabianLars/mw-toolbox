@@ -1,6 +1,7 @@
 name: Deploy cli on server
 
 on:
+    workflow_dispatch:
     push:
         branches:
             - main
