@@ -48,6 +48,19 @@ jobs:
             - name: Install yarn
               run: npm i -g yarn
 
+            - uses: actions/cache@v2
+              with:
+                  path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                      target
+                  key: test-cache-${{ hashFiles('**/Cargo.lock') }}
+
+            - name: install webkit2gtk
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y webkit2gtk-4.0
+
             - name: Install dependencies
               run: yarn
 
