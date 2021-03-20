@@ -7,6 +7,10 @@ on:
         branches:
             - main
 
+env:
+    WTOOLS_AEAD_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    WTOOLS_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
 jobs:
     rust:
         runs-on: ubuntu-latest
