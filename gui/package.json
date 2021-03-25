@@ -20,7 +20,7 @@
         "@chakra-ui/react": "^1.4.1",
         "@emotion/react": "^11.1.5",
         "@emotion/styled": "^11.1.5",
-        "@testing-library/jest-dom": "^5.11.9",
+        "@testing-library/jest-dom": "^5.11.10",
         "@testing-library/react": "^11.2.5",
         "@testing-library/user-event": "^13.0.15",
         "@types/jest": "^26.0.21",
