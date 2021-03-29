@@ -68,26 +68,26 @@ pub(crate) struct Page {
 pub(crate) struct Querypage {
     #[serde(rename = "continue")]
     pub(crate) querycontinue: Option<Continue>,
-    pub(crate) query: QPQuery,
+    pub(crate) query: QpQuery,
 }
 
 #[derive(Debug, Deserialize)]
-pub(crate) struct QPQuery {
-    pub(crate) querypage: QPQuerypage,
+pub(crate) struct QpQuery {
+    pub(crate) querypage: QpQuerypage,
 }
 
 #[derive(Debug, Deserialize)]
-pub(crate) struct QPQuerypage {
+pub(crate) struct QpQuerypage {
     pub(crate) results: Vec<Page>,
 }
 
 // get namespaces for allpages
 #[derive(Debug, Deserialize)]
 pub(crate) struct Namespaces {
-    pub(crate) query: NSQuery,
+    pub(crate) query: NsQuery,
 }
 #[derive(Debug, Deserialize)]
-pub(crate) struct NSQuery {
+pub(crate) struct NsQuery {
     pub(crate) namespaces: HashMap<String, Namespace>,
 }
 
