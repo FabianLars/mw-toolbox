@@ -1,5 +1,3 @@
-# cargo-features = ["resolver"]
-
 [workspace]
 members = [
   "cli",
@@ -8,7 +6,7 @@ members = [
   "crates/storage",
   "gui/src-tauri",
 ]
-# resolver = "2"
+resolver = "2"
 
 [profile.release]
 lto = true 
