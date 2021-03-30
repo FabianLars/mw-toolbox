@@ -312,18 +312,17 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result
         start_date, end_date, angebote
     );
 
-    log::info!(
-        "{:?}",
-        client
-            .post_into_text(&[
-                ("action", "edit"),
-                ("summary", "Nicht ganz so automatische Aktion"),
-                ("bot", ""),
-                ("title", "Vorlage:Aktuelle_Angebote"),
-                ("text", &full_template),
-            ])
-            .await?
-    );
+    let res = client
+        .post_into_text(&[
+            ("action", "edit"),
+            ("summary", "Nicht ganz so automatische Aktion"),
+            ("bot", ""),
+            ("title", "Vorlage:Aktuelle_Angebote"),
+            ("text", &full_template),
+        ])
+        .await?;
+
+    log::info!("{:?}", res);
 
     Ok(())
 }
