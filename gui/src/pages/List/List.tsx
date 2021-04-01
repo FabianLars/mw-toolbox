@@ -39,7 +39,7 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     const clearOutput = () => {
-        invoke('cacheSet', { key: 'list-cache', value: '' });
+        invoke('cacheSet', {key: 'list-cache', value: ''});
         setListOutput('');
     };
 

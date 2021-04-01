@@ -3,31 +3,28 @@
     windows_subsystem = "windows"
 )]
 
-mod cmd;
+use std::{collections::HashMap, path::PathBuf, sync::atomic::AtomicBool};
 
-use std::{collections::HashMap, path::PathBuf};
-
-use mw_tools::WikiClient;
 use once_cell::sync::Lazy;
 use serde::Serialize;
 use tokio::sync::Mutex;
+
+use mw_tools::WikiClient;
+
+mod cmd;
 
 // There is nothing we can do if init fails, so let's panic in the disco.
 static CLIENT: Lazy<Mutex<WikiClient>> = Lazy::new(|| Mutex::new(WikiClient::new().unwrap()));
 static CACHE: Lazy<Mutex<HashMap<String, serde_json::Value>>> =
     Lazy::new(|| Mutex::new(HashMap::new()));
 static FILES_HELPER: Lazy<Mutex<Vec<PathBuf>>> = Lazy::new(|| Mutex::new(Vec::new()));
+static INIT: AtomicBool = AtomicBool::new(false);
 static SAVED_STATE: Lazy<Mutex<SavedState>> = Lazy::new(|| Mutex::new(SavedState::default()));
 
 fn main() {
     pretty_env_logger::init();
-    let rt = tokio::runtime::Runtime::new().unwrap();
 
     tauri::AppBuilder::default()
-        .setup(|_| async move {
-            let saved_state = SavedState::load().await.unwrap_or_default();
-            *SAVED_STATE.lock().await = saved_state;
-        })
         .invoke_handler(tauri::generate_handler![
             cmd::cache_get,
             cmd::cache_set,

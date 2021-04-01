@@ -19,7 +19,7 @@
             ],
             "resources": [],
             "externalBin": [],
-            "copyright": "",
+            "copyright": "MIT",
             "category": "DeveloperTool",
             "shortDescription": "mw-toolbox GUI",
             "longDescription": "mw-toolbox GUI",
@@ -36,7 +36,7 @@
                 "title": "mw-toolbox by FabianLars",
                 "minWidth": 1280,
                 "minHeight": 720,
-                "resizable": false,
+                "resizable": true,
                 "fullscreen": false
             }
         ],
