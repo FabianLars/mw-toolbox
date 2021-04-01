@@ -1,0 +1,21 @@
+name: Format
+
+on:
+    workflow_dispatch:
+    pull_request:
+    push:
+        branches:
+            - main
+
+jobs:
+    format:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: hecrj/setup-rust-action@v1
+              with:
+                  components: rustfmt
+
+            - uses: actions/checkout@v2
+
+            - name: Check format
+              run: cargo fmt --all -- --check

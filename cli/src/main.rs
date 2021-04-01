@@ -227,7 +227,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     }
                 }
             } else {
-                panic!(format!("Invalid path given!: {}", input.display()))
+                panic!("Invalid path given!")
             }
             api::upload::upload_multiple(&client, &files, text).await?
         }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/dist/tauri';
 import { Box, Button, Flex, FormControl, FormLabel, Input, Select, Textarea, useToast } from '@chakra-ui/react';
 
 import { Header } from '../../components';
@@ -81,7 +81,7 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
             <Header isDisabled={loading} isOnline={isOnline} />
             <Flex w="100%" mb={4} direction="row" align="center">
                 {paramInfo === '' ? (
-                    <Box mx={2} w="100%"></Box>
+                    <Box mx={2} w="100%" />
                 ) : (
                     <FormControl
                         id="parameter-input"

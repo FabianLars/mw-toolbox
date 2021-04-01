@@ -1,0 +1,73 @@
+name: Test
+
+on:
+    workflow_dispatch:
+    pull_request:
+    push:
+        branches:
+            - main
+
+env:
+    WTOOLS_AEAD_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    WTOOLS_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+jobs:
+    rust:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+
+            - uses: hecrj/setup-rust-action@v1
+              with:
+                  components: clippy
+                  rust-version: nightly
+
+            - uses: actions/cache@v2
+              with:
+                  path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                      target
+                  key: test-cache-${{ hashFiles('**/Cargo.lock') }}
+
+            - name: Install webkit2gtk
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev appmenu-gtk3-module libgtk-3-dev squashfs-tools
+
+            - name: Run clippy
+              run: cargo clippy --all-features
+
+            - name: Run tests
+              run: cargo test --verbose --all --all-features
+
+    js:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: gui
+
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Setup Node
+              uses: actions/setup-node@v1
+              with:
+                  node-version: '14'
+
+            - name: Install yarn
+              run: npm i -g yarn
+
+            - uses: actions/cache@v2
+              with:
+                  path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                      target
+                  key: test-cache-${{ hashFiles('**/Cargo.lock') }}
+
+            - name: Install dependencies
+              run: yarn
+
+            - name: Run tests
+              run: yarn test

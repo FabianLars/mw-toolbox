@@ -1,3 +1,0 @@
-[build]
-# To make tauri work in a workspace (kinda fixed upstream)
-target-dir = "C:/Users/Fabian-Lars/dev/mw-toolbox/gui/src-tauri/target"

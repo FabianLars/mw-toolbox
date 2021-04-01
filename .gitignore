@@ -1,3 +1,6 @@
 target/
 movelist.txt
 Cargo.lock
+
+# TODO: Wait for tauri bundler update and remove .cargo/ from .gitignore
+.cargo/

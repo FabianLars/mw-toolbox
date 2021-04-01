@@ -26,11 +26,6 @@
             "deb": {
                 "depends": [],
                 "useBootstrapper": false
-            },
-            "osx": {
-                "frameworks": [],
-                "minimumSystemVersion": "",
-                "useBootstrapper": false
             }
         },
         "allowlist": {
