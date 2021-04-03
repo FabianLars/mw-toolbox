@@ -260,11 +260,11 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result
     let mut angebote: String = "".to_string();
 
     if let Some(date) = start_date.split('T').next() {
-        let date_vec = date.split('-').collect();
+        let date_vec: Vec<_> = date.split('-').collect();
         start_date = format!("{}.{}.{}", date_vec[2], date_vec[1], date_vec[0]);
     }
     if let Some(date) = end_date.split('T').next() {
-        let date_vec = date.split('-').collect();
+        let date_vec: Vec<_> = date.split('-').collect();
         end_date = format!("{}.{}.{}", date_vec[2], date_vec[1], date_vec[0]);
     }
 
@@ -294,7 +294,7 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result
 }}}}"#,
             s.champ,
             // unwrapping here is save
-            s.skin.unwrap(),
+            s.skin.as_ref().unwrap(),
             s.discount
         ))
     }
