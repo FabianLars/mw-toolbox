@@ -141,7 +141,9 @@ pub async fn champs() -> Result<()> {
             name: c.name.clone(),
         };
 
-        champions.get_mut(&champid).unwrap().skins.push(temp);
+        if let Some(champ) = champions.get_mut(&champid) {
+            champ.skins.push(temp);
+        }
     }
 
     File::create("champions.json")
@@ -154,7 +156,7 @@ pub async fn champs() -> Result<()> {
 
 pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result<()> {
     let client = client.as_ref();
-    let lockfile = std::fs::read_to_string(path).unwrap();
+    let lockfile = std::fs::read_to_string(path)?;
     // 0: "LeagueClient", 1: PID, 2: Port, 3: Auth, 4: Protocol
     let contents = lockfile.split(':').collect::<Vec<_>>();
     let port = contents[2];
@@ -191,26 +193,25 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result
     let mut start_date = String::new();
     let mut end_date = String::new();
 
-    for entry in &json {
-        if entry.sale.is_none() {
-            continue;
-        }
+    for entry in json {
+        let sale = match entry.sale {
+            Some(s) => s,
+            None => continue,
+        };
 
         match entry.inventory_type.as_str() {
             "CHAMPION" => {
                 let mut discount = "discount_error".to_string();
-                for p in &entry.sale.as_ref().unwrap().prices {
+                for p in sale.prices {
                     if p.currency == "RP" {
-                        discount = format!("{:.2}", p.discount)
-                            .split('.')
-                            .last()
-                            .unwrap()
-                            .to_string();
+                        if let Some(s) = format!("{:.2}", p.discount).split('.').last() {
+                            discount = s.to_string();
+                        }
                     }
                 }
 
-                start_date = entry.sale.as_ref().unwrap().start_date.clone();
-                end_date = entry.sale.as_ref().unwrap().end_date.clone();
+                start_date = sale.start_date.clone();
+                end_date = sale.end_date.clone();
 
                 champs.push(Angebot {
                     champ: champions_wapi[&entry.item_id].name.clone(),
@@ -219,7 +220,10 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result
                 });
             }
             "CHAMPION_SKIN" => {
-                let champ_id: i32 = entry.item_requirements.as_ref().unwrap()[0].item_id;
+                let champ_id: i32 = match entry.item_requirements {
+                    Some(ir) => ir[0].item_id,
+                    None => -1,
+                };
 
                 let mut skin = "skin_error".to_string();
                 let mut discount = "discount_error".to_string();
@@ -230,13 +234,11 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result
                     }
                 }
 
-                for p in &entry.sale.as_ref().unwrap().prices {
+                for p in sale.prices {
                     if p.currency == "RP" {
-                        discount = format!("{:.2}", p.discount)
-                            .split('.')
-                            .last()
-                            .unwrap()
-                            .to_string();
+                        if let Some(s) = format!("{:.2}", p.discount).split('.').last() {
+                            discount = s.to_string();
+                        }
                     }
                 }
 
@@ -257,17 +259,14 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result
 
     let mut angebote: String = "".to_string();
 
-    let start_date_vec: Vec<_> = start_date.split('T').next().unwrap().split('-').collect();
-    let end_date_vec: Vec<_> = end_date.split('T').next().unwrap().split('-').collect();
-
-    start_date = format!(
-        "{}.{}.{}",
-        start_date_vec[2], start_date_vec[1], start_date_vec[0]
-    );
-    end_date = format!(
-        "{}.{}.{}",
-        end_date_vec[2], end_date_vec[1], end_date_vec[0]
-    );
+    if let Some(date) = start_date.split('T').next() {
+        let date_vec = date.split('-').collect();
+        start_date = format!("{}.{}.{}", date_vec[2], date_vec[1], date_vec[0]);
+    }
+    if let Some(date) = end_date.split('T').next() {
+        let date_vec = date.split('-').collect();
+        end_date = format!("{}.{}.{}", date_vec[2], date_vec[1], date_vec[0]);
+    }
 
     for c in &champs {
         angebote.push_str(&format!(
@@ -294,7 +293,8 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result
 |discount     = {}
 }}}}"#,
             s.champ,
-            s.skin.as_ref().unwrap(),
+            // unwrapping here is save
+            s.skin.unwrap(),
             s.discount
         ))
     }
@@ -742,7 +742,10 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     let document = Document::from(resp.as_str());
 
     let champdata: HashMap<String, Parse> = resp2?;
-    let champdata = &champdata.get("parse").unwrap().wikitext;
+    let champdata = match &champdata.get("parse") {
+        Some(parse) => &parse.wikitext,
+        None => return Err(anyhow!("Response doesn't contain requested wikitext")),
+    };
     let champdata_regex = Regex::new("(?m)\\[\"op_positions\"] *= .+,$")?;
     let champdata_iter = champdata_regex.split(champdata);
 
