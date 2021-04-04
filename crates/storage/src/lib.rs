@@ -16,7 +16,7 @@ fn path() -> std::path::PathBuf {
             std::env::current_dir().unwrap()
         };
 
-    path.push("mw-toolbox");
+    path.push("storage");
 
     path
 }
