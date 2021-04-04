@@ -9,12 +9,9 @@ use rand::prelude::*;
 use tokio::{fs::File, io::AsyncWriteExt};
 
 fn path() -> std::path::PathBuf {
-    let mut path =
-        if let Some(project_dirs) = directories_next::ProjectDirs::from("", "", "mw-toolbox") {
-            project_dirs.data_dir().into()
-        } else {
-            std::env::current_dir().unwrap()
-        };
+    let mut path = directories_next::ProjectDirs::from("", "", "mw-toolbox")
+        .map(|pd| pd.data_dir().to_path_buf())
+        .expect("Can't create or find app data folder!");
 
     path.push("storage");
 

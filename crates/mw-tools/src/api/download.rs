@@ -11,10 +11,8 @@ pub async fn download<C: AsRef<WikiClient>, S: AsRef<str>>(
     let client = client.as_ref();
 
     let mut path = directories_next::UserDirs::new()
-        .expect("Couldn't get home dir from system")
-        .download_dir()
-        .expect("Couldn't get download dir from system")
-        .to_path_buf();
+        .and_then(|p| p.download_dir().map(|p| p.to_path_buf()))
+        .expect("Can't find user's download folder!");
 
     for f in files {
         let f = f.as_ref();
@@ -27,20 +25,26 @@ pub async fn download<C: AsRef<WikiClient>, S: AsRef<str>>(
             ])
             .await?;
 
-        let file_contents = client
-            .client()
-            .get(&file_info.query.pages[0].imageinfo.as_ref().unwrap()[0].url)
-            .send()
-            .await?
-            .bytes()
-            .await?;
+        if let Some(imageinfo) = file_info.query.pages[0].imageinfo.as_ref() {
+            let file_contents = client
+                .client()
+                .get(&imageinfo[0].url)
+                .send()
+                .await?
+                .bytes()
+                .await?;
 
-        path.push(f.split_at(f.find(':').unwrap_or(0) + 1).1);
+            if let Some(pos) = f.find(':') {
+                path.push(f.split_at(pos + 1).1);
+            } else {
+                path.push(f);
+            }
 
-        let mut file = File::create(&path).expect("Couldn't create file");
-        file.write_all(&file_contents)?;
+            let mut file = File::create(&path)?;
+            file.write_all(&file_contents)?;
 
-        path.pop();
+            path.pop();
+        }
     }
 
     Ok(())

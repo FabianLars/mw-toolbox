@@ -282,7 +282,7 @@ async fn get_from_api(
                                     results.push(format!(
                                         "{}~URL~{}",
                                         page.title,
-                                        page.url.unwrap()
+                                        page.url.unwrap_or_else(|| "".to_string())
                                     ));
                                 }
                                 _ => results.push(page.title),
