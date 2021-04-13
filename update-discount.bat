@@ -1,1 +1,1 @@
-cargo run -p mw-cli --features league-wiki league discount -p "E:\Spiele\Riot Games\League of Legends\lockfile"
+cargo run -p mw-cli --features league-wiki league discount
