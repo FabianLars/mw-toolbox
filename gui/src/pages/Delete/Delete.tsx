@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import { useState } from 'react';
-import { invoke } from '@tauri-apps/api/src/tauri';
+import { invoke } from '@tauri-apps/api/dist/tauri';
 import { Header } from '../../components';
 
 const Delete = ({ isOnline }: { isOnline: boolean }) => {
