@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { invoke } from '@tauri-apps/api/dist/tauri';
+import { invoke } from '@tauri-apps/api/src/tauri';
 import { Box, Button, Flex, FormControl, FormLabel, Input, Select, Textarea, useToast } from '@chakra-ui/react';
 
 import { Header } from '../../components';
@@ -23,7 +23,7 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
                 .then(res => {
                     const output = res.join('\n');
                     setListOutput(output);
-                    invoke('cacheSet', { key: 'list-cache', value: output });
+                    invoke('cacheSet', { key: 'list-cache', value: output }).catch(console.error);
                 })
                 .catch(err =>
                     toast({
@@ -39,7 +39,7 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     const clearOutput = () => {
-        invoke('cacheSet', {key: 'list-cache', value: ''});
+        invoke('cacheSet', {key: 'list-cache', value: ''}).catch(console.error);
         setListOutput('');
     };
 

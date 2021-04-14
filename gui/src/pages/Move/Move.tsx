@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import { useState } from 'react';
-import { invoke } from '@tauri-apps/api/dist/tauri';
+import { invoke } from '@tauri-apps/api/src/tauri';
 import { Header } from '../../components';
 
 const Move = ({ isOnline }: { isOnline: boolean }) => {
@@ -43,7 +43,7 @@ const Move = ({ isOnline }: { isOnline: boolean }) => {
                     resize="none"
                     value={areaFrom}
                     onChange={event => setAreaFrom(event.target.value)}
-                    placeholder="Write exact names of pages to move. Seperated by newline."
+                    placeholder="Write exact names of pages to move. Separated by newline."
                     h="100%"
                     mr={2}
                 />
@@ -51,7 +51,7 @@ const Move = ({ isOnline }: { isOnline: boolean }) => {
                     resize="none"
                     value={areaTo}
                     onChange={event => setAreaTo(event.target.value)}
-                    placeholder="Write exact names of destinations. Seperated by newline."
+                    placeholder="Write exact names of destinations. Separated by newline."
                     h="100%"
                     ml={2}
                 />

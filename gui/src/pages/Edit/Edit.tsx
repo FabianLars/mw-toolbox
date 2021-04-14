@@ -1,6 +1,6 @@
 import { Button, Flex, Grid, GridItem, Textarea, Checkbox, useToast, Input, useDisclosure } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { invoke } from '@tauri-apps/api/dist/tauri';
+import { invoke } from '@tauri-apps/api/src/tauri';
 import { Header } from '../../components';
 import FindReplaceModal from './FindReplaceModal';
 
@@ -115,7 +115,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                             isDisabled={isRunning}
                             resize="none"
                             h="100%"
-                            placeholder="List of pages to operate on. Seperated by newline."
+                            placeholder="List of pages to operate on. Separated by newline."
                             value={pageList}
                             onChange={event => setPageList(event.target.value)}
                         />
