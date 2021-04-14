@@ -22,11 +22,7 @@
             "copyright": "MIT",
             "category": "DeveloperTool",
             "shortDescription": "mw-toolbox GUI",
-            "longDescription": "mw-toolbox GUI",
-            "deb": {
-                "depends": [],
-                "useBootstrapper": false
-            }
+            "longDescription": "mw-toolbox GUI"
         },
         "allowlist": {
             "all": false
@@ -34,10 +30,10 @@
         "windows": [
             {
                 "title": "mw-toolbox by FabianLars",
+                "width": 1280,
+                "height": 720,
                 "minWidth": 1280,
-                "minHeight": 720,
-                "resizable": true,
-                "fullscreen": false
+                "minHeight": 720
             }
         ],
         "security": {

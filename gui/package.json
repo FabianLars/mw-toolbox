@@ -11,16 +11,17 @@
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "tauri": "node ../../tauri/cli/tauri.js/bin/tauri",
-        "tauri-dev": "node ../../tauri/cli/tauri.js/bin/tauri dev",
-        "tauri-build": "node ../../tauri/cli/tauri.js/bin/tauri build"
+        "tauri": "tauri",
+        "tauri-dev": "tauri dev",
+        "tauri-build": "tauri build"
     },
     "dependencies": {
         "@chakra-ui/icons": "^1.0.8",
         "@chakra-ui/react": "^1.4.2",
         "@emotion/react": "^11.1.5",
         "@emotion/styled": "^11.1.5",
-        "@tauri-apps/api": "link:./../../tauri/api",
+        "@tauri-apps/api": "1.0.0-beta-rc.0",
+        "@tauri-apps/cli": "1.0.0-beta-rc.0",
         "@testing-library/jest-dom": "^5.11.10",
         "@testing-library/react": "^11.2.6",
         "@testing-library/user-event": "^13.1.1",
