@@ -24,7 +24,7 @@ static SAVED_STATE: Lazy<Mutex<SavedState>> = Lazy::new(|| Mutex::new(SavedState
 fn main() {
     pretty_env_logger::init();
 
-    tauri::AppBuilder::default()
+    tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             cmd::cache_get,
             cmd::cache_set,
@@ -42,8 +42,8 @@ fn main() {
             cmd::upload_dialog,
             cmd::upload
         ])
-        .build(tauri::generate_context!())
-        .run();
+        .run(tauri::generate_context!())
+        .expect("error while running application");
 }
 
 #[derive(Clone, Debug, Default, Serialize)]
