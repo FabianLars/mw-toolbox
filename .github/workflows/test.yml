@@ -39,7 +39,7 @@ jobs:
               run: cargo clippy --all-features
 
             - name: Run tests
-              run: cargo test --verbose --all --all-features
+              run: cargo test --workspace --all-features
 
     js:
         runs-on: ubuntu-latest
