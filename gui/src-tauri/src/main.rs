@@ -66,9 +66,9 @@ impl SavedState {
             .unwrap_or(false);
 
         let s = Self {
+            wikiurl,
             loginname,
             password,
-            wikiurl,
             is_persistent,
         };
         Ok(s)
