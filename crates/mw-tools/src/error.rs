@@ -8,8 +8,6 @@ pub enum ToolsError {
     #[error(transparent)]
     IoError(#[from] std::io::Error),
 
-    /* #[error("Building inner Reqwest Client failed.")]
-    BuildFailed { source: reqwest::Error }, */
     #[error("Error executing request.")]
     RequestFailed { source: reqwest::Error },
     #[error("Error extracting body as text.")]

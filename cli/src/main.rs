@@ -2,6 +2,7 @@
 
 use std::path::PathBuf;
 
+use anyhow::{anyhow, Result};
 use api::rename::Destination;
 use clap::Clap;
 use tokio::{fs, io::AsyncWriteExt};
@@ -11,7 +12,7 @@ use mw_tools::{api, WikiClient};
 #[derive(Clap, Debug, PartialEq)]
 enum Subcommand {
     Delete {
-        /// uses newline seperation
+        /// uses newline separation
         #[clap(parse(from_os_str))]
         input: PathBuf,
     },
@@ -25,7 +26,7 @@ enum Subcommand {
         output: Option<PathBuf>,
     },
     Move {
-        /// uses newline seperation
+        /// uses newline separation
         #[clap(parse(from_os_str))]
         input: PathBuf,
         #[clap(long)]
@@ -36,7 +37,7 @@ enum Subcommand {
         replace: Option<Vec<String>>,
     },
     Nulledit {
-        /// uses newline seperation
+        /// uses newline separation
         #[clap(parse(from_os_str))]
         input: PathBuf,
     },
@@ -115,7 +116,7 @@ struct Cli {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<()> {
     env_logger::init();
 
     let cli = Cli::parse();
@@ -220,14 +221,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             if input.is_file() {
                 files.push(input);
             } else if input.is_dir() {
-                for entry in input.read_dir().expect("read_dir call failed") {
+                for entry in input.read_dir()? {
                     match entry {
                         Ok(entry) => files.push(entry.path()),
                         Err(err) => println!("Invalid path in dir: {:?}\nProceeding...", err),
                     }
                 }
             } else {
-                panic!("Invalid path given!")
+                return Err(anyhow!("Invalid path given!"));
             }
             api::upload::upload_multiple(&client, &files, text).await?
         }
@@ -235,18 +236,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Subcommand::League { league_type, path } => match league_type {
             LeagueType::Champs | LeagueType::Champions => league::champs().await?,
             LeagueType::Discount | LeagueType::Discounts => {
-                league::discounts(
-                    &client,
-                    path.unwrap_or_else(|| {
-                        PathBuf::from("E:/Spiele/Riot Games/League of Legends/lockfile")
-                    }),
-                )
-                .await?
+                let path = match path {
+                    Some(p) => p,
+                    None => get_client_path()?,
+                };
+
+                league::discounts(&client, path).await?
             }
             LeagueType::Positions => league::positions(&client).await?,
             LeagueType::Rotation | LeagueType::Rotations => {
                 #[cfg(not(feature = "riot-api"))]
-                panic!("Did you forget to set the riot-api feature flag?");
+                return Err(anyhow!("Did you forget to set the riot-api feature flag?"));
                 #[cfg(feature = "riot-api")]
                 league::rotation(&client).await?
             }
@@ -254,4 +254,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         },
     }
     Ok(())
+}
+
+#[cfg(feature = "league-wiki")]
+fn get_client_path() -> Result<PathBuf> {
+    use sysinfo::{ProcessExt, RefreshKind, System, SystemExt};
+
+    let system = System::new_with_specifics(RefreshKind::new().with_processes());
+
+    let process = system.get_process_by_name("LeagueClient.exe");
+
+    if let Some(p) = process.get(0) {
+        if let Some(path) = p.exe().parent() {
+            let mut path = path.to_path_buf();
+            path.push("lockfile");
+            return Ok(path);
+        }
+    }
+
+    Err(anyhow!("Can't find lockfile. Make sure that the League Client is running. If it still doesn't work, try specifying the path to the lockfile yourself."))
 }
