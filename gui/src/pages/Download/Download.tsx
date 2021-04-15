@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import { useState } from 'react';
-import { promisified } from 'tauri/api/tauri';
+import { invoke } from '@tauri-apps/api/dist/tauri';
 import { Header } from '../../components';
 
 const Download = ({ isOnline }: { isOnline: boolean }) => {
@@ -10,8 +10,7 @@ const Download = ({ isOnline }: { isOnline: boolean }) => {
 
     const downloadFiles = () => {
         setIsLoading(true);
-        promisified({
-            cmd: 'download',
+        invoke('download', {
             files: areaValue.split(/\r?\n/),
         })
             .then(() =>

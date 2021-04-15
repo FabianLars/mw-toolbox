@@ -1,6 +1,6 @@
-import { promisified } from 'tauri/api/tauri';
+import { invoke } from '@tauri-apps/api/dist/tauri';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Divider, Flex, FormControl, FormLabel, Input, Text, useToast } from '@chakra-ui/react';
 
 import { Header } from '../../components';
@@ -24,8 +24,7 @@ const Account = ({ user, setUser }: Props) => {
 
     const login = () => {
         setLoggingin(true);
-        (promisified({
-            cmd: 'login',
+        (invoke('login', {
             loginname: lgname,
             password: lgpasswd,
             wikiurl: apiUrl,
@@ -58,9 +57,7 @@ const Account = ({ user, setUser }: Props) => {
 
     const logout = () => {
         setLoggingin(true);
-        (promisified({
-            cmd: 'logout',
-        }) as Promise<any>).finally(() => {
+        (invoke('logout') as Promise<any>).finally(() => {
             setLoggingin(false);
             setUser(u => ({
                 ...u,
@@ -78,9 +75,12 @@ const Account = ({ user, setUser }: Props) => {
                 setLgpasswd(user.password);
                 setApiUrl(user.url);
             } else {
-                (promisified({
-                    cmd: 'init',
-                }) as Promise<{ wikiurl: string; loginname: string; password: string; is_persistent: boolean }>)
+                (invoke('init') as Promise<{
+                    wikiurl: string;
+                    loginname: string;
+                    password: string;
+                    is_persistent: boolean;
+                }>)
                     .then(({ wikiurl, loginname, password, is_persistent }) => {
                         if (wikiurl !== '') setApiUrl(wikiurl);
                         setLgname(loginname);

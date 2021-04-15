@@ -1,6 +1,6 @@
 import { Button, Flex, Grid, GridItem, Textarea, Checkbox, useToast, Input, useDisclosure } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { promisified } from 'tauri/api/tauri';
+import { invoke } from '@tauri-apps/api/dist/tauri';
 import { Header } from '../../components';
 import FindReplaceModal from './FindReplaceModal';
 
@@ -47,8 +47,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
             setIsRunning(false);
             setIsLoading(false);
         } else {
-            (promisified({
-                cmd: 'getPage',
+            (invoke('getPage', {
                 page: curr,
                 patterns: patterns,
             }) as Promise<string>)
@@ -69,8 +68,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
 
     const save = () => {
         setIsLoading(true);
-        (promisified({
-            cmd: 'edit',
+        (invoke('edit', {
             title: currentPage,
             content: pageContent
                 .replace(/[\u007F-\u009F\u200B]/g, '')
@@ -117,7 +115,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                             isDisabled={isRunning}
                             resize="none"
                             h="100%"
-                            placeholder="List of pages to operate on. Seperated by newline."
+                            placeholder="List of pages to operate on. Separated by newline."
                             value={pageList}
                             onChange={event => setPageList(event.target.value)}
                         />

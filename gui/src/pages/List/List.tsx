@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { promisified } from 'tauri/api/tauri';
+import { invoke } from '@tauri-apps/api/dist/tauri';
 import { Box, Button, Flex, FormControl, FormLabel, Input, Select, Textarea, useToast } from '@chakra-ui/react';
 
 import { Header } from '../../components';
@@ -16,15 +16,14 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
     const getList = () => {
         if (listType !== '') {
             setLoading(true);
-            (promisified({
-                cmd: 'list',
+            (invoke('list', {
                 listtype: listType,
                 param: paramInput || null,
             }) as Promise<string[]>)
                 .then(res => {
                     const output = res.join('\n');
                     setListOutput(output);
-                    promisified({ cmd: 'cacheSet', key: 'list-cache', value: output });
+                    invoke('cacheSet', { key: 'list-cache', value: output }).catch(console.error);
                 })
                 .catch(err =>
                     toast({
@@ -40,12 +39,12 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     const clearOutput = () => {
-        promisified({ cmd: 'cacheSet', key: 'list-cache', value: '' });
+        invoke('cacheSet', {key: 'list-cache', value: ''}).catch(console.error);
         setListOutput('');
     };
 
     useEffect(() => {
-        (promisified({ cmd: 'cacheGet', key: 'list-cache' }) as Promise<string>).then(setListOutput);
+        (invoke('cacheSet', { key: 'list-cache' }) as Promise<string>).then(setListOutput);
     }, []);
 
     useEffect(() => {
@@ -82,7 +81,7 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
             <Header isDisabled={loading} isOnline={isOnline} />
             <Flex w="100%" mb={4} direction="row" align="center">
                 {paramInfo === '' ? (
-                    <Box mx={2} w="100%"></Box>
+                    <Box mx={2} w="100%" />
                 ) : (
                     <FormControl
                         id="parameter-input"

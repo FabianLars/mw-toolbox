@@ -14,7 +14,7 @@ import {
     IconButton,
 } from '@chakra-ui/react';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 type Pattern = {
     find: string;

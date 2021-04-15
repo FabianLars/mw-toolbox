@@ -28,7 +28,7 @@ jobs:
                       ~/.cargo/registry
                       ~/.cargo/git
                       target
-                  key: test-cache-${{ hashFiles('**/Cargo.lock') }}
+                  key: rs-test-cache-${{ hashFiles('**/Cargo.lock') }}
 
             - name: Install webkit2gtk
               run: |
@@ -39,7 +39,7 @@ jobs:
               run: cargo clippy --all-features
 
             - name: Run tests
-              run: cargo test --verbose --all --all-features
+              run: cargo test --workspace --all-features
 
     js:
         runs-on: ubuntu-latest
@@ -60,14 +60,11 @@ jobs:
 
             - uses: actions/cache@v2
               with:
-                  path: |
-                      ~/.cargo/registry
-                      ~/.cargo/git
-                      target
-                  key: test-cache-${{ hashFiles('**/Cargo.lock') }}
+                  path: node_modules
+                  key: js-test-cache-${{ hashFiles('yarn.lock') }}
 
             - name: Install dependencies
-              run: yarn
+              run: yarn install
 
             - name: Run tests
               run: yarn test

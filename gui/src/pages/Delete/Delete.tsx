@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import { useState } from 'react';
-import { promisified } from 'tauri/api/tauri';
+import { invoke } from '@tauri-apps/api/dist/tauri';
 import { Header } from '../../components';
 
 const Delete = ({ isOnline }: { isOnline: boolean }) => {
@@ -10,8 +10,7 @@ const Delete = ({ isOnline }: { isOnline: boolean }) => {
 
     const deletePages = () => {
         setIsLoading(true);
-        promisified({
-            cmd: 'delete',
+        invoke('delete', {
             pages: areaValue.split(/\r?\n/),
         })
             .then(() =>

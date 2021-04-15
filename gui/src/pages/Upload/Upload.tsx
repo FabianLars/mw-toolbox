@@ -1,7 +1,7 @@
 import { Box, Button, Flex, FormControl, FormLabel, Input, Textarea, useToast } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { promisified } from 'tauri/api/tauri';
-import { emit } from 'tauri/api/event';
+import { invoke } from '@tauri-apps/api/dist/tauri';
+import { emit } from '@tauri-apps/api/dist/event';
 import { Header } from '../../components';
 
 const Upload = ({ isOnline }: { isOnline: boolean }) => {
@@ -12,16 +12,14 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
     const toast = useToast();
 
     const clearList = () => {
-        emit('clear-files');
-        promisified({ cmd: 'cacheSet', key: 'files-cache', value: '' });
+        emit('clear-files').catch(console.error);
+        invoke('cacheSet', { key: 'files-cache', value: '' }).catch(console.error);
         setFiles('');
     };
 
     const openDialog = () => {
         setIsWaiting(true);
-        (promisified({
-            cmd: 'uploadDialog',
-        }) as Promise<string[]>)
+        (invoke('uploadDialog') as Promise<string[]>)
             .then(res => {
                 const files = res.join('\n');
                 setFiles(files);
@@ -40,10 +38,9 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
 
     const startUpload = () => {
         setIsUploading(true);
-        promisified({
-            cmd: 'upload',
+        (invoke('upload', {
             text: uploadtext,
-        })
+        }) as Promise<any>)
             .then(() =>
                 toast({
                     title: 'Upload complete!',
@@ -65,8 +62,8 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     useEffect(() => {
-        (promisified({ cmd: 'cacheGet', key: 'files-cache' }) as Promise<string>).then(setFiles);
-        (promisified({ cmd: 'cacheGet', key: 'uploadtext-cache' }) as Promise<string>).then(setUploadtext);
+        (invoke('cacheGet', { key: 'files-cache' }) as Promise<string>).then(setFiles);
+        (invoke('cacheGet', { key: 'uploadtext-cache' }) as Promise<string>).then(setUploadtext);
     }, []);
 
     return (
@@ -79,7 +76,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
                         value={uploadtext}
                         isDisabled={isUploading || isWaiting}
                         onChange={event => setUploadtext(event.target.value)}
-                        onBlur={() => promisified({ cmd: 'cacheSet', key: 'uploadtext-cache', value: uploadtext })}
+                        onBlur={() => invoke('cacheSet', { key: 'uploadtext-cache', value: uploadtext })}
                     />
                 </FormControl>
                 <Box>

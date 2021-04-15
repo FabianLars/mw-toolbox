@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Flex, Textarea, useToast } from '@chakra-ui/react';
-import { promisified } from 'tauri/api/tauri';
+import { invoke } from '@tauri-apps/api/dist/tauri';
 import { Header } from '../../components';
 
 const Purge = ({ isOnline }: { isOnline: boolean }) => {
@@ -15,8 +15,7 @@ const Purge = ({ isOnline }: { isOnline: boolean }) => {
         } else {
             setIsPurging(true);
         }
-        promisified({
-            cmd: 'purge',
+        invoke('purge', {
             pages: areaValue.split(/\r?\n/),
             is_nulledit: isNulledit,
         })

@@ -189,6 +189,8 @@ impl WikiClient {
             parameters.to_vec()
         };
 
+        //is_send(self.client.post("https://google.com/").send());
+
         self.client
             .post(&self.url)
             .query(&[

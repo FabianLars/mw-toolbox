@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { promisified } from 'tauri/api/tauri';
+import { invoke } from '@tauri-apps/api/dist/tauri';
 import { Account, Delete, Download, Edit, List, Move, Purge, Upload } from './pages';
 
 export type User = {
@@ -28,8 +28,7 @@ const App = () => {
     useEffect(() => {
         // @ts-ignore
         if (!!window.__TAURI__) {
-            (promisified({
-                cmd: 'cacheGet',
+            (invoke('cacheGet', {
                 key: 'userObj',
             }) as Promise<User>).then(
                 ({ isOnline = false, isPersistent = false, username = '', password = '', url = '' }) => {
@@ -50,11 +49,10 @@ const App = () => {
     // This exists to handle reloads
     useEffect(() => {
         if (mounted.current) {
-            promisified({
-                cmd: 'cacheSet',
+            invoke('cacheSet', {
                 key: 'userObj',
                 value: user,
-            });
+            }).catch(console.error);
         } else {
             mounted.current = true;
         }
