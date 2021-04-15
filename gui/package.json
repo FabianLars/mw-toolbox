@@ -20,7 +20,7 @@
         "@chakra-ui/react": "^1.5.1",
         "@emotion/react": "^11.1.5",
         "@emotion/styled": "^11.3.0",
-        "@tauri-apps/api": "1.0.0-beta-rc.0",
+        "@tauri-apps/api": "1.0.0-beta-rc.1",
         "@tauri-apps/cli": "1.0.0-beta-rc.0",
         "@testing-library/jest-dom": "^5.11.10",
         "@testing-library/react": "^11.2.6",
