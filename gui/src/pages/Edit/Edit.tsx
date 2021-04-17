@@ -56,7 +56,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                     startStop();
                     toast({
                         title: 'Something went wrong!',
-                        description: err,
+                        description: err.Err,
                         status: 'error',
                         duration: 10000,
                         isClosable: true,
@@ -90,7 +90,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                 setIsLoading(false);
                 toast({
                     title: 'Something went wrong!',
-                    description: err,
+                    description: err.Err,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,

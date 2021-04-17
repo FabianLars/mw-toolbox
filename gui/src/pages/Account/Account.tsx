@@ -28,7 +28,7 @@ const Account = ({ user, setUser }: Props) => {
             loginname: lgname,
             password: lgpasswd,
             wikiurl: apiUrl,
-            is_persistent: persistent,
+            isPersistent: persistent,
         }) as Promise<{ username: string; url: string }>)
             .then(res => {
                 setUser({
@@ -46,7 +46,7 @@ const Account = ({ user, setUser }: Props) => {
                 }));
                 toast({
                     title: "Couldn't log in!",
-                    description: err,
+                    description: err.Err,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
@@ -79,13 +79,13 @@ const Account = ({ user, setUser }: Props) => {
                     wikiurl: string;
                     loginname: string;
                     password: string;
-                    is_persistent: boolean;
+                    isPersistent: boolean;
                 }>)
-                    .then(({ wikiurl, loginname, password, is_persistent }) => {
+                    .then(({ wikiurl, loginname, password, isPersistent }) => {
                         if (wikiurl !== '') setApiUrl(wikiurl);
                         setLgname(loginname);
                         setLgpasswd(password);
-                        setPersistent(is_persistent);
+                        setPersistent(isPersistent);
                     })
                     .catch(console.error);
             }

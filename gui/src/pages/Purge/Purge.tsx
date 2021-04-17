@@ -17,7 +17,7 @@ const Purge = ({ isOnline }: { isOnline: boolean }) => {
         }
         invoke('purge', {
             pages: areaValue.split(/\r?\n/),
-            is_nulledit: isNulledit,
+            isNulledit,
         })
             .then(() =>
                 toast({
@@ -30,7 +30,7 @@ const Purge = ({ isOnline }: { isOnline: boolean }) => {
             .catch(err =>
                 toast({
                     title: 'Something went wrong!',
-                    description: err,
+                    description: err.Err,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,

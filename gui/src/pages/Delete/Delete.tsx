@@ -24,7 +24,7 @@ const Delete = ({ isOnline }: { isOnline: boolean }) => {
             .catch(err =>
                 toast({
                     title: 'Something went wrong!',
-                    description: err,
+                    description: err.Err,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
