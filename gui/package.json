@@ -44,6 +44,11 @@
             "react-app/jest"
         ]
     },
+    "jest": {
+        "transformIgnorePatterns": [
+            "node_modules/(?!@tauri-apps)"
+        ]
+    },
     "browserslist": {
         "production": [
             ">0.2%",
