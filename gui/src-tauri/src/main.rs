@@ -51,6 +51,7 @@ pub struct SavedState {
     wikiurl: String,
     loginname: String,
     password: String,
+    #[serde(rename(serialize = "isPersistent"))]
     is_persistent: bool,
 }
 
