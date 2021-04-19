@@ -1,7 +1,7 @@
 import { Box, Button, Flex, FormControl, FormLabel, Input, Textarea, useToast } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { invoke } from '@tauri-apps/api/dist/tauri';
-import { emit } from '@tauri-apps/api/dist/event';
+import { invoke } from '@tauri-apps/api/tauri';
+import { emit } from '@tauri-apps/api/event';
 import { Header } from '../../components';
 
 const Upload = ({ isOnline }: { isOnline: boolean }) => {

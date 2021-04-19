@@ -1,4 +1,4 @@
-import { invoke } from '@tauri-apps/api/dist/tauri';
+import { invoke } from '@tauri-apps/api/tauri';
 
 import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Divider, Flex, FormControl, FormLabel, Input, Text, useToast } from '@chakra-ui/react';
