@@ -28,7 +28,7 @@ const App = () => {
     useEffect(() => {
         // @ts-ignore
         if (!!window.__TAURI__) {
-            (invoke('cacheGet', {
+            (invoke('cache_get', {
                 key: 'userObj',
             }) as Promise<User>).then(
                 ({ isOnline = false, isPersistent = false, username = '', password = '', url = '' }) => {
@@ -49,7 +49,7 @@ const App = () => {
     // This exists to handle reloads
     useEffect(() => {
         if (mounted.current) {
-            invoke('cacheSet', {
+            invoke('cache_set', {
                 key: 'userObj',
                 value: user,
             }).catch(console.error);

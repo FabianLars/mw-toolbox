@@ -13,13 +13,13 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
 
     const clearList = () => {
         emit('clear-files').catch(console.error);
-        invoke('cacheSet', { key: 'files-cache', value: '' }).catch(console.error);
+        invoke('cache_set', { key: 'files-cache', value: '' }).catch(console.error);
         setFiles('');
     };
 
     const openDialog = () => {
         setIsWaiting(true);
-        (invoke('uploadDialog') as Promise<string[]>)
+        (invoke('upload_dialog') as Promise<string[]>)
             .then(res => {
                 const files = res.join('\n');
                 setFiles(files);
@@ -62,8 +62,8 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     useEffect(() => {
-        (invoke('cacheGet', { key: 'files-cache' }) as Promise<string>).then(setFiles);
-        (invoke('cacheGet', { key: 'uploadtext-cache' }) as Promise<string>).then(setUploadtext);
+        (invoke('cache_get', { key: 'files-cache' }) as Promise<string>).then(setFiles);
+        (invoke('cache_get', { key: 'uploadtext-cache' }) as Promise<string>).then(setUploadtext);
     }, []);
 
     return (
@@ -76,7 +76,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
                         value={uploadtext}
                         isDisabled={isUploading || isWaiting}
                         onChange={event => setUploadtext(event.target.value)}
-                        onBlur={() => invoke('cacheSet', { key: 'uploadtext-cache', value: uploadtext })}
+                        onBlur={() => invoke('cache_set', { key: 'uploadtext-cache', value: uploadtext })}
                     />
                 </FormControl>
                 <Box>

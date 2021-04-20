@@ -47,7 +47,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
             setIsRunning(false);
             setIsLoading(false);
         } else {
-            (invoke('getPage', {
+            (invoke('get_page', {
                 page: curr,
                 patterns: patterns,
             }) as Promise<string>)

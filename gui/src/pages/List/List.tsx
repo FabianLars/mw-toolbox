@@ -23,7 +23,7 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
                 .then(res => {
                     const output = res.join('\n');
                     setListOutput(output);
-                    invoke('cacheSet', { key: 'list-cache', value: output }).catch(console.error);
+                    invoke('cache_set', { key: 'list-cache', value: output }).catch(console.error);
                 })
                 .catch(err =>
                     toast({
@@ -39,12 +39,12 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     const clearOutput = () => {
-        invoke('cacheSet', {key: 'list-cache', value: ''}).catch(console.error);
+        invoke('cache_set', {key: 'list-cache', value: ''}).catch(console.error);
         setListOutput('');
     };
 
     useEffect(() => {
-        (invoke('cacheSet', { key: 'list-cache' }) as Promise<string>).then(setListOutput);
+        (invoke('cache_set', { key: 'list-cache' }) as Promise<string>).then(setListOutput);
     }, []);
 
     useEffect(() => {
