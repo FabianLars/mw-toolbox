@@ -63,8 +63,12 @@ pub async fn download(files: Vec<String>) -> Result<(), String> {
 }
 
 #[command]
-pub async fn edit(title: String, content: String, summary: String) -> Result<String, String> {
-    api::edit::edit(&*CLIENT.lock().await, title, content, Some(summary))
+pub async fn edit(
+    title: String,
+    content: String,
+    summary: Option<String>,
+) -> Result<String, String> {
+    api::edit::edit(&*CLIENT.lock().await, title, content, summary)
         .await
         .map_err(|err| err.to_string())
 }
