@@ -31,7 +31,8 @@ const App = () => {
             (invoke('cache_get', {
                 key: 'userObj',
             }) as Promise<User>).then(
-                ({ isOnline = false, isPersistent = false, username = '', password = '', url = '' }) => {
+                res => {
+                    const { isOnline = false, isPersistent = false, username = '', password = '', url = '' } = res || {};
                     setUser({
                         isOnline,
                         isPersistent,
