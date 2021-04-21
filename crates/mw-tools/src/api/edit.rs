@@ -23,17 +23,14 @@ pub async fn nulledit<C: AsRef<WikiClient>, S: AsRef<str>>(
     Ok(())
 }
 
-pub async fn edit<C: AsRef<WikiClient>, S: AsRef<str>>(
+pub async fn edit<C: AsRef<WikiClient>, S: AsRef<str>, R: Into<String>>(
     client: C,
     title: S,
     content: S,
-    summary: Option<S>,
+    summary: Option<R>,
 ) -> Result<String, ToolsError> {
     let client = client.as_ref();
-    let summary = match summary {
-        Some(s) => s.as_ref().to_string(),
-        None => "automated action".to_string(),
-    };
+    let summary = summary.map_or_else(|| "".to_string(), |v| v.into());
 
     let res: Edit = client
         .post_into_json(&[
