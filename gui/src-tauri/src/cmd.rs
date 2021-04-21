@@ -82,7 +82,12 @@ pub async fn get_page(page: String, patterns: Vec<FindReplace>) -> Result<String
                 if !pat.find.is_empty() {
                     if pat.is_regex {
                         let re = regex::Regex::new(&pat.find).map_err(|err| err.to_string())?;
-                        s = re.replace_all(&s, pat.replace.as_str()).to_string();
+                        s = re
+                            .replace_all(
+                                &s,
+                                unescape::unescape(&pat.replace).unwrap_or(pat.replace),
+                            )
+                            .to_string();
                     } else {
                         s = s.replace(&pat.find, &pat.replace);
                     }
