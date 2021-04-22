@@ -9,10 +9,6 @@ module.exports = {
     '@snowpack/plugin-dotenv',
     [
       '@snowpack/plugin-typescript',
-      {
-        /* Yarn PnP workaround: see https://www.npmjs.com/package/@snowpack/plugin-typescript */
-        ...(process.versions.pnp ? { tsc: 'yarn pnpify tsc' } : {}),
-      },
     ],
   ],
   routes: [
@@ -30,7 +26,9 @@ module.exports = {
     /* ... */
   },
   devOptions: {
-    port: 3000
+    port: 3000,
+    open: 'none',
+    output: 'stream',
   },
   buildOptions: {
     /* ... */
