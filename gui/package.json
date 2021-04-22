@@ -21,7 +21,7 @@
         "@emotion/react": "^11.1.5",
         "@emotion/styled": "^11.3.0",
         "@tauri-apps/api": "1.0.0-beta-rc.1",
-        "@tauri-apps/cli": "1.0.0-beta-rc.1",
+        "@tauri-apps/cli": "1.0.0-beta-rc.2",
         "@testing-library/jest-dom": "^5.11.10",
         "@testing-library/react": "^11.2.6",
         "@testing-library/user-event": "^13.1.5",
