@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Divider, Flex, FormControl, FormLabel, Input, Text, useToast } from '@chakra-ui/react';
 
 import { Header } from '../../components';
-import { User } from '../../App';
+import type { User } from '../../App';
 
 type Props = {
     user: User;

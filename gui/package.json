@@ -5,12 +5,12 @@
     "private": true,
     "author": "",
     "license": "MIT",
-    "main": "index.js",
     "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject",
+        "start": "snowpack dev",
+        "build": "snowpack build",
+        "test": "wtr \"src/**/*.test.tsx\"",
+        "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
+        "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
         "tauri": "tauri",
         "tauri-dev": "tauri dev",
         "tauri-build": "tauri build"
@@ -22,48 +22,28 @@
         "@emotion/styled": "^11.3.0",
         "@tauri-apps/api": "1.0.0-beta-rc.2",
         "@tauri-apps/cli": "1.0.0-beta-rc.2",
-        "@testing-library/jest-dom": "^5.12.0",
-        "@testing-library/react": "^11.2.6",
-        "@testing-library/user-event": "^13.1.5",
-        "@types/jest": "^26.0.22",
-        "@types/node": "^14.14.41",
-        "@types/react": "^17.0.3",
-        "@types/react-dom": "^17.0.3",
         "framer-motion": "^4.1.8",
         "history": "^5.0.0",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "react-router": "^6.0.0-beta.0",
-        "react-router-dom": "^6.0.0-beta.0",
-        "react-scripts": "4.0.3",
+        "react-router-dom": "^6.0.0-beta.0"
+    },
+    "devDependencies": {
+        "@snowpack/plugin-dotenv": "^2.1.0",
+        "@snowpack/plugin-react-refresh": "^2.4.2",
+        "@snowpack/plugin-typescript": "^1.2.1",
+        "@snowpack/web-test-runner-plugin": "^0.2.2",
+        "@testing-library/react": "^11.2.6",
+        "@types/chai": "^4.2.16",
+        "@types/mocha": "^8.2.2",
+        "@types/react": "^17.0.3",
+        "@types/react-dom": "^17.0.3",
+        "@types/snowpack-env": "^2.3.3",
+        "@web/test-runner": "^0.13.0",
+        "chai": "^4.3.4",
+        "prettier": "^2.2.1",
+        "snowpack": "^3.3.5",
         "typescript": "^4.2.4"
-    },
-    "eslintConfig": {
-        "extends": [
-            "react-app",
-            "react-app/jest"
-        ]
-    },
-    "jest": {
-        "transformIgnorePatterns": [
-            "node_modules/(?!@tauri-apps)"
-        ]
-    },
-    "browserslist": {
-        "production": [
-            ">0.2%",
-            "not dead",
-            "not op_mini all",
-            "not ie 11",
-            "not chrome 49",
-            "not samsung < 20",
-            "not ios_saf < 20",
-            "not and_uc < 20"
-        ],
-        "development": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ]
     }
 }

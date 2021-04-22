@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Header } from '../../components';

@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Account, Delete, Download, Edit, List, Move, Purge, Upload } from './pages';
 
