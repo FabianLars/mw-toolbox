@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Header } from '../../components';
@@ -25,16 +25,16 @@ const Purge = ({ isOnline }: { isOnline: boolean }) => {
                     description: (isNulledit ? 'Nulledit' : 'Purge') + ' successful',
                     status: 'success',
                     isClosable: true,
-                })
+                }),
             )
-            .catch(err =>
+            .catch((err) =>
                 toast({
                     title: 'Something went wrong!',
                     description: err.Err,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
-                })
+                }),
             )
             .finally(() => {
                 setIsPurging(false);
@@ -49,7 +49,7 @@ const Purge = ({ isOnline }: { isOnline: boolean }) => {
                 <Textarea
                     resize="none"
                     value={areaValue}
-                    onChange={event => setAreaValue(event.target.value)}
+                    onChange={(event) => setAreaValue(event.target.value)}
                     placeholder="Write exact page names here. Separated by newline."
                     h="100%"
                     mb={4}
@@ -60,7 +60,11 @@ const Purge = ({ isOnline }: { isOnline: boolean }) => {
                         isDisabled={!isOnline || isNulling}
                         onClick={() => purgePages(false)}
                         loadingText="Purging"
-                        title={!isOnline ? 'Please login first!' : 'Clear server caches. This might take a while!'}
+                        title={
+                            !isOnline
+                                ? 'Please login first!'
+                                : 'Clear server caches. This might take a while!'
+                        }
                         mx={2}
                     >
                         Purge all
@@ -71,7 +75,9 @@ const Purge = ({ isOnline }: { isOnline: boolean }) => {
                         onClick={() => purgePages(true)}
                         loadingText="Saving nulledits"
                         title={
-                            !isOnline ? 'Please login first!' : 'Do a nulledit on every page. This might take a while!'
+                            !isOnline
+                                ? 'Please login first!'
+                                : 'Do a nulledit on every page. This might take a while!'
                         }
                         mx={2}
                     >

@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Header } from '../../components';
 
@@ -19,16 +19,16 @@ const Download = ({ isOnline }: { isOnline: boolean }) => {
                     description: 'Download successful! Check your download folder.',
                     status: 'success',
                     isClosable: true,
-                })
+                }),
             )
-            .catch(err =>
+            .catch((err) =>
                 toast({
                     title: 'Something went wrong!',
                     description: err.Err,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
-                })
+                }),
             )
             .finally(() => setIsLoading(false));
     };
@@ -39,7 +39,7 @@ const Download = ({ isOnline }: { isOnline: boolean }) => {
             <Textarea
                 resize="none"
                 value={areaValue}
-                onChange={event => setAreaValue(event.target.value)}
+                onChange={(event) => setAreaValue(event.target.value)}
                 placeholder="Write exact page names here. Separated by newline. Inclusive 'File:' Prefix. Saved in your download folder."
                 h="100%"
                 mb={4}

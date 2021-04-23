@@ -14,7 +14,7 @@ type HeaderProps = {
     isOnline: boolean;
 };
 
-const MenuItem = ({ children, isDisabled, isLast, to = '/' }: MenuProps) => {
+const MenuItem = ({ children, isDisabled, isLast, to = '/' }: MenuProps): JSX.Element => {
     const location = useLocation().pathname;
     return (
         <Link
@@ -34,9 +34,17 @@ const MenuItem = ({ children, isDisabled, isLast, to = '/' }: MenuProps) => {
     );
 };
 
-const Header = ({ isDisabled, isOnline }: HeaderProps) => {
+const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
     return (
-        <Flex as="nav" align="center" justify="left" w="100%" p={2} mb={4} borderBottom="1px solid #deb992;">
+        <Flex
+            as="nav"
+            align="center"
+            justify="left"
+            w="100%"
+            p={2}
+            mb={4}
+            borderBottom="1px solid #deb992;"
+        >
             <MenuItem isDisabled={isDisabled} to="/">
                 Account
             </MenuItem>

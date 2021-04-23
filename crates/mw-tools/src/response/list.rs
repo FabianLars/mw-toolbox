@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
-use super::deserialize_string_from_number;
 use serde::Deserialize;
+
+use super::deserialize_string_from_number;
 
 #[derive(Debug, Deserialize)]
 #[serde(untagged)]
@@ -86,6 +87,7 @@ pub(crate) struct QpQuerypage {
 pub(crate) struct Namespaces {
     pub(crate) query: NsQuery,
 }
+
 #[derive(Debug, Deserialize)]
 pub(crate) struct NsQuery {
     pub(crate) namespaces: HashMap<String, Namespace>,

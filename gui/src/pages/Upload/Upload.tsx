@@ -1,5 +1,14 @@
-import { Box, Button, Flex, FormControl, FormLabel, Input, Textarea, useToast } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import {
+    Box,
+    Button,
+    Flex,
+    FormControl,
+    FormLabel,
+    Input,
+    Textarea,
+    useToast,
+} from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { emit } from '@tauri-apps/api/event';
 import { Header } from '../../components';
@@ -20,18 +29,18 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
     const openDialog = () => {
         setIsWaiting(true);
         (invoke('upload_dialog') as Promise<string[]>)
-            .then(res => {
+            .then((res) => {
                 const files = res.join('\n');
                 setFiles(files);
             })
-            .catch(err =>
+            .catch((err) =>
                 toast({
                     title: 'Something went wrong!',
                     description: err.Err,
                     status: 'error',
                     duration: 5000,
                     isClosable: true,
-                })
+                }),
             )
             .finally(() => setIsWaiting(false));
     };
@@ -47,16 +56,16 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
                     description: 'Upload complete!',
                     status: 'success',
                     isClosable: true,
-                })
+                }),
             )
-            .catch(err =>
+            .catch((err) =>
                 toast({
                     title: 'Something went wrong!',
                     description: err.Err,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
-                })
+                }),
             )
             .finally(() => setIsUploading(false));
     };
@@ -75,17 +84,32 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
                     <Input
                         value={uploadtext}
                         isDisabled={isUploading || isWaiting}
-                        onChange={event => setUploadtext(event.target.value)}
-                        onBlur={() => invoke('cache_set', { key: 'uploadtext-cache', value: uploadtext })}
+                        onChange={(event) => setUploadtext(event.target.value)}
+                        onBlur={() =>
+                            invoke('cache_set', {
+                                key: 'uploadtext-cache',
+                                value: uploadtext,
+                            })
+                        }
                     />
                 </FormControl>
                 <Box>
-                    <Button mx={2} isLoading={isWaiting} isDisabled={isUploading} onClick={openDialog}>
+                    <Button
+                        mx={2}
+                        isLoading={isWaiting}
+                        isDisabled={isUploading}
+                        onClick={openDialog}
+                    >
                         Select File(s)
                     </Button>
                 </Box>
                 <Box>
-                    <Button mx={2} isLoading={isWaiting} isDisabled={isUploading} onClick={clearList}>
+                    <Button
+                        mx={2}
+                        isLoading={isWaiting}
+                        isDisabled={isUploading}
+                        onClick={clearList}
+                    >
                         Clear Filelist
                     </Button>
                 </Box>

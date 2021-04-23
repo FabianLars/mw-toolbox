@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Account, Delete, Download, Edit, List, Move, Purge, Upload } from './pages';
 
@@ -30,18 +30,22 @@ const App = () => {
         if (!!window.__TAURI__) {
             (invoke('cache_get', {
                 key: 'userObj',
-            }) as Promise<User>).then(
-                res => {
-                    const { isOnline = false, isPersistent = false, username = '', password = '', url = '' } = res || {};
-                    setUser({
-                        isOnline,
-                        isPersistent,
-                        username,
-                        password,
-                        url,
-                    });
-                }
-            );
+            }) as Promise<User>).then((res) => {
+                const {
+                    isOnline = false,
+                    isPersistent = false,
+                    username = '',
+                    password = '',
+                    url = '',
+                } = res || {};
+                setUser({
+                    isOnline,
+                    isPersistent,
+                    username,
+                    password,
+                    url,
+                });
+            });
         }
         // eslint-disable-next-line
     }, []);

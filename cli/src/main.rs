@@ -3,10 +3,10 @@
 use std::path::PathBuf;
 
 use anyhow::{anyhow, Result};
-use api::rename::Destination;
 use clap::Clap;
 use tokio::{fs, io::AsyncWriteExt};
 
+use api::rename::Destination;
 use mw_tools::{api, WikiClient};
 
 #[derive(Clap, Debug, PartialEq)]
