@@ -66,14 +66,14 @@ const App = () => {
     return (
         <Router>
             <Routes>
-                <Route path='/' element={<Account user={user} setUser={setUser} />} />
-                <Route path='/Delete' element={<Delete isOnline={user.isOnline} />} />
-                <Route path='/Download' element={<Download isOnline={user.isOnline} />} />
-                <Route path='/Edit' element={<Edit isOnline={user.isOnline} />} />
-                <Route path='/List' element={<List isOnline={user.isOnline} />} />
-                <Route path='/Move' element={<Move isOnline={user.isOnline} />} />
-                <Route path='/Purge' element={<Purge isOnline={user.isOnline} />} />
-                <Route path='/Upload' element={<Upload isOnline={user.isOnline} />} />
+                <Route path="/" element={<Account user={user} setUser={setUser} />} />
+                <Route path="/Delete" element={<Delete isOnline={user.isOnline} />} />
+                <Route path="/Download" element={<Download isOnline={user.isOnline} />} />
+                <Route path="/Edit" element={<Edit isOnline={user.isOnline} />} />
+                <Route path="/List" element={<List isOnline={user.isOnline} />} />
+                <Route path="/Move" element={<Move isOnline={user.isOnline} />} />
+                <Route path="/Purge" element={<Purge isOnline={user.isOnline} />} />
+                <Route path="/Upload" element={<Upload isOnline={user.isOnline} />} />
             </Routes>
         </Router>
     );

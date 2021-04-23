@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from 'react';
 
 import { invoke } from '@tauri-apps/api/tauri';
-import { Box, Button, Flex, FormControl, FormLabel, Input, Select, Textarea, useToast } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Flex,
+    FormControl,
+    FormLabel,
+    Input,
+    Select,
+    Textarea,
+    useToast,
+} from '@chakra-ui/react';
 
 import { Header } from '../../components';
 
@@ -51,19 +61,19 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
         setParamInput('');
         switch (listType) {
             case 'allpages':
-                setParamInfo('Namespace id or \'all\'');
+                setParamInfo("Namespace id or 'all'");
                 break;
             case 'backlinks':
                 setParamInfo('Title to search');
                 break;
             case 'categorymembers':
-                setParamInfo('Category (incl. \'Category:\' prefix)');
+                setParamInfo("Category (incl. 'Category:' prefix)");
                 break;
             case 'embeddedin':
-                setParamInfo('Template to search (incl. \'Template:\' prefix)');
+                setParamInfo("Template to search (incl. 'Template:' prefix)");
                 break;
             case 'imagesearch':
-                setParamInfo('Image to search (incl. \'File:\' prefix)');
+                setParamInfo("Image to search (incl. 'File:' prefix)");
                 break;
             case 'querypage':
                 setParamInfo('Title to special page');
@@ -77,14 +87,14 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
     }, [listType]);
 
     return (
-        <Flex direction='column' align='center' p='0 1rem 1rem' h='100vh'>
+        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
             <Header isDisabled={loading} isOnline={isOnline} />
-            <Flex w='100%' mb={4} direction='row' align='center'>
+            <Flex w="100%" mb={4} direction="row" align="center">
                 {paramInfo === '' ? (
-                    <Box mx={2} w='100%' />
+                    <Box mx={2} w="100%" />
                 ) : (
                     <FormControl
-                        id='parameter-input'
+                        id="parameter-input"
                         mx={2}
                         isRequired
                         visibility={paramInfo === '' ? 'hidden' : undefined}
@@ -98,25 +108,25 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
                         />
                     </FormControl>
                 )}
-                <FormControl id='listtype-dropdown' mx={2} isRequired>
+                <FormControl id="listtype-dropdown" mx={2} isRequired>
                     <FormLabel>API Endpoint</FormLabel>
                     <Select
-                        placeholder='Select type of list'
+                        placeholder="Select type of list"
                         onChange={(event) => setListType(event.target.value)}
                     >
-                        <option value='allcategories'>allcategories</option>
-                        <option value='allimages'>allimages</option>
-                        <option value='allinfoboxes'>allinfoboxes</option>
-                        <option value='alllinks'>alllinks</option>
-                        <option value='allpages'>allpages</option>
-                        <option value='backlinks'>backlinks</option>
-                        <option value='categorymembers'>categorymembers</option>
-                        <option value='embeddedin'>embeddedin</option>
-                        <option value='exturlusage'>exturlusage</option>
-                        <option value='imageusage'>imageusage</option>
-                        <option value='protectedtitles'>protectedtitles</option>
-                        <option value='querypage'>querypage</option>
-                        <option value='search'>search</option>
+                        <option value="allcategories">allcategories</option>
+                        <option value="allimages">allimages</option>
+                        <option value="allinfoboxes">allinfoboxes</option>
+                        <option value="alllinks">alllinks</option>
+                        <option value="allpages">allpages</option>
+                        <option value="backlinks">backlinks</option>
+                        <option value="categorymembers">categorymembers</option>
+                        <option value="embeddedin">embeddedin</option>
+                        <option value="exturlusage">exturlusage</option>
+                        <option value="imageusage">imageusage</option>
+                        <option value="protectedtitles">protectedtitles</option>
+                        <option value="querypage">querypage</option>
+                        <option value="search">search</option>
                     </Select>
                 </FormControl>
                 <Box>
@@ -137,11 +147,11 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
                 </Box>
             </Flex>
             <Textarea
-                resize='none'
+                resize="none"
                 value={listOutput}
                 isReadOnly
-                placeholder='Output will be displayed here.'
-                h='100%'
+                placeholder="Output will be displayed here."
+                h="100%"
             />
         </Flex>
     );
