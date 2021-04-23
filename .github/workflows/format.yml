@@ -34,15 +34,15 @@ jobs:
                   node-version: '14'
 
             - name: Install yarn
-            run: npm i -g yarn
+              run: npm i -g yarn
 
             - uses: actions/cache@v2
-            with:
-                path: node_modules
-                key: js-test-cache-${{ hashFiles('yarn.lock') }}
+              with:
+                  path: node_modules
+                  key: js-test-cache-${{ hashFiles('yarn.lock') }}
 
             - name: Install dependencies
-            run: yarn install
+              run: yarn install
 
             - name: Check Prettier compliance
-            run: yarn lint
+              run: yarn lint
