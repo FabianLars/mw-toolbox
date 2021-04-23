@@ -36,7 +36,15 @@ const MenuItem = ({ children, isDisabled, isLast, to = '/' }: MenuProps): JSX.El
 
 const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
     return (
-        <Flex as="nav" align="center" justify="left" w="100%" p={2} mb={4} borderBottom="1px solid #deb992;">
+        <Flex
+            as="nav"
+            align="center"
+            justify="left"
+            w="100%"
+            p={2}
+            mb={4}
+            borderBottom="1px solid #deb992;"
+        >
             <MenuItem isDisabled={isDisabled} to="/">
                 Account
             </MenuItem>

@@ -6,10 +6,7 @@ module.exports = {
   },
   plugins: [
     '@snowpack/plugin-react-refresh',
-    '@snowpack/plugin-dotenv',
-    [
-      '@snowpack/plugin-typescript',
-    ],
+    '@snowpack/plugin-typescript',
   ],
   routes: [
     /* Enable an SPA Fallback in development: */

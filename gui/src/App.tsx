@@ -30,18 +30,22 @@ const App = () => {
         if (!!window.__TAURI__) {
             (invoke('cache_get', {
                 key: 'userObj',
-            }) as Promise<User>).then(
-                res => {
-                    const { isOnline = false, isPersistent = false, username = '', password = '', url = '' } = res || {};
-                    setUser({
-                        isOnline,
-                        isPersistent,
-                        username,
-                        password,
-                        url,
-                    });
-                }
-            );
+            }) as Promise<User>).then((res) => {
+                const {
+                    isOnline = false,
+                    isPersistent = false,
+                    username = '',
+                    password = '',
+                    url = '',
+                } = res || {};
+                setUser({
+                    isOnline,
+                    isPersistent,
+                    username,
+                    password,
+                    url,
+                });
+            });
         }
         // eslint-disable-next-line
     }, []);

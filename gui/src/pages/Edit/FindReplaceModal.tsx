@@ -33,13 +33,13 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
     const [localPatterns, setLocalPatterns] = useState<Pattern[]>(patterns);
 
     const onModalClose = () => {
-        const arr = patterns.map(obj => Object.assign({}, obj));
+        const arr = patterns.map((obj) => Object.assign({}, obj));
         setLocalPatterns(arr);
         onClose();
     };
 
     const onModalSave = () => {
-        const arr = localPatterns.map(obj => Object.assign({}, obj));
+        const arr = localPatterns.map((obj) => Object.assign({}, obj));
         setPatterns(arr);
         onClose();
     };
@@ -57,11 +57,11 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                                     m={1}
                                     placeholder="Find"
                                     value={localPatterns[index]['find'] || ''}
-                                    onKeyDown={e => {
+                                    onKeyDown={(e) => {
                                         if (e.key === 'Enter') onModalSave();
                                     }}
-                                    onChange={event =>
-                                        setLocalPatterns(oldArr => {
+                                    onChange={(event) =>
+                                        setLocalPatterns((oldArr) => {
                                             const values = [...oldArr];
                                             values[index]['find'] = event.target.value;
                                             return values;
@@ -72,11 +72,11 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                                     m={1}
                                     placeholder="Replace"
                                     value={localPatterns[index]['replace'] || ''}
-                                    onKeyDown={e => {
+                                    onKeyDown={(e) => {
                                         if (e.key === 'Enter') onModalSave();
                                     }}
-                                    onChange={event =>
-                                        setLocalPatterns(oldArr => {
+                                    onChange={(event) =>
+                                        setLocalPatterns((oldArr) => {
                                             const values = [...oldArr];
                                             values[index]['replace'] = event.target.value;
                                             return values;
@@ -87,8 +87,8 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                                     verticalAlign="center"
                                     m={1}
                                     isChecked={localPatterns[index]['isRegex']}
-                                    onChange={event =>
-                                        setLocalPatterns(oldArr => {
+                                    onChange={(event) =>
+                                        setLocalPatterns((oldArr) => {
                                             const values = [...oldArr];
                                             values[index]['isRegex'] = event.target.checked;
                                             return values;
@@ -97,7 +97,11 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                                 >
                                     Regex
                                 </Checkbox>
-                                <Link href="https://docs.rs/regex/" isExternal title="Open Regex Documentation">
+                                <Link
+                                    href="https://docs.rs/regex/"
+                                    isExternal
+                                    title="Open Regex Documentation"
+                                >
                                     <IconButton
                                         mt={2}
                                         variant="link"
@@ -114,7 +118,9 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                         mr={2}
                         onClick={() => {
                             if (localPatterns.length < 10)
-                                setLocalPatterns(old => old.concat({ find: '', replace: '', isRegex: false }));
+                                setLocalPatterns((old) =>
+                                    old.concat({ find: '', replace: '', isRegex: false }),
+                                );
                         }}
                         isDisabled={localPatterns.length >= 10}
                     >
@@ -123,7 +129,9 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                     <Button
                         colorScheme="red"
                         title="Press 'Save' to apply."
-                        onClick={() => setLocalPatterns([{ find: '', replace: '', isRegex: false }])}
+                        onClick={() =>
+                            setLocalPatterns([{ find: '', replace: '', isRegex: false }])
+                        }
                     >
                         Clear all
                     </Button>

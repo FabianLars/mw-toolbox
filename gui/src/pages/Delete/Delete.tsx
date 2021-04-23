@@ -19,16 +19,16 @@ const Delete = ({ isOnline }: { isOnline: boolean }) => {
                     description: 'Delete successful',
                     status: 'success',
                     isClosable: true,
-                })
+                }),
             )
-            .catch(err =>
+            .catch((err) =>
                 toast({
                     title: 'Something went wrong!',
                     description: err.Err,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
-                })
+                }),
             )
             .finally(() => setIsLoading(false));
     };
@@ -39,7 +39,7 @@ const Delete = ({ isOnline }: { isOnline: boolean }) => {
             <Textarea
                 resize="none"
                 value={areaValue}
-                onChange={event => setAreaValue(event.target.value)}
+                onChange={(event) => setAreaValue(event.target.value)}
                 placeholder="Write exact page names here. Separated by newline."
                 h="100%"
                 mb={4}

@@ -1,7 +1,17 @@
 import { invoke } from '@tauri-apps/api/tauri';
 
 import React, { useEffect, useState } from 'react';
-import { Button, Checkbox, Divider, Flex, FormControl, FormLabel, Input, Text, useToast } from '@chakra-ui/react';
+import {
+    Button,
+    Checkbox,
+    Divider,
+    Flex,
+    FormControl,
+    FormLabel,
+    Input,
+    Text,
+    useToast,
+} from '@chakra-ui/react';
 
 import { Header } from '../../components';
 import type { User } from '../../App';
@@ -30,7 +40,7 @@ const Account = ({ user, setUser }: Props) => {
             wikiurl: apiUrl,
             isPersistent: persistent,
         }) as Promise<{ username: string; url: string }>)
-            .then(res => {
+            .then((res) => {
                 setUser({
                     isOnline: true,
                     isPersistent: persistent,
@@ -39,8 +49,8 @@ const Account = ({ user, setUser }: Props) => {
                     url: res.url,
                 });
             })
-            .catch(err => {
-                setUser(u => ({
+            .catch((err) => {
+                setUser((u) => ({
                     ...u,
                     isOnline: false,
                 }));
@@ -59,7 +69,7 @@ const Account = ({ user, setUser }: Props) => {
         setLoggingin(true);
         (invoke('logout') as Promise<any>).finally(() => {
             setLoggingin(false);
-            setUser(u => ({
+            setUser((u) => ({
                 ...u,
                 isOnline: false,
             }));
@@ -94,7 +104,10 @@ const Account = ({ user, setUser }: Props) => {
     }, []);
 
     useEffect(() => {
-        if (!apiUrl.endsWith('api.php') || apiUrl.startsWith('http://') === apiUrl.startsWith('https://')) {
+        if (
+            !apiUrl.endsWith('api.php') ||
+            apiUrl.startsWith('http://') === apiUrl.startsWith('https://')
+        ) {
             setApiUrlInvalid(true);
         } else {
             setApiUrlInvalid(false);
@@ -115,7 +128,15 @@ const Account = ({ user, setUser }: Props) => {
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
             <Header isDisabled={logginin} isOnline={user.isOnline} />
 
-            <Flex as="main" direction="column" align="center" m="0 auto" w="50%" h="100%" justify="center">
+            <Flex
+                as="main"
+                direction="column"
+                align="center"
+                m="0 auto"
+                w="50%"
+                h="100%"
+                justify="center"
+            >
                 <Text fontSize="xl" align="center">
                     {user.isOnline ? user.username : ''}
                 </Text>
@@ -127,7 +148,7 @@ const Account = ({ user, setUser }: Props) => {
                     <FormLabel>API URL</FormLabel>
                     <Input
                         value={apiUrl}
-                        onChange={event => setApiUrl(event.target.value)}
+                        onChange={(event) => setApiUrl(event.target.value)}
                         isDisabled={user.isOnline}
                         placeholder="Full URL pointing to api.php"
                     />
@@ -137,7 +158,7 @@ const Account = ({ user, setUser }: Props) => {
                     <FormLabel>Bot Loginname</FormLabel>
                     <Input
                         value={lgname}
-                        onChange={event => setLgname(event.target.value)}
+                        onChange={(event) => setLgname(event.target.value)}
                         isDisabled={user.isOnline}
                         placeholder="Generated via Special:BotPasswords"
                     />
@@ -147,14 +168,17 @@ const Account = ({ user, setUser }: Props) => {
                     <FormLabel>Bot Password</FormLabel>
                     <Input
                         value={lgpasswd}
-                        onChange={event => setLgpasswd(event.target.value)}
+                        onChange={(event) => setLgpasswd(event.target.value)}
                         isDisabled={user.isOnline}
                         type="password"
                         placeholder="Generated via Special:BotPasswords"
                     />
                 </FormControl>
                 <Flex direction="row" w="100%" justify="flex-end" mt={2}>
-                    <Checkbox isChecked={persistent} onChange={event => setPersistent(event.target.checked)}>
+                    <Checkbox
+                        isChecked={persistent}
+                        onChange={(event) => setPersistent(event.target.checked)}
+                    >
                         Remember me
                     </Checkbox>
                     <Divider orientation="vertical" mx={2} />

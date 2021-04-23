@@ -1,4 +1,14 @@
-import { Button, Flex, Grid, GridItem, Textarea, Checkbox, useToast, Input, useDisclosure } from '@chakra-ui/react';
+import {
+    Button,
+    Flex,
+    Grid,
+    GridItem,
+    Textarea,
+    Checkbox,
+    useToast,
+    Input,
+    useDisclosure,
+} from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Header } from '../../components';
@@ -18,18 +28,20 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
     const [pageContent, setPageContent] = useState('');
     const [currentPage, setCurrentPage] = useState('');
     const [editSummary, setEditSummary] = useState('');
-    const [patterns, setPatterns] = useState<Pattern[]>([{ find: '', replace: '', isRegex: false }]);
+    const [patterns, setPatterns] = useState<Pattern[]>([
+        { find: '', replace: '', isRegex: false },
+    ]);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
 
     const startStop = () => {
         if (isRunning) {
-            setPageList(state => [currentPage, state].filter(Boolean).join('\n'));
+            setPageList((state) => [currentPage, state].filter(Boolean).join('\n'));
             setPageContent('');
         } else {
             getNextPage();
         }
-        setIsRunning(state => !state);
+        setIsRunning((state) => !state);
     };
 
     const getNextPage = () => {
@@ -38,8 +50,8 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
         const pages = pageList
             .trim()
             .split(/\r?\n/)
-            .map(el => el.trim())
-            .filter(el => el);
+            .map((el) => el.trim())
+            .filter((el) => el);
         const curr = pages.shift();
         setCurrentPage(curr ?? '');
         setPageList(pages.join('\n'));
@@ -52,7 +64,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                 patterns: patterns,
             }) as Promise<string>)
                 .then(setPageContent)
-                .catch(err => {
+                .catch((err) => {
                     startStop();
                     toast({
                         title: 'Something went wrong!',
@@ -76,7 +88,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                 .trim(),
             summary: editSummary || null,
         }) as Promise<string>)
-            .then(res => {
+            .then((res) => {
                 toast({
                     title: 'Edit successful',
                     description: res,
@@ -86,7 +98,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                 });
                 getNextPage();
             })
-            .catch(err => {
+            .catch((err) => {
                 setIsLoading(false);
                 toast({
                     title: 'Something went wrong!',
@@ -109,7 +121,13 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
         <>
             <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
                 <Header isOnline={isOnline} isDisabled={isLoading} />
-                <Grid h="100%" w="100%" templateRows="repeat(3, 1fr)" templateColumns="repeat(4, 1fr)" gap={4}>
+                <Grid
+                    h="100%"
+                    w="100%"
+                    templateRows="repeat(3, 1fr)"
+                    templateColumns="repeat(4, 1fr)"
+                    gap={4}
+                >
                     <GridItem rowSpan={3} whiteSpace="nowrap">
                         <Textarea
                             isDisabled={isRunning}
@@ -117,7 +135,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                             h="100%"
                             placeholder="List of pages to operate on. Separated by newline."
                             value={pageList}
-                            onChange={event => setPageList(event.target.value)}
+                            onChange={(event) => setPageList(event.target.value)}
                         />
                     </GridItem>
                     <GridItem colSpan={3} rowSpan={2}>
@@ -127,11 +145,15 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                             h="100%"
                             placeholder="Page contents will be displayed here."
                             value={pageContent}
-                            onChange={event => setPageContent(event.target.value)}
+                            onChange={(event) => setPageContent(event.target.value)}
                         />
                     </GridItem>
                     <GridItem colSpan={3}>
-                        <Grid templateColumns="repeat(8, 1fr)" templateRows="repeat(4, 1fr)" h="100%">
+                        <Grid
+                            templateColumns="repeat(8, 1fr)"
+                            templateRows="repeat(4, 1fr)"
+                            h="100%"
+                        >
                             <GridItem colSpan={4} mt={2}>
                                 Current page: {isRunning ? currentPage : 'Not running!'}
                             </GridItem>
@@ -149,11 +171,16 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                                 <Input
                                     placeholder="Edit summary"
                                     value={editSummary}
-                                    onChange={event => setEditSummary(event.target.value)}
+                                    onChange={(event) => setEditSummary(event.target.value)}
                                 />
                             </GridItem>
                             <GridItem rowSpan={4} colStart={8}>
-                                <Flex direction="column" align="center" justify="space-between" h="100%">
+                                <Flex
+                                    direction="column"
+                                    align="center"
+                                    justify="space-between"
+                                    h="100%"
+                                >
                                     <Button
                                         w="100%"
                                         onClick={startStop}
@@ -170,7 +197,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                                     </Button>
                                     <Checkbox
                                         isChecked={isAuto}
-                                        onChange={event => setIsAuto(event.target.checked)}
+                                        onChange={(event) => setIsAuto(event.target.checked)}
                                         isDisabled={isRunning}
                                     >
                                         Auto-Save
@@ -198,7 +225,12 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                 </Grid>
             </Flex>
 
-            <FindReplaceModal isOpen={isOpen} onClose={onClose} patterns={patterns} setPatterns={setPatterns} />
+            <FindReplaceModal
+                isOpen={isOpen}
+                onClose={onClose}
+                patterns={patterns}
+                setPatterns={setPatterns}
+            />
         </>
     );
 };
