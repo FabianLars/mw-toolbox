@@ -1,17 +1,17 @@
 import {
     Button,
-    Flex,
     Checkbox,
-    Link,
+    Flex,
+    IconButton,
     Input,
+    Link,
     Modal,
     ModalBody,
-    ModalOverlay,
     ModalContent,
-    ModalHeader,
     ModalFooter,
+    ModalHeader,
+    ModalOverlay,
     Spacer,
-    IconButton,
 } from '@chakra-ui/react';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import React, { useState } from 'react';

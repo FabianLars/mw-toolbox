@@ -1,70 +1,70 @@
 name: Test
 
 on:
-    workflow_dispatch:
-    pull_request:
-    push:
-        branches:
-            - main
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
 
 env:
-    WTOOLS_AEAD_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-    WTOOLS_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  WTOOLS_AEAD_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  WTOOLS_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
 jobs:
-    rust:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
 
-            - uses: hecrj/setup-rust-action@v1
-              with:
-                  components: clippy
-                  rust-version: nightly
+      - uses: hecrj/setup-rust-action@v1
+        with:
+          components: clippy
+          rust-version: nightly
 
-            - uses: actions/cache@v2
-              with:
-                  path: |
-                      ~/.cargo/registry
-                      ~/.cargo/git
-                      target
-                  key: rs-test-cache-${{ hashFiles('**/Cargo.lock') }}
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: rs-test-cache-${{ hashFiles('**/Cargo.lock') }}
 
-            - name: Install webkit2gtk
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev appmenu-gtk3-module libgtk-3-dev squashfs-tools
+      - name: Install webkit2gtk
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev appmenu-gtk3-module libgtk-3-dev squashfs-tools
 
-            - name: Run clippy
-              run: cargo clippy --workspace --no-default-features --features server
+      - name: Run clippy
+        run: cargo clippy --workspace --no-default-features --features server
 
-            - name: Run tests
-              run: cargo test --workspace --no-default-features --features server
+      - name: Run tests
+        run: cargo test --workspace --no-default-features --features server
 
-    js:
-        runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: gui
+  js:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gui
 
-        steps:
-            - uses: actions/checkout@v2
+    steps:
+      - uses: actions/checkout@v2
 
-            - name: Setup Node
-              uses: actions/setup-node@v1
-              with:
-                  node-version: '14'
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14'
 
-            - name: Install yarn
-              run: npm i -g yarn
+      - name: Install yarn
+        run: npm i -g yarn
 
-            - uses: actions/cache@v2
-              with:
-                  path: node_modules
-                  key: js-test-cache-${{ hashFiles('yarn.lock') }}
+      - uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: js-test-cache-${{ hashFiles('yarn.lock') }}
 
-            - name: Install dependencies
-              run: yarn install
+      - name: Install dependencies
+        run: yarn install
 
-            - name: Run tests
-              run: yarn test
+      - name: Run tests
+        run: yarn test

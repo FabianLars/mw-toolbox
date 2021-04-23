@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import { extendTheme, ChakraProvider, ThemeConfig } from '@chakra-ui/react';
+import { ChakraProvider, extendTheme, ThemeConfig } from '@chakra-ui/react';
 
 const config: ThemeConfig = {
     useSystemColorMode: false,

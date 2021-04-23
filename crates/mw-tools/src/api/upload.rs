@@ -20,7 +20,7 @@ pub async fn upload<C: AsRef<WikiClient>, P: AsRef<Path>, S: Into<String>>(
             return Err(ToolsError::InvalidInput(format!(
                 "Invalid file name: {:?}",
                 file.display()
-            )))
+            )));
         }
     };
 

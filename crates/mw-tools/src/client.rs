@@ -113,13 +113,13 @@ impl WikiClient {
         match res {
             Login::Login { .. } => {}
             Login::Error { error } => {
-                return Err(ToolsError::LoginFailed(error.reason.description))
+                return Err(ToolsError::LoginFailed(error.reason.description));
             }
             Login::ErrorUnreachable { mut errors } => {
-                return Err(ToolsError::LoginFailed(errors.remove(0).description))
+                return Err(ToolsError::LoginFailed(errors.remove(0).description));
             }
             Login::WarningsUnreachable { mut warnings } => {
-                return Err(ToolsError::LoginFailed(warnings.remove(0).description))
+                return Err(ToolsError::LoginFailed(warnings.remove(0).description));
             }
         }
 
