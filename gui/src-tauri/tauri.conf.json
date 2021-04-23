@@ -3,7 +3,7 @@
         "distDir": "../build",
         "devPath": "http://localhost:3000",
         "beforeDevCommand": "yarn --cwd .. start",
-        "beforeBuildCommand": "yarn --cwd .. build"
+        "beforeBuildCommand": "echo \"Not working at the moment :( \" && yarn --cwd .. build"
     },
     "tauri": {
         "bundle": {

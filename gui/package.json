@@ -13,7 +13,7 @@
         "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
         "tauri": "tauri",
         "tauri-dev": "tauri dev",
-        "tauri-build": "tauri build"
+        "tauri-build": "echo \" Workaround because beforeBuildCommand isn't working \" && snowpack build && tauri build"
     },
     "dependencies": {
         "@chakra-ui/icons": "^1.0.11",

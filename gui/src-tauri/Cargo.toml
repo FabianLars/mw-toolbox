@@ -7,6 +7,10 @@ license = "MIT"
 name = "mw-toolbox"
 version = "0.1.0"
 
+[features]
+# default = [ "custom-protocol" ]
+custom-protocol = [ "tauri/custom-protocol" ]
+
 [dependencies]
 anyhow = "1"
 mw-tools = {path = "../../crates/mw-tools"}
