@@ -41,7 +41,7 @@ const Delete = ({ isOnline }: { isOnline: boolean }) => {
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}
                 placeholder="Write exact page names here. Separated by newline."
-                h="100%"
+                flex="1"
                 mb={4}
             />
             <Box>

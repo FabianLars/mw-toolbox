@@ -45,13 +45,13 @@ const Purge = ({ isOnline }: { isOnline: boolean }) => {
     return (
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
             <Header isOnline={isOnline} isDisabled={isNulling || isPurging} />
-            <Flex w="100%" h="100%" direction="column">
+            <Flex w="100%" flex="1" direction="column">
                 <Textarea
                     resize="none"
                     value={areaValue}
                     onChange={(event) => setAreaValue(event.target.value)}
                     placeholder="Write exact page names here. Separated by newline."
-                    h="100%"
+                    flex="1"
                     mb={4}
                 />
                 <Flex direction="row" align="center" justify="center">

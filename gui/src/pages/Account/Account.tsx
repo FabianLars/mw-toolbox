@@ -132,9 +132,8 @@ const Account = ({ user, setUser }: Props) => {
                 as="main"
                 direction="column"
                 align="center"
-                m="0 auto"
                 w="50%"
-                h="100%"
+                flex="1"
                 justify="center"
             >
                 <Text fontSize="xl" align="center">

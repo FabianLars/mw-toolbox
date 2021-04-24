@@ -151,7 +151,7 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
                 value={listOutput}
                 isReadOnly
                 placeholder="Output will be displayed here."
-                h="100%"
+                flex="1"
             />
         </Flex>
     );

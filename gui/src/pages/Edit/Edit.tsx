@@ -122,7 +122,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
             <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
                 <Header isOnline={isOnline} isDisabled={isLoading} />
                 <Grid
-                    h="100%"
+                    flex="1"
                     w="100%"
                     templateRows="repeat(3, 1fr)"
                     templateColumns="repeat(4, 1fr)"
