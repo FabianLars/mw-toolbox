@@ -1,27 +1,17 @@
-import { invoke } from '@tauri-apps/api/tauri';
+import {invoke} from '@tauri-apps/api/tauri';
 
-import React, { useEffect, useState } from 'react';
-import {
-    Button,
-    Checkbox,
-    Divider,
-    Flex,
-    FormControl,
-    FormLabel,
-    Input,
-    Text,
-    useToast,
-} from '@chakra-ui/react';
+import React, {useEffect, useState} from 'react';
+import {Button, Checkbox, Divider, Flex, FormControl, FormLabel, Input, Text, useToast,} from '@chakra-ui/react';
 
-import { Header } from '../../components';
-import type { User } from '../../App';
+import {Header} from '../../components';
+import type {User} from '../../App';
 
 type Props = {
     user: User;
     setUser: React.Dispatch<React.SetStateAction<User>>;
 };
 
-const Account = ({ user, setUser }: Props) => {
+const Account = ({user, setUser}: Props) => {
     const [apiUrl, setApiUrl] = useState('https://leagueoflegends.fandom.com/de/api.php');
     const [lgname, setLgname] = useState('');
     const [lgpasswd, setLgpasswd] = useState('');
@@ -128,21 +118,14 @@ const Account = ({ user, setUser }: Props) => {
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
             <Header isDisabled={logginin} isOnline={user.isOnline} />
 
-            <Flex
-                as="main"
-                direction="column"
-                align="center"
-                w="50%"
-                flex="1"
-                justify="center"
-            >
+            <Flex as="main" direction="column" align="center" w="50%" flex="1" justify="center">
                 <Text fontSize="xl" align="center">
                     {user.isOnline ? user.username : ''}
                 </Text>
                 <Text fontSize="xl" align="center">
                     {user.isOnline ? user.url : 'Not logged in!'}
                 </Text>
-                <Divider my={2} />
+                <Divider my={2}/>
                 <FormControl id="api-url" isRequired isInvalid={apiUrlInvalid}>
                     <FormLabel>API URL</FormLabel>
                     <Input
