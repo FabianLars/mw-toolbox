@@ -24,6 +24,4 @@ yarn-error.log*
 
 .eslintcache
 
-.vscode
-
 .snowpack

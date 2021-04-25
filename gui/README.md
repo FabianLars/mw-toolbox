@@ -1,11 +1,12 @@
 # Development
 
-If you're on Windows, make sure you have WebView2 installed. Otherwise add "ie 11" to browserlist.development in package.json.
+If you're on Windows, make sure you have WebView2 installed.
 
-1. Start the react dev server: "npm start"
-2. Start tauri in dev mode: "npm run tauri dev"
+1. Start the react dev server: "yarn start" (Optional, because 2. runs this command too)
+2. Start tauri in dev mode: "yarn tauri dev"
 
 # Build
 
-1. Build react app: "npm run build"
-2. Build tauri app: "npm run tauri build"
+0. Make sure the gui/build/ folder is present. If it's not, create it or let 1. handle it. (2. crashes without it as of now) 
+1. Build react app: "yarn run build" (Optional if 0. is taken care of, because 2. runs this command too)
+2. Build tauri app: "yarn tauri build"
