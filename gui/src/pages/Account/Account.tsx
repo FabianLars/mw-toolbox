@@ -1,6 +1,5 @@
 import { invoke } from '@tauri-apps/api/tauri';
-
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'preact/hooks';
 import {
     Button,
     Checkbox,
@@ -19,6 +18,7 @@ import type { User } from '../../App';
 type Props = {
     user: User;
     setUser: React.Dispatch<React.SetStateAction<User>>;
+    path: string;
 };
 
 const Account = ({ user, setUser }: Props) => {
@@ -125,6 +125,7 @@ const Account = ({ user, setUser }: Props) => {
     }, [apiUrl, lgname, lgpasswd]);
 
     return (
+        //@ts-ignore
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
             <Header isDisabled={logginin} isOnline={user.isOnline} />
 
@@ -140,7 +141,7 @@ const Account = ({ user, setUser }: Props) => {
                     <FormLabel>API URL</FormLabel>
                     <Input
                         value={apiUrl}
-                        onChange={(event) => setApiUrl(event.target.value)}
+                        onChange={(event) => setApiUrl(event.currentTarget.value)}
                         isDisabled={user.isOnline}
                         placeholder="Full URL pointing to api.php"
                     />
@@ -150,7 +151,7 @@ const Account = ({ user, setUser }: Props) => {
                     <FormLabel>Bot Loginname</FormLabel>
                     <Input
                         value={lgname}
-                        onChange={(event) => setLgname(event.target.value)}
+                        onChange={(event) => setLgname(event.currentTarget.value)}
                         isDisabled={user.isOnline}
                         placeholder="Generated via Special:BotPasswords"
                     />
@@ -160,7 +161,7 @@ const Account = ({ user, setUser }: Props) => {
                     <FormLabel>Bot Password</FormLabel>
                     <Input
                         value={lgpasswd}
-                        onChange={(event) => setLgpasswd(event.target.value)}
+                        onChange={(event) => setLgpasswd(event.currentTarget.value)}
                         isDisabled={user.isOnline}
                         type="password"
                         placeholder="Generated via Special:BotPasswords"
@@ -168,8 +169,9 @@ const Account = ({ user, setUser }: Props) => {
                 </FormControl>
                 <Flex direction="row" w="100%" justify="flex-end" mt={2}>
                     <Checkbox
+                        defaultChecked={false}
                         isChecked={persistent}
-                        onChange={(event) => setPersistent(event.target.checked)}
+                        onChange={(event) => setPersistent(event.currentTarget.checked)}
                     >
                         Remember me
                     </Checkbox>

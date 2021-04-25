@@ -1,5 +1,3 @@
-import React from 'react';
-import { Link as ReactLink, useLocation } from 'react-router-dom';
 import { Badge, Flex, Link, Spacer, Spinner } from '@chakra-ui/react';
 
 type MenuProps = {
@@ -15,11 +13,11 @@ type HeaderProps = {
 };
 
 const MenuItem = ({ children, isDisabled, isLast, to = '/' }: MenuProps): JSX.Element => {
-    const location = useLocation().pathname;
+    const location = window.location.pathname;
     return (
         <Link
-            as={ReactLink}
-            to={to}
+            // @ts-ignore
+            href={to}
             mr={isLast ? 0 : 4}
             borderTop="1px solid transparent"
             borderTopColor={location === to ? 'gray.500' : 'transparent'}

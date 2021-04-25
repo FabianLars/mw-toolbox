@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { HashRouter as Router, Route, Routes } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'preact/hooks';
+import { Router, Route } from 'preact-router';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Account, Delete, Download, Edit, List, Move, Purge, Upload } from './pages';
+import { AnyComponent } from 'preact';
 
 export type User = {
     username: string;
@@ -64,17 +65,16 @@ const App = () => {
     }, [user]);
 
     return (
+        //@ts-ignore
         <Router>
-            <Routes>
-                <Route path="/" element={<Account user={user} setUser={setUser} />} />
-                <Route path="/Delete" element={<Delete isOnline={user.isOnline} />} />
-                <Route path="/Download" element={<Download isOnline={user.isOnline} />} />
-                <Route path="/Edit" element={<Edit isOnline={user.isOnline} />} />
-                <Route path="/List" element={<List isOnline={user.isOnline} />} />
-                <Route path="/Move" element={<Move isOnline={user.isOnline} />} />
-                <Route path="/Purge" element={<Purge isOnline={user.isOnline} />} />
-                <Route path="/Upload" element={<Upload isOnline={user.isOnline} />} />
-            </Routes>
+            <Account path="/" user={user} setUser={setUser} />
+            <Delete path="/Delete" isOnline={user.isOnline} />
+            <Download path="/Download" isOnline={user.isOnline} />
+            <Edit path="/Edit" isOnline={user.isOnline} />
+            <List path="/List" isOnline={user.isOnline} />
+            <Move path="/Move" isOnline={user.isOnline} />
+            <Purge path="/Purge" isOnline={user.isOnline} />
+            <Upload path="/Upload" isOnline={user.isOnline} />
         </Router>
     );
 };

@@ -1,9 +1,9 @@
 import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import { useState } from 'preact/hooks';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Header } from '../../components';
 
-const Move = ({ isOnline }: { isOnline: boolean }) => {
+const Move = ({ isOnline }: { isOnline: boolean; path: string }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [areaFrom, setAreaFrom] = useState('');
     const [areaTo, setAreaTo] = useState('');
@@ -36,13 +36,14 @@ const Move = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     return (
+        //@ts-ignore
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
             <Header isOnline={isOnline} isDisabled={isLoading} />
             <Flex direction="row" align="center" justify="center" flex="1" w="100%" mb={4}>
                 <Textarea
                     resize="none"
                     value={areaFrom}
-                    onChange={(event) => setAreaFrom(event.target.value)}
+                    onChange={(event) => setAreaFrom(event.currentTarget.value)}
                     placeholder="Write exact names of pages to move. Separated by newline."
                     h="100%"
                     mr={2}
@@ -50,7 +51,7 @@ const Move = ({ isOnline }: { isOnline: boolean }) => {
                 <Textarea
                     resize="none"
                     value={areaTo}
-                    onChange={(event) => setAreaTo(event.target.value)}
+                    onChange={(event) => setAreaTo(event.currentTarget.value)}
                     placeholder="Write exact names of destinations. Separated by newline."
                     h="100%"
                     ml={2}

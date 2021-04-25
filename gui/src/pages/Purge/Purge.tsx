@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'preact/hooks';
 import { Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Header } from '../../components';
 
-const Purge = ({ isOnline }: { isOnline: boolean }) => {
+const Purge = ({ isOnline }: { isOnline: boolean; path: string }) => {
     const [isPurging, setIsPurging] = useState(false);
     const [isNulling, setIsNulling] = useState(false);
     const [areaValue, setAreaValue] = useState('');
@@ -43,13 +43,16 @@ const Purge = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     return (
+        //@ts-ignore
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
             <Header isOnline={isOnline} isDisabled={isNulling || isPurging} />
             <Flex w="100%" flex="1" direction="column">
                 <Textarea
                     resize="none"
                     value={areaValue}
-                    onChange={(event) => setAreaValue(event.target.value)}
+                    onChange={(event) => {
+                        setAreaValue(event.currentTarget.value);
+                    }}
                     placeholder="Write exact page names here. Separated by newline."
                     flex="1"
                     mb={4}

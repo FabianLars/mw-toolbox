@@ -8,12 +8,12 @@ import {
     Textarea,
     useToast,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'preact/hooks';
 import { invoke } from '@tauri-apps/api/tauri';
 import { emit } from '@tauri-apps/api/event';
 import { Header } from '../../components';
 
-const Upload = ({ isOnline }: { isOnline: boolean }) => {
+const Upload = ({ isOnline }: { isOnline: boolean; path: string }) => {
     const [isUploading, setIsUploading] = useState(false);
     const [isWaiting, setIsWaiting] = useState(false);
     const [uploadtext, setUploadtext] = useState('');
@@ -76,6 +76,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
     }, []);
 
     return (
+        //@ts-ignore
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
             <Header isDisabled={isWaiting || isUploading} isOnline={isOnline} />
             <Flex direction="row" justify="center" align="center" w="75%" mb={4}>
@@ -84,7 +85,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
                     <Input
                         value={uploadtext}
                         isDisabled={isUploading || isWaiting}
-                        onChange={(event) => setUploadtext(event.target.value)}
+                        onChange={(event) => setUploadtext(event.currentTarget.value)}
                         onBlur={() =>
                             invoke('cache_set', {
                                 key: 'uploadtext-cache',

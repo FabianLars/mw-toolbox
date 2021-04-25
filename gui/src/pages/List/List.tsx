@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'preact/hooks';
 
 import { invoke } from '@tauri-apps/api/tauri';
 import {
@@ -15,7 +15,7 @@ import {
 
 import { Header } from '../../components';
 
-const List = ({ isOnline }: { isOnline: boolean }) => {
+const List = ({ isOnline }: { isOnline: boolean; path: string }) => {
     const [loading, setLoading] = useState(false);
     const [listOutput, setListOutput] = useState('');
     const [listType, setListType] = useState('');
@@ -104,7 +104,7 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
                             placeholder={paramInfo}
                             title={paramInfo}
                             value={paramInput}
-                            onChange={(event) => setParamInput(event.target.value)}
+                            onChange={(event) => setParamInput(event.currentTarget.value)}
                         />
                     </FormControl>
                 )}
@@ -112,7 +112,7 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
                     <FormLabel>API Endpoint</FormLabel>
                     <Select
                         placeholder="Select type of list"
-                        onChange={(event) => setListType(event.target.value)}
+                        onChange={(event) => setListType(event.currentTarget.value)}
                     >
                         <option value="allcategories">allcategories</option>
                         <option value="allimages">allimages</option>

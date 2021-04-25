@@ -1,9 +1,9 @@
 import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import { useState } from 'preact/hooks';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Header } from '../../components';
 
-const Download = ({ isOnline }: { isOnline: boolean }) => {
+const Download = ({ isOnline }: { isOnline: boolean; path: string }) => {
     const [areaValue, setAreaValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const toast = useToast();
@@ -39,7 +39,7 @@ const Download = ({ isOnline }: { isOnline: boolean }) => {
             <Textarea
                 resize="none"
                 value={areaValue}
-                onChange={(event) => setAreaValue(event.target.value)}
+                onChange={(event) => setAreaValue(event.currentTarget.value)}
                 placeholder="Write exact page names here. Separated by newline. Inclusive 'File:' Prefix. Saved in your download folder."
                 flex="1"
                 mb={4}

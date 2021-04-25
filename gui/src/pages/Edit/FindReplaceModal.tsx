@@ -14,7 +14,7 @@ import {
     Spacer,
 } from '@chakra-ui/react';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
-import React, { useState } from 'react';
+import { useState } from 'preact/hooks';
 
 type Pattern = {
     find: string;
@@ -63,7 +63,7 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                                     onChange={(event) =>
                                         setLocalPatterns((oldArr) => {
                                             const values = [...oldArr];
-                                            values[index]['find'] = event.target.value;
+                                            values[index]['find'] = event.currentTarget.value;
                                             return values;
                                         })
                                     }
@@ -78,19 +78,20 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                                     onChange={(event) =>
                                         setLocalPatterns((oldArr) => {
                                             const values = [...oldArr];
-                                            values[index]['replace'] = event.target.value;
+                                            values[index]['replace'] = event.currentTarget.value;
                                             return values;
                                         })
                                     }
                                 />
                                 <Checkbox
+                                    defaultChecked={false}
                                     verticalAlign="center"
                                     m={1}
                                     isChecked={localPatterns[index]['isRegex']}
                                     onChange={(event) =>
                                         setLocalPatterns((oldArr) => {
                                             const values = [...oldArr];
-                                            values[index]['isRegex'] = event.target.checked;
+                                            values[index]['isRegex'] = event.currentTarget.checked;
                                             return values;
                                         })
                                     }
@@ -105,6 +106,7 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                                     <IconButton
                                         mt={2}
                                         variant="link"
+                                        //@ts-ignore
                                         icon={<InfoOutlineIcon />}
                                         aria-label="Infos about Regular Expressions"
                                     />

@@ -9,7 +9,7 @@ import {
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'preact/hooks';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Header } from '../../components';
 import FindReplaceModal from './FindReplaceModal';
@@ -20,7 +20,7 @@ type Pattern = {
     isRegex: boolean;
 };
 
-const Edit = ({ isOnline }: { isOnline: boolean }) => {
+const Edit = ({ isOnline }: { isOnline: boolean; path: string }) => {
     const [isRunning, setIsRunning] = useState(false);
     const [isAuto, setIsAuto] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -135,7 +135,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                             h="100%"
                             placeholder="List of pages to operate on. Separated by newline."
                             value={pageList}
-                            onChange={(event) => setPageList(event.target.value)}
+                            onChange={(event) => setPageList(event.currentTarget.value)}
                         />
                     </GridItem>
                     <GridItem colSpan={3} rowSpan={2}>
@@ -145,7 +145,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                             h="100%"
                             placeholder="Page contents will be displayed here."
                             value={pageContent}
-                            onChange={(event) => setPageContent(event.target.value)}
+                            onChange={(event) => setPageContent(event.currentTarget.value)}
                         />
                     </GridItem>
                     <GridItem colSpan={3}>
@@ -171,7 +171,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                                 <Input
                                     placeholder="Edit summary"
                                     value={editSummary}
-                                    onChange={(event) => setEditSummary(event.target.value)}
+                                    onChange={(event) => setEditSummary(event.currentTarget.value)}
                                 />
                             </GridItem>
                             <GridItem rowSpan={4} colStart={8}>
@@ -196,8 +196,9 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                                         {isRunning ? 'Stop' : 'Start'}
                                     </Button>
                                     <Checkbox
+                                        defaultChecked={false}
                                         isChecked={isAuto}
-                                        onChange={(event) => setIsAuto(event.target.checked)}
+                                        onChange={(event) => setIsAuto(event.currentTarget.checked)}
                                         isDisabled={isRunning}
                                     >
                                         Auto-Save
