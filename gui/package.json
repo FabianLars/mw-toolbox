@@ -7,11 +7,12 @@
     "license": "MIT",
     "scripts": {
         "start": "vite",
-        "build": "tsc && vite build",
+        "build": "vite build",
         "serve": "vite preview",
         "test": "wtr \"src/**/*.test.tsx\"",
         "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
         "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
+        "type-check": "tsc --noEmit",
         "linux": "echo 'temporary minHeight workaroung for linux\n' && sed -i 's/^.*minHeight.*$//' src-tauri/tauri.conf.json && tauri",
         "tauri": "tauri",
         "tauri-dev": "tauri dev",

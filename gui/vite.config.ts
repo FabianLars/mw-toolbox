@@ -6,6 +6,7 @@ export default defineConfig({
     plugins: [reactRefresh()],
     build: {
         target: 'es2019',
+        minify: 'esbuild',
         outDir: 'build/',
     },
 });
