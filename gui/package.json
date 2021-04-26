@@ -23,8 +23,8 @@
         "@chakra-ui/react": "^1.6.0",
         "@emotion/react": "^11.1.5",
         "@emotion/styled": "^11.3.0",
-        "@tauri-apps/api": "1.0.0-beta-rc.2",
-        "@tauri-apps/cli": "1.0.0-beta-rc.2",
+        "@tauri-apps/api": "1.0.0-beta-rc.3",
+        "@tauri-apps/cli": "1.0.0-beta-rc.4",
         "framer-motion": "^4.1.9",
         "history": "^5.0.0",
         "react": "^17.0.2",
@@ -43,7 +43,7 @@
         "chai": "^4.3.4",
         "prettier": "^2.2.1",
         "typescript": "^4.2.4",
-        "vite": "^2.2.2",
+        "vite": "^2.2.3",
         "vite-web-test-runner-plugin": "^0.0.2"
     }
 }
