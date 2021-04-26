@@ -30,7 +30,7 @@ const App = () => {
         if (!!window.__TAURI__) {
             (invoke('cache_get', {
                 key: 'userObj',
-            }) as Promise<User>).then((res) => {
+            }) as Promise<User | null>).then((res) => {
                 const {
                     isOnline = false,
                     isPersistent = false,
@@ -47,7 +47,6 @@ const App = () => {
                 });
             });
         }
-        // eslint-disable-next-line
     }, []);
 
     // Update cache on every user object change

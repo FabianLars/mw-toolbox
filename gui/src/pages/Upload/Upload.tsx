@@ -49,7 +49,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
         setIsUploading(true);
         (invoke('upload', {
             text: uploadtext,
-        }) as Promise<any>)
+        }) as Promise<null>)
             .then(() =>
                 toast({
                     title: 'Upload complete!',
@@ -71,8 +71,8 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     useEffect(() => {
-        (invoke('cache_get', { key: 'files-cache' }) as Promise<string>).then(setFiles);
-        (invoke('cache_get', { key: 'uploadtext-cache' }) as Promise<string>).then(setUploadtext);
+        (invoke('cache_get', { key: 'files-cache' }) as Promise<string | null>).then(res => setFiles(res ?? ''));
+        (invoke('cache_get', { key: 'uploadtext-cache' }) as Promise<string | null>).then(res => setUploadtext(res ?? ''));
     }, []);
 
     return (

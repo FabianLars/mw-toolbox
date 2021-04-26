@@ -100,7 +100,6 @@ const Account = ({ user, setUser }: Props) => {
                     .catch(console.error);
             }
         }
-        // eslint-disable-next-line
     }, []);
 
     useEffect(() => {
