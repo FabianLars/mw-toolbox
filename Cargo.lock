@@ -1875,7 +1875,7 @@ dependencies = [
  "league",
  "mw-tools",
  "serde_json",
- "sysinfo 0.17.2",
+ "sysinfo",
  "tokio",
 ]
 
@@ -3149,21 +3149,6 @@ dependencies = [
 
 [[package]]
 name = "sysinfo"
-version = "0.10.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b8834e42be61ae4f6338b216fbb69837c7f33c3d4d3a139fb073735b25af4d9e"
-dependencies = [
- "cfg-if 0.1.10",
- "doc-comment",
- "libc",
- "ntapi",
- "once_cell",
- "rayon",
- "winapi",
-]
-
-[[package]]
-name = "sysinfo"
 version = "0.17.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f5e4b56d92c7c56cc8a06df0cc06860a8ec6102e9a8a5ee85dff90afbeadf3d"
@@ -3274,16 +3259,16 @@ dependencies = [
 
 [[package]]
 name = "tauri-utils"
-version = "1.0.0-beta-rc.0"
+version = "1.0.0-beta-rc.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f8c8cdee84c6f8eb8155ff6720f55f61d715b4038aadb1a0b2f37828c4e1c33f"
+checksum = "a896f622a51ae93bd77aa7aa02b4bbd1dd4982932551ea3319f04ffdf82fbe8f"
 dependencies = [
  "phf",
  "proc-macro2",
  "quote",
  "serde",
  "serde_json",
- "sysinfo 0.10.5",
+ "sysinfo",
  "thiserror",
  "url",
  "zstd",
