@@ -71,8 +71,12 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     useEffect(() => {
-        (invoke('cache_get', { key: 'files-cache' }) as Promise<string | null>).then(res => setFiles(res ?? ''));
-        (invoke('cache_get', { key: 'uploadtext-cache' }) as Promise<string | null>).then(res => setUploadtext(res ?? ''));
+        (invoke('cache_get', { key: 'files-cache' }) as Promise<string | null>).then((res) =>
+            setFiles(res ?? ''),
+        );
+        (invoke('cache_get', { key: 'uploadtext-cache' }) as Promise<string | null>).then((res) =>
+            setUploadtext(res ?? ''),
+        );
     }, []);
 
     return (

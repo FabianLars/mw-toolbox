@@ -54,7 +54,9 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     useEffect(() => {
-        (invoke('cache_get', { key: 'list-cache' }) as Promise<string | null>).then(res => setListOutput(res ?? ''));
+        (invoke('cache_get', { key: 'list-cache' }) as Promise<string | null>).then((res) =>
+            setListOutput(res ?? ''),
+        );
     }, []);
 
     useEffect(() => {
