@@ -68,17 +68,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "23b62fc65de8e4e7f52534fb52b0f3ed04746ae267519eef2a83941e8085068b"
 
 [[package]]
-name = "async-channel"
-version = "1.6.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2114d64672151c0c5eaa5e131ec84a74f06e1e559830dabba01ca30605d66319"
-dependencies = [
- "concurrent-queue",
- "event-listener",
- "futures-core",
-]
-
-[[package]]
 name = "atk"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -241,12 +230,6 @@ dependencies = [
  "libc",
  "pkg-config",
 ]
-
-[[package]]
-name = "cache-padded"
-version = "1.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "631ae5198c9be5e753e5cc215e1bd73c2b466a3565173db433f52bb9d3e66dba"
 
 [[package]]
 name = "cairo-rs"
@@ -465,15 +448,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "concurrent-queue"
-version = "1.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "30ed07550be01594c6026cff2a1d7fe9c8f683caa798e12b68694ac9e88286a3"
-dependencies = [
- "cache-padded",
 ]
 
 [[package]]
@@ -917,12 +891,6 @@ dependencies = [
  "regex",
  "termcolor",
 ]
-
-[[package]]
-name = "event-listener"
-version = "2.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f7531096570974c3a9dcf9e4b8e1cede1ec26cf5046219fb3b9d897503b9be59"
 
 [[package]]
 name = "filetime"
@@ -1661,9 +1629,9 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.2.93"
+version = "0.2.94"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9385f66bf6105b241aa65a61cb923ef20efc665cb9f9bb50ac2f0c4b7f378d41"
+checksum = "18794a8ad5b29321f790b55d93dfba91e125cb1a9edbd4f8e3150acc771c1a5e"
 
 [[package]]
 name = "libloading"
@@ -3169,8 +3137,7 @@ dependencies = [
 [[package]]
 name = "tauri"
 version = "1.0.0-beta-rc.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4230d7f5d01267c68ce01a42cb7726efeba71cfc515387ec0489a69229e926f4"
+source = "git+https://github.com/tauri-apps/tauri?branch=refactor/wry-updates#fe7585324b3bfc78389fbba8e867dd787834a5f8"
 dependencies = [
  "base64",
  "bytes",
@@ -3181,6 +3148,7 @@ dependencies = [
  "futures",
  "http",
  "ignore",
+ "image",
  "minisign-verify",
  "once_cell",
  "open",
@@ -3208,8 +3176,7 @@ dependencies = [
 [[package]]
 name = "tauri-codegen"
 version = "1.0.0-beta-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b15e1584330f194c375dff4583bdd9cc9dd31dc47b485e089d0571f9009216ba"
+source = "git+https://github.com/tauri-apps/tauri?branch=refactor/wry-updates#fe7585324b3bfc78389fbba8e867dd787834a5f8"
 dependencies = [
  "blake3",
  "proc-macro2",
@@ -3225,8 +3192,7 @@ dependencies = [
 [[package]]
 name = "tauri-macros"
 version = "1.0.0-beta-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "22f61841272de3d9c8955c66ee34a738aa53cd90deaec56005e64acba0fc805a"
+source = "git+https://github.com/tauri-apps/tauri?branch=refactor/wry-updates#fe7585324b3bfc78389fbba8e867dd787834a5f8"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3237,8 +3203,7 @@ dependencies = [
 [[package]]
 name = "tauri-utils"
 version = "1.0.0-beta-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a896f622a51ae93bd77aa7aa02b4bbd1dd4982932551ea3319f04ffdf82fbe8f"
+source = "git+https://github.com/tauri-apps/tauri?branch=refactor/wry-updates#fe7585324b3bfc78389fbba8e867dd787834a5f8"
 dependencies = [
  "phf",
  "proc-macro2",
@@ -3987,10 +3952,9 @@ dependencies = [
 [[package]]
 name = "wry"
 version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dffd44ee7ebd826e15ceb5a219562b71d5140e2b218bffe832895b4666708e23"
+source = "git+https://github.com/tauri-apps/wry?rev=35d82f908034da4f19763bce360d84fa9abcd739#35d82f908034da4f19763bce360d84fa9abcd739"
 dependencies = [
- "async-channel",
+ "bitflags",
  "cairo-rs",
  "cocoa",
  "core-graphics 0.22.2",

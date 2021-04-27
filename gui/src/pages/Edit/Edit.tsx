@@ -120,25 +120,19 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
         <>
             <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
                 <Header isOnline={isOnline} isDisabled={isLoading} />
-                <Grid
-                    flex="1"
-                    w="100%"
-                    templateRows="repeat(3, 1fr)"
-                    templateColumns="repeat(4, 1fr)"
-                    gap={4}
-                >
-                    <GridItem rowSpan={3} whiteSpace="nowrap">
+                <Flex flex="1" width="100%">
+                    <Textarea
+                        w="20%"
+                        isDisabled={isRunning}
+                        resize="none"
+                        h="100%"
+                        placeholder="List of pages to operate on. Separated by newline."
+                        value={pageList}
+                        onChange={(event) => setPageList(event.target.value)}
+                    />
+                    <Flex direction="column" flex="1" ml={4}>
                         <Textarea
-                            isDisabled={isRunning}
-                            resize="none"
-                            h="100%"
-                            placeholder="List of pages to operate on. Separated by newline."
-                            value={pageList}
-                            onChange={(event) => setPageList(event.target.value)}
-                        />
-                    </GridItem>
-                    <GridItem colSpan={3} rowSpan={2}>
-                        <Textarea
+                            flex="2"
                             isDisabled={isAuto || isLoading || !isRunning}
                             resize="none"
                             h="100%"
@@ -146,12 +140,13 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                             value={pageContent}
                             onChange={(event) => setPageContent(event.target.value)}
                         />
-                    </GridItem>
-                    <GridItem colSpan={3}>
                         <Grid
-                            templateColumns="repeat(8, 1fr)"
+                            pt={4}
+                            flex="1"
+                            templateColumns="repeat(7, 1fr)"
                             templateRows="repeat(4, 1fr)"
-                            h="100%"
+                            columnGap={4}
+                            maxH="250px"
                         >
                             <GridItem colSpan={4} mt={2}>
                                 Current page: {isRunning ? currentPage : 'Not running!'}
@@ -166,14 +161,14 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                                     Setup Find & Replace
                                 </Button>
                             </GridItem>
-                            <GridItem colSpan={3} mr={4}>
+                            <GridItem colSpan={2}>
                                 <Input
                                     placeholder="Edit summary"
                                     value={editSummary}
                                     onChange={(event) => setEditSummary(event.target.value)}
                                 />
                             </GridItem>
-                            <GridItem rowSpan={4} colStart={8}>
+                            <GridItem rowSpan={4} colStart={7} colSpan={1}>
                                 <Flex
                                     direction="column"
                                     align="center"
@@ -198,6 +193,7 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                                         isChecked={isAuto}
                                         onChange={(event) => setIsAuto(event.target.checked)}
                                         isDisabled={isRunning}
+                                        whiteSpace="nowrap"
                                     >
                                         Auto-Save
                                     </Checkbox>
@@ -220,8 +216,8 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
                                 </Flex>
                             </GridItem>
                         </Grid>
-                    </GridItem>
-                </Grid>
+                    </Flex>
+                </Flex>
             </Flex>
 
             <FindReplaceModal
