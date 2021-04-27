@@ -26,7 +26,7 @@ const Move = ({ isOnline }: { isOnline: boolean }) => {
             .catch((err) =>
                 toast({
                     title: 'Something went wrong!',
-                    description: err.Err,
+                    description: err,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,

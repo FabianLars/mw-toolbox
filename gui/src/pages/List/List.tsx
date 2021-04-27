@@ -38,7 +38,7 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
                 .catch((err) =>
                     toast({
                         title: 'Request failed!',
-                        description: err.Err,
+                        description: err,
                         status: 'error',
                         duration: 10000,
                         isClosable: true,

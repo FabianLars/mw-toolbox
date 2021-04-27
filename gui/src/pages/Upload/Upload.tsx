@@ -33,15 +33,15 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
                 const files = res.join('\n');
                 setFiles(files);
             })
-            .catch((err) =>
+            .catch((err) => {
                 toast({
                     title: 'Something went wrong!',
-                    description: err.Err,
+                    description: err,
                     status: 'error',
                     duration: 5000,
                     isClosable: true,
-                }),
-            )
+                });
+            })
             .finally(() => setIsWaiting(false));
     };
 
@@ -61,7 +61,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
             .catch((err) =>
                 toast({
                     title: 'Something went wrong!',
-                    description: err.Err,
+                    description: err,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,

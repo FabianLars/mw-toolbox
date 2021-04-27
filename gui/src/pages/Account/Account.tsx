@@ -56,7 +56,7 @@ const Account = ({ user, setUser }: Props) => {
                 }));
                 toast({
                     title: "Couldn't log in!",
-                    description: err.Err,
+                    description: err,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
