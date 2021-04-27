@@ -148,7 +148,7 @@ pub async fn login(
         username: loginname.clone(),
         url: wikiurl.clone(),
     };
-    // This kinda blocks the ui, but works best for now
+
     let client_res = client.login().await;
 
     if client_res.is_ok() {
