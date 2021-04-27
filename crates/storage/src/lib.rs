@@ -9,8 +9,7 @@ use rand::prelude::*;
 use tokio::{fs::File, io::AsyncWriteExt};
 
 fn path() -> std::path::PathBuf {
-    let mut path = dirs_next::data_local_dir()
-        .expect("Unable to determine local data dir path!");
+    let mut path = dirs_next::data_local_dir().expect("Unable to determine local data dir path!");
 
     path.push("de.fabianlars.mwtoolbox/storage");
 
