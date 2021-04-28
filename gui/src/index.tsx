@@ -3,6 +3,12 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import { ChakraProvider, extendTheme, ThemeConfig } from '@chakra-ui/react';
 
+declare global {
+    interface Window {
+        __TAURI__: {}
+    }
+}
+
 const config: ThemeConfig = {
     useSystemColorMode: false,
     initialColorMode: 'dark',

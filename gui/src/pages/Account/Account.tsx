@@ -77,7 +77,6 @@ const Account = ({ user, setUser }: Props) => {
     };
 
     useEffect(() => {
-        // @ts-ignore
         if (!!window.__TAURI__) {
             if (user.isOnline) {
                 setLgname(user.username);

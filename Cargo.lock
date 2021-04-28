@@ -3083,9 +3083,9 @@ checksum = "1e81da0851ada1f3e9d4312c704aa4f8806f0f9d69faaf8df2f3464b4a9437c2"
 
 [[package]]
 name = "syn"
-version = "1.0.70"
+version = "1.0.71"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b9505f307c872bab8eb46f77ae357c8eba1fdacead58ee5a850116b1d7f82883"
+checksum = "ad184cc9470f9117b2ac6817bfe297307418819ba40552f9b3846f05c33d5373"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3137,7 +3137,7 @@ dependencies = [
 [[package]]
 name = "tauri"
 version = "1.0.0-beta-rc.4"
-source = "git+https://github.com/tauri-apps/tauri?branch=refactor/wry-updates#fe7585324b3bfc78389fbba8e867dd787834a5f8"
+source = "git+https://github.com/tauri-apps/tauri?branch=refactor/wry-updates#b9f519ac499f1a16bf296d32a5e345bc131dc158"
 dependencies = [
  "base64",
  "bytes",
@@ -3176,7 +3176,7 @@ dependencies = [
 [[package]]
 name = "tauri-codegen"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=refactor/wry-updates#fe7585324b3bfc78389fbba8e867dd787834a5f8"
+source = "git+https://github.com/tauri-apps/tauri?branch=refactor/wry-updates#b9f519ac499f1a16bf296d32a5e345bc131dc158"
 dependencies = [
  "blake3",
  "proc-macro2",
@@ -3192,7 +3192,7 @@ dependencies = [
 [[package]]
 name = "tauri-macros"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=refactor/wry-updates#fe7585324b3bfc78389fbba8e867dd787834a5f8"
+source = "git+https://github.com/tauri-apps/tauri?branch=refactor/wry-updates#b9f519ac499f1a16bf296d32a5e345bc131dc158"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3203,7 +3203,7 @@ dependencies = [
 [[package]]
 name = "tauri-utils"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=refactor/wry-updates#fe7585324b3bfc78389fbba8e867dd787834a5f8"
+source = "git+https://github.com/tauri-apps/tauri?branch=refactor/wry-updates#b9f519ac499f1a16bf296d32a5e345bc131dc158"
 dependencies = [
  "phf",
  "proc-macro2",
@@ -3218,9 +3218,9 @@ dependencies = [
 
 [[package]]
 name = "tauri-winit"
-version = "0.24.0"
+version = "0.24.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02d5ed63af8ca000701df8a14d9dc6bc2a1decdecfe610eb4b4b3e08406a77c5"
+checksum = "6ecfd00324375014d3da161ba8ec1d71f1229cc4a8e7c5979ecfeb37b080bb86"
 dependencies = [
  "bitflags",
  "cocoa",
@@ -3952,7 +3952,7 @@ dependencies = [
 [[package]]
 name = "wry"
 version = "0.8.0"
-source = "git+https://github.com/tauri-apps/wry?rev=35d82f908034da4f19763bce360d84fa9abcd739#35d82f908034da4f19763bce360d84fa9abcd739"
+source = "git+https://github.com/tauri-apps/wry?rev=2b3be7a4db2cbc1612c7105cb698c1f21a05da77#2b3be7a4db2cbc1612c7105cb698c1f21a05da77"
 dependencies = [
  "bitflags",
  "cairo-rs",
@@ -3977,6 +3977,7 @@ dependencies = [
  "url",
  "webkit2gtk",
  "webview2",
+ "webview2-sys",
  "winapi",
 ]
 

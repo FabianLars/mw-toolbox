@@ -26,7 +26,6 @@ const App = () => {
     // Init user state from cache or default
     // This exists to handle reloads
     useEffect(() => {
-        // @ts-ignore
         if (!!window.__TAURI__) {
             (invoke('cache_get', {
                 key: 'userObj',
