@@ -5,7 +5,7 @@ import { ChakraProvider, extendTheme, ThemeConfig } from '@chakra-ui/react';
 
 declare global {
     interface Window {
-        __TAURI__: {}
+        __TAURI__: {};
     }
 }
 
