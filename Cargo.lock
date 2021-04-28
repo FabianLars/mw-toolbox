@@ -3218,9 +3218,9 @@ dependencies = [
 
 [[package]]
 name = "tauri-winit"
-version = "0.24.0"
+version = "0.24.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02d5ed63af8ca000701df8a14d9dc6bc2a1decdecfe610eb4b4b3e08406a77c5"
+checksum = "6ecfd00324375014d3da161ba8ec1d71f1229cc4a8e7c5979ecfeb37b080bb86"
 dependencies = [
  "bitflags",
  "cocoa",
