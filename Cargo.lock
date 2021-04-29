@@ -2111,9 +2111,9 @@ dependencies = [
 
 [[package]]
 name = "openssl"
-version = "0.10.33"
+version = "0.10.34"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a61075b62a23fef5a29815de7536d940aa35ce96d18ce0cc5076272db678a577"
+checksum = "6d7830286ad6a3973c0f1d9b73738f69c76b739301d0229c4b96501695cbe4c8"
 dependencies = [
  "bitflags",
  "cfg-if 1.0.0",
@@ -2131,9 +2131,9 @@ checksum = "77af24da69f9d9341038eba93a073b1fdaaa1b788221b00a69bce9e762cb32de"
 
 [[package]]
 name = "openssl-sys"
-version = "0.9.61"
+version = "0.9.62"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "313752393519e876837e09e1fa183ddef0be7735868dced3196f4472d536277f"
+checksum = "fa52160d45fa2e7608d504b7c3a3355afed615e6d8b627a74458634ba21b69bd"
 dependencies = [
  "autocfg",
  "cc",
@@ -2582,9 +2582,9 @@ dependencies = [
 
 [[package]]
 name = "redox_syscall"
-version = "0.2.6"
+version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8270314b5ccceb518e7e578952f0b72b88222d02e8f77f5ecf7abbb673539041"
+checksum = "85dd92e586f7355c633911e11f77f3d12f04b1b1bd76a198bd34ae3af8341ef2"
 dependencies = [
  "bitflags",
 ]
@@ -3137,7 +3137,7 @@ dependencies = [
 [[package]]
 name = "tauri"
 version = "1.0.0-beta-rc.4"
-source = "git+https://github.com/tauri-apps/tauri?branch=refactor/wry-updates#b9f519ac499f1a16bf296d32a5e345bc131dc158"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#252014cae2186083832eb59edec1266e2a21141c"
 dependencies = [
  "base64",
  "bytes",
@@ -3176,7 +3176,7 @@ dependencies = [
 [[package]]
 name = "tauri-codegen"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=refactor/wry-updates#b9f519ac499f1a16bf296d32a5e345bc131dc158"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#252014cae2186083832eb59edec1266e2a21141c"
 dependencies = [
  "blake3",
  "proc-macro2",
@@ -3192,7 +3192,7 @@ dependencies = [
 [[package]]
 name = "tauri-macros"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=refactor/wry-updates#b9f519ac499f1a16bf296d32a5e345bc131dc158"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#252014cae2186083832eb59edec1266e2a21141c"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3203,7 +3203,7 @@ dependencies = [
 [[package]]
 name = "tauri-utils"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=refactor/wry-updates#b9f519ac499f1a16bf296d32a5e345bc131dc158"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#252014cae2186083832eb59edec1266e2a21141c"
 dependencies = [
  "phf",
  "proc-macro2",
@@ -3951,8 +3951,9 @@ dependencies = [
 
 [[package]]
 name = "wry"
-version = "0.8.0"
-source = "git+https://github.com/tauri-apps/wry?rev=2b3be7a4db2cbc1612c7105cb698c1f21a05da77#2b3be7a4db2cbc1612c7105cb698c1f21a05da77"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "636ac78b231f2166b397bd8f126a02d8fa27171b8cc89e2fc8504434dd9d6270"
 dependencies = [
  "bitflags",
  "cairo-rs",
