@@ -25,6 +25,10 @@ fn main() {
     pretty_env_logger::init();
 
     tauri::Builder::default()
+        .manage(std::sync::Mutex::new(cmd::TestState {
+            val: 0,
+            st: "test".to_string(),
+        }))
         .invoke_handler(tauri::generate_handler![
             cmd::cache_get,
             cmd::cache_set,
@@ -40,7 +44,8 @@ fn main() {
             cmd::r#move,
             cmd::purge,
             cmd::upload_dialog,
-            cmd::upload
+            cmd::upload,
+            cmd::test
         ])
         .run(tauri::generate_context!())
         .expect("error while running application");

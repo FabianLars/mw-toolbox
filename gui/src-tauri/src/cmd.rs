@@ -243,3 +243,18 @@ pub async fn upload(text: String) -> Result<(), String> {
     .await
     .map_err(|err| err.to_string())
 }
+
+#[derive(Debug)]
+pub struct TestState {
+    pub val: usize,
+    pub st: String,
+}
+
+#[command]
+pub async fn test(arg: String, state: tauri::State<'_, std::sync::Mutex<TestState>>) {
+    let mut lock = state.lock().unwrap();
+    lock.val += 1;
+    lock.st = arg;
+
+    println!("{:?} {:?}", state.inner(), &lock);
+}
