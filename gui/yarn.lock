@@ -5911,24 +5911,10 @@ vary@^1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
-vite-web-test-runner-plugin@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/vite-web-test-runner-plugin/-/vite-web-test-runner-plugin-0.0.2.tgz#0e52a74ee7d326889536cb3b417b13d0cefb7963"
-  integrity sha512-4Z6YIdd5+CNsKYvN5D5unUWzFA9HgxmblebLJHIkn6QgWaLBYbxkZwpAdfbDYcr5zQ9b9umvqjOPl1H7OaWNCA==
-  dependencies:
-    vite "^2.1.2"
-
-vite@^2.1.2:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-2.2.2.tgz#9ad2063929ecd632f16dc9471217e26992938aad"
-  integrity sha512-Y0IMdu+YuKsisJPk6NaEwEQC7FFfLQSN97ZTE4gvrELrk8dGjTFslhNCG8wkdzMSLCzfOdpCMT8cPXAhqzkPfg==
-  dependencies:
-    esbuild "^0.9.3"
-    postcss "^8.2.1"
-    resolve "^1.19.0"
-    rollup "^2.38.5"
-  optionalDependencies:
-    fsevents "~2.3.1"
+vite-web-test-runner-plugin@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/vite-web-test-runner-plugin/-/vite-web-test-runner-plugin-0.0.3.tgz#a9da0d6a96ae24b32ae1b273986cd6b8109865d1"
+  integrity sha512-x1rNa67X8pirE3mmc36x/hLNFeM4PVSzQ/lyWIXcn/AhyuqYqDaQQ0rFBS8RR1SMIrS5JctKBqHGS819XktuGA==
 
 vite@^2.2.3:
   version "2.2.3"
