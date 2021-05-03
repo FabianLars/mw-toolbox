@@ -3,7 +3,7 @@
         "distDir": "../build",
         "devPath": "http://localhost:3000",
         "beforeDevCommand": "",
-        "beforeBuildCommand": "mkdir build; yarn build"
+        "beforeBuildCommand": "mkdirp build && yarn build"
     },
     "tauri": {
         "bundle": {
@@ -30,6 +30,8 @@
         "windows": [
             {
                 "title": "mw-toolbox by FabianLars",
+                "width": 1280,
+                "height": 720,
                 "minWidth": 1280,
                 "minHeight": 720,
                 "resizable": true
