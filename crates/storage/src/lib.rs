@@ -1,5 +1,7 @@
 #![forbid(unsafe_code)]
 
+pub mod blocking;
+
 use std::collections::BTreeMap;
 
 use anyhow::{anyhow, Result};
