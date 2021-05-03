@@ -2968,6 +2968,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "state"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3015a7d0a5fd5105c91c3710d42f9ccf0abfb287d62206484dcc67f9569a6483"
+
+[[package]]
 name = "stdweb"
 version = "0.4.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3146,7 +3152,7 @@ dependencies = [
 [[package]]
 name = "tauri"
 version = "1.0.0-beta-rc.4"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#df8bdcf0631fd4e1e7035eb20a954574da96de66"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#1d6f41812925142eb40f1908d2498880ab4a6266"
 dependencies = [
  "base64",
  "bytes",
@@ -3170,6 +3176,7 @@ dependencies = [
  "serde_json",
  "serde_repr",
  "shared_child",
+ "state",
  "tar",
  "tauri-macros",
  "tauri-utils",
@@ -3185,7 +3192,7 @@ dependencies = [
 [[package]]
 name = "tauri-codegen"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#df8bdcf0631fd4e1e7035eb20a954574da96de66"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#1d6f41812925142eb40f1908d2498880ab4a6266"
 dependencies = [
  "blake3",
  "proc-macro2",
@@ -3201,7 +3208,7 @@ dependencies = [
 [[package]]
 name = "tauri-macros"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#df8bdcf0631fd4e1e7035eb20a954574da96de66"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#1d6f41812925142eb40f1908d2498880ab4a6266"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3212,7 +3219,7 @@ dependencies = [
 [[package]]
 name = "tauri-utils"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#df8bdcf0631fd4e1e7035eb20a954574da96de66"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#1d6f41812925142eb40f1908d2498880ab4a6266"
 dependencies = [
  "phf",
  "proc-macro2",
