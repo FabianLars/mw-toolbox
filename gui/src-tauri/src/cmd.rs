@@ -1,12 +1,10 @@
-use std::sync::atomic::Ordering;
-
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::command;
 
 use mw_tools::api;
 
-use crate::{SavedState, CACHE, CLIENT, FILES_HELPER, INIT, SAVED_STATE};
+use crate::{SavedState, CACHE, CLIENT, FILES_HELPER, SAVED_STATE};
 
 #[derive(Debug, Serialize)]
 pub struct LoginResponse {
@@ -101,12 +99,7 @@ pub async fn get_page(page: String, patterns: Vec<FindReplace>) -> Result<String
 
 #[command]
 pub async fn init() -> Result<SavedState, String> {
-    let mut locked_state = SAVED_STATE.lock().await;
-    if !INIT.load(Ordering::Relaxed) {
-        let saved_state = SavedState::load().await.unwrap_or_default();
-        *locked_state = saved_state;
-        INIT.store(true, Ordering::Relaxed);
-    }
+    let locked_state = SAVED_STATE.lock().await;
     Ok(locked_state.clone())
 }
 
@@ -175,7 +168,7 @@ pub async fn login(
         password,
         is_persistent,
     }
-    .save()
+    .save_async()
     .await;
 
     match save_res {

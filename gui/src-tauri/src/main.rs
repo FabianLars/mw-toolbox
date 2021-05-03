@@ -18,8 +18,7 @@ static CLIENT: Lazy<Mutex<WikiClient>> = Lazy::new(|| Mutex::new(WikiClient::new
 static CACHE: Lazy<Mutex<HashMap<String, serde_json::Value>>> =
     Lazy::new(|| Mutex::new(HashMap::new()));
 static FILES_HELPER: Lazy<Mutex<Vec<PathBuf>>> = Lazy::new(|| Mutex::new(Vec::new()));
-static INIT: AtomicBool = AtomicBool::new(false);
-static SAVED_STATE: Lazy<Mutex<SavedState>> = Lazy::new(|| Mutex::new(SavedState::default()));
+static SAVED_STATE: Lazy<Mutex<SavedState>> = Lazy::new(|| Mutex::new(SavedState::load()));
 
 fn main() {
     pretty_env_logger::init();
@@ -61,32 +60,34 @@ pub struct SavedState {
 }
 
 impl SavedState {
-    async fn load() -> Result<SavedState, ()> {
-        let loginname = storage::get_secure("b9c95dde").await.unwrap_or_default();
-        let password = storage::get_secure("d7f0942b").await.unwrap_or_default();
-        let wikiurl = storage::get("wikiurl").await.unwrap_or_default();
-        let is_persistent = storage::get("is_persistent")
-            .await
-            .unwrap_or_else(|_| String::from("false"))
-            .parse::<bool>()
-            .unwrap_or(false);
+    async fn save_async(self) -> Result<(), anyhow::Error> {
+        use storage::*;
 
-        let s = Self {
-            wikiurl,
-            loginname,
-            password,
-            is_persistent,
-        };
-        Ok(s)
-    }
-
-    async fn save(self) -> Result<(), anyhow::Error> {
-        storage::insert_multiple(&[
-            ("b9c95dde", storage::encrypt(&self.loginname)?.as_slice()),
-            ("d7f0942b", storage::encrypt(&self.password)?.as_slice()),
+        insert_multiple(&[
+            ("b9c95dde", encrypt(&self.loginname)?.as_slice()),
+            ("d7f0942b", encrypt(&self.password)?.as_slice()),
             ("wikiurl", self.wikiurl.as_bytes()),
             ("is_persistent", self.is_persistent.to_string().as_bytes()),
         ])
         .await
+    }
+
+    fn load() -> SavedState {
+        use storage::blocking::*;
+
+        let loginname = get_secure("b9c95dde").unwrap_or_default();
+        let password = get_secure("d7f0942b").unwrap_or_default();
+        let wikiurl = get("wikiurl").unwrap_or_default();
+        let is_persistent = get("is_persistent")
+            .unwrap_or_else(|_| String::from("false"))
+            .parse::<bool>()
+            .unwrap_or(false);
+
+        Self {
+            wikiurl,
+            loginname,
+            password,
+            is_persistent,
+        }
     }
 }
