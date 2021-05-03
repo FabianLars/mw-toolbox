@@ -38,7 +38,7 @@ const Account = ({ user, setUser }: Props) => {
             loginname: lgname,
             password: lgpasswd,
             wikiurl: apiUrl,
-            isPersistent: persistent,
+            is_persistent: persistent,
         }) as Promise<{ username: string; url: string }>)
             .then((res) => {
                 setUser({

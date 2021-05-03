@@ -3,11 +3,11 @@
     windows_subsystem = "windows"
 )]
 
-use std::{collections::HashMap, path::PathBuf, sync::atomic::AtomicBool};
+use std::{collections::HashMap, path::PathBuf};
 
 use once_cell::sync::Lazy;
 use serde::Serialize;
-use tokio::sync::Mutex;
+use tokio::sync::{Mutex, OnceCell};
 
 use mw_tools::WikiClient;
 
@@ -18,7 +18,7 @@ static CLIENT: Lazy<Mutex<WikiClient>> = Lazy::new(|| Mutex::new(WikiClient::new
 static CACHE: Lazy<Mutex<HashMap<String, serde_json::Value>>> =
     Lazy::new(|| Mutex::new(HashMap::new()));
 static FILES_HELPER: Lazy<Mutex<Vec<PathBuf>>> = Lazy::new(|| Mutex::new(Vec::new()));
-static SAVED_STATE: Lazy<Mutex<SavedState>> = Lazy::new(|| Mutex::new(SavedState::load()));
+static SAVED_STATE: OnceCell<Mutex<SavedState>> = OnceCell::const_new();
 
 fn main() {
     pretty_env_logger::init();
@@ -60,7 +60,7 @@ pub struct SavedState {
 }
 
 impl SavedState {
-    async fn save_async(self) -> Result<(), anyhow::Error> {
+    async fn save(self) -> Result<(), anyhow::Error> {
         use storage::*;
 
         insert_multiple(&[
@@ -72,13 +72,14 @@ impl SavedState {
         .await
     }
 
-    fn load() -> SavedState {
-        use storage::blocking::*;
+    async fn load() -> SavedState {
+        use storage::*;
 
-        let loginname = get_secure("b9c95dde").unwrap_or_default();
-        let password = get_secure("d7f0942b").unwrap_or_default();
-        let wikiurl = get("wikiurl").unwrap_or_default();
+        let loginname = get_secure("b9c95dde").await.unwrap_or_default();
+        let password = get_secure("d7f0942b").await.unwrap_or_default();
+        let wikiurl = get("wikiurl").await.unwrap_or_default();
         let is_persistent = get("is_persistent")
+            .await
             .unwrap_or_else(|_| String::from("false"))
             .parse::<bool>()
             .unwrap_or(false);

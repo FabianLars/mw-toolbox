@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::command;
+use tokio::sync::Mutex;
 
 use mw_tools::api;
 
@@ -99,7 +100,11 @@ pub async fn get_page(page: String, patterns: Vec<FindReplace>) -> Result<String
 
 #[command]
 pub async fn init() -> Result<SavedState, String> {
-    let locked_state = SAVED_STATE.lock().await;
+    let locked_state = SAVED_STATE
+        .get_or_init(|| async { Mutex::new(SavedState::load().await) })
+        .await
+        .lock()
+        .await;
     Ok(locked_state.clone())
 }
 
@@ -145,7 +150,7 @@ pub async fn login(
     let client_res = client.login().await;
 
     if client_res.is_ok() {
-        *SAVED_STATE.lock().await = SavedState {
+        *SAVED_STATE.get().unwrap().lock().await = SavedState {
             wikiurl: wikiurl.clone(),
             loginname: loginname.clone(),
             password: password.clone(),
@@ -168,7 +173,7 @@ pub async fn login(
         password,
         is_persistent,
     }
-    .save_async()
+    .save()
     .await;
 
     match save_res {
