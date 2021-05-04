@@ -97,8 +97,8 @@ pub async fn get_page(page: String, patterns: Vec<FindReplace>) -> Result<String
 }
 
 #[command]
-pub async fn init() -> Result<SavedState, String> {
-    Ok(SavedState::load().await)
+pub async fn init() -> SavedState {
+    SavedState::load().await
 }
 
 #[command]

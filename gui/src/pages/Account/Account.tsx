@@ -89,14 +89,12 @@ const Account = ({ user, setUser }: Props) => {
                     loginname: string;
                     password: string;
                     isPersistent: boolean;
-                }>)
-                    .then(({ wikiurl, loginname, password, isPersistent }) => {
-                        if (wikiurl !== '') setApiUrl(wikiurl);
-                        setLgname(loginname);
-                        setLgpasswd(password);
-                        setPersistent(isPersistent);
-                    })
-                    .catch(console.error);
+                }>).then(({ wikiurl, loginname, password, isPersistent }) => {
+                    if (wikiurl !== '') setApiUrl(wikiurl);
+                    setLgname(loginname);
+                    setLgpasswd(password);
+                    setPersistent(isPersistent);
+                });
             }
         }
     }, []);
