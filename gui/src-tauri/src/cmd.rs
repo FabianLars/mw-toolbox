@@ -3,11 +3,10 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::command;
-use tokio::sync::Mutex;
 
 use mw_tools::api;
 
-use crate::{SavedState, CLIENT, SAVED_STATE};
+use crate::{SavedState, CLIENT};
 
 type Cache = parking_lot::Mutex<HashMap<String, Value>>;
 
@@ -99,12 +98,7 @@ pub async fn get_page(page: String, patterns: Vec<FindReplace>) -> Result<String
 
 #[command]
 pub async fn init() -> Result<SavedState, String> {
-    let locked_state = SAVED_STATE
-        .get_or_init(|| async { Mutex::new(SavedState::load().await) })
-        .await
-        .lock()
-        .await;
-    Ok(locked_state.clone())
+    Ok(SavedState::load().await)
 }
 
 #[command]
@@ -148,22 +142,14 @@ pub async fn login(
 
     let client_res = client.login().await;
 
-    if client_res.is_ok() {
-        *SAVED_STATE.get().unwrap().lock().await = SavedState {
-            wikiurl: wikiurl.clone(),
-            loginname: loginname.clone(),
-            password: password.clone(),
-            is_persistent,
-        }
+    if client_res.is_err() {
+        return Err(client_res.unwrap_err().to_string());
     }
 
-    let loginname = match is_persistent {
-        true => loginname,
-        false => String::new(),
-    };
-    let password = match is_persistent {
-        true => password,
-        false => String::new(),
+    let (loginname, password) = if is_persistent {
+        (loginname, password)
+    } else {
+        ("".to_string(), "".to_string())
     };
 
     let save_res = SavedState {
@@ -175,10 +161,9 @@ pub async fn login(
     .save()
     .await;
 
-    match save_res {
-        Ok(_) => Ok(callback_val),
-        Err(err) => Err(err.to_string()),
-    }
+    save_res
+        .and(Ok(callback_val))
+        .map_err(|err| err.to_string())
 }
 
 #[command]

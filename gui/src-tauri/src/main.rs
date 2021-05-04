@@ -3,12 +3,12 @@
     windows_subsystem = "windows"
 )]
 
-use std::{collections::HashMap, path::PathBuf};
+use std::collections::HashMap;
 
 use once_cell::sync::Lazy;
 use serde::Serialize;
 use serde_json::Value;
-use tokio::sync::{Mutex, OnceCell};
+use tokio::sync::Mutex;
 
 use mw_tools::WikiClient;
 
@@ -16,7 +16,6 @@ mod cmd;
 
 // There is nothing we can do if init fails, so let's panic in the disco.
 static CLIENT: Lazy<Mutex<WikiClient>> = Lazy::new(|| Mutex::new(WikiClient::new().unwrap()));
-static SAVED_STATE: OnceCell<Mutex<SavedState>> = OnceCell::const_new();
 
 fn main() {
     pretty_env_logger::init();
