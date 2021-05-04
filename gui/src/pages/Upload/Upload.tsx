@@ -120,7 +120,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
                 <Box>
                     <Button
                         mx={2}
-                        isDisabled={isWaiting || !isOnline}
+                        isDisabled={isWaiting || !isOnline || !files}
                         isLoading={isUploading}
                         onClick={startUpload}
                         title={!isOnline ? 'Please login first!' : 'This might take a while!'}
