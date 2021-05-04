@@ -1674,6 +1674,7 @@ dependencies = [
  "anyhow",
  "mw-tools",
  "once_cell",
+ "parking_lot",
  "pretty_env_logger",
  "regex",
  "reqwest",
@@ -2838,9 +2839,9 @@ checksum = "1e81da0851ada1f3e9d4312c704aa4f8806f0f9d69faaf8df2f3464b4a9437c2"
 
 [[package]]
 name = "syn"
-version = "1.0.71"
+version = "1.0.72"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad184cc9470f9117b2ac6817bfe297307418819ba40552f9b3846f05c33d5373"
+checksum = "a1e8cdbefb79a9a5a65e0db8b47b723ee907b7c7f8496c76a1770b5c310bab82"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2881,7 +2882,7 @@ dependencies = [
 [[package]]
 name = "tao"
 version = "0.1.0"
-source = "git+https://github.com/wusyong/tao?branch=dev#7f5772ec0f28cbaf296596b1d13e4ac856128c76"
+source = "git+https://github.com/wusyong/tao?branch=dev#f87d01faf3491cbd83248df37d53fc2a0f3de323"
 dependencies = [
  "bitflags",
  "cairo-rs",
@@ -2924,7 +2925,7 @@ dependencies = [
 [[package]]
 name = "tauri"
 version = "1.0.0-beta-rc.4"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#2122ae61fa51d3698908095271d6c69889ab8f78"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#2b4e2b7560515b76002d0c724bcca1f470ed106f"
 dependencies = [
  "base64",
  "bytes",
@@ -2964,7 +2965,7 @@ dependencies = [
 [[package]]
 name = "tauri-codegen"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#2122ae61fa51d3698908095271d6c69889ab8f78"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#2b4e2b7560515b76002d0c724bcca1f470ed106f"
 dependencies = [
  "blake3",
  "proc-macro2",
@@ -2980,7 +2981,7 @@ dependencies = [
 [[package]]
 name = "tauri-macros"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#2122ae61fa51d3698908095271d6c69889ab8f78"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#2b4e2b7560515b76002d0c724bcca1f470ed106f"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2991,7 +2992,7 @@ dependencies = [
 [[package]]
 name = "tauri-utils"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#2122ae61fa51d3698908095271d6c69889ab8f78"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#2b4e2b7560515b76002d0c724bcca1f470ed106f"
 dependencies = [
  "phf",
  "proc-macro2",

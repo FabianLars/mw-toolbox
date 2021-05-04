@@ -7,6 +7,7 @@ use std::{collections::HashMap, path::PathBuf};
 
 use once_cell::sync::Lazy;
 use serde::Serialize;
+use serde_json::Value;
 use tokio::sync::{Mutex, OnceCell};
 
 use mw_tools::WikiClient;
@@ -15,19 +16,14 @@ mod cmd;
 
 // There is nothing we can do if init fails, so let's panic in the disco.
 static CLIENT: Lazy<Mutex<WikiClient>> = Lazy::new(|| Mutex::new(WikiClient::new().unwrap()));
-static CACHE: Lazy<Mutex<HashMap<String, serde_json::Value>>> =
-    Lazy::new(|| Mutex::new(HashMap::new()));
-static FILES_HELPER: Lazy<Mutex<Vec<PathBuf>>> = Lazy::new(|| Mutex::new(Vec::new()));
 static SAVED_STATE: OnceCell<Mutex<SavedState>> = OnceCell::const_new();
 
 fn main() {
     pretty_env_logger::init();
 
     tauri::Builder::default()
-        .manage(std::sync::Mutex::new(cmd::TestState {
-            val: 0,
-            st: "test".to_string(),
-        }))
+        .manage(Mutex::new(Vec::<PathBuf>::new()))
+        .manage(parking_lot::Mutex::new(HashMap::<String, Value>::new()))
         .invoke_handler(tauri::generate_handler![
             cmd::cache_get,
             cmd::cache_set,
@@ -43,8 +39,7 @@ fn main() {
             cmd::r#move,
             cmd::purge,
             cmd::upload_dialog,
-            cmd::upload,
-            cmd::test
+            cmd::upload
         ])
         .run(tauri::generate_context!())
         .expect("error while running application");
