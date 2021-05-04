@@ -39,9 +39,8 @@ pub fn cache_get(key: String, cache: tauri::State<'_, Cache>) -> Option<Value> {
 }
 
 #[command]
-pub fn cache_set(key: String, value: Value, cache: tauri::State<'_, Cache>) -> Result<bool, ()> {
-    let updated = cache.lock().insert(key, value).is_some();
-    Ok(updated)
+pub fn cache_set(key: String, value: Value, cache: tauri::State<'_, Cache>) -> bool {
+    cache.lock().insert(key, value).is_some()
 }
 
 #[command]

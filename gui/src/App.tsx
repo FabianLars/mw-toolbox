@@ -55,7 +55,7 @@ const App = () => {
             invoke('cache_set', {
                 key: 'userObj',
                 value: user,
-            }).catch(console.error);
+            });
         } else {
             mounted.current = true;
         }

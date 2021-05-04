@@ -33,7 +33,7 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
                 .then((res) => {
                     const output = res.join('\n');
                     setListOutput(output);
-                    invoke('cache_set', { key: 'list-cache', value: output }).catch(console.error);
+                    invoke('cache_set', { key: 'list-cache', value: output });
                 })
                 .catch((err) =>
                     toast({
@@ -49,7 +49,7 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     const clearOutput = () => {
-        invoke('cache_set', { key: 'list-cache', value: '' }).catch(console.error);
+        invoke('cache_set', { key: 'list-cache', value: '' });
         setListOutput('');
     };
 

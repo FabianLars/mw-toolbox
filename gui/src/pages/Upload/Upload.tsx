@@ -21,7 +21,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
     const toast = useToast();
 
     const clearList = () => {
-        invoke('cache_set', { key: 'files-cache', value: '' }).catch(console.error);
+        invoke('cache_set', { key: 'files-cache', value: '' });
         setFiles([]);
     };
 
@@ -30,7 +30,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
         (open({ multiple: true, directory: false }) as Promise<string[]>)
             .then((res) => {
                 setFiles(res);
-                invoke('cache_set', { key: 'files-cache', value: res }).catch(console.error);
+                invoke('cache_set', { key: 'files-cache', value: res });
             })
             .catch((err) => {
                 toast({
