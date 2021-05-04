@@ -1678,7 +1678,6 @@ dependencies = [
  "pretty_env_logger",
  "regex",
  "reqwest",
- "rfd",
  "serde",
  "serde_json",
  "storage",

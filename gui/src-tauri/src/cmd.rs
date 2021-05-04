@@ -1,4 +1,4 @@
-use std::{collections::HashMap, path::PathBuf};
+use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -10,7 +10,6 @@ use mw_tools::api;
 use crate::{SavedState, CLIENT, SAVED_STATE};
 
 type Cache = parking_lot::Mutex<HashMap<String, Value>>;
-type Files = Mutex<Vec<PathBuf>>;
 
 #[derive(Debug, Serialize)]
 pub struct LoginResponse {
@@ -31,7 +30,7 @@ pub struct FindReplace {
 // TODO: Use actual errors instead of error strings
 
 #[command]
-pub async fn cache_get(key: String, cache: tauri::State<'_, Cache>) -> Option<Value> {
+pub fn cache_get(key: String, cache: tauri::State<'_, Cache>) -> Option<Value> {
     if let Some(v) = cache.lock().get(&key) {
         let v = v.to_owned();
         Some(v)
@@ -41,18 +40,9 @@ pub async fn cache_get(key: String, cache: tauri::State<'_, Cache>) -> Option<Va
 }
 
 #[command]
-pub async fn cache_set(
-    key: String,
-    value: Value,
-    cache: tauri::State<'_, Cache>,
-) -> Result<bool, ()> {
+pub fn cache_set(key: String, value: Value, cache: tauri::State<'_, Cache>) -> Result<bool, ()> {
     let updated = cache.lock().insert(key, value).is_some();
     Ok(updated)
-}
-
-#[command]
-pub async fn clear_files(files: tauri::State<'_, Files>) {
-    files.lock().await.clear();
 }
 
 #[command]
@@ -227,22 +217,8 @@ pub async fn purge(is_nulledit: bool, pages: Vec<String>) -> Result<(), String> 
 }
 
 #[command]
-pub async fn upload_dialog(files: tauri::State<'_, Files>) -> Result<Vec<String>, String> {
-    let result = rfd::FileDialog::new().pick_files();
-
-    if let Some(selected_files) = result {
-        let mut files = files.lock().await;
-        *files = selected_files;
-        let arr: Vec<String> = files.iter().map(|x| x.display().to_string()).collect();
-        Ok(arr)
-    } else {
-        Err("No files selected".to_string())
-    }
-}
-
-#[command]
-pub async fn upload(text: String, files: tauri::State<'_, Files>) -> Result<(), String> {
-    api::upload::upload_multiple(&*CLIENT.lock().await, &*files.lock().await, Some(text))
+pub async fn upload(text: String, files: Vec<String>) -> Result<(), String> {
+    api::upload::upload_multiple(&*CLIENT.lock().await, &files, Some(text))
         .await
         .map_err(|err| err.to_string())
 }

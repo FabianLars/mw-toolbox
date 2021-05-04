@@ -25,7 +25,11 @@
             "longDescription": "mw-toolbox GUI"
         },
         "allowlist": {
-            "all": false
+            "all": false,
+            "dialog": {
+                "all": false,
+                "open": true
+            }
         },
         "windows": [
             {

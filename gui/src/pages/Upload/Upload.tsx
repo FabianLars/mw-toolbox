@@ -10,28 +10,27 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
+import { open } from '@tauri-apps/api/dialog';
 import { Header } from '../../components';
 
 const Upload = ({ isOnline }: { isOnline: boolean }) => {
     const [isUploading, setIsUploading] = useState(false);
     const [isWaiting, setIsWaiting] = useState(false);
     const [uploadtext, setUploadtext] = useState('');
-    const [files, setFiles] = useState('');
+    const [files, setFiles] = useState<string[]>([]);
     const toast = useToast();
 
     const clearList = () => {
-        invoke('clear_files').catch(console.error);
         invoke('cache_set', { key: 'files-cache', value: '' }).catch(console.error);
-        setFiles('');
+        setFiles([]);
     };
 
     const openDialog = () => {
         setIsWaiting(true);
-        (invoke('upload_dialog') as Promise<string[]>)
+        (open({ multiple: true, directory: false }) as Promise<string[]>)
             .then((res) => {
-                const files = res.join('\n');
-                setFiles(files);
-                invoke('cache_set', { key: 'files-cache', value: files }).catch(console.error);
+                setFiles(res);
+                invoke('cache_set', { key: 'files-cache', value: res }).catch(console.error);
             })
             .catch((err) => {
                 toast({
@@ -49,6 +48,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
         setIsUploading(true);
         (invoke('upload', {
             text: uploadtext,
+            files,
         }) as Promise<null>)
             .then(() =>
                 toast({
@@ -71,8 +71,8 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     useEffect(() => {
-        (invoke('cache_get', { key: 'files-cache' }) as Promise<string | null>).then((res) =>
-            setFiles(res ?? ''),
+        (invoke('cache_get', { key: 'files-cache' }) as Promise<string[] | null>).then((res) =>
+            setFiles(res ?? []),
         );
         (invoke('cache_get', { key: 'uploadtext-cache' }) as Promise<string | null>).then((res) =>
             setUploadtext(res ?? ''),
@@ -131,7 +131,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
             </Flex>
             <Textarea
                 resize="none"
-                value={files}
+                value={files.join('\n')}
                 isReadOnly
                 placeholder="Selected files will be displayed here."
                 flex="1"

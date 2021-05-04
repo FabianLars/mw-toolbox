@@ -22,12 +22,10 @@ fn main() {
     pretty_env_logger::init();
 
     tauri::Builder::default()
-        .manage(Mutex::new(Vec::<PathBuf>::new()))
         .manage(parking_lot::Mutex::new(HashMap::<String, Value>::new()))
         .invoke_handler(tauri::generate_handler![
             cmd::cache_get,
             cmd::cache_set,
-            cmd::clear_files,
             cmd::delete,
             cmd::download,
             cmd::edit,
@@ -38,7 +36,6 @@ fn main() {
             cmd::logout,
             cmd::r#move,
             cmd::purge,
-            cmd::upload_dialog,
             cmd::upload
         ])
         .run(tauri::generate_context!())
