@@ -14,6 +14,7 @@ pub async fn nulledit<C: AsRef<WikiClient>, S: AsRef<str>>(
                 ("summary", "Nulledit (broken if visible in RecentChanges)"),
                 ("notminor", "true"),
                 ("prependtext", ""),
+                ("nocreate", ""),
                 ("title", title.as_ref()),
             ])
             .await?;
