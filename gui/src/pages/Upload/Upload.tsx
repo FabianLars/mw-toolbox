@@ -10,7 +10,6 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
-import { emit } from '@tauri-apps/api/event';
 import { Header } from '../../components';
 
 const Upload = ({ isOnline }: { isOnline: boolean }) => {
@@ -21,7 +20,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
     const toast = useToast();
 
     const clearList = () => {
-        emit('clear-files').catch(console.error);
+        invoke('clear_files').catch(console.error);
         invoke('cache_set', { key: 'files-cache', value: '' }).catch(console.error);
         setFiles('');
     };
@@ -32,6 +31,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
             .then((res) => {
                 const files = res.join('\n');
                 setFiles(files);
+                invoke('cache_set', { key: 'files-cache', value: files }).catch(console.error);
             })
             .catch((err) => {
                 toast({
