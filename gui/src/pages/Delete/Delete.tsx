@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Header } from '../../components';
 
@@ -32,10 +32,6 @@ const Delete = ({ isOnline }: { isOnline: boolean }) => {
             )
             .finally(() => setIsLoading(false));
     };
-
-    useEffect(() => {
-        invoke('test', { arg: 'hello there' }).then(console.log);
-    }, []);
 
     return (
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
