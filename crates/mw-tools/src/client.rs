@@ -157,6 +157,7 @@ impl WikiClient {
             .query(parameters)
             .send()
             .await
+            .and_then(|res| res.error_for_status())
             .map_err(|source| ToolsError::RequestFailed { source })
     }
 
@@ -189,8 +190,6 @@ impl WikiClient {
             parameters.to_vec()
         };
 
-        //is_send(self.client.post("https://google.com/").send());
-
         self.client
             .post(&self.url)
             .query(&[
@@ -201,6 +200,7 @@ impl WikiClient {
             .form(&parameters)
             .send()
             .await
+            .and_then(|res| res.error_for_status())
             .map_err(|source| ToolsError::RequestFailed { source })
     }
 

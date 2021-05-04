@@ -8,11 +8,11 @@ pub enum ToolsError {
     #[error(transparent)]
     IoError(#[from] std::io::Error),
 
-    #[error("Error executing request.")]
+    #[error("Error executing request. {source}")]
     RequestFailed { source: reqwest::Error },
-    #[error("Error extracting body as text.")]
+    #[error("Error extracting body as text. {source}")]
     TextConversionFailed { source: reqwest::Error },
-    #[error("Error extracting body as json.")]
+    #[error("Error extracting body as json. {source}")]
     JsonConversionFailed { source: reqwest::Error },
     #[error(transparent)]
     ReqwestError(#[from] reqwest::Error),
