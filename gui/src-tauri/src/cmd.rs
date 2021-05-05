@@ -118,10 +118,7 @@ pub async fn list(listtype: String, param: Option<String>) -> Result<Vec<String>
         "allinfoboxes" => api::list::allinfoboxes(&*client).await,
         _ => api::list::allimages(&*client).await,
     };
-    match res {
-        Ok(list) => Ok(list),
-        Err(err) => Err(err.to_string()),
-    }
+    res.map_err(|err| err.to_string())
 }
 
 #[command]
@@ -191,13 +188,12 @@ pub async fn r#move(from: Vec<String>, to: Vec<String>) -> Result<(), String> {
 #[command]
 pub async fn purge(is_nulledit: bool, pages: Vec<String>) -> Result<(), String> {
     let client = CLIENT.lock().await;
-    match match is_nulledit {
-        true => api::edit::nulledit(&*client, &pages[..]).await,
-        false => api::purge::purge(&*client, &pages[..], true).await,
-    } {
-        Ok(_) => Ok(()),
-        Err(err) => Err(err.to_string()),
+    if is_nulledit {
+        api::edit::nulledit(&*client, &pages[..]).await
+    } else {
+        api::purge::purge(&*client, &pages[..], true).await
     }
+    .map_err(|err| err.to_string())
 }
 
 #[command]

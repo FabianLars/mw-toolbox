@@ -39,13 +39,11 @@ pub async fn rename<C: AsRef<WikiClient>>(
 
     if prepend.is_some() || append.is_some() {
         actual_destination.iter_mut().for_each(|x| {
-            match &prepend {
-                Some(p) => x.insert_str(0, p),
-                None => (),
+            if let Some(p) = &prepend {
+                x.insert_str(0, p)
             }
-            match &append {
-                Some(a) => x.push_str(a),
-                None => (),
+            if let Some(a) = &prepend {
+                x.push_str(a)
             }
         });
     }

@@ -110,10 +110,7 @@ pub async fn insert_multiple<T: AsRef<[u8]>>(data: &[(&str, T)]) -> Result<()> {
     }
 
     let loaded = load().await;
-    map = match loaded {
-        Ok(c) => c,
-        _ => BTreeMap::new(),
-    };
+    map = loaded.unwrap_or_default();
 
     for (k, v) in data {
         map.insert(k.to_string(), v.as_ref().to_vec());

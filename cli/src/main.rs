@@ -197,9 +197,10 @@ async fn main() -> Result<()> {
                 }
             });
 
-            let to = match to.is_empty() {
-                true => replace.map(|x| Destination::Replace((x[0].clone(), x[1].clone()))),
-                false => Some(Destination::Plain(to)),
+            let to = if to.is_empty() {
+                replace.map(|x| Destination::Replace((x[0].clone(), x[1].clone())))
+            } else {
+                Some(Destination::Plain(to))
             };
             api::rename::rename(&client, from, to, prepend, append).await?
         }

@@ -9,20 +9,15 @@ pub async fn upload<C: AsRef<WikiClient>, P: AsRef<Path>, S: Into<String>>(
 ) -> Result<String, ToolsError> {
     let client = client.as_ref();
     let file = file.as_ref();
-    let text = match text {
-        Some(s) => s.into(),
-        None => "".to_string(),
-    };
+    let text = text.map_or_else(|| "".into(), |s| s.into());
 
-    let file_name = match file.file_name() {
-        Some(name) => name.to_string_lossy().to_string(),
-        None => {
-            return Err(ToolsError::InvalidInput(format!(
-                "Invalid file name: {:?}",
-                file.display()
-            )));
-        }
-    };
+    let file_name = file
+        .file_name()
+        .and_then(|f| f.to_str())
+        .ok_or_else(|| {
+            ToolsError::InvalidInput(format!("Invalid file name: {:?}", file.display()))
+        })?
+        .to_string();
 
     let file_content = tokio::fs::read(file).await?;
     let part = reqwest::multipart::Part::bytes(file_content).file_name(file_name.clone());
