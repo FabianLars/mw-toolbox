@@ -436,6 +436,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "245097e9a4535ee1e3e3931fcfcd55a796a44c643e8596ff6566d68f09b87bbc"
 
 [[package]]
+name = "convert_case"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6245d59a3e82a7fc217c5828a6692dbc6dfb63a0c8c90495621f7b9d79704a0e"
+
+[[package]]
 name = "cookie"
 version = "0.14.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -615,6 +621,33 @@ dependencies = [
 ]
 
 [[package]]
+name = "cssparser"
+version = "0.27.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "754b69d351cdc2d8ee09ae203db831e005560fc6030da058f86ad60c92a9cb0a"
+dependencies = [
+ "cssparser-macros",
+ "dtoa-short",
+ "itoa",
+ "matches",
+ "phf",
+ "proc-macro2",
+ "quote",
+ "smallvec",
+ "syn",
+]
+
+[[package]]
+name = "cssparser-macros"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dfae75de57f2b2e85e8768c3ea840fd159c8f33e2b6522c7835b7abac81be16e"
+dependencies = [
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "darling"
 version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -665,6 +698,18 @@ version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fcc3dd5e9e9c0b295d6e1e4d811fb6f157d5ffd784b8d202fc62eac8035a770b"
 dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "derive_more"
+version = "0.99.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f82b1b72f1263f214c0f823371768776c4f5841b942c9883aa8e5ec584fd0ba6"
+dependencies = [
+ "convert_case",
  "proc-macro2",
  "quote",
  "syn",
@@ -727,6 +772,21 @@ name = "doc-comment"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fea41bba32d969b513997752735605054bc0dfa92b4c56bf1189f2e174be7a10"
+
+[[package]]
+name = "dtoa"
+version = "0.4.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "56899898ce76aaf4a0f24d914c97ea6ed976d42fec6ad33fcbb0a1103e07b2b0"
+
+[[package]]
+name = "dtoa-short"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bde03329ae10e79ede66c9ce4dc930aa8599043b0743008548680f25b91502d6"
+dependencies = [
+ "dtoa",
+]
 
 [[package]]
 name = "either"
@@ -924,6 +984,15 @@ dependencies = [
  "proc-macro-hack",
  "proc-macro-nested",
  "slab",
+]
+
+[[package]]
+name = "fxhash"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c31b6d751ae2c7f11320402d34e41349dd1016f8d5d45e48c4312bc8625af50c"
+dependencies = [
+ "byteorder",
 ]
 
 [[package]]
@@ -1481,6 +1550,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "kuchiki"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1ea8e9c6e031377cff82ee3001dc8026cdf431ed4e2e6b51f98ab8c73484a358"
+dependencies = [
+ "cssparser",
+ "html5ever",
+ "matches",
+ "selectors",
+]
+
+[[package]]
 name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1767,6 +1848,12 @@ name = "new_debug_unreachable"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e4a24736216ec316047a1fc4252e27dabb04218aa4a3f37c6e7ddbf1f9782b54"
+
+[[package]]
+name = "nodrop"
+version = "0.1.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72ef4a56884ca558e5ddb05a1d1e7e1bfd9a68d9ed024c21704cc98872dae1bb"
 
 [[package]]
 name = "ntapi"
@@ -2552,6 +2639,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "selectors"
+version = "0.22.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "df320f1889ac4ba6bc0cdc9c9af7af4bd64bb927bccdf32d81140dc1f9be12fe"
+dependencies = [
+ "bitflags",
+ "cssparser",
+ "derive_more",
+ "fxhash",
+ "log",
+ "matches",
+ "phf",
+ "phf_codegen",
+ "precomputed-hash",
+ "servo_arc",
+ "smallvec",
+ "thin-slice",
+]
+
+[[package]]
 name = "semver"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2640,6 +2747,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "servo_arc"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d98238b800e0d1576d8b6e3de32827c2d74bee68bb97748dcf5071fb53965432"
+dependencies = [
+ "nodrop",
+ "stable_deref_trait",
+]
+
+[[package]]
 name = "sha1"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2697,6 +2814,12 @@ dependencies = [
  "pkg-config",
  "system-deps",
 ]
+
+[[package]]
+name = "stable_deref_trait"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a8f112729512f8e442d81f95a8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
 
 [[package]]
 name = "standback"
@@ -2924,7 +3047,7 @@ dependencies = [
 [[package]]
 name = "tauri"
 version = "1.0.0-beta-rc.4"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#2b4e2b7560515b76002d0c724bcca1f470ed106f"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#6132f3f4feb64488ef618f690a4f06adce864d91"
 dependencies = [
  "base64",
  "bytes",
@@ -2964,7 +3087,7 @@ dependencies = [
 [[package]]
 name = "tauri-codegen"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#2b4e2b7560515b76002d0c724bcca1f470ed106f"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#6132f3f4feb64488ef618f690a4f06adce864d91"
 dependencies = [
  "blake3",
  "proc-macro2",
@@ -2980,7 +3103,7 @@ dependencies = [
 [[package]]
 name = "tauri-macros"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#2b4e2b7560515b76002d0c724bcca1f470ed106f"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#6132f3f4feb64488ef618f690a4f06adce864d91"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2991,8 +3114,10 @@ dependencies = [
 [[package]]
 name = "tauri-utils"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#2b4e2b7560515b76002d0c724bcca1f470ed106f"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#6132f3f4feb64488ef618f690a4f06adce864d91"
 dependencies = [
+ "html5ever",
+ "kuchiki",
  "phf",
  "proc-macro2",
  "quote",
@@ -3046,6 +3171,12 @@ checksum = "203008d98caf094106cfaba70acfed15e18ed3ddb7d94e49baec153a2b462789"
 dependencies = [
  "unicode-width",
 ]
+
+[[package]]
+name = "thin-slice"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8eaa81235c7058867fa8c0e7314f33dcce9c215f535d1913822a2b3f5e289f3c"
 
 [[package]]
 name = "thiserror"
