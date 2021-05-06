@@ -3047,7 +3047,7 @@ dependencies = [
 [[package]]
 name = "tauri"
 version = "1.0.0-beta-rc.4"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#68e9a3fd10676458f03ef8b2c127ead9c32ada4a"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#e087f0f9374355ac4b4a48f94727ef8b26b1c4cf"
 dependencies = [
  "base64",
  "bytes",
@@ -3087,7 +3087,7 @@ dependencies = [
 [[package]]
 name = "tauri-codegen"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#68e9a3fd10676458f03ef8b2c127ead9c32ada4a"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#e087f0f9374355ac4b4a48f94727ef8b26b1c4cf"
 dependencies = [
  "blake3",
  "proc-macro2",
@@ -3103,7 +3103,7 @@ dependencies = [
 [[package]]
 name = "tauri-macros"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#68e9a3fd10676458f03ef8b2c127ead9c32ada4a"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#e087f0f9374355ac4b4a48f94727ef8b26b1c4cf"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3114,7 +3114,7 @@ dependencies = [
 [[package]]
 name = "tauri-utils"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#68e9a3fd10676458f03ef8b2c127ead9c32ada4a"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#e087f0f9374355ac4b4a48f94727ef8b26b1c4cf"
 dependencies = [
  "html5ever",
  "kuchiki",
@@ -3123,7 +3123,6 @@ dependencies = [
  "quote",
  "serde",
  "serde_json",
- "sysinfo",
  "thiserror",
  "url",
  "zstd",

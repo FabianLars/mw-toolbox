@@ -1,3 +1,4 @@
 import Header from './Header';
+import Output from './Output';
 
-export { Header };
+export { Header, Output };

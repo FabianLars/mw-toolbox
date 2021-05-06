@@ -13,7 +13,7 @@ import {
     useToast,
 } from '@chakra-ui/react';
 
-import { Header } from '../../components';
+import { Header, Output } from '../../components';
 
 const List = ({ isOnline }: { isOnline: boolean }) => {
     const [loading, setLoading] = useState(false);
@@ -89,7 +89,7 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
     }, [listType]);
 
     return (
-        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
+        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh" userSelect="none">
             <Header isDisabled={loading} isOnline={isOnline} />
             <Flex w="100%" mb={4} direction="row" align="center">
                 {paramInfo === '' ? (
@@ -148,13 +148,7 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
                     </Button>
                 </Box>
             </Flex>
-            <Textarea
-                resize="none"
-                value={listOutput}
-                isReadOnly
-                placeholder="Output will be displayed here."
-                flex="1"
-            />
+            <Output placeholder="Output will be displayed here.">{listOutput}</Output>
         </Flex>
     );
 };

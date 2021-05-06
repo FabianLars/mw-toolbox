@@ -11,7 +11,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
-import { Header } from '../../components';
+import { Header, Output } from '../../components';
 
 const Upload = ({ isOnline }: { isOnline: boolean }) => {
     const [isUploading, setIsUploading] = useState(false);
@@ -29,8 +29,9 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
         setIsWaiting(true);
         (open({ multiple: true, directory: false }) as Promise<string[]>)
             .then((res) => {
-                setFiles(res);
-                invoke('cache_set', { key: 'files-cache', value: res });
+                if (res) {
+                    setFiles((oldFiles) => [...new Set([...oldFiles, ...res])]);
+                }
             })
             .catch((err) => {
                 toast({
@@ -79,8 +80,15 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
         );
     }, []);
 
+    // componentWillUnmount with files state
+    useEffect(() => {
+        return () => {
+            invoke('cache_set', { key: 'files-cache', value: files });
+        };
+    }, [files]);
+
     return (
-        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
+        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh" userSelect="none">
             <Header isDisabled={isWaiting || isUploading} isOnline={isOnline} />
             <Flex direction="row" justify="center" align="center" w="75%" mb={4}>
                 <FormControl id="uploadtext-input" mx={2}>
@@ -129,13 +137,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
                     </Button>
                 </Box>
             </Flex>
-            <Textarea
-                resize="none"
-                value={files.join('\n')}
-                isReadOnly
-                placeholder="Selected files will be displayed here."
-                flex="1"
-            />
+            <Output placeholder="Selected files will be displayed here.">{files.join('\n')}</Output>
         </Flex>
     );
 };

@@ -28,6 +28,7 @@ const MenuItem = ({ children, isDisabled, isLast, to = '/' }: MenuProps): JSX.El
             color={isDisabled ? 'red.700' : ''}
             pointerEvents={isDisabled ? 'none' : undefined}
             _hover={{ bg: 'gray.700' }}
+            onClick={() => window.getSelection()?.removeAllRanges()}
         >
             {children}
         </Link>
