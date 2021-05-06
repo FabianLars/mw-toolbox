@@ -1234,6 +1234,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "gtk-source-sys"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "010ad29f87606c4bc91fe4ab6762cab3d5155af7100e59c1af9c6d9aba5df689"
+dependencies = [
+ "bitflags",
+ "cairo-sys-rs",
+ "gdk-pixbuf-sys",
+ "gdk-sys",
+ "gio-sys",
+ "glib-sys",
+ "gobject-sys",
+ "gtk-sys",
+ "libc",
+ "pkg-config",
+]
+
+[[package]]
 name = "gtk-sys"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2816,6 +2834,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "sourceview"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6197ca40c697b552b8d27cfa9d8ee15267037ac071f4c1010749625ba2fc8f79"
+dependencies = [
+ "bitflags",
+ "cairo-rs",
+ "gdk",
+ "gdk-pixbuf",
+ "gdk-pixbuf-sys",
+ "gdk-sys",
+ "gio",
+ "gio-sys",
+ "glib",
+ "glib-sys",
+ "gobject-sys",
+ "gtk",
+ "gtk-source-sys",
+ "gtk-sys",
+ "libc",
+ "pango",
+]
+
+[[package]]
 name = "stable_deref_trait"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3004,7 +3046,7 @@ dependencies = [
 [[package]]
 name = "tao"
 version = "0.1.0"
-source = "git+https://github.com/wusyong/tao?branch=dev#466d8b4d728bc0afb7e593957c4edc5eb44a5032"
+source = "git+https://github.com/wusyong/tao?branch=dev#08c68d67202d9ad85d23cdaaa4540681270dd6e9"
 dependencies = [
  "bitflags",
  "cairo-rs",
@@ -3030,6 +3072,7 @@ dependencies = [
  "parking_lot",
  "raw-window-handle",
  "scopeguard",
+ "sourceview",
  "winapi",
 ]
 
@@ -3047,7 +3090,7 @@ dependencies = [
 [[package]]
 name = "tauri"
 version = "1.0.0-beta-rc.4"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#e087f0f9374355ac4b4a48f94727ef8b26b1c4cf"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#e37e187d4a3c7568463c2546099d03dd5a314f40"
 dependencies = [
  "base64",
  "bytes",
@@ -3087,7 +3130,7 @@ dependencies = [
 [[package]]
 name = "tauri-codegen"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#e087f0f9374355ac4b4a48f94727ef8b26b1c4cf"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#e37e187d4a3c7568463c2546099d03dd5a314f40"
 dependencies = [
  "blake3",
  "proc-macro2",
@@ -3103,7 +3146,7 @@ dependencies = [
 [[package]]
 name = "tauri-macros"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#e087f0f9374355ac4b4a48f94727ef8b26b1c4cf"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#e37e187d4a3c7568463c2546099d03dd5a314f40"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3114,7 +3157,7 @@ dependencies = [
 [[package]]
 name = "tauri-utils"
 version = "1.0.0-beta-rc.1"
-source = "git+https://github.com/tauri-apps/tauri?branch=dev#e087f0f9374355ac4b4a48f94727ef8b26b1c4cf"
+source = "git+https://github.com/tauri-apps/tauri?branch=dev#e37e187d4a3c7568463c2546099d03dd5a314f40"
 dependencies = [
  "html5ever",
  "kuchiki",
