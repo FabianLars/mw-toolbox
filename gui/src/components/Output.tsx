@@ -4,7 +4,7 @@ const Output = ({
     children,
     placeholder,
 }: {
-    children?: string | JSX.Element;
+    children?: string | JSX.Element | JSX.Element[];
     placeholder?: string;
 }): JSX.Element => {
     return (

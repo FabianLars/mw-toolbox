@@ -1,4 +1,10 @@
-use std::collections::HashMap;
+use std::{
+    collections::HashMap,
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc,
+    },
+};
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -197,8 +203,25 @@ pub async fn purge(is_nulledit: bool, pages: Vec<String>) -> Result<(), String> 
 }
 
 #[command]
-pub async fn upload(text: String, files: Vec<String>) -> Result<(), String> {
-    api::upload::upload_multiple(&*CLIENT.lock().await, &files, Some(text))
-        .await
-        .map_err(|err| err.to_string())
+pub async fn upload<P: tauri::Params<Event = String>>(
+    text: String,
+    files: Vec<String>,
+    window: tauri::Window<P>,
+    cancel_upload: tauri::State<'_, Arc<AtomicBool>>,
+) -> Result<(), String> {
+    let mut file_iter = files.iter();
+    while !cancel_upload.load(Ordering::Relaxed) {
+        if let Some(file) = file_iter.next() {
+            api::upload::upload(&*CLIENT.lock().await, &file, Some(&text))
+                .await
+                .map_err(|err| err.to_string())?;
+            window
+                .emit("file-uploaded", Some(file))
+                .map_err(|err| err.to_string())?;
+        } else {
+            break;
+        }
+    }
+    cancel_upload.store(false, Ordering::Relaxed);
+    Ok(())
 }

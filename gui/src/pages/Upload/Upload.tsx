@@ -5,13 +5,14 @@ import {
     FormControl,
     FormLabel,
     Input,
-    Textarea,
+    Spacer,
     useToast,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
 import { Header, Output } from '../../components';
+import { emit, listen } from '@tauri-apps/api/event';
 
 const Upload = ({ isOnline }: { isOnline: boolean }) => {
     const [isUploading, setIsUploading] = useState(false);
@@ -68,10 +69,16 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
                     isClosable: true,
                 }),
             )
-            .finally(() => setIsUploading(false));
+            .finally(() => {
+                setIsWaiting(false);
+                setIsUploading(false);
+            });
     };
 
     useEffect(() => {
+        listen('file-uploaded', ({ payload }) => {
+            setFiles((oldFiles) => oldFiles.filter((f) => f !== payload));
+        });
         (invoke('cache_get', { key: 'files-cache' }) as Promise<string[] | null>).then((res) =>
             setFiles(res ?? []),
         );
@@ -90,8 +97,10 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
     return (
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh" userSelect="none">
             <Header isDisabled={isWaiting || isUploading} isOnline={isOnline} />
-            <Flex direction="row" justify="center" align="center" w="75%" mb={4}>
-                <FormControl id="uploadtext-input" mx={2}>
+            <Flex direction="row" align="center" w="100%" mb={4}>
+                <Box>Number of files: {files.length}</Box>
+                <Spacer />
+                <FormControl id="uploadtext-input" mx={2} maxW="50%">
                     <FormLabel>Text for newly created file pages</FormLabel>
                     <Input
                         value={uploadtext}
@@ -129,15 +138,40 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
                     <Button
                         mx={2}
                         isDisabled={isWaiting || !isOnline || !files}
-                        isLoading={isUploading}
-                        onClick={startUpload}
+                        onClick={() => {
+                            if (isUploading) {
+                                emit('cancel-upload').finally(() => setIsWaiting(true));
+                            } else {
+                                startUpload();
+                            }
+                        }}
                         title={!isOnline ? 'Please login first!' : 'This might take a while!'}
                     >
-                        Upload
+                        {isUploading ? 'Cancel' : 'Upload'}
                     </Button>
                 </Box>
             </Flex>
-            <Output placeholder="Selected files will be displayed here.">{files.join('\n')}</Output>
+            <Output placeholder="Selected files will be displayed here.">
+                {files.map((f) => (
+                    <Box
+                        key={f}
+                        aria-label="click to remove item"
+                        title="click to remove item"
+                        cursor="pointer"
+                        _hover={{
+                            color: 'red',
+                            backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                        }}
+                        onClick={() => {
+                            if (!isUploading) {
+                                setFiles((oldFiles) => oldFiles.filter((ff) => ff !== f));
+                            }
+                        }}
+                    >
+                        {f}
+                    </Box>
+                ))}
+            </Output>
         </Flex>
     );
 };

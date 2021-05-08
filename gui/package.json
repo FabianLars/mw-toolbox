@@ -20,11 +20,11 @@
     "dependencies": {
         "@chakra-ui/icons": "^1.0.13",
         "@chakra-ui/react": "^1.6.1",
-        "@emotion/react": "^11.1.5",
+        "@emotion/react": "^11.4.0",
         "@emotion/styled": "^11.3.0",
         "@tauri-apps/api": "1.0.0-beta-rc.3",
         "@tauri-apps/cli": "1.0.0-beta-rc.4",
-        "framer-motion": "^4.1.11",
+        "framer-motion": "^4.1.13",
         "history": "^5.0.0",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
@@ -33,7 +33,7 @@
     },
     "devDependencies": {
         "@testing-library/react": "^11.2.6",
-        "@types/chai": "^4.2.17",
+        "@types/chai": "^4.2.18",
         "@types/mocha": "^8.2.2",
         "@types/react": "^17.0.5",
         "@types/react-dom": "^17.0.3",

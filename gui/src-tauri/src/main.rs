@@ -3,11 +3,18 @@
     windows_subsystem = "windows"
 )]
 
-use std::collections::HashMap;
+use std::{
+    collections::HashMap,
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc,
+    },
+};
 
 use once_cell::sync::Lazy;
 use serde::Serialize;
 use serde_json::Value;
+use tauri::Manager;
 use tokio::sync::Mutex;
 
 use mw_tools::WikiClient;
@@ -21,6 +28,13 @@ fn main() {
     pretty_env_logger::init();
 
     tauri::Builder::default()
+        .on_page_load(|window, _| {
+            let cancel_upload = Arc::new(AtomicBool::new(false));
+            window.manage(cancel_upload.clone());
+            window.listen("cancel-upload", move |_| {
+                cancel_upload.store(true, Ordering::Relaxed)
+            });
+        })
         .manage(parking_lot::Mutex::new(HashMap::<String, Value>::new()))
         .invoke_handler(tauri::generate_handler![
             cmd::cache_get,
