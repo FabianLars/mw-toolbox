@@ -48,10 +48,12 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
 
     const startUpload = () => {
         setIsUploading(true);
-        (invoke('upload', {
-            text: uploadtext,
-            files,
-        }) as Promise<null>)
+        (
+            invoke('upload', {
+                text: uploadtext,
+                files,
+            }) as Promise<null>
+        )
             .then(() =>
                 toast({
                     title: 'Upload complete!',

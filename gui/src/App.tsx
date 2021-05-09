@@ -27,9 +27,11 @@ const App = () => {
     // This exists to handle reloads
     useEffect(() => {
         if (!!window.__TAURI__) {
-            (invoke('cache_get', {
-                key: 'userObj',
-            }) as Promise<User | null>).then((res) => {
+            (
+                invoke('cache_get', {
+                    key: 'userObj',
+                }) as Promise<User | null>
+            ).then((res) => {
                 const {
                     isOnline = false,
                     isPersistent = false,

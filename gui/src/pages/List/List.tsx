@@ -26,10 +26,12 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
     const getList = () => {
         if (listType !== '') {
             setLoading(true);
-            (invoke('list', {
-                listtype: listType,
-                param: paramInput || null,
-            }) as Promise<string[]>)
+            (
+                invoke('list', {
+                    listtype: listType,
+                    param: paramInput || null,
+                }) as Promise<string[]>
+            )
                 .then((res) => {
                     const output = res.join('\n');
                     setListOutput(output);

@@ -59,10 +59,12 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
             setIsRunning(false);
             setIsLoading(false);
         } else {
-            (invoke('get_page', {
-                page: curr,
-                patterns: patterns,
-            }) as Promise<string>)
+            (
+                invoke('get_page', {
+                    page: curr,
+                    patterns: patterns,
+                }) as Promise<string>
+            )
                 .then(setPageContent)
                 .catch((err) => {
                     startStop();
@@ -80,14 +82,16 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
 
     const save = () => {
         setIsLoading(true);
-        (invoke('edit', {
-            title: currentPage,
-            content: pageContent
-                .replace(/[\u007F-\u009F\u200B]/g, '')
-                .replace(/…/g, '...')
-                .trim(),
-            summary: editSummary || null,
-        }) as Promise<string>)
+        (
+            invoke('edit', {
+                title: currentPage,
+                content: pageContent
+                    .replace(/[\u007F-\u009F\u200B]/g, '')
+                    .replace(/…/g, '...')
+                    .trim(),
+                summary: editSummary || null,
+            }) as Promise<string>
+        )
             .then((res) => {
                 toast({
                     title: 'Edit successful',
