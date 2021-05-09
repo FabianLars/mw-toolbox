@@ -17,7 +17,7 @@ const Purge = ({ isOnline }: { isOnline: boolean }) => {
         }
         invoke('purge', {
             pages: areaValue.split(/\r?\n/),
-            is_nulledit: isNulledit,
+            isNulledit,
         })
             .then(() =>
                 toast({

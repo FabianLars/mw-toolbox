@@ -34,12 +34,14 @@ const Account = ({ user, setUser }: Props) => {
 
     const login = () => {
         setLoggingin(true);
-        (invoke('login', {
-            loginname: lgname,
-            password: lgpasswd,
-            wikiurl: apiUrl,
-            is_persistent: persistent,
-        }) as Promise<{ username: string; url: string }>)
+        (
+            invoke('login', {
+                loginname: lgname,
+                password: lgpasswd,
+                wikiurl: apiUrl,
+                isPersistent: persistent,
+            }) as Promise<{ username: string; url: string }>
+        )
             .then((res) => {
                 setUser({
                     isOnline: true,
@@ -84,12 +86,14 @@ const Account = ({ user, setUser }: Props) => {
                 setLgpasswd(user.password);
                 setApiUrl(user.url);
             } else {
-                (invoke('init') as Promise<{
-                    wikiurl: string;
-                    loginname: string;
-                    password: string;
-                    isPersistent: boolean;
-                }>).then(({ wikiurl, loginname, password, isPersistent }) => {
+                (
+                    invoke('init') as Promise<{
+                        wikiurl: string;
+                        loginname: string;
+                        password: string;
+                        isPersistent: boolean;
+                    }>
+                ).then(({ wikiurl, loginname, password, isPersistent }) => {
                     if (wikiurl !== '') setApiUrl(wikiurl);
                     setLgname(loginname);
                     setLgpasswd(password);
