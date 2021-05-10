@@ -216,7 +216,7 @@ pub async fn upload<P: tauri::Params<Event = String>>(
                 .await
                 .map_err(|err| err.to_string())?;
             window
-                .emit("file-uploaded", Some(file))
+                .emit("file-uploaded", file)
                 .map_err(|err| err.to_string())?;
         } else {
             break;
