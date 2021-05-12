@@ -22,7 +22,7 @@
         "@chakra-ui/react": "^1.6.1",
         "@emotion/react": "^11.4.0",
         "@emotion/styled": "^11.3.0",
-        "@tauri-apps/api": "1.0.0-beta-rc.3",
+        "@tauri-apps/api": "1.0.0-beta.0",
         "framer-motion": "4.1.11",
         "history": "^5.0.0",
         "react": "^17.0.2",
