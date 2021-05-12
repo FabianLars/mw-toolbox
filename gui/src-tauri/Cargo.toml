@@ -19,10 +19,10 @@ parking_lot = "0.11"
 pretty_env_logger = "0.4"
 regex = "1.4"
 reqwest = "0.11"
-serde = {version = "1", features = ["derive"]}
+serde = {version = "1", features = ["derive"] }
 serde_json = "1"
 storage = {path = "../../crates/storage"}
-tauri = {git = "https://github.com/tauri-apps/tauri", branch = "dev", version = "1.0.0-beta-rc.2", features =["shell-open", "dialog-open"]}
+tauri = {version = "1.0.0-beta.0", features = ["shell-open", "dialog-open"] }
 tokio = "1"
 unescape = "0.1"
 
