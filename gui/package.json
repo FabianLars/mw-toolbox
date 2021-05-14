@@ -31,7 +31,7 @@
         "react-router-dom": "^6.0.0-beta.0"
     },
     "devDependencies": {
-        "@tauri-apps/cli": "1.0.0-beta.1",
+        "@tauri-apps/cli": "1.0.0-beta.2",
         "@testing-library/react": "^11.2.6",
         "@types/chai": "^4.2.18",
         "@types/mocha": "^8.2.2",
