@@ -207,7 +207,7 @@ pub async fn upload<P: tauri::Params<Event = String>>(
     text: String,
     files: Vec<String>,
     window: tauri::Window<P>,
-    cancel_upload: tauri::State<Arc<AtomicBool>>,
+    cancel_upload: tauri::State<'_, Arc<AtomicBool>>,
 ) -> Result<(), String> {
     let mut file_iter = files.iter();
     while !cancel_upload.load(Ordering::Relaxed) {
