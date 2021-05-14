@@ -35,7 +35,7 @@ pub struct FindReplace {
 // TODO: Use actual errors instead of error strings
 
 #[command]
-pub fn cache_get(key: String, cache: tauri::State<'_, Cache>) -> Option<Value> {
+pub fn cache_get(key: String, cache: tauri::State<Cache>) -> Option<Value> {
     if let Some(v) = cache.lock().get(&key) {
         let v = v.to_owned();
         Some(v)
@@ -45,7 +45,7 @@ pub fn cache_get(key: String, cache: tauri::State<'_, Cache>) -> Option<Value> {
 }
 
 #[command]
-pub fn cache_set(key: String, value: Value, cache: tauri::State<'_, Cache>) -> bool {
+pub fn cache_set(key: String, value: Value, cache: tauri::State<Cache>) -> bool {
     cache.lock().insert(key, value).is_some()
 }
 
@@ -207,7 +207,7 @@ pub async fn upload<P: tauri::Params<Event = String>>(
     text: String,
     files: Vec<String>,
     window: tauri::Window<P>,
-    cancel_upload: tauri::State<'_, Arc<AtomicBool>>,
+    cancel_upload: tauri::State<Arc<AtomicBool>>,
 ) -> Result<(), String> {
     let mut file_iter = files.iter();
     while !cancel_upload.load(Ordering::Relaxed) {
