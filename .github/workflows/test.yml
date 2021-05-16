@@ -28,7 +28,7 @@ jobs:
                       ~/.cargo/registry
                       ~/.cargo/git
                       target
-                  key: rs-test-cache-${{ hashFiles('**/Cargo.lock') }}
+                  key: ${{ runner.os }}-cache-${{ hashFiles('**/Cargo.toml') }}
 
             - name: Install webkit2gtk
               run: |
@@ -61,7 +61,7 @@ jobs:
             - uses: actions/cache@v2
               with:
                   path: node_modules
-                  key: js-test-cache-${{ hashFiles('yarn.lock') }}
+                  key: ${{ runner.os }}-cache-${{ hashFiles('**/package.json') }}
 
             - name: Install dependencies
               run: yarn install
