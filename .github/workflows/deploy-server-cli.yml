@@ -23,7 +23,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: test-cache-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cache-${{ hashFiles('**/Cargo.toml') }}
 
       - name: Build cli
         run: |
