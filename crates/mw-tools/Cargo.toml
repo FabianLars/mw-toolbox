@@ -7,8 +7,10 @@ version = "0.1.0"
 
 [dependencies]
 directories-next = "2"
+futures = "0.3"
 log = "0.4"
-reqwest = { version = "0.11", features = ["json", "cookies", "multipart"] }
+regex = "1"
+reqwest = {version = "0.11", features = ["json", "cookies", "multipart"]}
 serde = "1.0"
 thiserror = "1.0"
-tokio = { version = "1.1", features = ["fs", "time"] }
+tokio = {version = "1.1", features = ["fs", "time"]}
