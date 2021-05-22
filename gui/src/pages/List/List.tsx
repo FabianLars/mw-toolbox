@@ -91,8 +91,7 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
     }, [listType]);
 
     return (
-        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh" userSelect="none">
-            <Header isDisabled={loading} isOnline={isOnline} />
+        <Flex direction="column" align="center" p="0 1rem 1rem" h="100%" w="100%">
             <Flex w="100%" mb={4} direction="row" align="center">
                 {paramInfo === '' ? (
                     <Box mx={2} w="100%" />

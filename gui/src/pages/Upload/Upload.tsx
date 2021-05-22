@@ -97,8 +97,7 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
     }, [files]);
 
     return (
-        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh" userSelect="none">
-            <Header isDisabled={isWaiting || isUploading} isOnline={isOnline} />
+        <Flex direction="column" align="center" p="0 1rem 1rem" h="100%" w="100%">
             <Flex direction="row" align="center" w="100%" mb={4}>
                 <Box>Number of files: {files.length}</Box>
                 <Spacer />

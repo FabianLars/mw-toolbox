@@ -125,63 +125,59 @@ const Account = ({ user, setUser }: Props) => {
     }, [apiUrl, lgname, lgpasswd]);
 
     return (
-        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
-            <Header isDisabled={logginin} isOnline={user.isOnline} />
-
-            <Flex as="main" direction="column" align="center" w="50%" flex="1" justify="center">
-                <Text fontSize="xl" align="center">
-                    {user.isOnline ? user.username : ''}
-                </Text>
-                <Text fontSize="xl" align="center">
-                    {user.isOnline ? user.url : 'Not logged in!'}
-                </Text>
-                <Divider my={2} />
-                <FormControl id="api-url" isRequired isInvalid={apiUrlInvalid}>
-                    <FormLabel>API URL</FormLabel>
-                    <Input
-                        value={apiUrl}
-                        onChange={(event) => setApiUrl(event.target.value)}
-                        isDisabled={user.isOnline}
-                        placeholder="Full URL pointing to api.php"
-                    />
-                </FormControl>
-                <Divider my={2} />
-                <FormControl id="loginname" isRequired isInvalid={lgnameInvalid}>
-                    <FormLabel>Bot Loginname</FormLabel>
-                    <Input
-                        value={lgname}
-                        onChange={(event) => setLgname(event.target.value)}
-                        isDisabled={user.isOnline}
-                        placeholder="Generated via Special:BotPasswords"
-                    />
-                </FormControl>
-                <Divider my={2} />
-                <FormControl id="password" isRequired isInvalid={lgpasswdInvalid}>
-                    <FormLabel>Bot Password</FormLabel>
-                    <Input
-                        value={lgpasswd}
-                        onChange={(event) => setLgpasswd(event.target.value)}
-                        isDisabled={user.isOnline}
-                        type="password"
-                        placeholder="Generated via Special:BotPasswords"
-                    />
-                </FormControl>
-                <Flex direction="row" w="100%" justify="flex-end" mt={2}>
-                    <Checkbox
-                        isChecked={persistent}
-                        onChange={(event) => setPersistent(event.target.checked)}
-                    >
-                        Remember me
-                    </Checkbox>
-                    <Divider orientation="vertical" mx={2} />
-                    <Button
-                        isDisabled={apiUrlInvalid || lgnameInvalid || lgpasswdInvalid}
-                        isLoading={logginin}
-                        onClick={user.isOnline ? logout : login}
-                    >
-                        {user.isOnline ? 'Log out' : 'Log in'}
-                    </Button>
-                </Flex>
+        <Flex as="main" direction="column" align="center" w="50%" justify="center">
+            <Text fontSize="xl" align="center">
+                {user.isOnline ? user.username : ''}
+            </Text>
+            <Text fontSize="xl" align="center">
+                {user.isOnline ? user.url : 'Not logged in!'}
+            </Text>
+            <Divider my={2} />
+            <FormControl id="api-url" isRequired isInvalid={apiUrlInvalid}>
+                <FormLabel>API URL</FormLabel>
+                <Input
+                    value={apiUrl}
+                    onChange={(event) => setApiUrl(event.target.value)}
+                    isDisabled={user.isOnline}
+                    placeholder="Full URL pointing to api.php"
+                />
+            </FormControl>
+            <Divider my={2} />
+            <FormControl id="loginname" isRequired isInvalid={lgnameInvalid}>
+                <FormLabel>Bot Loginname</FormLabel>
+                <Input
+                    value={lgname}
+                    onChange={(event) => setLgname(event.target.value)}
+                    isDisabled={user.isOnline}
+                    placeholder="Generated via Special:BotPasswords"
+                />
+            </FormControl>
+            <Divider my={2} />
+            <FormControl id="password" isRequired isInvalid={lgpasswdInvalid}>
+                <FormLabel>Bot Password</FormLabel>
+                <Input
+                    value={lgpasswd}
+                    onChange={(event) => setLgpasswd(event.target.value)}
+                    isDisabled={user.isOnline}
+                    type="password"
+                    placeholder="Generated via Special:BotPasswords"
+                />
+            </FormControl>
+            <Flex direction="row" w="100%" justify="flex-end" mt={2}>
+                <Checkbox
+                    isChecked={persistent}
+                    onChange={(event) => setPersistent(event.target.checked)}
+                >
+                    Remember me
+                </Checkbox>
+                <Divider orientation="vertical" mx={2} />
+                <Button
+                    isDisabled={apiUrlInvalid || lgnameInvalid || lgpasswdInvalid}
+                    isLoading={logginin}
+                    onClick={user.isOnline ? logout : login}
+                >
+                    {user.isOnline ? 'Log out' : 'Log in'}
+                </Button>
             </Flex>
         </Flex>
     );

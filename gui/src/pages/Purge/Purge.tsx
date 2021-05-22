@@ -43,8 +43,7 @@ const Purge = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     return (
-        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
-            <Header isOnline={isOnline} isDisabled={isNulling || isPurging} />
+        <Flex direction="column" align="center" p="0 1rem 1rem" h="100%" w="100%">
             <Flex w="100%" flex="1" direction="column">
                 <Textarea
                     resize="none"

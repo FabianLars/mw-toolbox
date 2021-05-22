@@ -34,8 +34,7 @@ const Download = ({ isOnline }: { isOnline: boolean }) => {
     };
 
     return (
-        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
-            <Header isOnline={isOnline} isDisabled={isLoading} />
+        <Flex direction="column" align="center" p="0 1rem 1rem" h="100%" w="100%">
             <Textarea
                 resize="none"
                 value={areaValue}
