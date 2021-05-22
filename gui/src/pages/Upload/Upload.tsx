@@ -11,7 +11,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
-import { Header, Output } from '../../components';
+import { Output } from '../../components';
 import { emit, listen } from '@tauri-apps/api/event';
 
 type Props = {

@@ -13,7 +13,7 @@ import {
     useToast,
 } from '@chakra-ui/react';
 
-import { Header, Output } from '../../components';
+import { Output } from '../../components';
 
 type Props = {
     isOnline: boolean;

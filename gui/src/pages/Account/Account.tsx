@@ -13,7 +13,6 @@ import {
     useToast,
 } from '@chakra-ui/react';
 
-import { Header } from '../../components';
 import type { User } from '../../App';
 
 type Props = {

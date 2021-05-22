@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Account, Delete, Download, Edit, List, Move, Purge, Upload } from './pages';
+import { Center, Flex } from '@chakra-ui/react';
 import { Header } from './components';
-import { Box, Center, Flex } from '@chakra-ui/react';
 
 export type User = {
     username: string;
