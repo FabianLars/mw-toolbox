@@ -1,9 +1,14 @@
 import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Header } from '../../components';
 
-const Move = ({ isOnline }: { isOnline: boolean }) => {
+type Props = {
+    isOnline: boolean;
+    setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const Move = ({ isOnline, setNavDisabled }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [areaFrom, setAreaFrom] = useState('');
     const [areaTo, setAreaTo] = useState('');
@@ -34,6 +39,8 @@ const Move = ({ isOnline }: { isOnline: boolean }) => {
             )
             .finally(() => setIsLoading(false));
     };
+
+    useEffect(() => setNavDisabled(isLoading), [isLoading]);
 
     return (
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100%" w="100%">

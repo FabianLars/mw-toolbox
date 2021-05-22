@@ -20,7 +20,12 @@ type Pattern = {
     isRegex: boolean;
 };
 
-const Edit = ({ isOnline }: { isOnline: boolean }) => {
+type Props = {
+    isOnline: boolean;
+    setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const Edit = ({ isOnline, setNavDisabled }: Props) => {
     const [isRunning, setIsRunning] = useState(false);
     const [isAuto, setIsAuto] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -119,6 +124,8 @@ const Edit = ({ isOnline }: { isOnline: boolean }) => {
             save();
         }
     }, [pageContent]);
+
+    useEffect(() => setNavDisabled(isLoading), [isLoading]);
 
     return (
         <>

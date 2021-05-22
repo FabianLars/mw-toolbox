@@ -19,9 +19,10 @@ import type { User } from '../../App';
 type Props = {
     user: User;
     setUser: React.Dispatch<React.SetStateAction<User>>;
+    setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Account = ({ user, setUser }: Props) => {
+const Account = ({ user, setUser, setNavDisabled }: Props) => {
     const [apiUrl, setApiUrl] = useState('https://leagueoflegends.fandom.com/de/api.php');
     const [lgname, setLgname] = useState('');
     const [lgpasswd, setLgpasswd] = useState('');
@@ -123,6 +124,8 @@ const Account = ({ user, setUser }: Props) => {
             setLgpasswdInvalid(false);
         }
     }, [apiUrl, lgname, lgpasswd]);
+
+    useEffect(() => setNavDisabled(logginin), [logginin]);
 
     return (
         <Flex as="main" direction="column" align="center" w="50%" justify="center">

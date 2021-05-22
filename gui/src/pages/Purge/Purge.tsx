@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Header } from '../../components';
 
-const Purge = ({ isOnline }: { isOnline: boolean }) => {
+type Props = {
+    isOnline: boolean;
+    setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const Purge = ({ isOnline, setNavDisabled }: Props) => {
     const [isPurging, setIsPurging] = useState(false);
     const [isNulling, setIsNulling] = useState(false);
     const [areaValue, setAreaValue] = useState('');
@@ -41,6 +46,8 @@ const Purge = ({ isOnline }: { isOnline: boolean }) => {
                 setIsNulling(false);
             });
     };
+
+    useEffect(() => setNavDisabled(isNulling || isPurging), [isNulling, isPurging]);
 
     return (
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100%" w="100%">

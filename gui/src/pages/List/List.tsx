@@ -15,7 +15,12 @@ import {
 
 import { Header, Output } from '../../components';
 
-const List = ({ isOnline }: { isOnline: boolean }) => {
+type Props = {
+    isOnline: boolean;
+    setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const List = ({ isOnline, setNavDisabled }: Props) => {
     const [loading, setLoading] = useState(false);
     const [listOutput, setListOutput] = useState('');
     const [listType, setListType] = useState('');
@@ -89,6 +94,8 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
                 setParamInfo('');
         }
     }, [listType]);
+
+    useEffect(() => setNavDisabled(loading), [loading]);
 
     return (
         <Flex direction="column" align="center" p="0 1rem 1rem" h="100%" w="100%">
