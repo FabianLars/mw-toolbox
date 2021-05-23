@@ -13,9 +13,14 @@ import {
     useToast,
 } from '@chakra-ui/react';
 
-import { Header, Output } from '../../components';
+import { Output } from '../../components';
 
-const List = ({ isOnline }: { isOnline: boolean }) => {
+type Props = {
+    isOnline: boolean;
+    setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const List = ({ isOnline, setNavDisabled }: Props) => {
     const [loading, setLoading] = useState(false);
     const [listOutput, setListOutput] = useState('');
     const [listType, setListType] = useState('');
@@ -90,9 +95,10 @@ const List = ({ isOnline }: { isOnline: boolean }) => {
         }
     }, [listType]);
 
+    useEffect(() => setNavDisabled(loading), [loading]);
+
     return (
-        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh" userSelect="none">
-            <Header isDisabled={loading} isOnline={isOnline} />
+        <Flex direction="column" align="center" h="100%" w="100%">
             <Flex w="100%" mb={4} direction="row" align="center">
                 {paramInfo === '' ? (
                     <Box mx={2} w="100%" />

@@ -11,10 +11,15 @@ import {
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
-import { Header, Output } from '../../components';
+import { Output } from '../../components';
 import { emit, listen } from '@tauri-apps/api/event';
 
-const Upload = ({ isOnline }: { isOnline: boolean }) => {
+type Props = {
+    isOnline: boolean;
+    setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const Upload = ({ isOnline, setNavDisabled }: Props) => {
     const [isUploading, setIsUploading] = useState(false);
     const [isWaiting, setIsWaiting] = useState(false);
     const [uploadtext, setUploadtext] = useState('');
@@ -96,9 +101,10 @@ const Upload = ({ isOnline }: { isOnline: boolean }) => {
         };
     }, [files]);
 
+    useEffect(() => setNavDisabled(isUploading || isWaiting), [isUploading, isWaiting]);
+
     return (
-        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh" userSelect="none">
-            <Header isDisabled={isWaiting || isUploading} isOnline={isOnline} />
+        <Flex direction="column" align="center" h="100%" w="100%">
             <Flex direction="row" align="center" w="100%" mb={4}>
                 <Box>Number of files: {files.length}</Box>
                 <Spacer />

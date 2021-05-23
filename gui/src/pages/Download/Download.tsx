@@ -1,9 +1,13 @@
 import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
-import { Header } from '../../components';
 
-const Download = ({ isOnline }: { isOnline: boolean }) => {
+type Props = {
+    isOnline: boolean;
+    setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const Download = ({ isOnline, setNavDisabled }: Props) => {
     const [areaValue, setAreaValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const toast = useToast();
@@ -33,9 +37,10 @@ const Download = ({ isOnline }: { isOnline: boolean }) => {
             .finally(() => setIsLoading(false));
     };
 
+    useEffect(() => setNavDisabled(isLoading), [isLoading]);
+
     return (
-        <Flex direction="column" align="center" p="0 1rem 1rem" h="100vh">
-            <Header isOnline={isOnline} isDisabled={isLoading} />
+        <Flex direction="column" align="center" h="100%" w="100%">
             <Textarea
                 resize="none"
                 value={areaValue}

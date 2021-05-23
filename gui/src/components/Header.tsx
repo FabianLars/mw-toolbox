@@ -43,7 +43,6 @@ const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
             justify="left"
             w="100%"
             p={2}
-            mb={4}
             borderBottom="1px solid #deb992;"
         >
             <MenuItem isDisabled={isDisabled} to="/">
