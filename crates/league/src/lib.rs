@@ -131,8 +131,7 @@ pub async fn champs() -> Result<()> {
     for (s, c) in skins.iter() {
         let skinpart: Vec<char> = s.chars().rev().take(3).collect();
         let skinid = format!("{}{}{}", skinpart[2], skinpart[1], skinpart[0]).parse::<i32>()?;
-        let champpart: Vec<char> = s.chars().take(c.id.to_string().len() - 3).collect();
-        let champstring: String = champpart.into_iter().collect();
+        let champstring: String = s.chars().take(c.id.to_string().len() - 3).collect();
         let champid: i32 = champstring.parse::<i32>()?;
 
         let temp = Skin {
