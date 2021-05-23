@@ -5,37 +5,35 @@
 
 use std::{
     collections::HashMap,
-    sync::{
-        atomic::{AtomicBool, Ordering},
-        Arc,
-    },
+    sync::atomic::{AtomicBool, Ordering},
 };
 
 use once_cell::sync::Lazy;
+use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use tauri::Manager;
-use tokio::sync::Mutex;
+use tokio::sync::Mutex as AsyncMutex;
 
 use mw_tools::WikiClient;
 
 mod cmd;
 
 // There is nothing we can do if init fails, so let's panic in the disco.
-static CLIENT: Lazy<Mutex<WikiClient>> = Lazy::new(|| Mutex::new(WikiClient::new().unwrap()));
+static CLIENT: Lazy<AsyncMutex<WikiClient>> =
+    Lazy::new(|| AsyncMutex::new(WikiClient::new().unwrap()));
+
+static CANCEL_UPLOAD: AtomicBool = AtomicBool::new(false);
 
 fn main() {
     pretty_env_logger::init();
 
     tauri::Builder::default()
         .on_page_load(|window, _| {
-            let cancel_upload = Arc::new(AtomicBool::new(false));
-            window.manage(cancel_upload.clone());
             window.listen("cancel-upload", move |_| {
-                cancel_upload.store(true, Ordering::Relaxed)
+                CANCEL_UPLOAD.store(true, Ordering::Relaxed)
             });
         })
-        .manage(parking_lot::Mutex::new(HashMap::<String, Value>::new()))
+        .manage(Mutex::new(HashMap::<String, Value>::new()))
         .invoke_handler(tauri::generate_handler![
             cmd::cache_get,
             cmd::cache_set,

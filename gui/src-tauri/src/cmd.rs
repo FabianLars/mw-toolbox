@@ -1,10 +1,4 @@
-use std::{
-    collections::HashMap,
-    sync::{
-        atomic::{AtomicBool, Ordering},
-        Arc,
-    },
-};
+use std::{collections::HashMap, sync::atomic::Ordering};
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -12,7 +6,7 @@ use tauri::command;
 
 use mw_tools::api;
 
-use crate::{SavedState, CLIENT};
+use crate::{SavedState, CANCEL_UPLOAD, CLIENT};
 
 type Cache = parking_lot::Mutex<HashMap<String, Value>>;
 
@@ -207,10 +201,9 @@ pub async fn upload<P: tauri::Params<Event = String>>(
     text: String,
     files: Vec<String>,
     window: tauri::Window<P>,
-    cancel_upload: tauri::State<'_, Arc<AtomicBool>>,
 ) -> Result<(), String> {
     let mut file_iter = files.iter();
-    while !cancel_upload.load(Ordering::Relaxed) {
+    while !CANCEL_UPLOAD.load(Ordering::Relaxed) {
         if let Some(file) = file_iter.next() {
             api::upload::upload(&*CLIENT.lock().await, &file, Some(&text))
                 .await
@@ -222,6 +215,6 @@ pub async fn upload<P: tauri::Params<Event = String>>(
             break;
         }
     }
-    cancel_upload.store(false, Ordering::Relaxed);
+    CANCEL_UPLOAD.store(false, Ordering::Relaxed);
     Ok(())
 }
