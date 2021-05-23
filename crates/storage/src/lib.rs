@@ -1,34 +1,23 @@
 #![forbid(unsafe_code)]
 
-pub mod blocking;
-
-use std::collections::BTreeMap;
+use std::path::PathBuf;
 
 use anyhow::{anyhow, Result};
 use chacha20poly1305::aead::{Aead, NewAead};
 use chacha20poly1305::{Key, XChaCha20Poly1305, XNonce};
+use once_cell::sync::Lazy;
 use rand::prelude::*;
+use serde::{de::DeserializeOwned, Serialize};
 use tokio::{fs::File, io::AsyncWriteExt};
 
-fn path() -> std::path::PathBuf {
-    let mut path = dirs_next::data_local_dir().expect("Unable to determine local data dir path!");
-
-    path.push("de.fabianlars.mwtoolbox/storage");
-
+static PATH: Lazy<PathBuf> = Lazy::new(|| {
+    let mut path = dirs_next::data_local_dir().expect("Unable to determine local-data-dir path!");
+    path.push("de.fabianlars.mwtoolbox/Storage/");
+    std::fs::create_dir_all(&path).expect("Unable to create storage directory");
     path
-}
+});
 
-async fn load() -> Result<BTreeMap<String, Vec<u8>>> {
-    if let Some(dir) = path().parent() {
-        tokio::fs::create_dir_all(dir).await?;
-    }
-
-    let contents = tokio::fs::read(path()).await?;
-
-    bincode::deserialize(&contents).map_err(|e| anyhow!("Error while deserializing: {:?}", e))
-}
-
-pub fn encrypt<T: AsRef<[u8]>>(val: T) -> Result<Vec<u8>> {
+pub fn encrypt(val: &[u8]) -> Result<Vec<u8>> {
     let cryptkey = Key::from_slice(env!("WTOOLS_AEAD_KEY").as_bytes());
     let aead = XChaCha20Poly1305::new(cryptkey);
 
@@ -39,19 +28,16 @@ pub fn encrypt<T: AsRef<[u8]>>(val: T) -> Result<Vec<u8>> {
     let mut ciphertext = aead
         .encrypt(
             nonce,
-            [env!("WTOOLS_SECRET").as_bytes(), val.as_ref()]
-                .concat()
-                .as_slice(),
+            [env!("WTOOLS_SECRET").as_bytes(), val].concat().as_slice(),
         )
         .map_err(|e| anyhow!("Error encrypting value: {:?}", e))?;
 
-    let mut data = rng_nonce.to_vec();
-    data.append(&mut ciphertext);
+    ciphertext.splice(0..0, rng_nonce.iter().cloned());
 
-    Ok(data)
+    Ok(ciphertext)
 }
 
-pub fn decrypt(data: Vec<u8>) -> Result<String> {
+pub fn decrypt(data: &[u8]) -> Result<Vec<u8>> {
     if data.len() <= 24 {
         return Err(anyhow!("Value given is too short to be encrypted data"));
     }
@@ -67,97 +53,111 @@ pub fn decrypt(data: Vec<u8>) -> Result<String> {
 
     let (_, plaintext) = plaintext.split_at(env!("WTOOLS_SECRET").len());
 
-    String::from_utf8(plaintext.to_vec())
-        .map_err(|e| anyhow!("Error converting decrypted u8-value to String: {:?}", e))
+    Ok(plaintext.to_vec())
 }
 
-async fn get_u8(key: &str) -> Result<Vec<u8>> {
-    let data = load().await.unwrap_or_default();
-
-    if data.is_empty() {
-        return Err(anyhow!("empty appdata"));
-    }
-
-    if let Some(v) = data.get(key) {
-        Ok(v.to_vec())
-    } else {
-        Err(anyhow!("Error getting value by key from file"))
-    }
-}
-
-pub async fn get(key: &str) -> Result<String> {
-    String::from_utf8(get_u8(key).await?)
-        .map_err(|e| anyhow!("Error converting u8 to String: {:?}", e))
-}
-
-pub async fn get_secure(key: &str) -> Result<String> {
-    let data = get_u8(key).await?;
-
-    decrypt(data)
-}
-
-pub async fn insert<T: AsRef<[u8]>>(key: &str, val: T) -> Result<()> {
-    insert_multiple(&[(key, val)]).await
-}
-
-pub async fn insert_multiple<T: AsRef<[u8]>>(data: &[(&str, T)]) -> Result<()> {
-    let path = path();
-
-    let mut map: BTreeMap<String, Vec<u8>>;
-
-    if let Some(dir) = path.parent() {
-        tokio::fs::create_dir_all(dir).await?;
-    }
-
-    let loaded = load().await;
-    map = loaded.unwrap_or_default();
-
-    for (k, v) in data {
-        map.insert(k.to_string(), v.as_ref().to_vec());
-    }
+pub async fn save<T: Serialize>(name: &str, object: T) -> Result<()> {
+    let mut path = PATH.clone();
+    path.push(format!("{}.mwt", name));
 
     let mut file = File::create(path).await?;
     file.write_all(
-        &bincode::serialize(&map).map_err(|e| anyhow!("Error while serializing: {:?}", e))?,
+        &bincode::serialize(&object).map_err(|e| anyhow!("Error while serializing: {:?}", e))?,
     )
     .await?;
 
     Ok(())
 }
 
-pub async fn insert_secure(key: &str, val: &str) -> Result<()> {
-    insert(key, encrypt(val)?).await
+pub async fn save_secure<T: Serialize>(name: &str, object: T) -> Result<()> {
+    let mut path = PATH.clone();
+    path.push(format!("{}.mwts", name));
+
+    let mut file = File::create(path).await?;
+    file.write_all(&encrypt(
+        &bincode::serialize(&object).map_err(|e| anyhow!("Error while serializing: {:?}", e))?,
+    )?)
+    .await?;
+
+    Ok(())
+}
+
+pub async fn load<T: Serialize + DeserializeOwned>(name: &str) -> Result<T> {
+    let mut path = PATH.clone();
+    path.push(format!("{}.mwt", name));
+
+    let file_contents = tokio::fs::read(path).await?;
+
+    bincode::deserialize(&file_contents).map_err(|e| anyhow!("Error while deserializing: {:?}", e))
+}
+
+pub async fn load_secure<T: Serialize + DeserializeOwned>(name: &str) -> Result<T> {
+    let mut path = PATH.clone();
+    path.push(format!("{}.mwts", name));
+
+    let file_contents = tokio::fs::read(path).await?;
+
+    bincode::deserialize(&decrypt(&file_contents)?)
+        .map_err(|e| anyhow!("Error while deserializing: {:?}", e))
 }
 
 #[cfg(test)]
 mod tests {
+    use serde::{Deserialize, Serialize};
+    use std::collections::HashMap;
+
+    #[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
+    struct TestObj {
+        bool: bool,
+        usize: usize,
+        string: String,
+        map: HashMap<String, String>,
+    }
     #[tokio::test]
     async fn storage() {
         use rand::{distributions::Alphanumeric, Rng};
 
-        super::insert("libtest_unsec", "abcdefghi123456789")
-            .await
-            .unwrap();
+        let bool = rand::thread_rng().gen_bool(0.5);
 
-        assert_eq!(
-            super::get("libtest_unsec").await.unwrap(),
-            "abcdefghi123456789".to_string()
+        let usize: usize = rand::thread_rng().gen();
+
+        let mut map = HashMap::new();
+        map.insert(
+            "libtest".to_string(),
+            String::from_utf8(
+                rand::thread_rng()
+                    .sample_iter(&Alphanumeric)
+                    .take(32)
+                    .collect::<Vec<u8>>(),
+            )
+            .unwrap(),
         );
 
-        let test_string = rand::thread_rng()
-            .sample_iter(&Alphanumeric)
-            .take(18)
-            .collect::<Vec<u8>>();
+        let string = String::from_utf8(
+            rand::thread_rng()
+                .sample_iter(&Alphanumeric)
+                .take(32)
+                .collect::<Vec<u8>>(),
+        )
+        .unwrap();
 
-        let test_string = String::from_utf8(test_string).unwrap();
+        let test_obj = TestObj {
+            bool,
+            usize,
+            string,
+            map,
+        };
 
-        super::insert_secure("unittest_secure", &test_string)
-            .await
-            .unwrap();
+        super::save("libtest_unsec", &test_obj).await.unwrap();
 
-        assert_eq!(
-            super::get_secure("unittest_secure").await.unwrap(),
-            test_string
-        );
+        super::save_secure("libtest_sec", &test_obj).await.unwrap();
+
+        let loaded_unsec: TestObj = super::load("libtest_unsec").await.unwrap();
+
+        let loaded_sec: TestObj = super::load_secure("libtest_sec").await.unwrap();
+
+        assert_eq!(test_obj, loaded_unsec);
+        assert_eq!(test_obj, loaded_sec);
+        assert_eq!(loaded_unsec, loaded_unsec);
     }
 }
