@@ -12,7 +12,7 @@ use std::{
 };
 
 use once_cell::sync::Lazy;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::Manager;
 use tokio::sync::Mutex;
@@ -55,7 +55,7 @@ fn main() {
         .expect("error while running application");
 }
 
-#[derive(Clone, Debug, Default, Serialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct SavedState {
     wikiurl: String,
     loginname: String,
@@ -66,34 +66,12 @@ pub struct SavedState {
 
 impl SavedState {
     async fn save(self) -> Result<(), anyhow::Error> {
-        use storage::*;
-
-        insert_multiple(&[
-            ("b9c95dde", encrypt(&self.loginname)?.as_slice()),
-            ("d7f0942b", encrypt(&self.password)?.as_slice()),
-            ("wikiurl", self.wikiurl.as_bytes()),
-            ("is_persistent", self.is_persistent.to_string().as_bytes()),
-        ])
-        .await
+        storage::save_secure("b9c95dde", self).await
     }
 
     async fn load() -> SavedState {
-        use storage::*;
-
-        let loginname = get_secure("b9c95dde").await.unwrap_or_default();
-        let password = get_secure("d7f0942b").await.unwrap_or_default();
-        let wikiurl = get("wikiurl").await.unwrap_or_default();
-        let is_persistent = get("is_persistent")
+        storage::load_secure::<SavedState>("b9c95dde")
             .await
-            .unwrap_or_else(|_| String::from("false"))
-            .parse::<bool>()
-            .unwrap_or(false);
-
-        Self {
-            wikiurl,
-            loginname,
-            password,
-            is_persistent,
-        }
+            .unwrap_or_default()
     }
 }
