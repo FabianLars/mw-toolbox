@@ -70,7 +70,7 @@ const App = () => {
         <Router>
             <Flex direction="column" h="100vh" w="100vw" userSelect="none">
                 <Header isDisabled={navDisabled} isOnline={user.isOnline} />
-                <Center flex="1 1 auto" overflow="hidden">
+                <Center flex="1 1 auto" overflow="hidden" p={4}>
                     <Routes>
                         <Route
                             path="/"

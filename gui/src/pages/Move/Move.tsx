@@ -42,7 +42,7 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(isLoading), [isLoading]);
 
     return (
-        <Flex direction="column" align="center" p="0 1rem 1rem" h="100%" w="100%">
+        <Flex direction="column" align="center" h="100%" w="100%">
             <Flex direction="row" align="center" justify="center" flex="1" w="100%" mb={4}>
                 <Textarea
                     resize="none"

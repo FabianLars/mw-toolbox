@@ -40,7 +40,7 @@ const Download = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(isLoading), [isLoading]);
 
     return (
-        <Flex direction="column" align="center" p="0 1rem 1rem" h="100%" w="100%">
+        <Flex direction="column" align="center" h="100%" w="100%">
             <Textarea
                 resize="none"
                 value={areaValue}

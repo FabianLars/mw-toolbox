@@ -98,7 +98,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(loading), [loading]);
 
     return (
-        <Flex direction="column" align="center" p="0 1rem 1rem" h="100%" w="100%">
+        <Flex direction="column" align="center" h="100%" w="100%">
             <Flex w="100%" mb={4} direction="row" align="center">
                 {paramInfo === '' ? (
                     <Box mx={2} w="100%" />

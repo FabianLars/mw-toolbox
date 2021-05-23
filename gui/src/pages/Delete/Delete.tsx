@@ -40,7 +40,7 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(isLoading), [isLoading]);
 
     return (
-        <Flex direction="column" align="center" p="0 1rem 1rem" w="100%" h="100%">
+        <Flex direction="column" align="center" w="100%" h="100%">
             <Textarea
                 resize="none"
                 value={areaValue}

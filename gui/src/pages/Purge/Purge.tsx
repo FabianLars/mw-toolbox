@@ -49,46 +49,44 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(isNulling || isPurging), [isNulling, isPurging]);
 
     return (
-        <Flex direction="column" align="center" p="0 1rem 1rem" h="100%" w="100%">
-            <Flex w="100%" flex="1" direction="column">
-                <Textarea
-                    resize="none"
-                    value={areaValue}
-                    onChange={(event) => setAreaValue(event.target.value)}
-                    placeholder="Write exact page names here. Separated by newline."
-                    flex="1"
-                    mb={4}
-                />
-                <Flex direction="row" align="center" justify="center">
-                    <Button
-                        isLoading={isPurging}
-                        isDisabled={!isOnline || isNulling}
-                        onClick={() => purgePages(false)}
-                        loadingText="Purging"
-                        title={
-                            !isOnline
-                                ? 'Please login first!'
-                                : 'Clear server caches. This might take a while!'
-                        }
-                        mx={2}
-                    >
-                        Purge all
-                    </Button>
-                    <Button
-                        isLoading={isNulling}
-                        isDisabled={!isOnline || isPurging}
-                        onClick={() => purgePages(true)}
-                        loadingText="Saving nulledits"
-                        title={
-                            !isOnline
-                                ? 'Please login first!'
-                                : 'Do a nulledit on every page. This might take a while!'
-                        }
-                        mx={2}
-                    >
-                        Nulledit all
-                    </Button>
-                </Flex>
+        <Flex direction="column" align="center" h="100%" w="100%">
+            <Textarea
+                resize="none"
+                value={areaValue}
+                onChange={(event) => setAreaValue(event.target.value)}
+                placeholder="Write exact page names here. Separated by newline."
+                flex="1"
+                mb={4}
+            />
+            <Flex direction="row" align="center" justify="center">
+                <Button
+                    isLoading={isPurging}
+                    isDisabled={!isOnline || isNulling}
+                    onClick={() => purgePages(false)}
+                    loadingText="Purging"
+                    title={
+                        !isOnline
+                            ? 'Please login first!'
+                            : 'Clear server caches. This might take a while!'
+                    }
+                    mx={2}
+                >
+                    Purge all
+                </Button>
+                <Button
+                    isLoading={isNulling}
+                    isDisabled={!isOnline || isPurging}
+                    onClick={() => purgePages(true)}
+                    loadingText="Saving nulledits"
+                    title={
+                        !isOnline
+                            ? 'Please login first!'
+                            : 'Do a nulledit on every page. This might take a while!'
+                    }
+                    mx={2}
+                >
+                    Nulledit all
+                </Button>
             </Flex>
         </Flex>
     );
