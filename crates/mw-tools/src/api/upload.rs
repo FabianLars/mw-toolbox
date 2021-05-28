@@ -38,7 +38,7 @@ pub async fn upload<C: AsRef<WikiClient>, P: AsRef<Path>, S: Into<String>>(
 
     match response {
         Upload::Succes { upload } => Ok(upload.result),
-        Upload::Failure { mut errors } => Err(ToolsError::MediaWikiError(errors.remove(0))),
+        Upload::Failure { mut errors } => Err(ToolsError::MediaWikiApi(errors.remove(0))),
     }
 }
 

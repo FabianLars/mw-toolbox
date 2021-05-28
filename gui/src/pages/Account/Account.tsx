@@ -57,8 +57,8 @@ const Account = ({ user, setUser, setNavDisabled }: Props) => {
                     isOnline: false,
                 }));
                 toast({
-                    title: "Couldn't log in!",
-                    description: <span style={{ wordBreak: 'break-word' }}>{err}</span>,
+                    title: `Couldn't log in! - ${err.code}-Error`,
+                    description: <span style={{ wordBreak: 'break-word' }}>{err.description}</span>,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,

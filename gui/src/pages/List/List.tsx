@@ -9,7 +9,6 @@ import {
     FormLabel,
     Input,
     Select,
-    Textarea,
     useToast,
 } from '@chakra-ui/react';
 
@@ -44,8 +43,8 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                 })
                 .catch((err) =>
                     toast({
-                        title: 'Request failed!',
-                        description: err,
+                        title: `Request failed! ${err.code}-Error`,
+                        description: err.description,
                         status: 'error',
                         duration: 10000,
                         isClosable: true,
@@ -144,7 +143,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                         mx={2}
                         onClick={getList}
                         isLoading={loading}
-                        isDisabled={!isOnline}
+                        isDisabled={!isOnline || !listType}
                         title={!isOnline ? 'Please login first!' : 'This might take a while!'}
                     >
                         Get List

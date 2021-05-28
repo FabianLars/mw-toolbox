@@ -158,26 +158,18 @@ impl WikiClient {
             .send()
             .await
             .and_then(|res| res.error_for_status())
-            .map_err(|source| ToolsError::RequestFailed { source })
+            .map_err(Into::into)
     }
 
     pub async fn get_into_text(&self, parameters: &[(&str, &str)]) -> Result<String, ToolsError> {
-        self.get(parameters)
-            .await?
-            .text()
-            .await
-            .map_err(|source| ToolsError::TextConversionFailed { source })
+        self.get(parameters).await?.text().await.map_err(Into::into)
     }
 
     pub async fn get_into_json<T: DeserializeOwned>(
         &self,
         parameters: &[(&str, &str)],
     ) -> Result<T, ToolsError> {
-        self.get(parameters)
-            .await?
-            .json()
-            .await
-            .map_err(|source| ToolsError::JsonConversionFailed { source })
+        self.get(parameters).await?.json().await.map_err(Into::into)
     }
 
     pub async fn post(&self, parameters: &[(&str, &str)]) -> Result<Response, ToolsError> {
@@ -201,7 +193,7 @@ impl WikiClient {
             .send()
             .await
             .and_then(|res| res.error_for_status())
-            .map_err(|source| ToolsError::RequestFailed { source })
+            .map_err(Into::into)
     }
 
     pub async fn post_into_text(&self, parameters: &[(&str, &str)]) -> Result<String, ToolsError> {
@@ -209,7 +201,7 @@ impl WikiClient {
             .await?
             .text()
             .await
-            .map_err(|source| ToolsError::TextConversionFailed { source })
+            .map_err(Into::into)
     }
 
     pub async fn post_into_json<T: DeserializeOwned>(
@@ -220,7 +212,7 @@ impl WikiClient {
             .await?
             .json()
             .await
-            .map_err(|source| ToolsError::JsonConversionFailed { source })
+            .map_err(Into::into)
     }
 
     async fn request_csrf_token(&mut self) -> Result<(), ToolsError> {
@@ -268,6 +260,6 @@ impl WikiClient {
             .multipart(form)
             .send()
             .await
-            .map_err(|source| ToolsError::RequestFailed { source })
+            .map_err(Into::into)
     }
 }

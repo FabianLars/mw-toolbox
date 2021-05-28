@@ -27,8 +27,8 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
             )
             .catch((err) =>
                 toast({
-                    title: 'Something went wrong!',
-                    description: err,
+                    title: `Something went wrong! ${err.code}-Error`,
+                    description: err.description,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
@@ -52,7 +52,7 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
             <Box>
                 <Button
                     isLoading={isLoading}
-                    isDisabled={!isOnline}
+                    isDisabled={!isOnline || areaValue.trim() === ''}
                     onClick={deletePages}
                     loadingText="Deleting..."
                     title={!isOnline ? 'Please login first!' : 'This might take a while!'}

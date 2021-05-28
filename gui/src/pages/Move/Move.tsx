@@ -29,8 +29,8 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
             )
             .catch((err) =>
                 toast({
-                    title: 'Something went wrong!',
-                    description: err,
+                    title: `Something went wrong! ${err.code}-Error`,
+                    description: err.description,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
@@ -64,7 +64,12 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
             <Box>
                 <Button
                     isLoading={isLoading}
-                    isDisabled={!isOnline}
+                    isDisabled={
+                        !isOnline ||
+                        areaFrom.trim() === '' ||
+                        areaTo.trim() === '' ||
+                        areaFrom.split(/\r\n|\r|\n/).length !== areaTo.split(/\r\n|\r|\n/).length
+                    }
                     onClick={movePages}
                     loadingText="Moving..."
                     title={!isOnline ? 'Please login first!' : 'This might take a while!'}

@@ -296,7 +296,7 @@ async fn get_from_api(
                         };
                     }
                     List::Failure { mut errors } => {
-                        return Err(ToolsError::MediaWikiError(errors.remove(0)));
+                        return Err(ToolsError::MediaWikiApi(errors.remove(0)));
                     }
                 }
             }

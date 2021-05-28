@@ -45,6 +45,6 @@ pub async fn edit<C: AsRef<WikiClient>, S: AsRef<str>, R: Into<String>>(
 
     match res {
         Edit::Succes { edit } => Ok(edit.result),
-        Edit::Failure { mut errors } => Err(ToolsError::MediaWikiError(errors.remove(0))),
+        Edit::Failure { mut errors } => Err(ToolsError::MediaWikiApi(errors.remove(0))),
     }
 }

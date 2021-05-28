@@ -4,11 +4,12 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::command;
 
-use mw_tools::api;
+use mw_tools::{api, error::ToolsError};
 
 use crate::{SavedState, CANCEL_UPLOAD, CLIENT};
 
 type Cache = parking_lot::Mutex<HashMap<String, Value>>;
+type Result<T, E = ToolsError> = core::result::Result<T, E>;
 
 #[derive(Debug, Serialize)]
 pub struct LoginResponse {
@@ -26,8 +27,6 @@ pub struct FindReplace {
     pub is_regex: bool,
 }
 
-// TODO: Use actual errors instead of error strings
-
 #[command]
 pub fn cache_get(key: String, cache: tauri::State<Cache>) -> Option<Value> {
     if let Some(v) = cache.lock().get(&key) {
@@ -44,55 +43,38 @@ pub fn cache_set(key: String, value: Value, cache: tauri::State<Cache>) -> bool 
 }
 
 #[command]
-pub async fn delete(pages: Vec<String>) -> Result<(), String> {
+pub async fn delete(pages: Vec<String>) -> Result<()> {
     let client = CLIENT.lock().await;
-    api::delete::delete(&*client, &pages[..])
-        .await
-        .map_err(|err| err.to_string())
+    api::delete::delete(&*client, &pages[..]).await
 }
 
 #[command]
-pub async fn download(files: Vec<String>) -> Result<(), String> {
-    api::download::download(&*CLIENT.lock().await, &files)
-        .await
-        .map_err(|err| err.to_string())
+pub async fn download(files: Vec<String>) -> Result<()> {
+    api::download::download(&*CLIENT.lock().await, &files).await
 }
 
 #[command]
-pub async fn edit(
-    title: String,
-    content: String,
-    summary: Option<String>,
-) -> Result<String, String> {
-    api::edit::edit(&*CLIENT.lock().await, title, content, summary)
-        .await
-        .map_err(|err| err.to_string())
+pub async fn edit(title: String, content: String, summary: Option<String>) -> Result<String> {
+    api::edit::edit(&*CLIENT.lock().await, title, content, summary).await
 }
 
 #[command]
-pub async fn get_page(page: String, patterns: Vec<FindReplace>) -> Result<String, String> {
-    match api::parse::get_page_content(&*CLIENT.lock().await, page).await {
-        Ok(s) => {
-            let mut s = s;
-            for pat in patterns {
-                if !pat.find.is_empty() {
-                    if pat.is_regex {
-                        let re = regex::Regex::new(&pat.find).map_err(|err| err.to_string())?;
-                        s = re
-                            .replace_all(
-                                &s,
-                                unescape::unescape(&pat.replace).unwrap_or(pat.replace),
-                            )
-                            .to_string();
-                    } else {
-                        s = s.replace(&pat.find, &pat.replace);
-                    }
-                }
+pub async fn get_page(page: String, patterns: Vec<FindReplace>) -> Result<String> {
+    let mut s = api::parse::get_page_content(&*CLIENT.lock().await, page).await?;
+    for pat in patterns {
+        if !pat.find.is_empty() {
+            if pat.is_regex {
+                let re = regex::Regex::new(&pat.find)
+                    .map_err(|err| ToolsError::Other(err.to_string()))?;
+                s = re
+                    .replace_all(&s, unescape::unescape(&pat.replace).unwrap_or(pat.replace))
+                    .to_string();
+            } else {
+                s = s.replace(&pat.find, &pat.replace);
             }
-            Ok(s)
         }
-        Err(err) => Err(err.to_string()),
     }
+    Ok(s)
 }
 
 #[command]
@@ -101,9 +83,9 @@ pub async fn init() -> SavedState {
 }
 
 #[command]
-pub async fn list(listtype: String, param: Option<String>) -> Result<Vec<String>, String> {
+pub async fn list(listtype: String, param: Option<String>) -> Result<Vec<String>> {
     let client = CLIENT.lock().await;
-    let res = match listtype.as_str() {
+    match listtype.as_str() {
         "allimages" => api::list::allimages(&*client).await,
         "allpages" => api::list::allpages(&*client, param.as_deref()).await,
         "alllinks" => api::list::alllinks(&*client).await,
@@ -116,9 +98,11 @@ pub async fn list(listtype: String, param: Option<String>) -> Result<Vec<String>
         "protectedtitles" => api::list::protectedtitles(&*client).await,
         "querypage" => api::list::querypage(&*client, param.as_deref()).await,
         "allinfoboxes" => api::list::allinfoboxes(&*client).await,
-        _ => api::list::allimages(&*client).await,
-    };
-    res.map_err(|err| err.to_string())
+        _ => Err(ToolsError::InvalidInput(format!(
+            "Invalid listtype provided: \"{}\"",
+            listtype
+        ))),
+    }
 }
 
 #[command]
@@ -127,7 +111,7 @@ pub async fn login(
     password: String,
     wikiurl: String,
     is_persistent: bool,
-) -> Result<LoginResponse, String> {
+) -> Result<LoginResponse> {
     let mut client = CLIENT.lock().await;
     client.url(&wikiurl);
     client.credentials(&loginname, &password);
@@ -136,11 +120,7 @@ pub async fn login(
         url: wikiurl.clone(),
     };
 
-    let client_res = client.login().await;
-
-    if client_res.is_err() {
-        return Err(client_res.unwrap_err().to_string());
-    }
+    client.login().await?;
 
     let (loginname, password) = if is_persistent {
         (loginname, password)
@@ -157,23 +137,16 @@ pub async fn login(
     .save()
     .await;
 
-    save_res
-        .and(Ok(callback_val))
-        .map_err(|err| err.to_string())
+    save_res.and(Ok(callback_val))
 }
 
 #[command]
-pub async fn logout() -> Result<(), String> {
-    CLIENT
-        .lock()
-        .await
-        .logout()
-        .await
-        .map_err(|err| err.to_string())
+pub async fn logout() -> Result<()> {
+    CLIENT.lock().await.logout().await
 }
 
 #[command]
-pub async fn r#move(from: Vec<String>, to: Vec<String>) -> Result<(), String> {
+pub async fn r#move(from: Vec<String>, to: Vec<String>) -> Result<()> {
     api::rename::rename(
         &*CLIENT.lock().await,
         from,
@@ -182,18 +155,16 @@ pub async fn r#move(from: Vec<String>, to: Vec<String>) -> Result<(), String> {
         None,
     )
     .await
-    .map_err(|err| err.to_string())
 }
 
 #[command]
-pub async fn purge(is_nulledit: bool, pages: Vec<String>) -> Result<(), String> {
+pub async fn purge(is_nulledit: bool, pages: Vec<String>) -> Result<()> {
     let client = CLIENT.lock().await;
     if is_nulledit {
         api::edit::nulledit(&*client, &pages[..]).await
     } else {
         api::purge::purge(&*client, &pages[..], true).await
     }
-    .map_err(|err| err.to_string())
 }
 
 #[command]
@@ -201,16 +172,14 @@ pub async fn upload<P: tauri::Params<Event = String>>(
     text: String,
     files: Vec<String>,
     window: tauri::Window<P>,
-) -> Result<(), String> {
+) -> Result<()> {
     let mut file_iter = files.iter();
     while !CANCEL_UPLOAD.load(Ordering::Relaxed) {
         if let Some(file) = file_iter.next() {
-            api::upload::upload(&*CLIENT.lock().await, &file, Some(&text))
-                .await
-                .map_err(|err| err.to_string())?;
+            api::upload::upload(&*CLIENT.lock().await, &file, Some(&text)).await?;
             window
                 .emit("file-uploaded", file)
-                .map_err(|err| err.to_string())?;
+                .map_err(|err| ToolsError::Other(err.to_string()))?;
         } else {
             break;
         }

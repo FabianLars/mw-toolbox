@@ -33,8 +33,8 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
             )
             .catch((err) =>
                 toast({
-                    title: 'Something went wrong!',
-                    description: err,
+                    title: `Something went wrong! ${err.code}-Error`,
+                    description: err.description,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
@@ -61,7 +61,7 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
             <Flex direction="row" align="center" justify="center">
                 <Button
                     isLoading={isPurging}
-                    isDisabled={!isOnline || isNulling}
+                    isDisabled={!isOnline || isNulling || areaValue.trim() === ''}
                     onClick={() => purgePages(false)}
                     loadingText="Purging"
                     title={
@@ -75,7 +75,7 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
                 </Button>
                 <Button
                     isLoading={isNulling}
-                    isDisabled={!isOnline || isPurging}
+                    isDisabled={!isOnline || isPurging || areaValue.trim() === ''}
                     onClick={() => purgePages(true)}
                     loadingText="Saving nulledits"
                     title={

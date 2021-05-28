@@ -17,6 +17,6 @@ pub async fn get_page_content<C: AsRef<WikiClient>, S: AsRef<str>>(
 
     match res {
         Parse::Succes { parse } => Ok(parse.wikitext),
-        Parse::Failure { mut errors } => Err(ToolsError::MediaWikiError(errors.remove(0))),
+        Parse::Failure { mut errors } => Err(ToolsError::MediaWikiApi(errors.remove(0))),
     }
 }

@@ -41,8 +41,8 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
             })
             .catch((err) => {
                 toast({
-                    title: 'Something went wrong!',
-                    description: err,
+                    title: `Something went wrong! ${err.code}-Error`,
+                    description: err.description,
                     status: 'error',
                     duration: 5000,
                     isClosable: true,
@@ -70,7 +70,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
             .catch((err) =>
                 toast({
                     title: 'Something went wrong!',
-                    description: err,
+                    description: err.description,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
@@ -145,7 +145,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                 <Box>
                     <Button
                         mx={2}
-                        isDisabled={isWaiting || !isOnline || !files}
+                        isDisabled={isWaiting || !isOnline || !files[0]}
                         onClick={() => {
                             if (isUploading) {
                                 emit('cancel-upload').finally(() => setIsWaiting(true));

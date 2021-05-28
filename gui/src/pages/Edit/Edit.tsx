@@ -73,8 +73,8 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                 .catch((err) => {
                     startStop();
                     toast({
-                        title: 'Something went wrong!',
-                        description: err,
+                        title: `Something went wrong! ${err.code}-Error`,
+                        description: err.description,
                         status: 'error',
                         duration: 10000,
                         isClosable: true,
@@ -109,8 +109,8 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
             .catch((err) => {
                 setIsLoading(false);
                 toast({
-                    title: 'Something went wrong!',
-                    description: err,
+                    title: `Something went wrong! ${err.code}-Error`,
+                    description: err.description,
                     status: 'error',
                     duration: 10000,
                     isClosable: true,
@@ -186,7 +186,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                 <Button
                                     w="100%"
                                     onClick={startStop}
-                                    isDisabled={!isOnline || isLoading}
+                                    isDisabled={!isOnline || isLoading || pageList.trim() === ''}
                                     title={
                                         !isOnline
                                             ? 'Please login first!'

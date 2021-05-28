@@ -14,7 +14,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tokio::sync::Mutex as AsyncMutex;
 
-use mw_tools::WikiClient;
+use mw_tools::{error::ToolsError, WikiClient};
 
 mod cmd;
 
@@ -63,8 +63,10 @@ pub struct SavedState {
 }
 
 impl SavedState {
-    async fn save(self) -> Result<(), anyhow::Error> {
-        storage::save_secure("b9c95dde", self).await
+    async fn save(self) -> Result<(), ToolsError> {
+        storage::save_secure("b9c95dde", self)
+            .await
+            .map_err(|err| ToolsError::Other(err.to_string()))
     }
 
     async fn load() -> SavedState {

@@ -1,4 +1,5 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
+use thiserror::Error;
 
 pub(crate) mod download;
 pub(crate) mod edit;
@@ -9,7 +10,7 @@ pub(crate) mod rename;
 pub(crate) mod token;
 pub(crate) mod upload;
 
-#[derive(Debug, Deserialize, thiserror::Error)]
+#[derive(Debug, Deserialize, Error, Serialize)]
 #[error("API returned an error: {code}. Description: {description}")]
 pub struct Error {
     pub(crate) code: String,
