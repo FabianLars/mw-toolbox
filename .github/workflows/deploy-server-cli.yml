@@ -34,7 +34,7 @@ jobs:
               run: mv target/release/mw-cli target/release/wtools
 
             - name: Deploy cli
-              uses: easingthemes/ssh-deploy@master
+              uses: easingthemes/ssh-deploy@main
               with:
                   REMOTE_HOST: ${{ secrets.SERVER_IP }}
                   REMOTE_USER: ${{ secrets.USERNAME }}
@@ -43,7 +43,7 @@ jobs:
                   TARGET: '~/wwwbackend'
 
             - name: File permissions
-              uses: appleboy/ssh-action@main
+              uses: appleboy/ssh-action@master
               with:
                   host: ${{ secrets.SERVER_IP }}
                   username: ${{ secrets.USERNAME }}
