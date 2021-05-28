@@ -1,51 +1,51 @@
 name: Deploy cli on server
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - 'gui/**'
-      - 'README.md'
+    workflow_dispatch:
+    push:
+        branches:
+            - main
+        paths-ignore:
+            - 'gui/**'
+            - 'README.md'
 
 jobs:
-  deploy-cli:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+    deploy-cli:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
 
-      - uses: hecrj/setup-rust-action@v1
+            - uses: hecrj/setup-rust-action@v1
 
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cache-${{ hashFiles('**/Cargo.toml') }}
+            - uses: actions/cache@v2
+              with:
+                  path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                      target
+                  key: ${{ runner.os }}-cache-${{ hashFiles('**/Cargo.toml') }}
 
-      - name: Build cli
-        run: |
-          chmod +x ./build-linux-cli.sh
-          ./build-linux-cli.sh
+            - name: Build cli
+              run: |
+                  chmod +x ./build-linux-cli.sh
+                  ./build-linux-cli.sh
 
-      - name: Rename executable
-        run: mv target/release/mw-cli target/release/wtools
+            - name: Rename executable
+              run: mv target/release/mw-cli target/release/wtools
 
-      - name: Deploy cli
-        uses: easingthemes/ssh-deploy@master
-        with:
-          REMOTE_HOST: ${{ secrets.SERVER_IP }}
-          REMOTE_USER: ${{ secrets.USERNAME }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SOURCE: 'target/release/wtools'
-          TARGET: '~/wwwbackend'
+            - name: Deploy cli
+              uses: easingthemes/ssh-deploy@master
+              with:
+                  REMOTE_HOST: ${{ secrets.SERVER_IP }}
+                  REMOTE_USER: ${{ secrets.USERNAME }}
+                  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+                  SOURCE: 'target/release/wtools'
+                  TARGET: '~/wwwbackend'
 
-      - name: File permissions
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: cd ~/wwwbackend && sudo ./rights.sh
+            - name: File permissions
+              uses: appleboy/ssh-action@main
+              with:
+                  host: ${{ secrets.SERVER_IP }}
+                  username: ${{ secrets.USERNAME }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  script: cd ~/wwwbackend && sudo ./rights.sh
