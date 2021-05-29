@@ -25,6 +25,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
     const [listType, setListType] = useState('');
     const [paramInfo, setParamInfo] = useState('');
     const [paramInput, setParamInput] = useState('');
+    const [paramRequired, setParamRequired] = useState(true);
     const toast = useToast();
 
     const getList = () => {
@@ -67,6 +68,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
 
     useEffect(() => {
         setParamInput('');
+        let paramReq = true;
         switch (listType) {
             case 'allpages':
                 setParamInfo("Namespace id or 'all'");
@@ -90,8 +92,10 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                 setParamInfo('Search');
                 break;
             default:
+                paramReq = false;
                 setParamInfo('');
         }
+        setParamRequired(paramReq);
     }, [listType]);
 
     useEffect(() => setNavDisabled(loading), [loading]);
@@ -143,7 +147,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                         mx={2}
                         onClick={getList}
                         isLoading={loading}
-                        isDisabled={!isOnline || !listType}
+                        isDisabled={!isOnline || !listType || (paramRequired && !paramInput.trim())}
                         title={!isOnline ? 'Please login first!' : 'This might take a while!'}
                     >
                         Get List

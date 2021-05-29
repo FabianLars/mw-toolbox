@@ -11,7 +11,7 @@ pub(crate) mod token;
 pub(crate) mod upload;
 
 #[derive(Debug, Deserialize, Error, Serialize)]
-#[error("API returned an error: {code}. Description: {description}")]
+#[error("API returned an error: \"{code}\". Description: \"{description}\"")]
 pub struct Error {
     pub(crate) code: String,
     #[serde(rename = "text")]

@@ -85,9 +85,10 @@ pub async fn init() -> SavedState {
 #[command]
 pub async fn list(listtype: &str, param: Option<&str>) -> Result<Vec<String>> {
     let client = CLIENT.lock().await;
+    let param = param.unwrap_or_default();
     match listtype {
         "allimages" => api::list::allimages(&*client).await,
-        "allpages" => api::list::allpages(&*client, param).await,
+        "allpages" => api::list::allpages(&*client, Some(param)).await,
         "alllinks" => api::list::alllinks(&*client).await,
         "allcategories" => api::list::allcategories(&*client).await,
         "backlinks" => api::list::backlinks(&*client, param).await,

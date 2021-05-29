@@ -66,53 +66,34 @@ pub async fn allpages(client: &WikiClient, parameter: Option<&str>) -> Result<Ve
     get_from_api(client, "allpages", "ap", None).await
 }
 
-pub async fn backlinks(client: &WikiClient, parameter: Option<&str>) -> Result<Vec<String>> {
-    if let Some(p) = parameter {
-        get_from_api(
-            client,
-            "backlinks",
-            "bl",
-            Some(&format!("bltitle={}", p)),
-        )
-        .await
-    } else {
-        Err(ToolsError::InvalidInput(
-            "Missing bltitle: Title to search".to_string(),
-        ))
-    }
+pub async fn backlinks(client: &WikiClient, parameter: &str) -> Result<Vec<String>> {
+    get_from_api(
+        client,
+        "backlinks",
+        "bl",
+        Some(&format!("bltitle={}", parameter)),
+    )
+    .await
 }
 
-pub async fn categorymembers(client: &WikiClient, parameter: Option<&str>) -> Result<Vec<String>> {
-    if let Some(p) = parameter {
-        get_from_api(
-            client,
-            "categorymembers",
-            "cm",
-            Some(&format!("cmtitle={}", p)),
-        )
-        .await
-    } else {
-        Err(ToolsError::InvalidInput(
-            "Missing cmtitle (Which category to enumerate (must include 'Category:' prefix))"
-                .to_string(),
-        ))
-    }
+pub async fn categorymembers(client: &WikiClient, parameter: &str) -> Result<Vec<String>> {
+    get_from_api(
+        client,
+        "categorymembers",
+        "cm",
+        Some(&format!("cmtitle={}", parameter)),
+    )
+    .await
 }
 
-pub async fn embeddedin(client: &WikiClient, parameter: Option<&str>) -> Result<Vec<String>> {
-    if let Some(p) = parameter {
-        get_from_api(
-            client,
-            "embeddedin",
-            "ei",
-            Some(&format!("eititle={}", p)),
-        )
-        .await
-    } else {
-        Err(ToolsError::InvalidInput(
-            "Missing eititle: Title to search".to_string(),
-        ))
-    }
+pub async fn embeddedin(client: &WikiClient, parameter: &str) -> Result<Vec<String>> {
+    get_from_api(
+        client,
+        "embeddedin",
+        "ei",
+        Some(&format!("eititle={}", parameter)),
+    )
+    .await
 }
 
 pub async fn exturlusage(client: &WikiClient) -> Result<HashMap<String, Vec<String>>> {
@@ -130,58 +111,38 @@ pub async fn exturlusage(client: &WikiClient) -> Result<HashMap<String, Vec<Stri
     Ok(results)
 }
 
-pub async fn imageusage(client: &WikiClient, parameter: Option<&str>) -> Result<Vec<String>> {
-    if let Some(p) = parameter {
-        get_from_api(
-            client,
-            "imageusage",
-            "iu",
-            Some(&format!("iutitle={}", p)),
-        )
-        .await
-    } else {
-        Err(ToolsError::InvalidInput(
-            "Missing iutitle: Title to search".to_string(),
-        ))
-    }
+pub async fn imageusage(client: &WikiClient, parameter: &str) -> Result<Vec<String>> {
+    get_from_api(
+        client,
+        "imageusage",
+        "iu",
+        Some(&format!("iutitle={}", parameter)),
+    )
+    .await
 }
 
 pub async fn protectedtitles(client: &WikiClient) -> Result<Vec<String>> {
     get_from_api(client, "protectedtitles", "pt", None).await
 }
 
-pub async fn querypage(client: &WikiClient, parameter: Option<&str>) -> Result<Vec<String>> {
-    if let Some(p) = parameter {
-        get_from_api(
-            client,
-            "querypage",
-            "qp",
-            Some(&format!("qppage={}", p)),
-        )
-        .await
-    } else {
-        Err(ToolsError::InvalidInput(
-            "Missing qppage: The name of the special page. Note, this is case sensitive"
-                .to_string(),
-        ))
-    }
+pub async fn querypage(client: &WikiClient, parameter: &str) -> Result<Vec<String>> {
+    get_from_api(
+        client,
+        "querypage",
+        "qp",
+        Some(&format!("qppage={}", parameter)),
+    )
+    .await
 }
 
-pub async fn search(client: &WikiClient, parameter: Option<&str>) -> Result<Vec<String>> {
-    if let Some(p) = parameter {
-        get_from_api(
-            client,
-            "search",
-            "sr",
-            Some(&format!("srsearch={}", p)),
-        )
-        .await
-    } else {
-        Err(ToolsError::InvalidInput(
-            "Missing srsearch: Search for all page titles (or content) that has this value"
-                .to_string(),
-        ))
-    }
+pub async fn search(client: &WikiClient, parameter: &str) -> Result<Vec<String>> {
+    get_from_api(
+        client,
+        "search",
+        "sr",
+        Some(&format!("srsearch={}", parameter)),
+    )
+    .await
 }
 
 async fn get_from_api(
@@ -259,7 +220,7 @@ async fn get_from_api(
                                     results.push(format!(
                                         "{}~URL~{}",
                                         page.title,
-                                        page.url.unwrap_or_else(|| "".to_string())
+                                        page.url.unwrap_or_default()
                                     ));
                                 }
                                 _ => results.push(page.title),

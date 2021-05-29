@@ -8,7 +8,7 @@ pub async fn upload<P: AsRef<Path>>(
     text: Option<&str>,
 ) -> Result<String, ToolsError> {
     let file = file.as_ref();
-    let text = text.unwrap_or("");
+    let text = text.unwrap_or_default();
 
     let file_name = file
         .file_name()

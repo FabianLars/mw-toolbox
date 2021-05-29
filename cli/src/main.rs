@@ -151,21 +151,21 @@ async fn main() -> Result<()> {
                     ListType::Alllinks => api::list::alllinks(&client).await?,
                     ListType::Allcategories => api::list::allcategories(&client).await?,
                     ListType::Backlinks => {
-                        api::list::backlinks(&client, parameter.as_deref()).await?
+                        api::list::backlinks(&client, &parameter.ok_or_else(|| anyhow!("parameter 'bltitle' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Backlinks for help."))?).await?
                     }
                     ListType::Categorymembers => {
-                        api::list::categorymembers(&client, parameter.as_deref()).await?
+                        api::list::categorymembers(&client, &parameter.ok_or_else(|| anyhow!("parameter 'cmtitle' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Categorymembers for help."))?).await?
                     }
                     ListType::Embeddedin => {
-                        api::list::embeddedin(&client, parameter.as_deref()).await?
+                        api::list::embeddedin(&client, &parameter.ok_or_else(|| anyhow!("parameter 'eititle' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Embeddedin for help."))?).await?
                     }
                     ListType::Imageusage => {
-                        api::list::imageusage(&client, parameter.as_deref()).await?
+                        api::list::imageusage(&client, &parameter.ok_or_else(|| anyhow!("parameter 'iutitle' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Imageusage for help."))?).await?
                     }
-                    ListType::Search => api::list::search(&client, parameter.as_deref()).await?,
+                    ListType::Search => api::list::search(&client, &parameter.ok_or_else(|| anyhow!("parameter 'srsearch' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Search for help."))?).await?,
                     ListType::Protectedtitles => api::list::protectedtitles(&client).await?,
                     ListType::Querypage => {
-                        api::list::querypage(&client, parameter.as_deref()).await?
+                        api::list::querypage(&client, &parameter.ok_or_else(|| anyhow!("parameter 'qppage' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Querypage for help."))?).await?
                     }
                     ListType::Allinfoboxes => api::list::allinfoboxes(&client).await?,
                     _ => vec![String::new()],
@@ -202,7 +202,7 @@ async fn main() -> Result<()> {
             } else {
                 Some(Destination::Plain(to))
             };
-            api::rename::rename(&client, from, to, prepend, append).await?
+            api::rename::rename(&client, from, to, prepend.as_deref(), append.as_deref()).await?
         }
         Subcommand::Nulledit { input } => {
             let contents = fs::read_to_string(input).await?;
@@ -228,7 +228,7 @@ async fn main() -> Result<()> {
             } else {
                 return Err(anyhow!("Invalid path given!"));
             }
-            api::upload::upload_multiple(&client, &files, text).await?
+            api::upload::upload_multiple(&client, &files, text.as_deref()).await?
         }
         #[cfg(feature = "league-wiki")]
         Subcommand::League { league_type, path } => match league_type {
