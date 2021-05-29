@@ -1,12 +1,7 @@
 use crate::WikiClient;
 use crate::{error::ToolsError, response::edit::Edit};
 
-pub async fn nulledit<C: AsRef<WikiClient>, S: AsRef<str>>(
-    client: C,
-    titles: &[S],
-) -> Result<(), ToolsError> {
-    let client = client.as_ref();
-
+pub async fn nulledit(client: &WikiClient, titles: &[&str]) -> Result<(), ToolsError> {
     for title in titles {
         client
             .post(&[
@@ -15,7 +10,7 @@ pub async fn nulledit<C: AsRef<WikiClient>, S: AsRef<str>>(
                 ("notminor", "true"),
                 ("prependtext", ""),
                 ("nocreate", ""),
-                ("title", title.as_ref()),
+                ("title", title),
             ])
             .await?;
         tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
@@ -24,22 +19,19 @@ pub async fn nulledit<C: AsRef<WikiClient>, S: AsRef<str>>(
     Ok(())
 }
 
-pub async fn edit<C: AsRef<WikiClient>, S: AsRef<str>, R: Into<String>>(
-    client: C,
-    title: S,
-    content: S,
-    summary: Option<R>,
+pub async fn edit(
+    client: &WikiClient,
+    title: &str,
+    content: &str,
+    summary: Option<&str>,
 ) -> Result<String, ToolsError> {
-    let client = client.as_ref();
-    let summary = summary.map_or_else(|| "".to_string(), |v| v.into());
-
     let res: Edit = client
         .post_into_json(&[
             ("action", "edit"),
             ("bot", ""),
-            ("summary", &summary),
-            ("title", title.as_ref()),
-            ("text", content.as_ref()),
+            ("summary", summary.unwrap_or("")),
+            ("title", title),
+            ("text", content),
         ])
         .await?;
 

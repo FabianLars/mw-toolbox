@@ -2,14 +2,13 @@ use std::path::Path;
 
 use crate::{error::ToolsError, response::upload::Upload, WikiClient};
 
-pub async fn upload<C: AsRef<WikiClient>, P: AsRef<Path>, S: Into<String>>(
-    client: C,
+pub async fn upload<P: AsRef<Path>>(
+    client: &WikiClient,
     file: P,
-    text: Option<S>,
+    text: Option<&str>,
 ) -> Result<String, ToolsError> {
-    let client = client.as_ref();
     let file = file.as_ref();
-    let text = text.map_or_else(|| "".into(), |s| s.into());
+    let text = text.unwrap_or("");
 
     let file_name = file
         .file_name()
@@ -42,13 +41,13 @@ pub async fn upload<C: AsRef<WikiClient>, P: AsRef<Path>, S: Into<String>>(
     }
 }
 
-pub async fn upload_multiple<C: AsRef<WikiClient>, P: AsRef<Path>>(
-    client: C,
+pub async fn upload_multiple<P: AsRef<Path>>(
+    client: &WikiClient,
     files: &[P],
-    text: Option<String>,
+    text: Option<&str>,
 ) -> Result<(), ToolsError> {
     for file in files {
-        if let Err(err) = upload(&client, file, text.as_ref()).await {
+        if let Err(err) = upload(&client, file, text).await {
             return Err(err);
         }
     }

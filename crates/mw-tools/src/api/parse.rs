@@ -1,18 +1,9 @@
 use crate::WikiClient;
 use crate::{error::ToolsError, response::parse::Parse};
 
-pub async fn get_page_content<C: AsRef<WikiClient>, S: AsRef<str>>(
-    client: C,
-    page: S,
-) -> Result<String, ToolsError> {
-    let client = client.as_ref();
-
+pub async fn get_page_content(client: &WikiClient, page: &str) -> Result<String, ToolsError> {
     let res: Parse = client
-        .get_into_json(&[
-            ("action", "parse"),
-            ("prop", "wikitext"),
-            ("page", page.as_ref()),
-        ])
+        .get_into_json(&[("action", "parse"), ("prop", "wikitext"), ("page", page)])
         .await?;
 
     match res {

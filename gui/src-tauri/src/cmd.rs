@@ -49,17 +49,17 @@ pub async fn delete(pages: Vec<&str>, reason: Option<&str>) -> Result<()> {
 }
 
 #[command]
-pub async fn download(files: Vec<String>) -> Result<()> {
+pub async fn download(files: Vec<&str>) -> Result<()> {
     api::download::download(&*CLIENT.lock().await, &files).await
 }
 
 #[command]
-pub async fn edit(title: String, content: String, summary: Option<String>) -> Result<String> {
+pub async fn edit(title: &str, content: &str, summary: Option<&str>) -> Result<String> {
     api::edit::edit(&*CLIENT.lock().await, title, content, summary).await
 }
 
 #[command]
-pub async fn get_page(page: String, patterns: Vec<FindReplace>) -> Result<String> {
+pub async fn get_page(page: &str, patterns: Vec<FindReplace>) -> Result<String> {
     let mut s = api::parse::get_page_content(&*CLIENT.lock().await, page).await?;
     for pat in patterns {
         if !pat.find.is_empty() {
@@ -83,20 +83,20 @@ pub async fn init() -> SavedState {
 }
 
 #[command]
-pub async fn list(listtype: String, param: Option<String>) -> Result<Vec<String>> {
+pub async fn list(listtype: &str, param: Option<&str>) -> Result<Vec<String>> {
     let client = CLIENT.lock().await;
-    match listtype.as_str() {
+    match listtype {
         "allimages" => api::list::allimages(&*client).await,
-        "allpages" => api::list::allpages(&*client, param.as_deref()).await,
+        "allpages" => api::list::allpages(&*client, param).await,
         "alllinks" => api::list::alllinks(&*client).await,
         "allcategories" => api::list::allcategories(&*client).await,
-        "backlinks" => api::list::backlinks(&*client, param.as_deref()).await,
-        "categorymembers" => api::list::categorymembers(&*client, param.as_deref()).await,
-        "embeddedin" => api::list::embeddedin(&*client, param.as_deref()).await,
-        "imageusage" => api::list::imageusage(&*client, param.as_deref()).await,
-        "search" => api::list::search(&*client, param.as_deref()).await,
+        "backlinks" => api::list::backlinks(&*client, param).await,
+        "categorymembers" => api::list::categorymembers(&*client, param).await,
+        "embeddedin" => api::list::embeddedin(&*client, param).await,
+        "imageusage" => api::list::imageusage(&*client, param).await,
+        "search" => api::list::search(&*client, param).await,
         "protectedtitles" => api::list::protectedtitles(&*client).await,
-        "querypage" => api::list::querypage(&*client, param.as_deref()).await,
+        "querypage" => api::list::querypage(&*client, param).await,
         "allinfoboxes" => api::list::allinfoboxes(&*client).await,
         _ => Err(ToolsError::InvalidInput(format!(
             "Invalid listtype provided: \"{}\"",
@@ -158,25 +158,25 @@ pub async fn r#move(from: Vec<String>, to: Vec<String>) -> Result<()> {
 }
 
 #[command]
-pub async fn purge(is_nulledit: bool, pages: Vec<String>) -> Result<()> {
+pub async fn purge(is_nulledit: bool, pages: Vec<&str>) -> Result<()> {
     let client = CLIENT.lock().await;
     if is_nulledit {
-        api::edit::nulledit(&*client, &pages[..]).await
+        api::edit::nulledit(&*client, &pages).await
     } else {
-        api::purge::purge(&*client, &pages[..], true).await
+        api::purge::purge(&*client, &pages, true).await
     }
 }
 
 #[command]
 pub async fn upload<P: tauri::Params<Event = String>>(
-    text: String,
-    files: Vec<String>,
+    text: &str,
+    files: Vec<&str>,
     window: tauri::Window<P>,
 ) -> Result<()> {
     let mut file_iter = files.iter();
     while !CANCEL_UPLOAD.load(Ordering::Relaxed) {
         if let Some(file) = file_iter.next() {
-            api::upload::upload(&*CLIENT.lock().await, &file, Some(&text)).await?;
+            api::upload::upload(&*CLIENT.lock().await, file, Some(text)).await?;
             window
                 .emit("file-uploaded", file)
                 .map_err(|err| ToolsError::Other(err.to_string()))?;

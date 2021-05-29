@@ -8,28 +8,23 @@ use crate::{
 
 type Result<T, E = ToolsError> = core::result::Result<T, E>;
 
-pub async fn allcategories<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
-    get_from_api(client.as_ref(), "allcategories", "ac", None).await
+pub async fn allcategories(client: &WikiClient) -> Result<Vec<String>> {
+    get_from_api(client, "allcategories", "ac", None).await
 }
 
-pub async fn allimages<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
-    get_from_api(client.as_ref(), "allimages", "ai", None).await
+pub async fn allimages(client: &WikiClient) -> Result<Vec<String>> {
+    get_from_api(client, "allimages", "ai", None).await
 }
 
-pub async fn allinfoboxes<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
-    get_from_api(client.as_ref(), "allinfoboxes", "", None).await
+pub async fn allinfoboxes(client: &WikiClient) -> Result<Vec<String>> {
+    get_from_api(client, "allinfoboxes", "", None).await
 }
 
-pub async fn alllinks<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
-    get_from_api(client.as_ref(), "alllinks", "al", None).await
+pub async fn alllinks(client: &WikiClient) -> Result<Vec<String>> {
+    get_from_api(client, "alllinks", "al", None).await
 }
 
-pub async fn allpages<C: AsRef<WikiClient>>(
-    client: C,
-    parameter: Option<&str>,
-) -> Result<Vec<String>> {
-    let client = client.as_ref();
-
+pub async fn allpages(client: &WikiClient, parameter: Option<&str>) -> Result<Vec<String>> {
     if let Some(param) = parameter {
         if param == "all" {
             let mut temp: Vec<String> = Vec::new();
@@ -71,13 +66,10 @@ pub async fn allpages<C: AsRef<WikiClient>>(
     get_from_api(client, "allpages", "ap", None).await
 }
 
-pub async fn backlinks<C: AsRef<WikiClient>>(
-    client: C,
-    parameter: Option<&str>,
-) -> Result<Vec<String>> {
+pub async fn backlinks(client: &WikiClient, parameter: Option<&str>) -> Result<Vec<String>> {
     if let Some(p) = parameter {
         get_from_api(
-            client.as_ref(),
+            client,
             "backlinks",
             "bl",
             Some(&format!("bltitle={}", p)),
@@ -90,13 +82,10 @@ pub async fn backlinks<C: AsRef<WikiClient>>(
     }
 }
 
-pub async fn categorymembers<C: AsRef<WikiClient>>(
-    client: C,
-    parameter: Option<&str>,
-) -> Result<Vec<String>> {
+pub async fn categorymembers(client: &WikiClient, parameter: Option<&str>) -> Result<Vec<String>> {
     if let Some(p) = parameter {
         get_from_api(
-            client.as_ref(),
+            client,
             "categorymembers",
             "cm",
             Some(&format!("cmtitle={}", p)),
@@ -110,13 +99,10 @@ pub async fn categorymembers<C: AsRef<WikiClient>>(
     }
 }
 
-pub async fn embeddedin<C: AsRef<WikiClient>>(
-    client: C,
-    parameter: Option<&str>,
-) -> Result<Vec<String>> {
+pub async fn embeddedin(client: &WikiClient, parameter: Option<&str>) -> Result<Vec<String>> {
     if let Some(p) = parameter {
         get_from_api(
-            client.as_ref(),
+            client,
             "embeddedin",
             "ei",
             Some(&format!("eititle={}", p)),
@@ -129,8 +115,8 @@ pub async fn embeddedin<C: AsRef<WikiClient>>(
     }
 }
 
-pub async fn exturlusage<C: AsRef<WikiClient>>(client: C) -> Result<HashMap<String, Vec<String>>> {
-    let api_res = get_from_api(client.as_ref(), "exturlusage", "eu", None).await?;
+pub async fn exturlusage(client: &WikiClient) -> Result<HashMap<String, Vec<String>>> {
+    let api_res = get_from_api(client, "exturlusage", "eu", None).await?;
     let mut results: HashMap<String, Vec<String>> = HashMap::new();
 
     for v in api_res {
@@ -144,13 +130,10 @@ pub async fn exturlusage<C: AsRef<WikiClient>>(client: C) -> Result<HashMap<Stri
     Ok(results)
 }
 
-pub async fn imageusage<C: AsRef<WikiClient>>(
-    client: C,
-    parameter: Option<&str>,
-) -> Result<Vec<String>> {
+pub async fn imageusage(client: &WikiClient, parameter: Option<&str>) -> Result<Vec<String>> {
     if let Some(p) = parameter {
         get_from_api(
-            client.as_ref(),
+            client,
             "imageusage",
             "iu",
             Some(&format!("iutitle={}", p)),
@@ -163,17 +146,14 @@ pub async fn imageusage<C: AsRef<WikiClient>>(
     }
 }
 
-pub async fn protectedtitles<C: AsRef<WikiClient>>(client: C) -> Result<Vec<String>> {
-    get_from_api(client.as_ref(), "protectedtitles", "pt", None).await
+pub async fn protectedtitles(client: &WikiClient) -> Result<Vec<String>> {
+    get_from_api(client, "protectedtitles", "pt", None).await
 }
 
-pub async fn querypage<C: AsRef<WikiClient>>(
-    client: C,
-    parameter: Option<&str>,
-) -> Result<Vec<String>> {
+pub async fn querypage(client: &WikiClient, parameter: Option<&str>) -> Result<Vec<String>> {
     if let Some(p) = parameter {
         get_from_api(
-            client.as_ref(),
+            client,
             "querypage",
             "qp",
             Some(&format!("qppage={}", p)),
@@ -187,13 +167,10 @@ pub async fn querypage<C: AsRef<WikiClient>>(
     }
 }
 
-pub async fn search<C: AsRef<WikiClient>>(
-    client: C,
-    parameter: Option<&str>,
-) -> Result<Vec<String>> {
+pub async fn search(client: &WikiClient, parameter: Option<&str>) -> Result<Vec<String>> {
     if let Some(p) = parameter {
         get_from_api(
-            client.as_ref(),
+            client,
             "search",
             "sr",
             Some(&format!("srsearch={}", p)),

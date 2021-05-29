@@ -1,14 +1,12 @@
 use crate::{error::ToolsError, response::rename::Rename, WikiClient};
 
-pub async fn rename<C: AsRef<WikiClient>>(
-    client: C,
+pub async fn rename(
+    client: &WikiClient,
     from: Vec<String>,
     to: Option<Destination>,
-    prepend: Option<String>,
-    append: Option<String>,
+    prepend: Option<&str>,
+    append: Option<&str>,
 ) -> Result<(), ToolsError> {
-    let client = client.as_ref();
-
     let mut actual_destination: Vec<String> = Vec::new();
 
     match to {

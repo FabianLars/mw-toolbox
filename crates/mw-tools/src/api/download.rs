@@ -10,12 +10,7 @@ use crate::{
     WikiClient,
 };
 
-pub async fn download<C: AsRef<WikiClient>, S: AsRef<str>>(
-    client: C,
-    files: &[S],
-) -> Result<(), ToolsError> {
-    let client = client.as_ref();
-
+pub async fn download(client: &WikiClient, files: &[&str]) -> Result<(), ToolsError> {
     let path = directories_next::UserDirs::new()
         .and_then(|p| p.download_dir().map(|p| p.to_path_buf()))
         .expect("Can't find user's download folder!");
@@ -26,8 +21,6 @@ pub async fn download<C: AsRef<WikiClient>, S: AsRef<str>>(
     let rgxp = Regex::new(r#"[<>:"/\|?*]+"#).unwrap();
 
     for f in files {
-        let f = f.as_ref();
-
         if !titles.is_empty() {
             titles.push('|');
         }

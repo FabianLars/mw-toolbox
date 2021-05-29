@@ -1,13 +1,10 @@
 use crate::{error::ToolsError, WikiClient};
 
-pub async fn purge<C: AsRef<WikiClient>, S: AsRef<str>>(
-    client: C,
-    titles: &[S],
+pub async fn purge(
+    client: &WikiClient,
+    titles: &[&str],
     recursive: bool,
 ) -> Result<(), ToolsError> {
-    let client = client.as_ref();
-    let titles: Vec<&str> = titles.iter().map(|s| s.as_ref()).collect();
-
     for chunk in titles.chunks(50) {
         client
             .post(&[

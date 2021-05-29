@@ -1,19 +1,17 @@
 use crate::error::ToolsError;
 use crate::WikiClient;
 
-pub async fn delete<C: AsRef<WikiClient>, S: AsRef<str>>(
-    client: C,
-    titles: &[S],
+pub async fn delete(
+    client: &WikiClient,
+    titles: &[&str],
     reason: Option<&str>,
 ) -> Result<(), ToolsError> {
-    let client = client.as_ref();
-
     for title in titles {
         let res = client
             .post_into_text(&[
                 ("action", "delete"),
                 ("reason", reason.unwrap_or("automated action")),
-                ("title", title.as_ref()),
+                ("title", title),
             ])
             .await?;
         log::debug!("{:?}", res);
