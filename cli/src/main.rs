@@ -126,7 +126,7 @@ async fn main() -> Result<()> {
         Subcommand::Delete { input } => {
             let contents = fs::read_to_string(input).await?;
             let titles: Vec<&str> = contents.lines().collect();
-            api::delete::delete(&client, &titles).await?
+            api::delete::delete(&client, &titles, None).await?
         }
         Subcommand::List {
             list_type,

@@ -4,6 +4,7 @@ use crate::WikiClient;
 pub async fn delete<C: AsRef<WikiClient>, S: AsRef<str>>(
     client: C,
     titles: &[S],
+    reason: Option<&str>,
 ) -> Result<(), ToolsError> {
     let client = client.as_ref();
 
@@ -11,7 +12,7 @@ pub async fn delete<C: AsRef<WikiClient>, S: AsRef<str>>(
         let res = client
             .post_into_text(&[
                 ("action", "delete"),
-                ("reason", "automated action"),
+                ("reason", reason.unwrap_or("automated action")),
                 ("title", title.as_ref()),
             ])
             .await?;

@@ -43,9 +43,9 @@ pub fn cache_set(key: String, value: Value, cache: tauri::State<Cache>) -> bool 
 }
 
 #[command]
-pub async fn delete(pages: Vec<String>) -> Result<()> {
+pub async fn delete(pages: Vec<&str>, reason: Option<&str>) -> Result<()> {
     let client = CLIENT.lock().await;
-    api::delete::delete(&*client, &pages[..]).await
+    api::delete::delete(&*client, &pages, reason).await
 }
 
 #[command]
