@@ -55,19 +55,22 @@ jobs:
               with:
                   node-version: '14'
 
-            - name: Install yarn
-              run: npm i -g yarn
-
-            - uses: actions/cache@v2
+            - name: Cache pnpm modules
+              uses: actions/cache@v2
+              env:
+                  cache-name: cache-pnnpm-modules
               with:
-                  path: node_modules
-                  key: ${{ runner.os }}-cache-${{ hashFiles('**/package.json') }}
+                  path: ~/.pnpm-store
+                  key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-
 
-            - name: Install dependencies
-              run: yarn install
+            - uses: pnpm/action-setup@v2
+              with:
+                  version: 6.x.x
+                  run_install: true
 
             - name: Type check
-              run: yarn type-check
+              run: pnpm type-check
 
             - name: Run tests
-              run: yarn test
+              run: pnpm test

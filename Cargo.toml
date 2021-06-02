@@ -1,14 +1,14 @@
 [workspace]
 members = [
-    "cli",
-    "crates/mw-tools",
-    "crates/league",
-    "crates/storage",
-    "gui/src-tauri",
+  "cli",
+  "crates/mw-tools",
+  "crates/league",
+  "crates/storage",
+  "gui/src-tauri",
 ]
 resolver = "2"
 
 [profile.release]
-lto = true
+lto = true 
 opt-level = "s" #"z"
 panic = "abort"

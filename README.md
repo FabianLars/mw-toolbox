@@ -1,22 +1,22 @@
 # mw-toolbox
 
-some tools to interact with http://leagueoflegends.fandom.com/de/wiki/  
-uses limited editing rate of ~1-2 edits per second according to fandoms rules  
-Interaction with Riot's API only via CLI + feature flag "riot-api" (just "update rotation" for now)  
+some tools to interact with http://leagueoflegends.fandom.com/de/wiki/
+uses limited editing rate of ~1-2 edits per second according to fandoms rules
+Interaction with Riot's API only via CLI + feature flag "riot-api" (just "update rotation" for now)
 
-Input files need to be formatted with newline seperation (eg 1 wiki article per line)  
+Input files need to be formatted with newline seperation (eg 1 wiki article per line)
 
-- GUI usage:
-    - cd into gui subdir
-    - run "yarn" or "yarn install"
-    - run "yarn tauri dev"
-- CLI usage:
-    - run via "[cargo run|cli] \<command\> (\<args if needed\>)"
-        - these commands need FANDOM_BOT_NAME, FANDOM_BOT_PASSWORD and/or RIOT_API_KEY (depends on command) environment variables as of now
-            - Fandom Login data can be provided via:
-              "[cargo run|cli] [--loginname \<name\>|-n \<name\>] and [--loginpassword \<pw\>|-p \<pw\>]"
-        - example: "cargo run delete ../todelete.txt"
-            - deletes every page listed in specified file (separation via newline)
+-   GUI usage:
+    -   cd into gui subdir
+    -   run "pnpm install"
+    -   run "pnpm tauri dev" (Note: edit "before(Dev|Build)Command" in tauri.conf.json if you're not using pnpm)
+-   CLI usage:
+    -   run via "[cargo run|cli] \<command\> (\<args if needed\>)"
+        -   these commands need FANDOM_BOT_NAME, FANDOM_BOT_PASSWORD and/or RIOT_API_KEY (depends on command) environment variables as of now
+            -   Fandom Login data can be provided via:
+                "[cargo run|cli] [--loginname \<name\>|-n \<name\>] and [--loginpassword \<pw\>|-p \<pw\>]"
+        -   example: "cargo run delete ../todelete.txt"
+            -   deletes every page listed in specified file (separation via newline)
 
 # Important!
 
