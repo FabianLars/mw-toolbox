@@ -8,12 +8,14 @@ import {
     Flex,
     FormControl,
     FormLabel,
+    IconButton,
     Input,
-    Text,
+    Select,
     useToast,
 } from '@chakra-ui/react';
 
 import type { User } from '../../App';
+import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 
 type Props = {
     user: User;
@@ -22,6 +24,8 @@ type Props = {
 };
 
 const Account = ({ user, setUser, setNavDisabled }: Props) => {
+    const [profiles, setProfiles] = useState(['Profile 1']);
+    const [profileIdx, setProfileIdx] = useState(0);
     const [apiUrl, setApiUrl] = useState('https://leagueoflegends.fandom.com/de/api.php');
     const [lgname, setLgname] = useState('');
     const [lgpasswd, setLgpasswd] = useState('');
@@ -78,6 +82,23 @@ const Account = ({ user, setUser, setNavDisabled }: Props) => {
         });
     };
 
+    const addProfile = () => {
+        const oldLen = profiles.length;
+        if (oldLen < 10) {
+            setProfiles((old) => old.concat('Profile ' + (old.length + 1)));
+            setProfileIdx(oldLen);
+        }
+    };
+
+    const removeProfile = () => {
+        setProfiles((old) => {
+            const curr = [...old];
+            curr.splice(profileIdx);
+            return curr;
+        });
+        setProfileIdx((old) => old - 1);
+    };
+
     useEffect(() => {
         if (!!window.__TAURI__) {
             if (user.isOnline) {
@@ -128,12 +149,67 @@ const Account = ({ user, setUser, setNavDisabled }: Props) => {
 
     return (
         <Flex as="main" direction="column" align="center" w="50%" justify="center">
-            <Text fontSize="xl" align="center">
+            {/* <Text fontSize="xl" align="center">
                 {user.isOnline ? user.username : ''}
             </Text>
             <Text fontSize="xl" align="center">
                 {user.isOnline ? user.url : 'Not logged in!'}
-            </Text>
+            </Text> */}
+            <Flex w="100%" alignItems="flex-end">
+                <FormControl
+                    flex="2"
+                    mr={3}
+                    id="profile-name"
+                    isRequired
+                    isInvalid={profiles[profileIdx].trim() === ''}
+                >
+                    <FormLabel>Profile Name</FormLabel>
+                    <Input
+                        value={profiles[profileIdx]}
+                        onChange={(event) =>
+                            setProfiles((old) => {
+                                const curr = [...old];
+                                curr[profileIdx] = event.target.value;
+                                return curr;
+                            })
+                        }
+                        isDisabled={logginin}
+                        placeholder="Profile name"
+                    />
+                </FormControl>
+                <FormControl flex="1" id="profile-select" isRequired>
+                    <FormLabel>Select Profile</FormLabel>
+                    <Select
+                        value={profileIdx.toString()}
+                        onChange={(event) => setProfileIdx(parseInt(event.target.value))}
+                        isDisabled={user.isOnline}
+                    >
+                        {profiles.map((v, i) => (
+                            <option key={i + '-profile-' + v} value={i}>
+                                {v || 'Profile ' + (i + 1)}
+                            </option>
+                        ))}
+                    </Select>
+                </FormControl>
+                <IconButton
+                    isDisabled={profiles.length >= 10}
+                    w={10}
+                    mx={3}
+                    title="Add additional profile"
+                    aria-label="Add additional profile"
+                    icon={<AddIcon />}
+                    onClick={addProfile}
+                />
+                <IconButton
+                    colorScheme="red"
+                    isDisabled={profiles.length <= 1}
+                    w={10}
+                    title="Remove current profile"
+                    aria-label="Remove current profile"
+                    icon={<CloseIcon />}
+                    onClick={removeProfile}
+                />
+            </Flex>
             <Divider my={2} />
             <FormControl id="api-url" isRequired isInvalid={apiUrlInvalid}>
                 <FormLabel>API URL</FormLabel>
