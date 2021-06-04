@@ -5,11 +5,12 @@ import { Account, Delete, Download, Edit, List, Move, Purge, Upload } from './pa
 import { Center, Flex } from '@chakra-ui/react';
 import { Header } from './components';
 
-export type User = {
+export type Profile = {
+    profile: string;
     username: string;
     password: string;
     url: string;
-    isPersistent: boolean;
+    savePassword: boolean;
     isOnline: boolean;
 };
 
@@ -17,39 +18,38 @@ const App = () => {
     // useRef to make useEffect skip the change from useState
     const mounted = useRef(false);
     // Init dummy object to prevent errors on startup
-    const [user, setUser] = useState<User>({
-        username: '',
-        password: '',
-        url: '',
-        isPersistent: false,
-        isOnline: false,
-    });
+    const [profiles, setProfiles] = useState<Profile[]>([
+        {
+            profile: '',
+            username: '',
+            password: '',
+            url: '',
+            savePassword: false,
+            isOnline: false,
+        },
+    ]);
+    const [currentProfile, setCurrentProfile] = useState(0);
     const [navDisabled, setNavDisabled] = useState(false);
+    const [oldProfilesLen, setOldProfilesLen] = useState(1);
 
     // Init user state from cache or default
     // This exists to handle reloads
     useEffect(() => {
         if (!!window.__TAURI__) {
-            (
-                invoke('cache_get', {
-                    key: 'userObj',
-                }) as Promise<User | null>
-            ).then((res) => {
-                const {
-                    isOnline = false,
-                    isPersistent = false,
-                    username = '',
-                    password = '',
-                    url = '',
-                } = res || {};
-                setUser({
-                    isOnline,
-                    isPersistent,
-                    username,
-                    password,
-                    url,
-                });
-            });
+            (async () => {
+                setNavDisabled(true);
+                const cache: Profile[] | null = await invoke('cache_get', { key: 'profiles' });
+                if (cache) {
+                    setProfiles(cache);
+                } else {
+                    const init: [Profile[], number] = await invoke('init');
+                    if (init[0].some((p) => p.profile !== '' && p.url !== '')) {
+                        setProfiles(init[0]);
+                        setCurrentProfile(init[1] || 0);
+                    }
+                }
+                setNavDisabled(false);
+            })();
         }
     }, []);
 
@@ -58,26 +58,33 @@ const App = () => {
     useEffect(() => {
         if (mounted.current) {
             invoke('cache_set', {
-                key: 'userObj',
-                value: user,
+                key: 'profiles',
+                value: profiles,
             });
+            // OnProfileRemoved
+            if (profiles.length < oldProfilesLen) {
+                invoke('update_profile_store', { profiles, current: 0 });
+            }
+            setOldProfilesLen(profiles.length);
         } else {
             mounted.current = true;
         }
-    }, [user]);
+    }, [profiles]);
 
     return (
         <Router>
             <Flex direction="column" h="100vh" w="100vw" userSelect="none">
-                <Header isDisabled={navDisabled} isOnline={user.isOnline} />
+                <Header isDisabled={navDisabled} isOnline={profiles[currentProfile].isOnline} />
                 <Center flex="1 1 auto" overflow="hidden" p={4}>
                     <Routes>
                         <Route
                             path="/"
                             element={
                                 <Account
-                                    user={user}
-                                    setUser={setUser}
+                                    profiles={profiles}
+                                    setProfiles={setProfiles}
+                                    currentProfile={currentProfile}
+                                    setCurrentProfile={setCurrentProfile}
                                     setNavDisabled={setNavDisabled}
                                 />
                             }
@@ -85,14 +92,17 @@ const App = () => {
                         <Route
                             path="/Delete"
                             element={
-                                <Delete isOnline={user.isOnline} setNavDisabled={setNavDisabled} />
+                                <Delete
+                                    isOnline={profiles[currentProfile].isOnline}
+                                    setNavDisabled={setNavDisabled}
+                                />
                             }
                         />
                         <Route
                             path="/Download"
                             element={
                                 <Download
-                                    isOnline={user.isOnline}
+                                    isOnline={profiles[currentProfile].isOnline}
                                     setNavDisabled={setNavDisabled}
                                 />
                             }
@@ -100,31 +110,46 @@ const App = () => {
                         <Route
                             path="/Edit"
                             element={
-                                <Edit isOnline={user.isOnline} setNavDisabled={setNavDisabled} />
+                                <Edit
+                                    isOnline={profiles[currentProfile].isOnline}
+                                    setNavDisabled={setNavDisabled}
+                                />
                             }
                         />
                         <Route
                             path="/List"
                             element={
-                                <List isOnline={user.isOnline} setNavDisabled={setNavDisabled} />
+                                <List
+                                    isOnline={profiles[currentProfile].isOnline}
+                                    setNavDisabled={setNavDisabled}
+                                />
                             }
                         />
                         <Route
                             path="/Move"
                             element={
-                                <Move isOnline={user.isOnline} setNavDisabled={setNavDisabled} />
+                                <Move
+                                    isOnline={profiles[currentProfile].isOnline}
+                                    setNavDisabled={setNavDisabled}
+                                />
                             }
                         />
                         <Route
                             path="/Purge"
                             element={
-                                <Purge isOnline={user.isOnline} setNavDisabled={setNavDisabled} />
+                                <Purge
+                                    isOnline={profiles[currentProfile].isOnline}
+                                    setNavDisabled={setNavDisabled}
+                                />
                             }
                         />
                         <Route
                             path="/Upload"
                             element={
-                                <Upload isOnline={user.isOnline} setNavDisabled={setNavDisabled} />
+                                <Upload
+                                    isOnline={profiles[currentProfile].isOnline}
+                                    setNavDisabled={setNavDisabled}
+                                />
                             }
                         />
                     </Routes>

@@ -128,7 +128,6 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                     </Button>
                     <Button
                         colorScheme="red"
-                        title="Press 'Save' to apply."
                         onClick={() =>
                             setLocalPatterns([{ find: '', replace: '', isRegex: false }])
                         }

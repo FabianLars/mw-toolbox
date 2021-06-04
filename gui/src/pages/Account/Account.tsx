@@ -8,54 +8,52 @@ import {
     Flex,
     FormControl,
     FormLabel,
+    IconButton,
     Input,
-    Text,
+    Select,
     useToast,
 } from '@chakra-ui/react';
 
-import type { User } from '../../App';
+import type { Profile } from '../../App';
+import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 
 type Props = {
-    user: User;
-    setUser: React.Dispatch<React.SetStateAction<User>>;
+    profiles: Profile[];
+    setProfiles: React.Dispatch<React.SetStateAction<Profile[]>>;
+    currentProfile: number;
+    setCurrentProfile: React.Dispatch<React.SetStateAction<number>>;
     setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Account = ({ user, setUser, setNavDisabled }: Props) => {
-    const [apiUrl, setApiUrl] = useState('https://leagueoflegends.fandom.com/de/api.php');
-    const [lgname, setLgname] = useState('');
-    const [lgpasswd, setLgpasswd] = useState('');
+const Account = ({
+    profiles,
+    setProfiles,
+    currentProfile,
+    setCurrentProfile,
+    setNavDisabled,
+}: Props) => {
     const [logginin, setLoggingin] = useState(false);
-    const [persistent, setPersistent] = useState(false);
-    const [apiUrlInvalid, setApiUrlInvalid] = useState(false);
-    const [lgnameInvalid, setLgnameInvalid] = useState(false);
-    const [lgpasswdInvalid, setLgpasswdInvalid] = useState(false);
+    const [urlInvalid, seturlInvalid] = useState(false);
+    const [usernameInvalid, setUsnameInvalid] = useState(false);
+    const [passwordInvalid, setPasswordInvalid] = useState(false);
     const toast = useToast();
 
     const login = () => {
         setLoggingin(true);
-        (
-            invoke('login', {
-                loginname: lgname,
-                password: lgpasswd,
-                wikiurl: apiUrl,
-                isPersistent: persistent,
-            }) as Promise<{ username: string; url: string }>
-        )
+        (invoke('login', { profiles, current: currentProfile }) as Promise<number>)
             .then((res) => {
-                setUser({
-                    isOnline: true,
-                    isPersistent: persistent,
-                    username: res.username,
-                    password: lgpasswd,
-                    url: res.url,
+                setProfiles((old) => {
+                    const curr = [...old];
+                    curr[res].isOnline = true;
+                    return curr;
                 });
             })
             .catch((err) => {
-                setUser((u) => ({
-                    ...u,
-                    isOnline: false,
-                }));
+                setProfiles((old) => {
+                    const curr = [...old];
+                    curr.map((p) => (p.isOnline = false));
+                    return curr;
+                });
                 toast({
                     title: `Couldn't log in! - ${err.code}-Error`,
                     description: <span style={{ wordBreak: 'break-word' }}>{err.description}</span>,
@@ -71,114 +69,195 @@ const Account = ({ user, setUser, setNavDisabled }: Props) => {
         setLoggingin(true);
         (invoke('logout') as Promise<any>).finally(() => {
             setLoggingin(false);
-            setUser((u) => ({
-                ...u,
-                isOnline: false,
-            }));
+            setProfiles((old) => {
+                const curr = [...old];
+                curr.map((p) => (p.isOnline = false));
+                return curr;
+            });
         });
     };
 
-    useEffect(() => {
-        if (!!window.__TAURI__) {
-            if (user.isOnline) {
-                setLgname(user.username);
-                setPersistent(user.isPersistent);
-                setLgpasswd(user.password);
-                setApiUrl(user.url);
-            } else {
-                (
-                    invoke('init') as Promise<{
-                        wikiurl: string;
-                        loginname: string;
-                        password: string;
-                        isPersistent: boolean;
-                    }>
-                ).then(({ wikiurl, loginname, password, isPersistent }) => {
-                    if (wikiurl !== '') setApiUrl(wikiurl);
-                    setLgname(loginname);
-                    setLgpasswd(password);
-                    setPersistent(isPersistent);
-                });
-            }
+    const addProfile = () => {
+        const oldLen = profiles.length;
+        if (oldLen < 10) {
+            setProfiles((old) =>
+                old.concat({
+                    profile: 'Profile ' + (old.length + 1),
+                    username: '',
+                    password: '',
+                    url: '',
+                    savePassword: old[currentProfile].savePassword || false,
+                    isOnline: false,
+                }),
+            );
+            setCurrentProfile(oldLen);
         }
-    }, []);
+    };
+
+    const removeProfile = () => {
+        setProfiles((old) => {
+            const curr = [...old];
+            curr.splice(currentProfile);
+            return curr;
+        });
+        setCurrentProfile((old) => old - 1);
+    };
 
     useEffect(() => {
+        const curr = profiles[currentProfile];
         if (
-            !apiUrl.endsWith('api.php') ||
-            apiUrl.startsWith('http://') === apiUrl.startsWith('https://')
+            !curr.url.endsWith('api.php') ||
+            curr.url.startsWith('http://') === curr.url.startsWith('https://')
         ) {
-            setApiUrlInvalid(true);
+            seturlInvalid(true);
         } else {
-            setApiUrlInvalid(false);
+            seturlInvalid(false);
         }
-        if (!lgname.includes('@')) {
-            setLgnameInvalid(true);
+        if (!curr.username.includes('@')) {
+            setUsnameInvalid(true);
         } else {
-            setLgnameInvalid(false);
+            setUsnameInvalid(false);
         }
-        if (/\W/.test(lgpasswd) || lgpasswd.length <= 16) {
-            setLgpasswdInvalid(true);
+        if (/\W/.test(curr.password) || curr.password.length <= 16) {
+            setPasswordInvalid(true);
         } else {
-            setLgpasswdInvalid(false);
+            setPasswordInvalid(false);
         }
-    }, [apiUrl, lgname, lgpasswd]);
+    }, [profiles, currentProfile]);
 
     useEffect(() => setNavDisabled(logginin), [logginin]);
 
     return (
         <Flex as="main" direction="column" align="center" w="50%" justify="center">
-            <Text fontSize="xl" align="center">
-                {user.isOnline ? user.username : ''}
-            </Text>
-            <Text fontSize="xl" align="center">
-                {user.isOnline ? user.url : 'Not logged in!'}
-            </Text>
+            <Flex w="100%" alignItems="flex-end">
+                <FormControl
+                    flex="2"
+                    mr={3}
+                    id="profile-name"
+                    isRequired
+                    isInvalid={profiles[currentProfile].profile.trim() === ''}
+                >
+                    <FormLabel>Profile Name</FormLabel>
+                    <Input
+                        value={profiles[currentProfile].profile}
+                        onChange={(event) =>
+                            setProfiles((old) => {
+                                const curr = [...old];
+                                curr[currentProfile].profile = event.target.value;
+                                return curr;
+                            })
+                        }
+                        isDisabled={profiles[currentProfile].isOnline}
+                        placeholder="Profile name"
+                    />
+                </FormControl>
+                <FormControl flex="1" id="profile-select" isRequired>
+                    <FormLabel>Select Profile</FormLabel>
+                    <Select
+                        value={currentProfile}
+                        onChange={(event) => setCurrentProfile(parseInt(event.target.value))}
+                        isDisabled={logginin || profiles[currentProfile].isOnline}
+                    >
+                        {profiles.map((v, i) => (
+                            <option key={i + '-profile-' + v.profile} value={i}>
+                                {v.profile || 'Profile ' + (i + 1)}
+                            </option>
+                        ))}
+                    </Select>
+                </FormControl>
+                <IconButton
+                    isDisabled={
+                        logginin || profiles.length >= 10 || profiles[currentProfile].isOnline
+                    }
+                    w={10}
+                    mx={3}
+                    title="Add additional profile"
+                    aria-label="Add additional profile"
+                    icon={<AddIcon />}
+                    onClick={addProfile}
+                />
+                <IconButton
+                    colorScheme="red"
+                    isDisabled={
+                        logginin || profiles.length <= 1 || profiles[currentProfile].isOnline
+                    }
+                    w={10}
+                    title="Remove current profile"
+                    aria-label="Remove current profile"
+                    icon={<CloseIcon />}
+                    onClick={removeProfile}
+                />
+            </Flex>
             <Divider my={2} />
-            <FormControl id="api-url" isRequired isInvalid={apiUrlInvalid}>
+            <FormControl id="api-url" isRequired isInvalid={urlInvalid}>
                 <FormLabel>API URL</FormLabel>
                 <Input
-                    value={apiUrl}
-                    onChange={(event) => setApiUrl(event.target.value)}
-                    isDisabled={user.isOnline}
-                    placeholder="Full URL pointing to api.php"
+                    value={profiles[currentProfile].url}
+                    onChange={(event) =>
+                        setProfiles((old) => {
+                            const curr = [...old];
+                            curr[currentProfile].url = event.target.value;
+                            return curr;
+                        })
+                    }
+                    isDisabled={logginin || profiles[currentProfile].isOnline}
+                    placeholder="Full api.php URL (https://wikiname.fandom.com/en/api.php)"
                 />
             </FormControl>
             <Divider my={2} />
-            <FormControl id="loginname" isRequired isInvalid={lgnameInvalid}>
+            <FormControl id="loginname" isRequired isInvalid={usernameInvalid}>
                 <FormLabel>Bot Loginname</FormLabel>
                 <Input
-                    value={lgname}
-                    onChange={(event) => setLgname(event.target.value)}
-                    isDisabled={user.isOnline}
+                    value={profiles[currentProfile].username}
+                    onChange={(event) =>
+                        setProfiles((old) => {
+                            const curr = [...old];
+                            curr[currentProfile].username = event.target.value;
+                            return curr;
+                        })
+                    }
+                    isDisabled={logginin || profiles[currentProfile].isOnline}
                     placeholder="Generated via Special:BotPasswords"
                 />
             </FormControl>
             <Divider my={2} />
-            <FormControl id="password" isRequired isInvalid={lgpasswdInvalid}>
+            <FormControl id="password" isRequired isInvalid={passwordInvalid}>
                 <FormLabel>Bot Password</FormLabel>
                 <Input
-                    value={lgpasswd}
-                    onChange={(event) => setLgpasswd(event.target.value)}
-                    isDisabled={user.isOnline}
+                    value={profiles[currentProfile].password}
+                    onChange={(event) =>
+                        setProfiles((old) => {
+                            const curr = [...old];
+                            curr[currentProfile].password = event.target.value;
+                            return curr;
+                        })
+                    }
+                    isDisabled={logginin || profiles[currentProfile].isOnline}
                     type="password"
                     placeholder="Generated via Special:BotPasswords"
                 />
             </FormControl>
             <Flex direction="row" w="100%" justify="flex-end" mt={2}>
                 <Checkbox
-                    isChecked={persistent}
-                    onChange={(event) => setPersistent(event.target.checked)}
+                    isDisabled={logginin || profiles[currentProfile].isOnline}
+                    isChecked={profiles[currentProfile].savePassword}
+                    onChange={(event) =>
+                        setProfiles((old) => {
+                            const curr = [...old];
+                            curr[currentProfile].savePassword = event.target.checked;
+                            return curr;
+                        })
+                    }
                 >
-                    Remember me
+                    Remember password
                 </Checkbox>
                 <Divider orientation="vertical" mx={2} />
                 <Button
-                    isDisabled={apiUrlInvalid || lgnameInvalid || lgpasswdInvalid}
+                    isDisabled={urlInvalid || usernameInvalid || passwordInvalid}
                     isLoading={logginin}
-                    onClick={user.isOnline ? logout : login}
+                    onClick={profiles[currentProfile].isOnline ? logout : login}
                 >
-                    {user.isOnline ? 'Log out' : 'Log in'}
+                    {profiles[currentProfile].isOnline ? 'Log out' : 'Log in'}
                 </Button>
             </Flex>
         </Flex>

@@ -10,11 +10,10 @@ use std::{
 
 use once_cell::sync::Lazy;
 use parking_lot::Mutex;
-use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tokio::sync::Mutex as AsyncMutex;
 
-use mw_tools::{error::ToolsError, WikiClient};
+use mw_tools::WikiClient;
 
 mod cmd;
 
@@ -47,31 +46,9 @@ fn main() {
             cmd::logout,
             cmd::r#move,
             cmd::purge,
+            cmd::update_profile_store,
             cmd::upload
         ])
         .run(tauri::generate_context!())
         .expect("error while running application");
-}
-
-#[derive(Clone, Debug, Default, Serialize, Deserialize)]
-pub struct SavedState {
-    wikiurl: String,
-    loginname: String,
-    password: String,
-    #[serde(rename(serialize = "isPersistent"))]
-    is_persistent: bool,
-}
-
-impl SavedState {
-    async fn save(self) -> Result<(), ToolsError> {
-        storage::save_secure("b9c95dde", self)
-            .await
-            .map_err(|err| ToolsError::Other(err.to_string()))
-    }
-
-    async fn load() -> SavedState {
-        storage::load_secure::<SavedState>("b9c95dde")
-            .await
-            .unwrap_or_default()
-    }
 }
