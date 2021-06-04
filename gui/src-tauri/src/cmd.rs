@@ -6,15 +6,19 @@ use tauri::command;
 
 use mw_tools::{api, error::ToolsError};
 
-use crate::{SavedState, CANCEL_UPLOAD, CLIENT};
+use crate::{CANCEL_UPLOAD, CLIENT};
 
 type Cache = parking_lot::Mutex<HashMap<String, Value>>;
 type Result<T, E = ToolsError> = core::result::Result<T, E>;
 
-#[derive(Debug, Serialize)]
-pub struct LoginResponse {
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub struct Profile {
+    profile: String,
     username: String,
+    password: String,
     url: String,
+    #[serde(rename = "savePassword")]
+    save_password: bool,
 }
 
 #[derive(Debug, Deserialize)]
@@ -78,8 +82,10 @@ pub async fn get_page(page: &str, patterns: Vec<FindReplace>) -> Result<String> 
 }
 
 #[command]
-pub async fn init() -> SavedState {
-    SavedState::load().await
+pub async fn init() -> (Vec<Profile>, usize) {
+    storage::load_secure::<(Vec<Profile>, usize)>("a7caf1a8")
+        .await
+        .unwrap_or_default()
 }
 
 #[command]
@@ -107,38 +113,18 @@ pub async fn list(listtype: &str, param: Option<&str>) -> Result<Vec<String>> {
 }
 
 #[command]
-pub async fn login(
-    loginname: String,
-    password: String,
-    wikiurl: String,
-    is_persistent: bool,
-) -> Result<LoginResponse> {
+pub async fn login(profiles: Vec<Profile>, current: usize) -> Result<usize> {
+    let current_profile = &profiles[current];
+
     let mut client = CLIENT.lock().await;
-    client.url(&wikiurl);
-    client.credentials(&loginname, &password);
-    let callback_val = LoginResponse {
-        username: loginname.clone(),
-        url: wikiurl.clone(),
-    };
+    client.url(&current_profile.url);
+    client.credentials(&current_profile.username, &current_profile.password);
 
     client.login().await?;
 
-    let (loginname, password) = if is_persistent {
-        (loginname, password)
-    } else {
-        ("".to_string(), "".to_string())
-    };
-
-    let save_res = SavedState {
-        wikiurl,
-        loginname,
-        password,
-        is_persistent,
-    }
-    .save()
-    .await;
-
-    save_res.and(Ok(callback_val))
+    update_profile_store(profiles, current)
+        .await
+        .and(Ok(current))
 }
 
 #[command]
@@ -166,6 +152,19 @@ pub async fn purge(is_nulledit: bool, pages: Vec<&str>) -> Result<()> {
     } else {
         api::purge::purge(&*client, &pages, true).await
     }
+}
+
+#[command]
+pub async fn update_profile_store(mut profiles: Vec<Profile>, current: usize) -> Result<()> {
+    for p in profiles.iter_mut() {
+        if !p.save_password {
+            p.password = "".to_string();
+        }
+    }
+
+    storage::save_secure("a7caf1a8", (profiles, current))
+        .await
+        .map_err(|err| ToolsError::Other(err.to_string()))
 }
 
 #[command]
