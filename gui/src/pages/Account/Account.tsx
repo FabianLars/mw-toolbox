@@ -16,6 +16,7 @@ import {
 
 import type { Profile } from '../../App';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
+import { errorToast } from '../../helpers/toast';
 
 type Props = {
     profiles: Profile[];
@@ -54,13 +55,7 @@ const Account = ({
                     curr.map((p) => (p.isOnline = false));
                     return curr;
                 });
-                toast({
-                    title: `Couldn't log in! - ${err.code}-Error`,
-                    description: <span style={{ wordBreak: 'break-word' }}>{err.description}</span>,
-                    status: 'error',
-                    duration: 10000,
-                    isClosable: true,
-                });
+                toast(errorToast(err));
             })
             .finally(() => setLoggingin(false));
     };

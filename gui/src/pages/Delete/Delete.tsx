@@ -1,6 +1,7 @@
 import { Box, Button, Flex, Input, Textarea, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
+import { errorToast, successToast } from '../../helpers/toast';
 
 type Props = {
     isOnline: boolean;
@@ -19,23 +20,8 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
             pages: areaValue.split(/\r?\n/),
             reason,
         })
-            .then(() =>
-                toast({
-                    title: 'Delete successful',
-                    description: 'Delete successful',
-                    status: 'success',
-                    isClosable: true,
-                }),
-            )
-            .catch((err) =>
-                toast({
-                    title: `Something went wrong! ${err.code}-Error`,
-                    description: err.description,
-                    status: 'error',
-                    duration: 10000,
-                    isClosable: true,
-                }),
-            )
+            .then(() => toast(successToast('Delete successful')))
+            .catch((err) => toast(errorToast(err)))
             .finally(() => setIsLoading(false));
     };
 

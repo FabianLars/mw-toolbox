@@ -21,6 +21,7 @@ mod cmd;
 static CLIENT: Lazy<AsyncMutex<WikiClient>> =
     Lazy::new(|| AsyncMutex::new(WikiClient::new().unwrap()));
 
+static CANCEL_EDIT: AtomicBool = AtomicBool::new(false);
 static CANCEL_UPLOAD: AtomicBool = AtomicBool::new(false);
 
 fn main() {
@@ -31,6 +32,9 @@ fn main() {
             window.listen("cancel-upload", move |_| {
                 CANCEL_UPLOAD.store(true, Ordering::Relaxed)
             });
+            window.listen("cancel-autoedit", move |_| {
+                CANCEL_EDIT.store(true, Ordering::Relaxed)
+            });
         })
         .manage(Mutex::new(HashMap::<String, Value>::new()))
         .invoke_handler(tauri::generate_handler![
@@ -39,6 +43,7 @@ fn main() {
             cmd::delete,
             cmd::download,
             cmd::edit,
+            cmd::auto_edit,
             cmd::get_page,
             cmd::init,
             cmd::list,

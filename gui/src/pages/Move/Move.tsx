@@ -1,6 +1,7 @@
 import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
+import { errorToast, successToast } from '../../helpers/toast';
 
 type Props = {
     isOnline: boolean;
@@ -19,23 +20,8 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
             from: areaFrom.split(/\r?\n/),
             to: areaTo.split(/\r?\n/),
         })
-            .then(() =>
-                toast({
-                    title: 'Successfully moved pages',
-                    description: 'Successfully moved pages.',
-                    status: 'success',
-                    isClosable: true,
-                }),
-            )
-            .catch((err) =>
-                toast({
-                    title: `Something went wrong! ${err.code}-Error`,
-                    description: err.description,
-                    status: 'error',
-                    duration: 10000,
-                    isClosable: true,
-                }),
-            )
+            .then(() => toast(successToast('Successfully moved pages')))
+            .catch((err) => toast(errorToast(err)))
             .finally(() => setIsLoading(false));
     };
 

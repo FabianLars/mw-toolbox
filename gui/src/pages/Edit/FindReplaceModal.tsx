@@ -14,7 +14,8 @@ import {
     Spacer,
 } from '@chakra-ui/react';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { invoke } from '@tauri-apps/api/tauri';
 
 type Pattern = {
     find: string;
@@ -30,7 +31,7 @@ type Props = {
 };
 
 const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => {
-    const [localPatterns, setLocalPatterns] = useState<Pattern[]>(patterns);
+    const [localPatterns, setLocalPatterns] = useState<Pattern[]>([]);
 
     const onModalClose = () => {
         const arr = patterns.map((obj) => Object.assign({}, obj));
@@ -41,8 +42,12 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
     const onModalSave = () => {
         const arr = localPatterns.map((obj) => Object.assign({}, obj));
         setPatterns(arr);
-        onClose();
+        invoke('cache_set', { key: 'edit-patterns', value: arr }).finally(onClose);
     };
+
+    useEffect(() => {
+        setLocalPatterns(patterns);
+    }, [patterns]);
 
     return (
         <Modal onClose={onModalClose} isOpen={isOpen} isCentered size="xl">

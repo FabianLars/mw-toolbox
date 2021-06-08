@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import { invoke } from '@tauri-apps/api/tauri';
+import { errorToast, successToast } from '../../helpers/toast';
 
 type Props = {
     isOnline: boolean;
@@ -23,23 +24,8 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
             pages: areaValue.split(/\r?\n/),
             isNulledit,
         })
-            .then(() =>
-                toast({
-                    title: (isNulledit ? 'Nulledit' : 'Purge') + ' successful',
-                    description: (isNulledit ? 'Nulledit' : 'Purge') + ' successful',
-                    status: 'success',
-                    isClosable: true,
-                }),
-            )
-            .catch((err) =>
-                toast({
-                    title: `Something went wrong! ${err.code}-Error`,
-                    description: err.description,
-                    status: 'error',
-                    duration: 10000,
-                    isClosable: true,
-                }),
-            )
+            .then(() => toast(successToast((isNulledit ? 'Nulledit' : 'Purge') + ' successful')))
+            .catch((err) => toast(errorToast(err)))
             .finally(() => {
                 setIsPurging(false);
                 setIsNulling(false);

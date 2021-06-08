@@ -6,7 +6,7 @@ use tauri::command;
 
 use mw_tools::{api, error::ToolsError};
 
-use crate::{CANCEL_UPLOAD, CLIENT};
+use crate::{CANCEL_EDIT, CANCEL_UPLOAD, CLIENT};
 
 type Cache = parking_lot::Mutex<HashMap<String, Value>>;
 type Result<T, E = ToolsError> = core::result::Result<T, E>;
@@ -21,7 +21,13 @@ pub struct Profile {
     save_password: bool,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize)]
+pub struct GetPage {
+    content: String,
+    edited: bool,
+}
+
+#[derive(Clone, Debug, Deserialize)]
 pub struct FindReplace {
     #[serde(default)]
     pub find: String,
@@ -63,22 +69,61 @@ pub async fn edit(title: &str, content: &str, summary: Option<&str>) -> Result<S
 }
 
 #[command]
-pub async fn get_page(page: &str, patterns: Vec<FindReplace>) -> Result<String> {
+pub async fn auto_edit(
+    titles: Vec<&str>,
+    patterns: Vec<FindReplace>,
+    summary: Option<&str>,
+    window: tauri::Window,
+) -> Result<()> {
+    CANCEL_EDIT.store(false, Ordering::Relaxed);
+
+    for t in titles {
+        if CANCEL_EDIT.load(Ordering::Relaxed) {
+            println!("cancel_edit true");
+            break;
+        }
+        let gp = get_page(t, patterns.clone()).await?;
+        if gp.edited {
+            let _ = api::edit::edit(&*CLIENT.lock().await, t, &gp.content, summary).await?;
+            window
+                .emit("page-edited", t)
+                .map_err(|_| ToolsError::Other("Couldn't emit event to window".to_string()))?;
+            tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+        } else {
+            window
+                .emit("page-skipped", t)
+                .map_err(|_| ToolsError::Other("Couldn't emit event to window".to_string()))?;
+        }
+    }
+    Ok(())
+}
+
+#[command]
+pub async fn get_page(page: &str, patterns: Vec<FindReplace>) -> Result<GetPage> {
     let mut s = api::parse::get_page_content(&*CLIENT.lock().await, page).await?;
+    let mut edited = false;
     for pat in patterns {
         if !pat.find.is_empty() {
             if pat.is_regex {
                 let re = regex::Regex::new(&pat.find)
                     .map_err(|err| ToolsError::Other(err.to_string()))?;
-                s = re
+                let new = re
                     .replace_all(&s, unescape::unescape(&pat.replace).unwrap_or(pat.replace))
                     .to_string();
+                if new != s {
+                    edited = true
+                }
+                s = new;
             } else {
-                s = s.replace(&pat.find, &pat.replace);
+                let new = s.replace(&pat.find, &pat.replace);
+                if new != s {
+                    edited = true
+                }
+                s = new;
             }
         }
     }
-    Ok(s)
+    Ok(GetPage { content: s, edited })
 }
 
 #[command]
@@ -173,6 +218,7 @@ pub async fn upload<P: tauri::Params<Event = String>>(
     files: Vec<&str>,
     window: tauri::Window<P>,
 ) -> Result<()> {
+    CANCEL_UPLOAD.store(false, Ordering::Relaxed);
     let mut file_iter = files.iter();
     while !CANCEL_UPLOAD.load(Ordering::Relaxed) {
         if let Some(file) = file_iter.next() {
@@ -184,6 +230,5 @@ pub async fn upload<P: tauri::Params<Event = String>>(
             break;
         }
     }
-    CANCEL_UPLOAD.store(false, Ordering::Relaxed);
     Ok(())
 }

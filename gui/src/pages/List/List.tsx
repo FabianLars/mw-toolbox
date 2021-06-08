@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 
 import { Output } from '../../components';
+import { errorToast } from '../../helpers/toast';
 
 type Props = {
     isOnline: boolean;
@@ -42,15 +43,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                     setListOutput(output);
                     invoke('cache_set', { key: 'list-cache', value: output });
                 })
-                .catch((err) =>
-                    toast({
-                        title: `Request failed! ${err.code}-Error`,
-                        description: err.description,
-                        status: 'error',
-                        duration: 10000,
-                        isClosable: true,
-                    }),
-                )
+                .catch((err) => toast(errorToast(err)))
                 .finally(() => setLoading(false));
         }
     };

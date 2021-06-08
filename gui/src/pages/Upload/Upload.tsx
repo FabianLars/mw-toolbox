@@ -13,6 +13,7 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
 import { Output } from '../../components';
 import { emit, listen } from '@tauri-apps/api/event';
+import { errorToast, successToast } from '../../helpers/toast';
 
 type Props = {
     isOnline: boolean;
@@ -40,13 +41,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                 }
             })
             .catch((err) => {
-                toast({
-                    title: `Something went wrong! ${err.code}-Error`,
-                    description: err.description,
-                    status: 'error',
-                    duration: 5000,
-                    isClosable: true,
-                });
+                toast(errorToast(err));
             })
             .finally(() => setIsWaiting(false));
     };
@@ -59,23 +54,8 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                 files,
             }) as Promise<null>
         )
-            .then(() =>
-                toast({
-                    title: 'Upload complete!',
-                    description: 'Upload complete!',
-                    status: 'success',
-                    isClosable: true,
-                }),
-            )
-            .catch((err) =>
-                toast({
-                    title: 'Something went wrong!',
-                    description: err.description,
-                    status: 'error',
-                    duration: 10000,
-                    isClosable: true,
-                }),
-            )
+            .then(() => toast(successToast('Upload complete')))
+            .catch((err) => toast(errorToast(err)))
             .finally(() => {
                 setIsWaiting(false);
                 setIsUploading(false);
@@ -83,7 +63,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
     };
 
     useEffect(() => {
-        listen('file-uploaded', ({ payload }) => {
+        const unlistenUploaded = listen('file-uploaded', ({ payload }) => {
             setFiles((oldFiles) => oldFiles.filter((f) => f !== payload));
         });
         (invoke('cache_get', { key: 'files-cache' }) as Promise<string[] | null>).then((res) =>
@@ -92,6 +72,10 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
         (invoke('cache_get', { key: 'uploadtext-cache' }) as Promise<string | null>).then((res) =>
             setUploadtext(res ?? ''),
         );
+
+        return () => {
+            unlistenUploaded.then((f) => f());
+        };
     }, []);
 
     // componentWillUnmount with files state

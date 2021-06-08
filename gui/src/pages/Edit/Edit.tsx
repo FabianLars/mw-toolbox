@@ -9,9 +9,11 @@ import {
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import FindReplaceModal from './FindReplaceModal';
+import { listen, emit } from '@tauri-apps/api/event';
+import { errorToast, successToast } from '../../helpers/toast';
 
 type Pattern = {
     find: string;
@@ -28,7 +30,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
     const [isRunning, setIsRunning] = useState(false);
     const [isAuto, setIsAuto] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [pageList, setPageList] = useState('');
+    const [pageList, setPageList] = useState(['']);
     const [pageContent, setPageContent] = useState('');
     const [currentPage, setCurrentPage] = useState('');
     const [editSummary, setEditSummary] = useState('');
@@ -38,27 +40,41 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
 
-    const startStop = () => {
-        if (isRunning) {
-            setPageList((state) => [currentPage, state].filter(Boolean).join('\n'));
+    const start = () => {
+        setIsRunning(true);
+        if (isAuto) {
             setPageContent('');
+            invoke('auto_edit', {
+                titles: pageList,
+                patterns,
+                summary: editSummary,
+            })
+                .catch((err) => {
+                    toast(errorToast(err));
+                })
+                .finally(stop);
         } else {
             getNextPage();
         }
-        setIsRunning((state) => !state);
+    };
+
+    const stop = () => {
+        if (isAuto) {
+            emit('cancel-autoedit');
+        }
+        setPageList((state) => [currentPage, ...state].filter(Boolean));
+        setPageContent('');
+        setIsRunning(false);
     };
 
     const getNextPage = () => {
         setPageContent('');
         setIsLoading(true);
-        const pages = pageList
-            .trim()
-            .split(/\r?\n/)
-            .map((el) => el.trim())
-            .filter((el) => el);
+        const pages = pageList;
         const curr = pages.shift();
+        console.log(!curr, pages);
         setCurrentPage(curr ?? '');
-        setPageList(pages.join('\n'));
+        setPageList(pages);
         if (!curr) {
             setIsRunning(false);
             setIsLoading(false);
@@ -67,18 +83,14 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                 invoke('get_page', {
                     page: curr,
                     patterns: patterns,
-                }) as Promise<string>
+                }) as Promise<{ content: string; edited: boolean }>
             )
-                .then(setPageContent)
+                .then(({ content }) => {
+                    setPageContent(content);
+                })
                 .catch((err) => {
-                    startStop();
-                    toast({
-                        title: `Something went wrong! ${err.code}-Error`,
-                        description: err.description,
-                        status: 'error',
-                        duration: 10000,
-                        isClosable: true,
-                    });
+                    stop();
+                    toast(errorToast(err));
                 })
                 .finally(() => setIsLoading(false));
         }
@@ -97,34 +109,47 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
             }) as Promise<string>
         )
             .then((res) => {
-                toast({
-                    title: 'Edit successful',
-                    description: res,
-                    status: 'success',
-                    duration: 1000,
-                    isClosable: true,
-                });
+                toast(successToast('Edit successful', res));
                 getNextPage();
             })
             .catch((err) => {
                 setIsLoading(false);
-                toast({
-                    title: `Something went wrong! ${err.code}-Error`,
-                    description: err.description,
-                    status: 'error',
-                    duration: 10000,
-                    isClosable: true,
-                });
+                toast(errorToast(err));
             });
     };
 
-    useEffect(() => {
-        if (isAuto && pageContent !== '') {
-            save();
-        }
-    }, [pageContent]);
+    useEffect(
+        () => setNavDisabled(isLoading || isAuto ? isRunning : false),
+        [isLoading, isRunning],
+    );
 
-    useEffect(() => setNavDisabled(isLoading), [isLoading]);
+    useEffect(() => {
+        const unlistenEdited = listen('page-edited', ({ payload }) => {
+            setPageList((old) => old.filter((p) => p !== payload));
+        });
+        const unlistenSkipped = listen('page-skipped', ({ payload }) => {
+            setPageList((old) => old.filter((p) => p !== payload));
+        });
+
+        const getCache = async () => {
+            const list: string[] | null = await invoke('cache_get', { key: 'edit-pagelist' });
+            const patts: Pattern[] | null = await invoke('cache_get', { key: 'edit-patterns' });
+            const summary: string | null = await invoke('cache_get', { key: 'edit-summary' });
+            const auto: boolean | null = await invoke('cache_get', { key: 'edit-isauto' });
+
+            if (list) setPageList(list);
+            if (patts) setPatterns(patts);
+            if (summary) setEditSummary(summary);
+            if (auto) setIsAuto(auto);
+        };
+
+        getCache();
+
+        return () => {
+            unlistenEdited.then((f) => f());
+            unlistenSkipped.then((f) => f());
+        };
+    }, []);
 
     return (
         <>
@@ -135,8 +160,14 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                     resize="none"
                     h="100%"
                     placeholder="List of pages to operate on. Separated by newline."
-                    value={pageList}
-                    onChange={(event) => setPageList(event.target.value)}
+                    value={pageList.join('\n')}
+                    onChange={(event) => setPageList(event.target.value.split(/\r?\n/))}
+                    onBlur={() => {
+                        setPageList((old) => {
+                            return old.map((el: string) => el.trim()).filter(Boolean);
+                        });
+                        invoke('cache_set', { key: 'edit-pagelist', value: pageList });
+                    }}
                 />
                 <Flex direction="column" flex="1" ml={4}>
                     <Textarea
@@ -157,7 +188,12 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                         maxH="250px"
                     >
                         <GridItem colSpan={4} mt={2}>
-                            Current page: {isRunning ? currentPage : 'Not running!'}
+                            Current page:{' '}
+                            {isRunning
+                                ? isAuto
+                                    ? 'Automated saving mode...'
+                                    : currentPage
+                                : 'Not running!'}
                         </GridItem>
                         <GridItem rowStart={4} colSpan={2}>
                             <Button
@@ -174,6 +210,9 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                 placeholder="Edit summary"
                                 value={editSummary}
                                 onChange={(event) => setEditSummary(event.target.value)}
+                                onBlur={() =>
+                                    invoke('cache_set', { key: 'edit-summary', value: editSummary })
+                                }
                             />
                         </GridItem>
                         <GridItem rowSpan={4} colStart={7} colSpan={1}>
@@ -185,8 +224,8 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                             >
                                 <Button
                                     w="100%"
-                                    onClick={startStop}
-                                    isDisabled={!isOnline || isLoading || pageList.trim() === ''}
+                                    onClick={() => (isRunning ? stop() : start())}
+                                    isDisabled={!isOnline || isLoading || pageList.join('') === ''}
                                     title={
                                         !isOnline
                                             ? 'Please login first!'
@@ -199,7 +238,15 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                 </Button>
                                 <Checkbox
                                     isChecked={isAuto}
-                                    onChange={(event) => setIsAuto(event.target.checked)}
+                                    onChange={(event) => {
+                                        setIsAuto(event.target.checked);
+                                    }}
+                                    onBlur={() => {
+                                        invoke('cache_set', {
+                                            key: 'edit-isauto',
+                                            value: isAuto,
+                                        });
+                                    }}
                                     isDisabled={isRunning}
                                     whiteSpace="nowrap"
                                 >
