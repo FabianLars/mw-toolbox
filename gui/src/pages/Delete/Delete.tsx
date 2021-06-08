@@ -28,9 +28,12 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(isLoading), [isLoading]);
 
     useEffect(() => {
-        (invoke('cache_get', { key: 'delete-reason' }) as Promise<string | null>).then((res) =>
-            setReason(res ?? ''),
-        );
+        (invoke('cache_get', { key: 'delete-reason' }) as Promise<string | null>).then((cache) => {
+            if (cache) setReason(cache);
+        });
+        (invoke('cache_get', { key: 'delete-pages' }) as Promise<string | null>).then((cache) => {
+            if (cache) setAreaValue(cache);
+        });
     }, []);
 
     return (
@@ -53,6 +56,7 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
                 resize="none"
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}
+                onBlur={() => invoke('cache_set', { key: 'delete-pages', value: areaValue })}
                 placeholder="Write exact page names here. Separated by newline."
                 flex="1"
                 my={4}

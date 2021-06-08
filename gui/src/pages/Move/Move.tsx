@@ -27,6 +27,17 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
 
     useEffect(() => setNavDisabled(isLoading), [isLoading]);
 
+    useEffect(() => {
+        (invoke('cache_get', { key: 'move-cache-from' }) as Promise<string | null>).then(
+            (cache) => {
+                if (cache) setAreaFrom(cache);
+            },
+        );
+        (invoke('cache_get', { key: 'move-cache-to' }) as Promise<string | null>).then((cache) => {
+            if (cache) setAreaTo(cache);
+        });
+    }, []);
+
     return (
         <Flex direction="column" align="center" h="100%" w="100%">
             <Flex direction="row" align="center" justify="center" flex="1" w="100%" mb={4}>
@@ -34,6 +45,7 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
                     resize="none"
                     value={areaFrom}
                     onChange={(event) => setAreaFrom(event.target.value)}
+                    onBlur={() => invoke('cache_set', { key: 'move-cache-from', value: areaFrom })}
                     placeholder="Write exact names of pages to move. Separated by newline."
                     h="100%"
                     mr={2}
@@ -42,6 +54,7 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
                     resize="none"
                     value={areaTo}
                     onChange={(event) => setAreaTo(event.target.value)}
+                    onBlur={() => invoke('cache_set', { key: 'move-cache-to', value: areaTo })}
                     placeholder="Write exact names of destinations. Separated by newline."
                     h="100%"
                     ml={2}

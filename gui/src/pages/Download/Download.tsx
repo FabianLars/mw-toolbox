@@ -25,12 +25,19 @@ const Download = ({ isOnline, setNavDisabled }: Props) => {
 
     useEffect(() => setNavDisabled(isLoading), [isLoading]);
 
+    useEffect(() => {
+        (invoke('cache_get', { key: 'download-cache' }) as Promise<string | null>).then((cache) => {
+            if (cache) setAreaValue(cache);
+        });
+    }, []);
+
     return (
         <Flex direction="column" align="center" h="100%" w="100%">
             <Textarea
                 resize="none"
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}
+                onBlur={() => invoke('cache_set', { key: 'download-cache', value: areaValue })}
                 placeholder="Write exact page names here. Separated by newline. Inclusive 'File:' Prefix. Saved in your download folder."
                 flex="1"
                 mb={4}

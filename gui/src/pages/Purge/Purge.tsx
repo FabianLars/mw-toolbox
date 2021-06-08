@@ -34,12 +34,19 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
 
     useEffect(() => setNavDisabled(isNulling || isPurging), [isNulling, isPurging]);
 
+    useEffect(() => {
+        (invoke('cache_get', { key: 'purge-cache' }) as Promise<string | null>).then((cache) => {
+            if (cache) setAreaValue(cache);
+        });
+    }, []);
+
     return (
         <Flex direction="column" align="center" h="100%" w="100%">
             <Textarea
                 resize="none"
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}
+                onBlur={() => invoke('cache_set', { key: 'purge-cache', value: areaValue })}
                 placeholder="Write exact page names here. Separated by newline."
                 flex="1"
                 mb={4}
