@@ -733,7 +733,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         client.client().get(opgg).send(),
         client.get_into_json(&[
             ("action", "parse"),
-            ("page", "Module:ChampionData/data"),
+            ("page", "Module:Champion/data"),
             ("prop", "wikitext"),
         ])
     );
@@ -805,7 +805,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
             ("action", "edit"),
             ("summary", "automated action"),
             ("bot", ""),
-            ("title", "Module:ChampionData/data"),
+            ("title", "Module:Champion/data"),
             ("text", &new_champdata.concat()),
         ])
         .await?;
