@@ -3,10 +3,12 @@ import { render } from '@testing-library/react';
 import { expect } from 'chai';
 import App from './App';
 
+// Placeholder test
+
 describe('<App>', () => {
-    it('renders "Not logged in!"', () => {
+    it('renders "Profile 1"', () => {
         const { getByText } = render(<App />);
-        const linkElement = getByText(/Not logged in/i);
-        expect(document.body.contains(linkElement));
+        const el = getByText(/Profile 1/i);
+        expect(document.body.contains(el));
     });
 });
