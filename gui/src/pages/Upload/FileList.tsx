@@ -1,10 +1,10 @@
 import React from 'react';
 
-const Output = ({
+const FileList = ({
     children,
     placeholder,
 }: {
-    children?: string | JSX.Element | JSX.Element[];
+    children: JSX.Element[];
     placeholder?: string;
 }): JSX.Element => {
     return (
@@ -16,15 +16,15 @@ const Output = ({
                 border: '1px solid',
                 borderColor: 'rgba(255, 255, 255, 0.16)',
                 borderRadius: '6px',
-                userSelect: 'text',
+                userSelect: children.length === 0 ? 'none' : 'text',
                 overflowY: 'auto',
                 whiteSpace: 'pre-line',
-                opacity: !children ? '0.5' : 'initial',
+                opacity: children.length === 0 ? '0.5' : 'initial',
             }}
         >
-            {children || placeholder || ''}
+            {children.length === 0 ? placeholder : children}
         </div>
     );
 };
 
-export default Output;
+export default FileList;

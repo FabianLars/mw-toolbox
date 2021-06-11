@@ -1,17 +1,8 @@
-import {
-    Box,
-    Button,
-    Flex,
-    FormControl,
-    FormLabel,
-    Input,
-    Spacer,
-    useToast,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, FormLabel, Input, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
-import { Output } from '../../components';
+import FileList from './FileList';
 import { emit, listen } from '@tauri-apps/api/event';
 import { errorToast, successToast } from '../../helpers/toast';
 
@@ -156,7 +147,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                     </Button>
                 </Box>
             </Flex>
-            <Output placeholder="Selected files will be displayed here.">
+            <FileList placeholder="Selected files will be displayed here.">
                 {files.map((f) => (
                     <Box
                         key={f}
@@ -176,7 +167,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                         {f}
                     </Box>
                 ))}
-            </Output>
+            </FileList>
         </Flex>
     );
 };

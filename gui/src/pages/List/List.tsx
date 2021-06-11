@@ -9,10 +9,10 @@ import {
     FormLabel,
     Input,
     Select,
+    Textarea,
     useToast,
 } from '@chakra-ui/react';
 
-import { Output } from '../../components';
 import { errorToast } from '../../helpers/toast';
 
 type Props = {
@@ -148,7 +148,13 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                     </Button>
                 </Box>
             </Flex>
-            <Output placeholder="Output will be displayed here.">{listOutput}</Output>
+            <Textarea
+                resize="none"
+                flex="1"
+                value={listOutput}
+                readOnly
+                placeholder="Output will be displayed here."
+            />
         </Flex>
     );
 };
