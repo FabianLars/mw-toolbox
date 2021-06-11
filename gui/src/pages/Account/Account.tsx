@@ -123,7 +123,14 @@ const Account = ({
     useEffect(() => setNavDisabled(logginin), [logginin]);
 
     return (
-        <Flex as="main" direction="column" align="center" w="50%" justify="center">
+        <Flex
+            as="main"
+            direction="column"
+            align="center"
+            /* second null: break menu */
+            w={['100%', null, '75%', null, '50%']}
+            justify="center"
+        >
             <Flex w="100%" alignItems="flex-end">
                 <FormControl
                     flex="2"
@@ -232,7 +239,7 @@ const Account = ({
                     placeholder="Generated via Special:BotPasswords"
                 />
             </FormControl>
-            <Flex direction="row" w="100%" justify="flex-end" mt={2}>
+            <Flex direction="row" w="100%" h="40px" justify="flex-end" mt={2}>
                 <Checkbox
                     isDisabled={logginin || profiles[currentProfile].isOnline}
                     isChecked={profiles[currentProfile].savePassword}

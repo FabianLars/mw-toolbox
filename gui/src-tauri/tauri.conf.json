@@ -40,8 +40,8 @@
                 "title": "mw-toolbox by FabianLars",
                 "width": 1280,
                 "height": 720,
-                "minWidth": 1280,
-                "minHeight": 720,
+                "minWidth": 500,
+                "minHeight": 480,
                 "resizable": true
             }
         ],

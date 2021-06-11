@@ -89,11 +89,28 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
 
     return (
         <Flex direction="column" align="center" h="100%" w="100%">
-            <Flex direction="row" align="center" w="100%" mb={4}>
-                <Box>Number of files: {files.length}</Box>
-                <Spacer />
-                <FormControl id="uploadtext-input" mx={2} maxW="50%">
-                    <FormLabel>Text for newly created file pages</FormLabel>
+            <Flex direction={['column', null, 'row']} align="center" w="100%" mb={4}>
+                <Flex
+                    mx={2}
+                    pb={[null, null, 2]}
+                    flex="1 0 auto"
+                    direction="column"
+                    justify="space-between"
+                    align="center"
+                    h={[null, null, '100%']}
+                    pr={[null, null, 4]}
+                    borderRight={[null, null, '1px solid rgba(255, 255, 255, 0.16)']}
+                >
+                    <Box fontWeight={500}>Number of files</Box>
+                    {files.length}
+                </Flex>
+                <FormControl
+                    title="No effect on existing pages"
+                    id="uploadtext-input"
+                    mx={2}
+                    flex="1 1 auto"
+                >
+                    <FormLabel>Text for new file pages</FormLabel>
                     <Input
                         value={uploadtext}
                         isDisabled={isUploading || isWaiting}
@@ -106,7 +123,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                         }
                     />
                 </FormControl>
-                <Box>
+                <Box flex="1 0 auto" alignSelf="flex-end" mt={4}>
                     <Button
                         mx={2}
                         isLoading={isWaiting}
@@ -115,8 +132,6 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                     >
                         Select File(s)
                     </Button>
-                </Box>
-                <Box>
                     <Button
                         mx={2}
                         isLoading={isWaiting}
@@ -125,8 +140,6 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                     >
                         Clear Filelist
                     </Button>
-                </Box>
-                <Box>
                     <Button
                         mx={2}
                         isDisabled={isWaiting || !isOnline || !files[0]}

@@ -153,12 +153,13 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
 
     return (
         <>
-            <Flex w="100%" h="100%">
+            <Flex w="100%" h="100%" direction={['column', null, 'row']}>
                 <Textarea
-                    w="20%"
+                    w={[null, null, '30%', '25%', '20%']}
                     isDisabled={isRunning}
                     resize="none"
-                    h="100%"
+                    mb={[4, null, 0]}
+                    h={['20%', null, '100%']}
                     placeholder="List of pages to operate on. Separated by newline."
                     value={pageList.join('\n')}
                     onChange={(event) => setPageList(event.target.value.split(/\r?\n/))}
@@ -169,7 +170,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                         invoke('cache_set', { key: 'edit-pagelist', value: pageList });
                     }}
                 />
-                <Flex direction="column" flex="1" ml={4}>
+                <Flex direction="column" flex="1" ml={[null, null, 4]}>
                     <Textarea
                         flex="2"
                         isDisabled={isAuto || isLoading || !isRunning}
@@ -187,7 +188,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                         columnGap={4}
                         maxH="250px"
                     >
-                        <GridItem colSpan={4} mt={2}>
+                        <GridItem colSpan={[4, null, 2]} mt={2} overflow="hidden">
                             Current page:{' '}
                             {isRunning
                                 ? isAuto
@@ -195,7 +196,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                     : currentPage
                                 : 'Not running!'}
                         </GridItem>
-                        <GridItem rowStart={4} colSpan={2}>
+                        <GridItem rowStart={4}>
                             <Button
                                 mt={2}
                                 title="This will be processed before contents get displayed!"
@@ -205,7 +206,11 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                 Setup Find & Replace
                             </Button>
                         </GridItem>
-                        <GridItem colSpan={2}>
+                        <GridItem
+                            colSpan={[6, null, 4]}
+                            colStart={[1, null, 3]}
+                            rowStart={[3, null, 1]}
+                        >
                             <Input
                                 placeholder="Edit summary"
                                 value={editSummary}

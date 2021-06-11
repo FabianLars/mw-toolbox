@@ -39,7 +39,7 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
     return (
         <Flex direction="column" align="center" w="100%" h="100%">
             <Input
-                w="50%"
+                w={['100%', null, '75%', '50%']}
                 alignSelf="flex-end"
                 aria-label="Delete reason"
                 placeholder="Delete reason"

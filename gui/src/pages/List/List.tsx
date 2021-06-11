@@ -95,26 +95,8 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
 
     return (
         <Flex direction="column" align="center" h="100%" w="100%">
-            <Flex w="100%" mb={4} direction="row" align="center">
-                {paramInfo === '' ? (
-                    <Box mx={2} w="100%" />
-                ) : (
-                    <FormControl
-                        id="parameter-input"
-                        mx={2}
-                        isRequired
-                        visibility={paramInfo === '' ? 'hidden' : undefined}
-                    >
-                        <FormLabel>Required Parameter</FormLabel>
-                        <Input
-                            placeholder={paramInfo}
-                            title={paramInfo}
-                            value={paramInput}
-                            onChange={(event) => setParamInput(event.target.value)}
-                        />
-                    </FormControl>
-                )}
-                <FormControl id="listtype-dropdown" mx={2} isRequired>
+            <Flex w="100%" mb={4} direction={['column', null, 'row']} align="center">
+                <FormControl id="listtype-dropdown" mx={2} isRequired flex="1 1 auto">
                     <FormLabel>API Endpoint</FormLabel>
                     <Select
                         placeholder="Select type of list"
@@ -135,7 +117,23 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                         <option value="search">search</option>
                     </Select>
                 </FormControl>
-                <Box>
+                <FormControl
+                    id="parameter-input"
+                    mx={2}
+                    mt={[2, null, 0]}
+                    isRequired={paramRequired}
+                    isDisabled={!paramRequired}
+                    flex="1 1 auto"
+                >
+                    <FormLabel>Required Parameter</FormLabel>
+                    <Input
+                        placeholder={paramInfo}
+                        title={paramInfo}
+                        value={paramInput}
+                        onChange={(event) => setParamInput(event.target.value)}
+                    />
+                </FormControl>
+                <Box mt={4} flex="1 0 auto" alignSelf="flex-end">
                     <Button
                         mx={2}
                         onClick={getList}
@@ -145,8 +143,6 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                     >
                         Get List
                     </Button>
-                </Box>
-                <Box>
                     <Button mx={2} onClick={clearOutput}>
                         Clear Output
                     </Button>
