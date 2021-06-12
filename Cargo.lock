@@ -172,9 +172,9 @@ checksum = "9c59e7af012c713f529e7a3ee57ce9b31ddd858d4b512923602f74608b009631"
 
 [[package]]
 name = "bytemuck"
-version = "1.6.0"
+version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1bd24bfbd2c054630764222780a681282d7d524ffc28b7925e712afdfb3502bf"
+checksum = "0d45b1d46ddf3b55b8746d56cac01e05a156fa3719616f5483683662834ee43a"
 
 [[package]]
 name = "byteorder"
@@ -1187,9 +1187,9 @@ dependencies = [
 
 [[package]]
 name = "globset"
-version = "0.4.6"
+version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c152169ef1e421390738366d2f796655fec62621dabbd0fd476f905934061e4a"
+checksum = "f0fc1b9fa0e64ffb1aa5b95daa0f0f167734fd528b7c02eabc581d9d843649b1"
 dependencies = [
  "aho-corasick",
  "bstr",
@@ -1417,9 +1417,9 @@ dependencies = [
 
 [[package]]
 name = "ignore"
-version = "0.4.17"
+version = "0.4.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b287fb45c60bb826a0dc68ff08742b9d88a2fea13d6e0c286b3172065aaf878c"
+checksum = "713f1b139373f96a2e0ce3ac931cd01ee973c3c5dd7c40c0c2efe96ad2b6751d"
 dependencies = [
  "crossbeam-utils",
  "globset",
@@ -1754,7 +1754,7 @@ dependencies = [
 
 [[package]]
 name = "mw-toolbox"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "anyhow",
  "mw-tools",
