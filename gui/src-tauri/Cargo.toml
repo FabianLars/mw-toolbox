@@ -14,15 +14,15 @@ custom-protocol = ["tauri/custom-protocol"]
 [dependencies]
 anyhow = "1"
 mw-tools = {path = "../../crates/mw-tools"}
-once_cell = "1.7"
+once_cell = "1.8"
 parking_lot = "0.11"
 pretty_env_logger = "0.4"
 regex = "1.4"
 reqwest = "0.11"
-serde = {version = "1", features = ["derive"] }
+serde = {version = "1", features = ["derive"]}
 serde_json = "1"
 storage = {path = "../../crates/storage"}
-tauri = {version = "1.0.0-beta.1", features = ["shell-open", "dialog-open", "updater"] }
+tauri = {version = "1.0.0-beta.1", features = ["shell-open", "dialog-open", "updater"]}
 tokio = "1"
 unescape = "0.1"
 
