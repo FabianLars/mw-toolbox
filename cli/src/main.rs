@@ -260,7 +260,7 @@ fn get_client_path() -> Result<PathBuf> {
 
     let system = System::new_with_specifics(RefreshKind::new().with_processes());
 
-    let process = system.get_process_by_name("LeagueClient.exe");
+    let process = system.process_by_name("LeagueClient.exe");
 
     if let Some(p) = process.get(0) {
         if let Some(path) = p.exe().parent() {
