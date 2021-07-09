@@ -14,6 +14,7 @@ import { invoke } from '@tauri-apps/api/tauri';
 import FindReplaceModal from './FindReplaceModal';
 import { listen, emit } from '@tauri-apps/api/event';
 import { errorToast, successToast } from '../../helpers/toast';
+import { removeFirst } from '../../helpers/array';
 
 type Pattern = {
     find: string;
@@ -44,6 +45,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
         setIsRunning(true);
         if (isAuto) {
             setPageContent('');
+            console.log('start', pageList);
             invoke('auto_edit', {
                 titles: pageList,
                 patterns,
@@ -124,11 +126,11 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
     );
 
     useEffect(() => {
-        const unlistenEdited = listen('page-edited', ({ payload }) => {
-            setPageList((old) => old.filter((p) => p !== payload));
+        const unlistenEdited = listen('page-edited', ({ payload }: { payload: string }) => {
+            setPageList((old) => removeFirst(old, payload));
         });
-        const unlistenSkipped = listen('page-skipped', ({ payload }) => {
-            setPageList((old) => old.filter((p) => p !== payload));
+        const unlistenSkipped = listen('page-skipped', ({ payload }: { payload: string }) => {
+            setPageList((old) => removeFirst(old, payload));
         });
 
         const getCache = async () => {
