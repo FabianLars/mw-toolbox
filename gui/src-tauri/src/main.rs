@@ -49,7 +49,7 @@ fn main() {
             cmd::list,
             cmd::login,
             cmd::logout,
-            cmd::r#move,
+            cmd::rename,
             cmd::purge,
             cmd::update_profile_store,
             cmd::upload

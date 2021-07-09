@@ -1,10 +1,8 @@
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
-#[serde(untagged)]
-pub(crate) enum Delete {
-    Succes { delete: Response },
-    Failure { errors: Vec<super::Error> },
+pub(crate) struct Delete {
+    delete: Response,
 }
 
 #[derive(Debug, Deserialize)]

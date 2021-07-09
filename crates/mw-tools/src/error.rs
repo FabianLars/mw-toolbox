@@ -22,7 +22,7 @@ pub enum ToolsError {
     StatusCode(String),
     #[error("Error executing request: \"{0}\"")]
     RequestFailed(String),
-    #[error("Error parsing body as text or json: \"{0}\"")]
+    #[error("Error parsing body as json: \"{0}\"")]
     ParsingFailed(String),
     /// Catch-all reqwest errors
     #[error("HTTP Client Error: \"{0}\"")]
@@ -38,7 +38,7 @@ pub enum ToolsError {
 }
 
 impl ToolsError {
-    const fn code(&self) -> &'static str {
+    pub const fn code(&self) -> &'static str {
         match self {
             ToolsError::MediaWikiApi(_) => "MediaWikiaApi",
             ToolsError::TokenNotFound(_) => "TokenNotFound",

@@ -88,7 +88,7 @@ pub async fn auto_edit(
             window
                 .emit("page-edited", t)
                 .map_err(|_| ToolsError::Other("Couldn't emit event to window".to_string()))?;
-            //tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+            tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
         } else {
             window
                 .emit("page-skipped", t)
@@ -178,7 +178,7 @@ pub async fn logout() -> Result<()> {
 }
 
 #[command]
-pub async fn r#move(from: Vec<String>, to: Vec<String>) -> Result<()> {
+pub async fn rename(from: Vec<String>, to: Vec<String>) -> Result<()> {
     api::rename::rename(
         &*CLIENT.lock().await,
         from,

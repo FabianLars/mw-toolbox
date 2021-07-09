@@ -16,7 +16,7 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
 
     const movePages = () => {
         setIsLoading(true);
-        invoke('move', {
+        invoke('rename', {
             from: areaFrom.split(/\r?\n/),
             to: areaTo.split(/\r?\n/),
         })

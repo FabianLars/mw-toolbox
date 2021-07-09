@@ -1,10 +1,8 @@
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
-#[serde(untagged)]
-pub enum Edit {
-    Succes { edit: Response },
-    Failure { errors: Vec<super::Error> },
+pub struct Edit {
+    pub edit: Response,
 }
 
 #[derive(Debug, Deserialize)]

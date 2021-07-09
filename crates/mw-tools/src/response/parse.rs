@@ -1,10 +1,8 @@
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
-#[serde(untagged)]
-pub(crate) enum Parse {
-    Succes { parse: Response },
-    Failure { errors: Vec<super::Error> },
+pub(crate) struct Parse {
+    pub(crate) parse: Response,
 }
 
 #[derive(Debug, Deserialize)]

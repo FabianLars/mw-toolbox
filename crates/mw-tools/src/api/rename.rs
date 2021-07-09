@@ -47,7 +47,7 @@ pub async fn rename(
     }
 
     for (x, y) in from.iter().zip(actual_destination.iter()) {
-        let response: Rename = client
+        let response: Result<Rename, ToolsError> = client
             .post(&[
                 ("action", "move"),
                 ("from", x),
@@ -57,20 +57,21 @@ pub async fn rename(
                 ("movesubpages", ""),
                 ("ignorewarnings", ""),
             ])
-            .await?;
+            .await;
 
         log::debug!("{:?}", response);
 
         match response {
-            Rename::Succes { moved } => {
-                println!("{} => MOVED TO => {}", moved.from, moved.to);
-            }
-            Rename::Failure { errors } => {
-                println!(
-                    "Error moving {} to {}: {}\nProceeding with next pages...",
-                    x, y, errors[0].code
-                );
-            }
+            Ok(m) => println!("{} => MOVED TO => {}", m.rename.from, m.rename.to),
+            Err(err) => println!(
+                "Error moving {} to {}: {}\nProceeding with next pages...",
+                x,
+                y,
+                match err {
+                    ToolsError::MediaWikiApi(err) => format!("{} - {}", err.code, err.description),
+                    _ => err.code().to_string(),
+                }
+            ),
         }
 
         tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;

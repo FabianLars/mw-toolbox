@@ -209,34 +209,24 @@ async fn get_from_api(
                     ])
                     .await?;
 
-                match json {
-                    List::Succes {
-                        querycontinue,
-                        query,
-                    } => {
-                        for page in query.pages {
-                            match short {
-                                "eu" => {
-                                    results.push(format!(
-                                        "{}~URL~{}",
-                                        page.title,
-                                        page.url.unwrap_or_default()
-                                    ));
-                                }
-                                _ => results.push(page.title),
-                            }
+                for page in json.query.pages {
+                    match short {
+                        "eu" => {
+                            results.push(format!(
+                                "{}~URL~{}",
+                                page.title,
+                                page.url.unwrap_or_default()
+                            ));
                         }
-
-                        if let Some(c) = querycontinue {
-                            continue_from = c.from
-                        } else {
-                            has_next = false
-                        };
-                    }
-                    List::Failure { mut errors } => {
-                        return Err(ToolsError::MediaWikiApi(errors.remove(0)));
+                        _ => results.push(page.title),
                     }
                 }
+
+                if let Some(c) = json.querycontinue {
+                    continue_from = c.from
+                } else {
+                    has_next = false
+                };
             }
         }
     }

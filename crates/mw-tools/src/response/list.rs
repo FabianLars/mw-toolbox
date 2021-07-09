@@ -5,16 +5,10 @@ use serde::Deserialize;
 use super::deserialize_string_from_number;
 
 #[derive(Debug, Deserialize)]
-#[serde(untagged)]
-pub(crate) enum List {
-    Succes {
-        #[serde(rename = "continue")]
-        querycontinue: Option<Continue>,
-        query: Query,
-    },
-    Failure {
-        errors: Vec<super::Error>,
-    },
+pub(crate) struct List {
+    #[serde(rename = "continue")]
+    pub(crate) querycontinue: Option<Continue>,
+    pub(crate) query: Query,
 }
 
 #[derive(Debug, Deserialize)]

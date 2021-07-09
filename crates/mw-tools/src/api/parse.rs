@@ -6,8 +6,5 @@ pub async fn get_page_content(client: &WikiClient, page: &str) -> Result<String,
         .get(&[("action", "parse"), ("prop", "wikitext"), ("page", page)])
         .await?;
 
-    match res {
-        Parse::Succes { parse } => Ok(parse.wikitext),
-        Parse::Failure { mut errors } => Err(ToolsError::MediaWikiApi(errors.remove(0))),
-    }
+    Ok(res.parse.wikitext)
 }

@@ -35,10 +35,7 @@ pub async fn upload<P: AsRef<Path>>(
         .json()
         .await?;
 
-    match response {
-        Upload::Succes { upload } => Ok(upload.result),
-        Upload::Failure { mut errors } => Err(ToolsError::MediaWikiApi(errors.remove(0))),
-    }
+    Ok(response.upload.result)
 }
 
 pub async fn upload_multiple<P: AsRef<Path>>(

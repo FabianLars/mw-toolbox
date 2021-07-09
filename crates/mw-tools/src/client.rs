@@ -21,6 +21,13 @@ impl AsRef<WikiClient> for WikiClient {
     }
 }
 
+#[derive(serde::Deserialize)]
+#[serde(untagged)]
+enum ApiResponse<T> {
+    Success(T),
+    Failure { errors: Vec<crate::response::Error> },
+}
+
 impl WikiClient {
     pub fn new() -> Result<Self, ToolsError> {
         Ok(Self {
@@ -110,18 +117,9 @@ impl WikiClient {
 
         log::debug!("login request completed: {:?}", res);
 
-        match res {
-            Login::Login { .. } => {}
-            Login::Error { error } => {
-                return Err(ToolsError::LoginFailed(error.reason.description));
-            }
-            Login::ErrorUnreachable { mut errors } => {
-                return Err(ToolsError::LoginFailed(errors.remove(0).description));
-            }
-            Login::WarningsUnreachable { mut warnings } => {
-                return Err(ToolsError::LoginFailed(warnings.remove(0).description));
-            }
-        }
+        if let Some(r) = res.login.reason {
+            return Err(ToolsError::LoginFailed(r.description));
+        };
 
         self.request_csrf_token().await
     }
@@ -151,7 +149,7 @@ impl WikiClient {
     ) -> Result<T, ToolsError> {
         loop {
             // It's fine to create a new request every iteration, because we almost never need a second one
-            let res = self
+            let res: ApiResponse<T> = self
                 .client
                 .get(&self.url)
                 .query(&[
@@ -166,15 +164,19 @@ impl WikiClient {
                 .map_err(ToolsError::from)?
                 .json()
                 .await
-                .map_err(ToolsError::from);
-            if let Err(ToolsError::MediaWikiApi(err)) = &res {
-                if &err.code == "ratelimited" {
-                    log::warn!("Rate limited! Retrying after 10 seconds...");
-                    tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
-                    continue;
+                .map_err(ToolsError::from)?;
+            match res {
+                ApiResponse::Success(r) => return Ok(r),
+                ApiResponse::Failure { mut errors } => {
+                    let err = errors.remove(0);
+                    if &err.code == "ratelimited" {
+                        log::warn!("Rate limited! Retrying after 15 seconds...");
+                        tokio::time::sleep(tokio::time::Duration::from_secs(15)).await;
+                        continue;
+                    } else {
+                        return Err(ToolsError::MediaWikiApi(err));
+                    }
                 }
-            } else {
-                return res;
             };
         }
     }
@@ -194,7 +196,7 @@ impl WikiClient {
 
         loop {
             // It's fine to create a new request every iteration, because we almost never need a second one
-            let res = self
+            let res: ApiResponse<T> = self
                 .client
                 .post(&self.url)
                 .query(&[
@@ -209,15 +211,19 @@ impl WikiClient {
                 .map_err(ToolsError::from)?
                 .json()
                 .await
-                .map_err(ToolsError::from);
-            if let Err(ToolsError::MediaWikiApi(err)) = &res {
-                if &err.code == "ratelimited" {
-                    log::warn!("Rate limited! Retrying after 10 seconds...");
-                    tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
-                    continue;
+                .map_err(ToolsError::from)?;
+            match res {
+                ApiResponse::Success(r) => return Ok(r),
+                ApiResponse::Failure { mut errors } => {
+                    let err = errors.remove(0);
+                    if &err.code == "ratelimited" {
+                        log::warn!("Rate limited! Retrying after 15 seconds...");
+                        tokio::time::sleep(tokio::time::Duration::from_secs(15)).await;
+                        continue;
+                    } else {
+                        return Err(ToolsError::MediaWikiApi(err));
+                    }
                 }
-            } else {
-                return res;
             };
         }
     }

@@ -1,19 +1,13 @@
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
-#[serde(untagged)]
-pub(crate) enum Rename {
-    Succes {
-        #[serde(rename = "move")]
-        moved: Moved,
-    },
-    Failure {
-        errors: Vec<super::Error>,
-    },
+pub(crate) struct Rename {
+    #[serde(rename = "move")]
+    pub(crate) rename: Response,
 }
 
 #[derive(Debug, Deserialize)]
-pub(crate) struct Moved {
+pub(crate) struct Response {
     pub(crate) from: String,
     pub(crate) to: String,
 }

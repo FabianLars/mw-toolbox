@@ -35,8 +35,5 @@ pub async fn edit(
         ])
         .await?;
 
-    match res {
-        Edit::Succes { edit } => Ok(edit.result),
-        Edit::Failure { mut errors } => Err(ToolsError::MediaWikiApi(errors.remove(0))),
-    }
+    Ok(res.edit.result)
 }
