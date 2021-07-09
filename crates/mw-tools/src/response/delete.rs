@@ -2,13 +2,13 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 #[serde(untagged)]
-pub enum Edit {
-    Succes { edit: Response },
+pub(crate) enum Delete {
+    Succes { delete: Response },
     Failure { errors: Vec<super::Error> },
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Response {
-    pub result: String,
-    pub title: String,
+pub(crate) struct Response {
+    pub(crate) title: String,
+    pub(crate) reason: String,
 }

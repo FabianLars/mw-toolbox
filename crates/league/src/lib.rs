@@ -13,6 +13,8 @@ use tokio::{fs::File, io::AsyncWriteExt};
 
 use mw_tools::WikiClient;
 
+type Ignore = serde::de::IgnoredAny;
+
 #[derive(Default, Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct ChampSrc {
@@ -311,8 +313,8 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result
         start_date, end_date, angebote
     );
 
-    let res = client
-        .post_into_text(&[
+    let res: mw_tools::response::edit::Edit = client
+        .post(&[
             ("action", "edit"),
             ("summary", "Nicht ganz so automatische Aktion"),
             ("bot", ""),
@@ -426,7 +428,7 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
         .await?;
 
     client
-        .post(&[
+        .post::<Ignore>(&[
             ("action", "edit"),
             ("summary", "automated action"),
             ("bot", ""),
@@ -531,7 +533,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
 
     let fut_skin = async {
         client
-            .post(&[
+            .post::<Ignore>(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
                 ("bot", ""),
@@ -543,7 +545,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't edit skins.json"));
     let fut_set = async {
         client
-            .post(&[
+            .post::<Ignore>(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
                 ("bot", ""),
@@ -555,7 +557,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't edit skinlines.json"));
     let fut_universe = async {
         client
-            .post(&[
+            .post::<Ignore>(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
                 ("bot", ""),
@@ -567,7 +569,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't edit universes.json"));
     let fut_icons = async {
         client
-            .post(&[
+            .post::<Ignore>(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
                 ("bot", ""),
@@ -579,7 +581,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't edit universes.json"));
     let fut_iconsets = async {
         client
-            .post(&[
+            .post::<Ignore>(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
                 ("bot", ""),
@@ -591,7 +593,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't edit universes.json"));
     let fut_champion = async {
         client
-            .post(&[
+            .post::<Ignore>(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
                 ("bot", ""),
@@ -603,7 +605,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't edit universes.json"));
     let fut_tft = async {
         client
-            .post(&[
+            .post::<Ignore>(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
                 ("bot", ""),
@@ -626,7 +628,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
 
     let fut_skin = async {
         client
-            .post(&[
+            .post::<Ignore>(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
                 ("bot", ""),
@@ -638,7 +640,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't edit skins.src"));
     let fut_set = async {
         client
-            .post(&[
+            .post::<Ignore>(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
                 ("bot", ""),
@@ -650,7 +652,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't edit skinlines.src"));
     let fut_universe = async {
         client
-            .post(&[
+            .post::<Ignore>(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
                 ("bot", ""),
@@ -662,7 +664,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't edit universes.src"));
     let fut_icons = async {
         client
-            .post(&[
+            .post::<Ignore>(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
                 ("bot", ""),
@@ -674,7 +676,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't edit universes.src"));
     let fut_iconsets = async {
         client
-            .post(&[
+            .post::<Ignore>(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
                 ("bot", ""),
@@ -686,7 +688,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't edit universes.src"));
     let fut_champion = async {
         client
-            .post(&[
+            .post::<Ignore>(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
                 ("bot", ""),
@@ -698,7 +700,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     .map_err(|_| anyhow!("Can't edit universes.src"));
     let fut_tft = async {
         client
-            .post(&[
+            .post::<Ignore>(&[
                 ("action", "edit"),
                 ("summary", "automated update"),
                 ("bot", ""),
@@ -731,7 +733,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
 
     let (resp, resp2) = join!(
         client.client().get(opgg).send(),
-        client.get_into_json(&[
+        client.get(&[
             ("action", "parse"),
             ("page", "Module:Champion/data"),
             ("prop", "wikitext"),
@@ -801,7 +803,7 @@ pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     new_champdata.pop();
 
     client
-        .post(&[
+        .post::<Ignore>(&[
             ("action", "edit"),
             ("summary", "automated action"),
             ("bot", ""),

@@ -29,7 +29,7 @@ pub async fn allpages(client: &WikiClient, parameter: Option<&str>) -> Result<Ve
         if param == "all" {
             let mut temp: Vec<String> = Vec::new();
             let ns_res: Namespaces = client
-                .get_into_json(&[
+                .get(&[
                     ("action", "query"),
                     ("meta", "siteinfo"),
                     ("siprop", "namespaces"),
@@ -170,7 +170,7 @@ async fn get_from_api(
         "qp" => {
             while has_next {
                 let json: Querypage = api
-                    .get_into_json(&[
+                    .get(&[
                         ("action", "query"),
                         ("list", long),
                         ("qplimit", "500"),
@@ -193,7 +193,7 @@ async fn get_from_api(
         _ => {
             while has_next {
                 let json: List = api
-                    .get_into_json(&[
+                    .get(&[
                         ("action", "query"),
                         ("list", long),
                         (&format!("{}limit", short), "5000"),

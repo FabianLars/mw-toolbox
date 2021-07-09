@@ -48,7 +48,7 @@ pub async fn rename(
 
     for (x, y) in from.iter().zip(actual_destination.iter()) {
         let response: Rename = client
-            .post_into_json(&[
+            .post(&[
                 ("action", "move"),
                 ("from", x),
                 ("to", y),

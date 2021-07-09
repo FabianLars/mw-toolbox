@@ -3,7 +3,7 @@ use serde::de::DeserializeOwned;
 
 use crate::{
     error::ToolsError,
-    response::{login::Login, token::Token},
+    response::{login::Login, token::Token, Ignore},
 };
 
 #[derive(Clone, Debug, Default)]
@@ -89,7 +89,7 @@ impl WikiClient {
 
     pub async fn login(&mut self) -> Result<(), ToolsError> {
         let json: Token = self
-            .get_into_json(&[("action", "query"), ("meta", "tokens"), ("type", "login")])
+            .get(&[("action", "query"), ("meta", "tokens"), ("type", "login")])
             .await?;
 
         log::debug!("this should contain the requested login token: {:?}", &json);
@@ -100,7 +100,7 @@ impl WikiClient {
         };
 
         let res: Login = self
-            .post_into_json(&[
+            .post(&[
                 ("action", "login"),
                 ("lgname", &self.loginname),
                 ("lgpassword", &self.password),
@@ -127,11 +127,10 @@ impl WikiClient {
     }
 
     pub async fn logout(&mut self) -> Result<(), ToolsError> {
-        let res = self
-            .post_into_text(&[("action", "logout"), ("token", &self.csrf_token)])
+        self.post::<Ignore>(&[("action", "logout"), ("token", &self.csrf_token)])
             .await?;
 
-        log::debug!("logout request completed: {:?}", res);
+        log::debug!("logout successful");
 
         self.csrf_token = "".to_string();
 
@@ -146,33 +145,44 @@ impl WikiClient {
         !self.csrf_token.is_empty()
     }
 
-    pub async fn get(&self, parameters: &[(&str, &str)]) -> Result<Response, ToolsError> {
-        self.client
-            .get(&self.url)
-            .query(&[
-                ("format", "json"),
-                ("formatversion", "2"),
-                ("errorformat", "plaintext"),
-            ])
-            .query(parameters)
-            .send()
-            .await
-            .and_then(|res| res.error_for_status())
-            .map_err(Into::into)
-    }
-
-    pub async fn get_into_text(&self, parameters: &[(&str, &str)]) -> Result<String, ToolsError> {
-        self.get(parameters).await?.text().await.map_err(Into::into)
-    }
-
-    pub async fn get_into_json<T: DeserializeOwned>(
+    pub async fn get<T: DeserializeOwned>(
         &self,
         parameters: &[(&str, &str)],
     ) -> Result<T, ToolsError> {
-        self.get(parameters).await?.json().await.map_err(Into::into)
+        loop {
+            // It's fine to create a new request every iteration, because we almost never need a second one
+            let res = self
+                .client
+                .get(&self.url)
+                .query(&[
+                    ("format", "json"),
+                    ("formatversion", "2"),
+                    ("errorformat", "plaintext"),
+                ])
+                .query(parameters)
+                .send()
+                .await
+                .and_then(|res| res.error_for_status())
+                .map_err(ToolsError::from)?
+                .json()
+                .await
+                .map_err(ToolsError::from);
+            if let Err(ToolsError::MediaWikiApi(err)) = &res {
+                if &err.code == "ratelimited" {
+                    log::warn!("Rate limited! Retrying after 10 seconds...");
+                    tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
+                    continue;
+                }
+            } else {
+                return res;
+            };
+        }
     }
 
-    pub async fn post(&self, parameters: &[(&str, &str)]) -> Result<Response, ToolsError> {
+    pub async fn post<T: DeserializeOwned>(
+        &self,
+        parameters: &[(&str, &str)],
+    ) -> Result<T, ToolsError> {
         let parameters = if parameters
             .iter()
             .any(|(x, y)| *x == "action" && ["delete", "edit", "move", "upload"].contains(y))
@@ -182,42 +192,39 @@ impl WikiClient {
             parameters.to_vec()
         };
 
-        self.client
-            .post(&self.url)
-            .query(&[
-                ("format", "json"),
-                ("formatversion", "2"),
-                ("errorformat", "plaintext"),
-            ])
-            .form(&parameters)
-            .send()
-            .await
-            .and_then(|res| res.error_for_status())
-            .map_err(Into::into)
-    }
-
-    pub async fn post_into_text(&self, parameters: &[(&str, &str)]) -> Result<String, ToolsError> {
-        self.post(parameters)
-            .await?
-            .text()
-            .await
-            .map_err(Into::into)
-    }
-
-    pub async fn post_into_json<T: DeserializeOwned>(
-        &self,
-        parameters: &[(&str, &str)],
-    ) -> Result<T, ToolsError> {
-        self.post(parameters)
-            .await?
-            .json()
-            .await
-            .map_err(Into::into)
+        loop {
+            // It's fine to create a new request every iteration, because we almost never need a second one
+            let res = self
+                .client
+                .post(&self.url)
+                .query(&[
+                    ("format", "json"),
+                    ("formatversion", "2"),
+                    ("errorformat", "plaintext"),
+                ])
+                .form(&parameters)
+                .send()
+                .await
+                .and_then(|res| res.error_for_status())
+                .map_err(ToolsError::from)?
+                .json()
+                .await
+                .map_err(ToolsError::from);
+            if let Err(ToolsError::MediaWikiApi(err)) = &res {
+                if &err.code == "ratelimited" {
+                    log::warn!("Rate limited! Retrying after 10 seconds...");
+                    tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
+                    continue;
+                }
+            } else {
+                return res;
+            };
+        }
     }
 
     async fn request_csrf_token(&mut self) -> Result<(), ToolsError> {
         let res: Token = self
-            .get_into_json(&[("action", "query"), ("meta", "tokens"), ("type", "csrf")])
+            .get(&[("action", "query"), ("meta", "tokens"), ("type", "csrf")])
             .await?;
 
         log::debug!("this should contain the requested csrf token: {:?}", &res);

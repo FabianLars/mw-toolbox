@@ -26,7 +26,7 @@ pub async fn edit(
     summary: Option<&str>,
 ) -> Result<String, ToolsError> {
     let res: Edit = client
-        .post_into_json(&[
+        .post(&[
             ("action", "edit"),
             ("bot", ""),
             ("summary", summary.unwrap_or("")),

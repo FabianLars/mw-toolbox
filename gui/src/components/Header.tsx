@@ -13,6 +13,7 @@ import {
     Spacer,
     Spinner,
 } from '@chakra-ui/react';
+import { readTextFile } from '@tauri-apps/api/fs';
 
 type MenuProps = {
     children: string;

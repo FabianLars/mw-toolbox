@@ -28,7 +28,7 @@ pub async fn download(client: &WikiClient, files: &[&str]) -> Result<(), ToolsEr
 
         if titles.len() >= 1500 {
             let mut file_infos: Imageinfo = client
-                .get_into_json(&[
+                .get(&[
                     ("action", "query"),
                     ("prop", "imageinfo"),
                     ("iiprop", "url"),
