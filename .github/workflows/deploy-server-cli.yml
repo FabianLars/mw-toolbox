@@ -8,6 +8,7 @@ on:
         paths-ignore:
             - 'gui/**'
             - 'README.md'
+            - '!.github/workflows/deploy-server-cli.yml'
 
 jobs:
     deploy-cli:
