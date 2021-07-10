@@ -1,7 +1,7 @@
 name: Publish app
 
 on:
-    workflow_dispatch:
+    create:
 
 env:
     WTOOLS_AEAD_KEY: ${{ secrets.WTOOLS_AEAD_KEY }}
@@ -13,8 +13,9 @@ env:
 
 jobs:
     mw-toolbox:
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+
         strategy:
-            fail-fast: false
             matrix:
                 platform: [macos-latest, ubuntu-latest, windows-latest]
 
@@ -98,22 +99,10 @@ jobs:
                   SOURCE: 'target/release/bundle/macos/'
                   TARGET: '~/wwwcdn/releases/mw-toolbox/latest/darwin/'
 
-            - name: Get release version
-              uses: nyaa8/package-version@v1
-              with:
-                  path: 'gui/package.json'
-
-            - name: Tag commit
-              uses: tvdias/github-tagger@v0.0.1
-              with:
-                  repo-token: ${{ secrets.GITHUB_TOKEN }}
-                  tag: 'v${{ env.PACKAGE_VERSION }}'
-
             - name: Create release
               uses: ncipollo/release-action@v1
               with:
                   allowUpdates: true
                   artifacts: 'target/release/bundle/msi/*,target/release/bundle/appimage/*,target/release/bundle/macos/*,'
                   body: 'See the assets to download this version and install.'
-                  tag: 'v${{ env.PACKAGE_VERSION }}'
                   token: ${{ secrets.GITHUB_TOKEN }}
