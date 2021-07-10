@@ -79,10 +79,10 @@ jobs:
               uses: SamKirkland/FTP-Deploy-Action@4.1.0
               with:
                   server: ${{ env.REMOTE_HOST }}
-                  username: ${{ env.REMOTE_USER }}
+                  username: ${{ env.FTP_USER }}
                   password: ${{ secrets.FTP_PASSWORD }}
                   local-dir: 'target/release/bundle/msi/'
-                  server-dir: '~/wwwcdn/releases/mw-toolbox/latest/win64/'
+                  server-dir: 'releases/mw-toolbox/latest/win64/'
 
             - name: Upload files to the update server (Linux)
               if: runner.os == 'Linux'
