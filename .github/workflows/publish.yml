@@ -20,10 +20,6 @@ jobs:
 
         runs-on: ${{ matrix.platform }}
 
-        defaults:
-            run:
-                working-directory: gui
-
         steps:
             - uses: actions/checkout@v2
 
