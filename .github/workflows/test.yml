@@ -28,8 +28,8 @@ jobs:
                       ~/.cargo/registry
                       ~/.cargo/git
                       target
-                  key: ${{ runner.os }}-cache-${{ hashFiles('**/Cargo.lock') }}
-                  restore-keys: ${{ runner.os }}-cache-
+                  key: ${{ runner.os }}-cache-test-${{ hashFiles('**/Cargo.lock') }}
+                  restore-keys: ${{ runner.os }}-cache-test-
 
             - name: Install webkit2gtk
               run: |

@@ -1723,7 +1723,7 @@ packages:
       mime-types: 2.1.31
       parse5: 6.0.1
       picomatch: 2.3.0
-      ws: 7.5.2
+      ws: 7.5.3
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -3115,7 +3115,7 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       readable-web-to-node-stream: 2.0.0
-      strtok3: 6.0.8
+      strtok3: 6.1.1
       token-types: 2.1.1
       typedarray-to-buffer: 3.1.5
     dev: true
@@ -4931,7 +4931,7 @@ packages:
       rimraf: 3.0.2
       tar-fs: 2.1.1
       unbzip2-stream: 1.4.3
-      ws: 7.5.2
+      ws: 7.5.3
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -5643,9 +5643,9 @@ packages:
       escape-string-regexp: 1.0.5
     dev: true
 
-  /strtok3/6.0.8:
-    resolution: {integrity: sha512-QLgv+oiXwXgCgp2PdPPa+Jpp4D9imK9e/0BsyfeFMr6QL6wMVqoVn9+OXQ9I7MZbmUzN6lmitTJ09uwS2OmGcw==}
-    engines: {node: '>=8'}
+  /strtok3/6.1.1:
+    resolution: {integrity: sha512-Q2YbTf17/GPyhWnYGPcxZdPuXvVvstHEKdgxgdaj+SI2c5//KezIgAQJAT2/RYI0H+CQt2fDVvPiLBdl82i0yA==}
+    engines: {node: '>=10'}
     dependencies:
       '@tokenizer/token': 0.1.1
       '@types/debug': 4.1.6
@@ -6127,8 +6127,8 @@ packages:
       typedarray-to-buffer: 3.1.5
     dev: true
 
-  /ws/7.5.2:
-    resolution: {integrity: sha512-lkF7AWRicoB9mAgjeKbGqVUekLnSNO4VjKVnuPHpQeOxZOErX6BPXwJk70nFslRCEEA8EVW7ZjKwXaP9N+1sKQ==}
+  /ws/7.5.3:
+    resolution: {integrity: sha512-kQ/dHIzuLrS6Je9+uv81ueZomEwH0qVYstcAQ4/Z93K8zeko9gtAbttJWzoC5ukqXY1PpoouV3+VSOqEAFt5wg==}
     engines: {node: '>=8.3.0'}
     peerDependencies:
       bufferutil: ^4.0.1
