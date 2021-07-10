@@ -23,6 +23,19 @@ jobs:
         steps:
             - uses: actions/checkout@v2
 
+            - name: Prepare folders on update server
+              if: runner.os == 'Linux'
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ env.REMOTE_HOST }}
+                  username: ${{ env.REMOTE_USER }}
+                  key: ${{ env.SSH_PRIVATE_KEY }}
+                  script: |
+                      cd ~/wwwcdn/releases/mw-toolbox/
+                      rm -rf previous/
+                      mv latest/ previous
+                      mkdir -p latest/win64 latest/linux latest/darwin
+
             - name: Setup rust
               uses: hecrj/setup-rust-action@v1
 
@@ -60,21 +73,6 @@ jobs:
               run: |
                   cd gui
                   pnpm tauri build
-
-            - name: Prepare folders on update server
-              uses: appleboy/ssh-action@master
-              env:
-                  APP_TARGET: ${{ (runner.os == 'Linux' && 'linux') || (runner.os == 'macOS' && 'darwin') || (runner.os == 'Windows' && 'win64') || 'win32' }}
-              with:
-                  host: ${{ env.SERVER_IP }}
-                  username: ${{ env.USERNAME }}
-                  key: ${{ env.SSH_PRIVATE_KEY }}
-                  envs: APP_TARGET
-                  script: |
-                      cd ~/wwwcdn/releases/mw-toolbox/
-                      rm -rf previous/$APP_TARGET
-                      mv latest/$APP_TARGET previous/$APP_TARGET
-                      mkdir -p latest/$APP_TARGET
 
             - name: Upload files to the update server (Windows)
               if: runner.os == 'Windows'
