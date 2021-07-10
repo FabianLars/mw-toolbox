@@ -1,0 +1,106 @@
+name: Publish app
+
+on:
+    workflow_dispatch:
+
+env:
+    WTOOLS_AEAD_KEY: ${{ secrets.WTOOLS_AEAD_KEY }}
+    WTOOLS_SECRET: ${{ secrets.WTOOLS_SECRET }}
+    TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+    REMOTE_HOST: ${{ secrets.SERVER_IP }}
+    REMOTE_USER: ${{ secrets.USERNAME }}
+    SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+jobs:
+    mw-toolbox:
+        strategy:
+            fail-fast: false
+            matrix:
+                platform: [macos-latest, ubuntu-latest, windows-latest]
+
+        runs-on: ${{ matrix.platform }}
+
+        defaults:
+            run:
+                working-directory: gui
+
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Setup rust
+            - uses: hecrj/setup-rust-action@v1
+
+            - name: Setup node
+            - uses: actions/setup-node@v1
+              with:
+                  node-version: '16'
+
+            - name: install dependencies (ubuntu only)
+              if: runner.os == 'Linux'
+              run: |
+                  sudo apt update
+                  sudo apt install -y libwebkit2gtk-4.0-dev
+
+            # No need for rust cache for release build as it gets cleared every week
+            - name: Cache pnpm modules
+              uses: actions/cache@v2
+              env:
+                  cache-name: cache-pnpm-modules
+              with:
+                  path: ~/.pnpm-store
+                  key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-
+                      ${{ runner.os }}-build-${{ env.cache-name }}-
+
+            - uses: pnpm/action-setup@v2
+              with:
+                  version: 6.x.x
+                  run_install: |
+                      - cwd: gui
+
+            - name: Build and release app
+              uses: tauri-apps/tauri-action@v0
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  projectPath: gui
+                  tagName: mw-toolbox-v__VERSION__
+                  releaseName: 'mw-toolbox v__VERSION__'
+                  body: 'See the assets to download this version and install.'
+
+            - name: prepare folders on update server
+              uses: appleboy/ssh-action@master
+              env:
+                  APP_TARGET: ${{ (runner.os == 'Linux' && 'linux') || (runner.os == 'macOS' && 'darwin') || (runner.os == 'Windows' && 'win64') || 'win32' }}
+              with:
+                  host: ${{ env.SERVER_IP }}
+                  username: ${{ env.USERNAME }}
+                  key: ${{ env.SSH_PRIVATE_KEY }}
+                  envs: APP_TARGET
+                  script: |
+                      cd ~/wwwcdn/releases/mw-toolbox/
+                      rm -rf previous/$APP_TARGET
+                      mv latest/$APP_TARGET previous/$APP_TARGET
+                      mkdir -p latest/$APP_TARGET
+
+            - name: upload files for updater (Windows)
+              if: runner.os == 'Windows'
+              uses: easingthemes/ssh-deploy@main
+              with:
+                  SOURCE: 'target/release/bundle/msi/'
+                  TARGET: '~/wwwcdn/releases/mw-toolbox/latest/win64/'
+
+            - name: upload files for updater (Linux)
+              if: runner.os == 'Linux'
+              uses: easingthemes/ssh-deploy@main
+              with:
+                  SOURCE: 'target/release/bundle/appimage/'
+                  TARGET: '~/wwwcdn/releases/mw-toolbox/latest/linux/'
+
+            - name: upload files for updater (macOS)
+              if: runner.os == 'macOS'
+              uses: easingthemes/ssh-deploy@main
+              with:
+                  SOURCE: 'target/release/bundle/macos/'
+                  TARGET: '~/wwwcdn/releases/mw-toolbox/latest/darwin/'

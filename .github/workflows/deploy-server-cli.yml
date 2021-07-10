@@ -41,7 +41,7 @@ jobs:
                   REMOTE_USER: ${{ secrets.USERNAME }}
                   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
                   SOURCE: 'target/release/wtools'
-                  TARGET: '~/wwwbackend'
+                  TARGET: '~/wwwapi'
 
             - name: File permissions
               uses: appleboy/ssh-action@master
@@ -49,4 +49,4 @@ jobs:
                   host: ${{ secrets.SERVER_IP }}
                   username: ${{ secrets.USERNAME }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  script: cd ~/wwwbackend && sudo ./rights.sh
+                  script: cd ~/wwwapi && sudo ./rights.sh
