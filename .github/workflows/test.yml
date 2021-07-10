@@ -6,8 +6,6 @@ on:
     push:
         branches:
             - main
-        paths-ignore:
-            - '!.github/workflows/test.yml'
 
 env:
     WTOOLS_AEAD_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
