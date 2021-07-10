@@ -113,4 +113,5 @@ jobs:
                   allowUpdates: true
                   artifacts: 'target/release/bundle/msi/*,target/release/bundle/appimage/*,target/release/bundle/macos/*,'
                   body: 'See the assets to download this version and install.'
+                  tag: 'v${{ steps.app-version.outputs.current-version }}'
                   token: ${{ secrets.GITHUB_TOKEN }}
