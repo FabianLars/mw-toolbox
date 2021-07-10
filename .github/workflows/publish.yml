@@ -104,7 +104,7 @@ jobs:
               uses: ncipollo/release-action@v1
               with:
                   allowUpdates: true
-                  artifacts: target/release/bundle/msi/mw-toolbox_*.msi*
+                  artifacts: target/release/bundle/msi/mw-toolbox_*.msi
                   token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Upload release assets (Linux)
@@ -112,7 +112,7 @@ jobs:
               uses: ncipollo/release-action@v1
               with:
                   allowUpdates: true
-                  artifacts: target/release/bundle/appimage/mw-toolbox_*.AppImage*
+                  artifacts: target/release/bundle/appimage/mw-toolbox_*.AppImage
                   token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Upload release assets (macOS)
@@ -120,5 +120,5 @@ jobs:
               uses: ncipollo/release-action@v1
               with:
                   allowUpdates: true
-                  artifacts: target/release/bundle/macos/mw-toolbox_*.app*
+                  artifacts: target/release/bundle/macos/mw-toolbox_*.app
                   token: ${{ secrets.GITHUB_TOKEN }}
