@@ -96,16 +96,15 @@ jobs:
                   TARGET: '~/wwwcdn/releases/mw-toolbox/latest/darwin/'
 
             - name: Get release version
-              id: app-version
-              uses: martinbeentjes/npm-get-version-action@master
+              uses: nyaa8/package-version@v1
               with:
-                  path: gui/
+                  path: 'gui/package.json'
 
             - name: Tag commit
               uses: tvdias/github-tagger@v0.0.1
               with:
                   repo-token: ${{ secrets.GITHUB_TOKEN }}
-                  tag: 'v${{ steps.app-version.outputs.current-version }}'
+                  tag: 'v${{ env.PACKAGE_VERSION }}'
 
             - name: Create release
               uses: ncipollo/release-action@v1
@@ -113,5 +112,5 @@ jobs:
                   allowUpdates: true
                   artifacts: 'target/release/bundle/msi/*,target/release/bundle/appimage/*,target/release/bundle/macos/*,'
                   body: 'See the assets to download this version and install.'
-                  tag: 'v${{ steps.app-version.outputs.current-version }}'
+                  tag: 'v${{ env.PACKAGE_VERSION }}'
                   token: ${{ secrets.GITHUB_TOKEN }}
