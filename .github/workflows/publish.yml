@@ -121,5 +121,5 @@ jobs:
               uses: ncipollo/release-action@v1
               with:
                   allowUpdates: true
-                  artifacts: target/release/bundle/macos/mw-toolbox_*.app
+                  artifacts: target/release/bundle/macos/mw-toolbox.app
                   token: ${{ secrets.GITHUB_TOKEN }}
