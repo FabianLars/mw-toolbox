@@ -25,7 +25,7 @@ pub async fn upload<P: AsRef<Path>>(
         .send_multipart(
             &[
                 ("action", "upload"),
-                ("text", &text),
+                ("text", text),
                 ("filename", &file_name),
                 ("ignorewarnings", ""),
             ],
@@ -44,7 +44,7 @@ pub async fn upload_multiple<P: AsRef<Path>>(
     text: Option<&str>,
 ) -> Result<(), ToolsError> {
     for file in files {
-        if let Err(err) = upload(&client, file, text).await {
+        if let Err(err) = upload(client, file, text).await {
             return Err(err);
         }
     }

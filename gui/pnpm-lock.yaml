@@ -1737,7 +1737,7 @@ packages:
       '@web/dev-server-core': 0.3.13
       chalk: 4.1.1
       parse5: 6.0.1
-      rollup: 2.53.0
+      rollup: 2.53.1
       whatwg-url: 8.7.0
     transitivePeerDependencies:
       - bufferutil
@@ -1758,7 +1758,7 @@ packages:
       '@web/dev-server-rollup': 0.3.5
       camelcase: 6.2.0
       chalk: 4.1.1
-      command-line-args: 5.1.1
+      command-line-args: 5.1.2
       command-line-usage: 6.1.1
       debounce: 1.2.1
       deepmerge: 4.2.2
@@ -1882,7 +1882,7 @@ packages:
       '@web/test-runner-mocha': 0.7.3
       camelcase: 6.2.0
       chalk: 4.1.1
-      command-line-args: 5.1.1
+      command-line-args: 5.1.2
       command-line-usage: 6.1.1
       convert-source-map: 1.8.0
       diff: 5.0.0
@@ -2021,6 +2021,11 @@ packages:
   /array-back/4.0.2:
     resolution: {integrity: sha512-NbdMezxqf94cnNfWLL7V/im0Ub+Anbb0IoZhvzie8+4HJ4nMQuzHuy49FkGYCJK2yAloZ3meiB6AVMClbrI1vg==}
     engines: {node: '>=8'}
+    dev: true
+
+  /array-back/6.1.2:
+    resolution: {integrity: sha512-V/+UG3q3273RgjbayqQrWbdCEFJqGXa5gnvaBnDtmrFlMXQoTypYpu1DVSSrHytX1U72LzL8CkoQS9N86LV9Cw==}
+    engines: {node: '>=14'}
     dev: true
 
   /array-find-index/1.0.2:
@@ -2478,11 +2483,11 @@ packages:
     resolution: {integrity: sha512-MKGMzyfeuutC/ZJ1cba9NqcNpfeqMUcYmyF1ZFY6/Cn7CNSAKx6a+s48sqLqyAiZuaP2TcqMhoo+dlwFnVxT9w==}
     dev: true
 
-  /command-line-args/5.1.1:
-    resolution: {integrity: sha512-hL/eG8lrll1Qy1ezvkant+trihbGnaKaeEjj6Scyr3DN+RC7iQ5Rz84IeLERfAWDGo0HBSNAakczwgCilDXnWg==}
+  /command-line-args/5.1.2:
+    resolution: {integrity: sha512-fytTsbndLbl+pPWtS0CxLV3BEWw9wJayB8NnU2cbQqVPsNdYezQeT+uIQv009m+GShnMNyuoBrRo8DTmuTfSCA==}
     engines: {node: '>=4.0.0'}
     dependencies:
-      array-back: 3.1.0
+      array-back: 6.1.2
       find-replace: 3.0.0
       lodash.camelcase: 4.3.0
       typical: 4.0.0
@@ -3115,7 +3120,7 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       readable-web-to-node-stream: 2.0.0
-      strtok3: 6.1.1
+      strtok3: 6.1.2
       token-types: 2.1.1
       typedarray-to-buffer: 3.1.5
     dev: true
@@ -4742,8 +4747,8 @@ packages:
     resolution: {integrity: sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==}
     dev: true
 
-  /peek-readable/3.1.3:
-    resolution: {integrity: sha512-mpAcysyRJxmICBcBa5IXH7SZPvWkcghm6Fk8RekoS3v+BpbSzlZzuWbMx+GXrlUwESi9qHar4nVEZNMKylIHvg==}
+  /peek-readable/3.1.4:
+    resolution: {integrity: sha512-DX7ec7frSMtCWw+zMd27f66hcxIz/w9LQTY2RflB4WNHCVPAye1pJiP2t3gvaaOhu7IOhtPbHw8MemMj+F5lrg==}
     engines: {node: '>=8'}
     dev: true
 
@@ -5282,8 +5287,8 @@ packages:
       glob: 7.1.7
     dev: true
 
-  /rollup/2.53.0:
-    resolution: {integrity: sha512-spgrY78Toh+m0+zaOoeaayJKuzFuWy6o1PdFIBMVwRcuxT0xCOX9A5rChyKe+2ruL4lePKWUMImS4mMW1QAkmQ==}
+  /rollup/2.53.1:
+    resolution: {integrity: sha512-yiTCvcYXZEulNWNlEONOQVlhXA/hgxjelFSjNcrwAAIfYx/xqjSHwqg/cCaWOyFRKr+IQBaXwt723m8tCaIUiw==}
     engines: {node: '>=10.0.0'}
     hasBin: true
     optionalDependencies:
@@ -5643,13 +5648,13 @@ packages:
       escape-string-regexp: 1.0.5
     dev: true
 
-  /strtok3/6.1.1:
-    resolution: {integrity: sha512-Q2YbTf17/GPyhWnYGPcxZdPuXvVvstHEKdgxgdaj+SI2c5//KezIgAQJAT2/RYI0H+CQt2fDVvPiLBdl82i0yA==}
+  /strtok3/6.1.2:
+    resolution: {integrity: sha512-ECqYgTe/FU1r2fSgXaCywfhoveNNxDWcGSaJesD7OvlrQLIwSck8mZT6xxYdnI4q0l8SwrrExx/01chzUM4Dzw==}
     engines: {node: '>=10'}
     dependencies:
       '@tokenizer/token': 0.1.1
       '@types/debug': 4.1.6
-      peek-readable: 3.1.3
+      peek-readable: 3.1.4
     dev: true
 
   /style-value-types/4.1.4:
@@ -6020,7 +6025,7 @@ packages:
       esbuild: 0.12.15
       postcss: 8.3.5
       resolve: 1.20.0
-      rollup: 2.53.0
+      rollup: 2.53.1
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
