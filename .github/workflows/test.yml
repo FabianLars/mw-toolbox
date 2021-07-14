@@ -85,10 +85,8 @@ jobs:
                   cache-name: cache-pnpm-modules
               with:
                   path: ~/.pnpm-store
-                  key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: |
-                      ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-
-                      ${{ runner.os }}-build-${{ env.cache-name }}-
+                  key: ${{ runner.os }}-pnpm-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: ${{ runner.os }}-pnpm-cache-
 
             - uses: pnpm/action-setup@v2
               with:

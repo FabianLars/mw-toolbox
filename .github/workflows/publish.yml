@@ -53,14 +53,10 @@ jobs:
             # No need for rust cache for release build as it gets cleared every week
             - name: Create cache for pnpm modules
               uses: actions/cache@v2
-              env:
-                  cache-name: cache-pnpm-modules
               with:
                   path: ~/.pnpm-store
-                  key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: |
-                      ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-
-                      ${{ runner.os }}-build-${{ env.cache-name }}-
+                  key: ${{ runner.os }}-pnpm-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: ${{ runner.os }}-pnpm-cache-
 
             - name: Install pnpm and project dependencies
               uses: pnpm/action-setup@v2
