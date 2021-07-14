@@ -128,7 +128,7 @@ pub async fn get_page(page: &str, patterns: Vec<FindReplace>) -> Result<GetPage>
 
 #[command]
 pub async fn init() -> (Vec<Profile>, usize) {
-    storage::load_secure::<(Vec<Profile>, usize)>("a7caf1a8")
+    storage::load_secure::<(Vec<Profile>, usize)>("oB9uBQDs")
         .await
         .unwrap_or_default()
 }
@@ -207,7 +207,7 @@ pub async fn update_profile_store(mut profiles: Vec<Profile>, current: usize) ->
         }
     }
 
-    storage::save_secure("a7caf1a8", (profiles, current))
+    storage::save_secure("oB9uBQDs", (profiles, current))
         .await
         .map_err(|err| ToolsError::Other(err.to_string()))
 }

@@ -17,7 +17,7 @@ static PATH: Lazy<PathBuf> = Lazy::new(|| {
     path
 });
 
-pub fn encrypt(val: &[u8]) -> Result<Vec<u8>> {
+pub fn encrypt(data: &[u8]) -> Result<Vec<u8>> {
     let cryptkey = Key::from_slice(env!("WTOOLS_AEAD_KEY").as_bytes());
     let aead = XChaCha20Poly1305::new(cryptkey);
 
@@ -26,10 +26,7 @@ pub fn encrypt(val: &[u8]) -> Result<Vec<u8>> {
 
     let nonce = XNonce::from_slice(&rng_nonce);
     let mut ciphertext = aead
-        .encrypt(
-            nonce,
-            [env!("WTOOLS_SECRET").as_bytes(), val].concat().as_slice(),
-        )
+        .encrypt(nonce, data)
         .map_err(|e| anyhow!("Error encrypting value: {:?}", e))?;
 
     ciphertext.splice(0..0, rng_nonce.iter().cloned());
@@ -50,8 +47,6 @@ pub fn decrypt(data: &[u8]) -> Result<Vec<u8>> {
     let plaintext = aead
         .decrypt(nonce, ciphertext)
         .map_err(|e| anyhow!("Error decrypting value: {:?}", e))?;
-
-    let (_, plaintext) = plaintext.split_at(env!("WTOOLS_SECRET").len());
 
     Ok(plaintext.to_vec())
 }
