@@ -1,10 +1,9 @@
-use crate::WikiClient;
-use crate::{error::ToolsError, response::edit::Edit};
+use crate::{error::ToolsError, response::edit::Edit, response::Ignore, WikiClient};
 
 pub async fn nulledit(client: &WikiClient, titles: &[&str]) -> Result<(), ToolsError> {
     for title in titles {
         client
-            .post(&[
+            .post::<Ignore>(&[
                 ("action", "edit"),
                 ("summary", "Nulledit (broken if visible in RecentChanges)"),
                 ("notminor", "true"),

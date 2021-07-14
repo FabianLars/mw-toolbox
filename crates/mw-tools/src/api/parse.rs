@@ -1,5 +1,4 @@
-use crate::WikiClient;
-use crate::{error::ToolsError, response::parse::Parse};
+use crate::{error::ToolsError, response::parse::Parse, WikiClient};
 
 pub async fn get_page_content(client: &WikiClient, page: &str) -> Result<String, ToolsError> {
     let res: Parse = client

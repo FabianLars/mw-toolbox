@@ -117,7 +117,7 @@ struct Cli {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    env_logger::init();
+    pretty_env_logger::init();
 
     let cli = Cli::parse();
     let client = WikiClient::new_logged_in(&cli.url, &cli.name, &cli.password).await?;
