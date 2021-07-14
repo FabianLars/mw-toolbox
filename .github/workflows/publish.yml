@@ -5,7 +5,6 @@ on:
 
 env:
     WTOOLS_AEAD_KEY: ${{ secrets.WTOOLS_AEAD_KEY }}
-    WTOOLS_SECRET: ${{ secrets.WTOOLS_SECRET }}
     TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
     REMOTE_HOST: ${{ secrets.SERVER_IP }}
     REMOTE_USER: ${{ secrets.USERNAME }}
