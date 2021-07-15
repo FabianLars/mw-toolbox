@@ -213,11 +213,7 @@ pub async fn update_profile_store(mut profiles: Vec<Profile>, current: usize) ->
 }
 
 #[command]
-pub async fn upload<P: tauri::Params<Event = String>>(
-    text: &str,
-    files: Vec<&str>,
-    window: tauri::Window<P>,
-) -> Result<()> {
+pub async fn upload(text: &str, files: Vec<&str>, window: tauri::Window) -> Result<()> {
     CANCEL_UPLOAD.store(false, Ordering::Relaxed);
     let mut file_iter = files.iter();
     while !CANCEL_UPLOAD.load(Ordering::Relaxed) {
