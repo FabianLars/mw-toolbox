@@ -45,7 +45,6 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
         setIsRunning(true);
         if (isAuto) {
             setPageContent('');
-            console.log('start', pageList);
             invoke('auto_edit', {
                 titles: pageList,
                 patterns,
@@ -74,7 +73,6 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
         setIsLoading(true);
         const pages = pageList.split(/\r?\n/);
         const curr = pages.shift();
-        console.log(!curr, pages);
         setCurrentPage(curr ?? '');
         setPageList(pages.join('\n'));
         if (!curr) {
