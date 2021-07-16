@@ -31,7 +31,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
     const [isRunning, setIsRunning] = useState(false);
     const [isAuto, setIsAuto] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [pageList, setPageList] = useState(['']);
+    const [pageList, setPageList] = useState('');
     const [pageContent, setPageContent] = useState('');
     const [currentPage, setCurrentPage] = useState('');
     const [editSummary, setEditSummary] = useState('');
@@ -64,7 +64,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
         if (isAuto) {
             emit('cancel-autoedit');
         }
-        setPageList((state) => [currentPage, ...state].filter(Boolean));
+        setPageList((state) => currentPage + '\n' + state);
         setPageContent('');
         setIsRunning(false);
     };
@@ -72,11 +72,11 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
     const getNextPage = () => {
         setPageContent('');
         setIsLoading(true);
-        const pages = pageList;
+        const pages = pageList.split(/\r?\n/);
         const curr = pages.shift();
         console.log(!curr, pages);
         setCurrentPage(curr ?? '');
-        setPageList(pages);
+        setPageList(pages.join('\n'));
         if (!curr) {
             setIsRunning(false);
             setIsLoading(false);
@@ -127,14 +127,14 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
 
     useEffect(() => {
         const unlistenEdited = listen('page-edited', ({ payload }: { payload: string }) => {
-            setPageList((old) => removeFirst(old, payload));
+            setPageList((old) => removeFirst(old.split(/\r?\n/), payload).join('\n'));
         });
         const unlistenSkipped = listen('page-skipped', ({ payload }: { payload: string }) => {
-            setPageList((old) => removeFirst(old, payload));
+            setPageList((old) => removeFirst(old.split(/\r?\n/), payload).join('\n'));
         });
 
         const getCache = async () => {
-            const list: string[] | null = await invoke('cache_get', { key: 'edit-pagelist' });
+            const list: string | null = await invoke('cache_get', { key: 'edit-pagelist' });
             const patts: Pattern[] | null = await invoke('cache_get', { key: 'edit-patterns' });
             const summary: string | null = await invoke('cache_get', { key: 'edit-summary' });
             const auto: boolean | null = await invoke('cache_get', { key: 'edit-isauto' });
@@ -163,11 +163,15 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                     mb={[4, null, 0]}
                     h={['20%', null, '100%']}
                     placeholder="List of pages to operate on. Separated by newline."
-                    value={pageList.join('\n')}
-                    onChange={(event) => setPageList(event.target.value.split(/\r?\n/))}
+                    value={pageList}
+                    onChange={(event) => setPageList(event.target.value)}
                     onBlur={() => {
                         setPageList((old) => {
-                            return old.map((el: string) => el.trim()).filter(Boolean);
+                            return old
+                                .split(/\r?\n/)
+                                .map((el: string) => el.trim())
+                                .filter(Boolean)
+                                .join('\n');
                         });
                         invoke('cache_set', { key: 'edit-pagelist', value: pageList });
                     }}
@@ -232,7 +236,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                 <Button
                                     w="100%"
                                     onClick={() => (isRunning ? stop() : start())}
-                                    isDisabled={!isOnline || isLoading || pageList.join('') === ''}
+                                    isDisabled={!isOnline || isLoading || pageList.trim() === ''}
                                     title={
                                         !isOnline
                                             ? 'Please login first!'
