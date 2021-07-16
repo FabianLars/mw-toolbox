@@ -22,7 +22,7 @@
         "@chakra-ui/react": "1.6.5",
         "@emotion/react": "^11.4.0",
         "@emotion/styled": "^11.3.0",
-        "@tauri-apps/api": "^1.0.0-beta.4",
+        "@tauri-apps/api": "^1.0.0-beta.5",
         "framer-motion": "^4.1.17",
         "history": "^5.0.0",
         "react": "^17.0.2",
@@ -31,7 +31,7 @@
         "react-router-dom": "^6.0.0-beta.0"
     },
     "devDependencies": {
-        "@tauri-apps/cli": "^1.0.0-beta.5",
+        "@tauri-apps/cli": "^1.0.0-beta.6",
         "@testing-library/react": "^12.0.0",
         "@types/chai": "^4.2.21",
         "@types/mocha": "^8.2.3",
