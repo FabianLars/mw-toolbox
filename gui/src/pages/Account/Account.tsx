@@ -35,7 +35,7 @@ const Account = ({
 }: Props) => {
     const [logginin, setLoggingin] = useState(false);
     const [urlInvalid, seturlInvalid] = useState(false);
-    const [usernameInvalid, setUsnameInvalid] = useState(false);
+    const [usernameInvalid, setUsernameInvalid] = useState(false);
     const [passwordInvalid, setPasswordInvalid] = useState(false);
     const toast = useToast();
 
@@ -98,6 +98,18 @@ const Account = ({
         setCurrentProfile((old) => old - 1);
     };
 
+    const handleInput = ({
+        target: { value, id, checked, name },
+    }: React.ChangeEvent<HTMLInputElement>) => {
+        setProfiles((old) => {
+            const curr = [...old];
+            //@ts-ignore omg dynamic object indexing is sooo annoying in typescript
+            curr[currentProfile][name || id] = id === 'save-password' ? checked : value;
+            return curr;
+        });
+    };
+
+    // using useEffect for this to not rely on input events for validity-checks
     useEffect(() => {
         const curr = profiles[currentProfile];
         if (
@@ -109,9 +121,9 @@ const Account = ({
             seturlInvalid(false);
         }
         if (!curr.username.includes('@')) {
-            setUsnameInvalid(true);
+            setUsernameInvalid(true);
         } else {
-            setUsnameInvalid(false);
+            setUsernameInvalid(false);
         }
         if (/\W/.test(curr.password) || curr.password.length <= 16) {
             setPasswordInvalid(true);
@@ -141,14 +153,9 @@ const Account = ({
                 >
                     <FormLabel>Profile Name</FormLabel>
                     <Input
+                        name="profile"
                         value={profiles[currentProfile].profile}
-                        onChange={(event) =>
-                            setProfiles((old) => {
-                                const curr = [...old];
-                                curr[currentProfile].profile = event.target.value;
-                                return curr;
-                            })
-                        }
+                        onChange={handleInput}
                         isDisabled={profiles[currentProfile].isOnline}
                         placeholder="Profile name"
                     />
@@ -191,33 +198,21 @@ const Account = ({
                 />
             </Flex>
             <Divider my={2} />
-            <FormControl id="api-url" isRequired isInvalid={urlInvalid}>
+            <FormControl id="url" isRequired isInvalid={urlInvalid}>
                 <FormLabel>API URL</FormLabel>
                 <Input
                     value={profiles[currentProfile].url}
-                    onChange={(event) =>
-                        setProfiles((old) => {
-                            const curr = [...old];
-                            curr[currentProfile].url = event.target.value;
-                            return curr;
-                        })
-                    }
+                    onChange={handleInput}
                     isDisabled={logginin || profiles[currentProfile].isOnline}
                     placeholder="Full api.php URL (https://wikiname.fandom.com/en/api.php)"
                 />
             </FormControl>
             <Divider my={2} />
-            <FormControl id="loginname" isRequired isInvalid={usernameInvalid}>
+            <FormControl id="username" isRequired isInvalid={usernameInvalid}>
                 <FormLabel>Bot Loginname</FormLabel>
                 <Input
                     value={profiles[currentProfile].username}
-                    onChange={(event) =>
-                        setProfiles((old) => {
-                            const curr = [...old];
-                            curr[currentProfile].username = event.target.value;
-                            return curr;
-                        })
-                    }
+                    onChange={handleInput}
                     isDisabled={logginin || profiles[currentProfile].isOnline}
                     placeholder="Generated via Special:BotPasswords"
                 />
@@ -227,13 +222,7 @@ const Account = ({
                 <FormLabel>Bot Password</FormLabel>
                 <Input
                     value={profiles[currentProfile].password}
-                    onChange={(event) =>
-                        setProfiles((old) => {
-                            const curr = [...old];
-                            curr[currentProfile].password = event.target.value;
-                            return curr;
-                        })
-                    }
+                    onChange={handleInput}
                     isDisabled={logginin || profiles[currentProfile].isOnline}
                     type="password"
                     placeholder="Generated via Special:BotPasswords"
@@ -241,15 +230,11 @@ const Account = ({
             </FormControl>
             <Flex direction="row" w="100%" h="40px" justify="flex-end" mt={2}>
                 <Checkbox
+                    id="save-password"
+                    name="savePassword"
                     isDisabled={logginin || profiles[currentProfile].isOnline}
                     isChecked={profiles[currentProfile].savePassword}
-                    onChange={(event) =>
-                        setProfiles((old) => {
-                            const curr = [...old];
-                            curr[currentProfile].savePassword = event.target.checked;
-                            return curr;
-                        })
-                    }
+                    onChange={handleInput}
                 >
                     Remember password
                 </Checkbox>
