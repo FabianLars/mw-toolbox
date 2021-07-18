@@ -1,19 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
 import { invoke } from '@tauri-apps/api/tauri';
-import {
-    Box,
-    Button,
-    Flex,
-    FormControl,
-    FormLabel,
-    Select,
-    Textarea,
-    useToast,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, FormLabel, Textarea, useToast } from '@chakra-ui/react';
 
 import { errorToast } from '@/helpers/toast';
-import { Input, Label } from '@/components';
+import { Input, Label, Select } from '@/components';
 import classes from './List.module.css';
 
 type Props = {

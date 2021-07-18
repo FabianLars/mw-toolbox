@@ -1,4 +1,4 @@
 import Header from './Header';
-import { Input, Label } from './forms';
+import { Input, Label, Select } from './forms';
 
-export { Header, Input, Label };
+export { Header, Input, Label, Select };

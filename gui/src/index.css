@@ -11,6 +11,7 @@
     --background-color: #1a202c;
     --border-color: rgba(255, 255, 255, 0.16);
     --border-color-focus: #63b3ed;
+    --border-color-hover: rgba(255, 255, 255, 0.24);
     --border-color-invalid: #fc8181;
     --box-shadow-focus: 0 0 0 1px #63b3ed;
     --box-shadow-invalid: 0 0 0 1px #fc8181;
