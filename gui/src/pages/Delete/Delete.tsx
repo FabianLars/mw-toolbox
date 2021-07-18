@@ -1,7 +1,9 @@
-import { Box, Button, Flex, Input, Textarea, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
-import { errorToast, successToast } from '../../helpers/toast';
+import { Input, Label, Textarea } from '@/components';
+import { errorToast, successToast } from '@/helpers/toast';
+import classes from './Delete.module.css';
 
 type Props = {
     isOnline: boolean;
@@ -38,29 +40,23 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
 
     return (
         <Flex direction="column" align="center" w="100%" h="100%">
-            <Input
-                w={['100%', null, '75%', '50%']}
-                alignSelf="flex-end"
-                aria-label="Delete reason"
-                placeholder="Delete reason"
-                value={reason}
-                onChange={(event) => setReason(event.target.value)}
-                onBlur={() =>
-                    invoke('cache_set', {
-                        key: 'delete-reason',
-                        value: reason,
-                    })
-                }
-            />
+            <div className={classes.input}>
+                <Label htmlFor="delete-reason">Delete reason</Label>
+                <Input
+                    id="delete-reason"
+                    value={reason}
+                    onChange={(event) => setReason(event.target.value)}
+                    onBlur={() => invoke('cache_set', { key: 'delete-reaseon', value: reason })}
+                />
+            </div>
             <Textarea
-                resize="none"
+                className={classes.area}
+                label="pages to delete"
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}
                 onBlur={() => invoke('cache_set', { key: 'delete-pages', value: areaValue })}
                 placeholder="Write exact page names here. Separated by newline."
-                flex="1"
-                my={4}
-            />
+            ></Textarea>
             <Box>
                 <Button
                     isLoading={isLoading}

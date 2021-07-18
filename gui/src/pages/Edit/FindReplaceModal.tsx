@@ -2,8 +2,6 @@ import {
     Button,
     Checkbox,
     Flex,
-    IconButton,
-    Input,
     Link,
     Modal,
     ModalBody,
@@ -13,9 +11,10 @@ import {
     ModalOverlay,
     Spacer,
 } from '@chakra-ui/react';
-import { InfoOutlineIcon } from '@chakra-ui/icons';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
+import classes from './FindReplaceModal.module.css';
+import { Input } from '@/components';
 
 type Pattern = {
     find: string;
@@ -28,9 +27,10 @@ type Props = {
     onClose: () => void;
     patterns: Pattern[];
     setPatterns: React.Dispatch<React.SetStateAction<Pattern[]>>;
+    initialRef?: React.RefObject<HTMLButtonElement>;
 };
 
-const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => {
+const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns, initialRef }: Props) => {
     const [localPatterns, setLocalPatterns] = useState<Pattern[]>([]);
 
     const onModalClose = () => {
@@ -50,21 +50,36 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
     }, [patterns]);
 
     return (
-        <Modal onClose={onModalClose} isOpen={isOpen} isCentered size="xl">
+        <Modal
+            onClose={onModalClose}
+            isOpen={isOpen}
+            isCentered
+            size="xl"
+            initialFocusRef={initialRef}
+        >
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>Find & Replace</ModalHeader>
+                <ModalHeader>
+                    Find & Replace
+                    <div className={classes.regexinfo}>
+                        <Link
+                            href="https://docs.rs/regex/"
+                            isExternal
+                            title="Open Regex Documentation"
+                        >
+                            Click here for the regex docs.
+                        </Link>
+                    </div>
+                </ModalHeader>
                 <ModalBody>
                     <Flex direction="column" h="100%" w="100%">
                         {localPatterns.map((_, index) => (
                             <Flex key={index} align="center">
                                 <Input
-                                    m={1}
+                                    className={classes.input}
                                     placeholder="Find"
+                                    label="text to find"
                                     value={localPatterns[index]['find'] || ''}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') onModalSave();
-                                    }}
                                     onChange={(event) =>
                                         setLocalPatterns((oldArr) => {
                                             const values = [...oldArr];
@@ -74,12 +89,10 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                                     }
                                 />
                                 <Input
-                                    m={1}
+                                    className={classes.input}
                                     placeholder="Replace"
+                                    label="replacement text"
                                     value={localPatterns[index]['replace'] || ''}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') onModalSave();
-                                    }}
                                     onChange={(event) =>
                                         setLocalPatterns((oldArr) => {
                                             const values = [...oldArr];
@@ -90,7 +103,7 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                                 />
                                 <Checkbox
                                     verticalAlign="center"
-                                    m={1}
+                                    className={classes.input}
                                     isChecked={localPatterns[index]['isRegex']}
                                     onChange={(event) =>
                                         setLocalPatterns((oldArr) => {
@@ -102,18 +115,6 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                                 >
                                     Regex
                                 </Checkbox>
-                                <Link
-                                    href="https://docs.rs/regex/"
-                                    isExternal
-                                    title="Open Regex Documentation"
-                                >
-                                    <IconButton
-                                        mt={2}
-                                        variant="link"
-                                        icon={<InfoOutlineIcon />}
-                                        aria-label="Infos about Regular Expressions"
-                                    />
-                                </Link>
                             </Flex>
                         ))}
                     </Flex>
@@ -143,7 +144,9 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                     <Button colorScheme="blue" mr={2} onClick={onModalSave}>
                         Save
                     </Button>
-                    <Button onClick={onModalClose}>Cancel</Button>
+                    <Button onClick={onModalClose} ref={initialRef}>
+                        Cancel
+                    </Button>
                 </ModalFooter>
             </ModalContent>
         </Modal>

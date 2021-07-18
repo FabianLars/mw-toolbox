@@ -1,0 +1,20 @@
+.area {
+    flex: 1;
+}
+
+.endpoint {
+    flex: 1 1 auto;
+    width: 100%;
+}
+
+.parameter {
+    margin: 0.5rem 1rem 0;
+    flex: 1 1 auto;
+    width: 100%;
+}
+
+@media screen and (min-width: 48em) {
+    .parameter {
+        margin-top: 0;
+    }
+}

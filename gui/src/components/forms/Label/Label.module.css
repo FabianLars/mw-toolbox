@@ -1,0 +1,15 @@
+.label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.indicator {
+    color: var(--color-red);
+    margin-inline-start: 0.25rem;
+}
+
+.disabled {
+    opacity: 0.4;
+}
