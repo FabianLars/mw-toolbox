@@ -1,22 +1,12 @@
 import { invoke } from '@tauri-apps/api/tauri';
 
 import React, { useEffect, useState } from 'react';
-import {
-    Button,
-    Checkbox,
-    Divider,
-    Flex,
-    FormControl,
-    FormLabel,
-    IconButton,
-    Input,
-    Select,
-    useToast,
-} from '@chakra-ui/react';
+import { Button, Checkbox, Divider, Flex, IconButton, Select, useToast } from '@chakra-ui/react';
+import { Input, Label } from '@/components';
 
-import type { Profile } from '../../App';
+import type { Profile } from '@/App';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
-import { errorToast } from '../../helpers/toast';
+import { errorToast } from '@/helpers/toast';
 
 type Props = {
     profiles: Profile[];
@@ -144,24 +134,25 @@ const Account = ({
             justify="center"
         >
             <Flex w="100%" alignItems="flex-end">
-                <FormControl
-                    flex="2"
-                    mr={3}
-                    id="profile-name"
-                    isRequired
-                    isInvalid={profiles[currentProfile].profile.trim() === ''}
-                >
-                    <FormLabel>Profile Name</FormLabel>
+                <div style={{ flex: 2, marginRight: '0.75rem' }}>
+                    <Label htmlFor="profile-name" isRequired>
+                        Profile Name
+                    </Label>
                     <Input
+                        id="profile-name"
                         name="profile"
                         value={profiles[currentProfile].profile}
                         onChange={handleInput}
                         isDisabled={profiles[currentProfile].isOnline}
+                        isRequired
+                        isInvalid={profiles[currentProfile].profile.trim() === ''}
                         placeholder="Profile name"
                     />
-                </FormControl>
-                <FormControl flex="1" id="profile-select" isRequired>
-                    <FormLabel>Select Profile</FormLabel>
+                </div>
+                <div className="w100" style={{ flex: 1 }}>
+                    <Label htmlFor="profile-select" isRequired>
+                        Select Profile
+                    </Label>
                     <Select
                         value={currentProfile}
                         onChange={(event) => setCurrentProfile(parseInt(event.target.value))}
@@ -173,7 +164,7 @@ const Account = ({
                             </option>
                         ))}
                     </Select>
-                </FormControl>
+                </div>
                 <IconButton
                     isDisabled={
                         logginin || profiles.length >= 10 || profiles[currentProfile].isOnline
@@ -198,36 +189,51 @@ const Account = ({
                 />
             </Flex>
             <Divider my={2} />
-            <FormControl id="url" isRequired isInvalid={urlInvalid}>
-                <FormLabel>API URL</FormLabel>
+            <div className="w100">
+                <Label htmlFor="url" isRequired>
+                    API URL
+                </Label>
                 <Input
+                    id="url"
                     value={profiles[currentProfile].url}
                     onChange={handleInput}
                     isDisabled={logginin || profiles[currentProfile].isOnline}
+                    isRequired
+                    isInvalid={urlInvalid}
                     placeholder="Full api.php URL (https://wikiname.fandom.com/en/api.php)"
                 />
-            </FormControl>
+            </div>
             <Divider my={2} />
-            <FormControl id="username" isRequired isInvalid={usernameInvalid}>
-                <FormLabel>Bot Loginname</FormLabel>
+            <div className="w100">
+                <Label htmlFor="username" isRequired>
+                    Bot Loginname
+                </Label>
                 <Input
+                    id="username"
                     value={profiles[currentProfile].username}
                     onChange={handleInput}
                     isDisabled={logginin || profiles[currentProfile].isOnline}
+                    isRequired
+                    isInvalid={usernameInvalid}
                     placeholder="Generated via Special:BotPasswords"
                 />
-            </FormControl>
+            </div>
             <Divider my={2} />
-            <FormControl id="password" isRequired isInvalid={passwordInvalid}>
-                <FormLabel>Bot Password</FormLabel>
+            <div className="w100">
+                <Label htmlFor="password" isRequired>
+                    Bot Password
+                </Label>
                 <Input
+                    id="password"
                     value={profiles[currentProfile].password}
                     onChange={handleInput}
                     isDisabled={logginin || profiles[currentProfile].isOnline}
-                    type="password"
+                    isPassword
+                    isRequired
+                    isInvalid={passwordInvalid}
                     placeholder="Generated via Special:BotPasswords"
                 />
-            </FormControl>
+            </div>
             <Flex direction="row" w="100%" h="40px" justify="flex-end" mt={2}>
                 <Checkbox
                     id="save-password"

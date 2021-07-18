@@ -7,13 +7,14 @@ import {
     Flex,
     FormControl,
     FormLabel,
-    Input,
     Select,
     Textarea,
     useToast,
 } from '@chakra-ui/react';
 
-import { errorToast } from '../../helpers/toast';
+import { errorToast } from '@/helpers/toast';
+import { Input, Label } from '@/components';
+import classes from './List.module.css';
 
 type Props = {
     isOnline: boolean;
@@ -117,22 +118,22 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                         <option value="search">search</option>
                     </Select>
                 </FormControl>
-                <FormControl
-                    id="parameter-input"
-                    mx={2}
-                    mt={[2, null, 0]}
-                    isRequired={paramRequired}
-                    isDisabled={!paramRequired}
-                    flex="1 1 auto"
-                >
-                    <FormLabel>Required Parameter</FormLabel>
+                <div title={paramInfo} className={classes.parameter}>
+                    <Label
+                        htmlFor="parameter-input"
+                        isRequired={paramRequired}
+                        isDisabled={!paramRequired}
+                    >
+                        Required Parameter
+                    </Label>
                     <Input
+                        isDisabled={!paramRequired}
+                        id="parameter-input"
                         placeholder={paramInfo}
-                        title={paramInfo}
                         value={paramInput}
                         onChange={(event) => setParamInput(event.target.value)}
                     />
-                </FormControl>
+                </div>
                 <Box mt={4} flex="1 0 auto" alignSelf="flex-end">
                     <Button
                         mx={2}

@@ -4,7 +4,6 @@ import {
     Flex,
     Grid,
     GridItem,
-    Input,
     Textarea,
     useDisclosure,
     useToast,
@@ -13,8 +12,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import FindReplaceModal from './FindReplaceModal';
 import { listen, emit } from '@tauri-apps/api/event';
-import { errorToast, successToast } from '../../helpers/toast';
-import { removeFirst } from '../../helpers/array';
+import { Input, Label } from '@/components';
+import { errorToast, successToast } from '@/helpers/toast';
+import { removeFirst } from '@/helpers/array';
+import classes from './Edit.module.css';
 
 type Pattern = {
     find: string;
@@ -211,12 +212,16 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                             </Button>
                         </GridItem>
                         <GridItem
-                            colSpan={[6, null, 4]}
-                            colStart={[1, null, 3]}
-                            rowStart={[3, null, 1]}
+                            colSpan={[6, null, null, 4]}
+                            colStart={[1, null, null, 3]}
+                            rowStart={[3, null, null, 1]}
+                            display="flex"
                         >
+                            <Label htmlFor="edit-summary" className={classes.label}>
+                                Edit summary:
+                            </Label>
                             <Input
-                                placeholder="Edit summary"
+                                id="edit-summary"
                                 value={editSummary}
                                 onChange={(event) => setEditSummary(event.target.value)}
                                 onBlur={() =>

@@ -1,10 +1,12 @@
-import { Box, Button, Flex, FormControl, FormLabel, Input, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
 import FileList from './FileList';
 import { emit, listen } from '@tauri-apps/api/event';
-import { errorToast, successToast } from '../../helpers/toast';
+import { errorToast, successToast } from '@/helpers/toast';
+import { Input, Label } from '@/components';
+import classes from './Upload.module.css';
 
 type Props = {
     isOnline: boolean;
@@ -95,14 +97,14 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                     <Box fontWeight={500}>Number of files</Box>
                     {files.length}
                 </Flex>
-                <FormControl
+                <div
                     title="No effect on existing pages"
                     id="uploadtext-input"
-                    mx={2}
-                    flex="1 1 auto"
+                    className={classes.uploadtext}
                 >
-                    <FormLabel>Text for new file pages</FormLabel>
+                    <Label htmlFor="uploadtext-input">Text for new file pages</Label>
                     <Input
+                        id="uploadtext-input"
                         value={uploadtext}
                         isDisabled={isUploading || isWaiting}
                         onChange={(event) => setUploadtext(event.target.value)}
@@ -113,7 +115,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                             })
                         }
                     />
-                </FormControl>
+                </div>
                 <Box flex="1 0 auto" alignSelf="flex-end" mt={4}>
                     <Button
                         mx={2}
@@ -132,7 +134,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                         Clear Filelist
                     </Button>
                     <Button
-                        mx={2}
+                        ml={2}
                         isDisabled={isWaiting || !isOnline || !files[0]}
                         onClick={() => {
                             if (isUploading) {

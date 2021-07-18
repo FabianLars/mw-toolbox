@@ -1,0 +1,11 @@
+.parameter {
+    margin: 0.5rem 0.5rem 0;
+    flex: '1 1 auto';
+    width: 100%;
+}
+
+@media screen and (min-width: 48em) {
+    .parameter {
+        margin-top: 0;
+    }
+}

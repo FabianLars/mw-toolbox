@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import { invoke } from '@tauri-apps/api/tauri';
-import { errorToast, successToast } from '../../helpers/toast';
+import { errorToast, successToast } from '@/helpers/toast';
 
 type Props = {
     isOnline: boolean;

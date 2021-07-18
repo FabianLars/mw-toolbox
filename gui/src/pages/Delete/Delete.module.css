@@ -1,0 +1,16 @@
+.input {
+    width: 100%;
+    align-self: flex-end;
+}
+
+@media screen and (min-width: 48em) {
+    .input {
+        width: 75%;
+    }
+}
+
+@media screen and (min-width: 62em) {
+    .input {
+        width: 50%;
+    }
+}
