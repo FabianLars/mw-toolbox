@@ -27,9 +27,10 @@ type Props = {
     onClose: () => void;
     patterns: Pattern[];
     setPatterns: React.Dispatch<React.SetStateAction<Pattern[]>>;
+    initialRef?: React.RefObject<HTMLButtonElement>;
 };
 
-const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => {
+const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns, initialRef }: Props) => {
     const [localPatterns, setLocalPatterns] = useState<Pattern[]>([]);
 
     const onModalClose = () => {
@@ -49,7 +50,13 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
     }, [patterns]);
 
     return (
-        <Modal onClose={onModalClose} isOpen={isOpen} isCentered size="xl">
+        <Modal
+            onClose={onModalClose}
+            isOpen={isOpen}
+            isCentered
+            size="xl"
+            initialFocusRef={initialRef}
+        >
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>
@@ -137,7 +144,9 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                     <Button colorScheme="blue" mr={2} onClick={onModalSave}>
                         Save
                     </Button>
-                    <Button onClick={onModalClose}>Cancel</Button>
+                    <Button onClick={onModalClose} ref={initialRef}>
+                        Cancel
+                    </Button>
                 </ModalFooter>
             </ModalContent>
         </Modal>

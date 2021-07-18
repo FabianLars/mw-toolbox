@@ -1,5 +1,5 @@
 import { Button, Checkbox, Flex, Grid, GridItem, useDisclosure, useToast } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import FindReplaceModal from './FindReplaceModal';
 import { listen, emit } from '@tauri-apps/api/event';
@@ -32,6 +32,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
     ]);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
+    const initialRef = useRef<HTMLButtonElement>();
 
     const start = () => {
         setIsRunning(true);
@@ -281,6 +282,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                 onClose={onClose}
                 patterns={patterns}
                 setPatterns={setPatterns}
+                initialRef={initialRef as React.RefObject<HTMLButtonElement>}
             />
         </>
     );
