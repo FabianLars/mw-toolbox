@@ -1,7 +1,7 @@
-import { Box, Button, Flex, Input as ChakraInput, Textarea, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
-import { Input, Label } from '@/components';
+import { Input, Label, Textarea } from '@/components';
 import { errorToast, successToast } from '@/helpers/toast';
 import classes from './Delete.module.css';
 
@@ -50,14 +50,13 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
                 />
             </div>
             <Textarea
-                resize="none"
+                className={classes.area}
+                label="pages to delete"
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}
                 onBlur={() => invoke('cache_set', { key: 'delete-pages', value: areaValue })}
                 placeholder="Write exact page names here. Separated by newline."
-                flex="1"
-                my={4}
-            />
+            ></Textarea>
             <Box>
                 <Button
                     isLoading={isLoading}

@@ -1,18 +1,9 @@
-import {
-    Button,
-    Checkbox,
-    Flex,
-    Grid,
-    GridItem,
-    Textarea,
-    useDisclosure,
-    useToast,
-} from '@chakra-ui/react';
-import React, { useEffect, useRef, useState } from 'react';
+import { Button, Checkbox, Flex, Grid, GridItem, useDisclosure, useToast } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import FindReplaceModal from './FindReplaceModal';
 import { listen, emit } from '@tauri-apps/api/event';
-import { Input, Label } from '@/components';
+import { Input, Label, Textarea } from '@/components';
 import { errorToast, successToast } from '@/helpers/toast';
 import { removeFirst } from '@/helpers/array';
 import classes from './Edit.module.css';
@@ -156,11 +147,9 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
         <>
             <Flex w="100%" h="100%" direction={['column', null, 'row']}>
                 <Textarea
-                    w={[null, null, '30%', '25%', '20%']}
+                    className={classes.list}
+                    label="list of pages"
                     isDisabled={isRunning}
-                    resize="none"
-                    mb={[4, null, 0]}
-                    h={['20%', null, '100%']}
                     placeholder="List of pages to operate on. Separated by newline."
                     value={pageList}
                     onChange={(event) => setPageList(event.target.value)}
@@ -177,10 +166,9 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                 />
                 <Flex direction="column" flex="1" ml={[null, null, 4]}>
                     <Textarea
-                        flex="2"
+                        className={classes.content}
+                        label="page content container"
                         isDisabled={isAuto || isLoading || !isRunning}
-                        resize="none"
-                        h="100%"
                         placeholder="Page contents will be displayed here."
                         value={pageContent}
                         onChange={(event) => setPageContent(event.target.value)}

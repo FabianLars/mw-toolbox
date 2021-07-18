@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
 import { invoke } from '@tauri-apps/api/tauri';
-import { Box, Button, Flex, FormControl, FormLabel, Textarea, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, useToast } from '@chakra-ui/react';
 
 import { errorToast } from '@/helpers/toast';
-import { Input, Label, Select } from '@/components';
+import { Input, Label, Select, Textarea } from '@/components';
 import classes from './List.module.css';
 
 type Props = {
@@ -88,9 +88,12 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
     return (
         <Flex direction="column" align="center" h="100%" w="100%">
             <Flex w="100%" mb={4} direction={['column', null, 'row']} align="center">
-                <FormControl id="listtype-dropdown" mx={2} isRequired flex="1 1 auto">
-                    <FormLabel>API Endpoint</FormLabel>
+                <div className={classes.endpoint}>
+                    <Label htmlFor="listtype" isRequired>
+                        API Endpoint
+                    </Label>
                     <Select
+                        id="listtype"
                         placeholder="Select type of list"
                         onChange={(event) => setListType(event.target.value)}
                     >
@@ -108,10 +111,10 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                         <option value="querypage">querypage</option>
                         <option value="search">search</option>
                     </Select>
-                </FormControl>
+                </div>
                 <div title={paramInfo} className={classes.parameter}>
                     <Label
-                        htmlFor="parameter-input"
+                        htmlFor="parameter"
                         isRequired={paramRequired}
                         isDisabled={!paramRequired}
                     >
@@ -119,7 +122,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                     </Label>
                     <Input
                         isDisabled={!paramRequired}
-                        id="parameter-input"
+                        id="parameter"
                         placeholder={paramInfo}
                         value={paramInput}
                         onChange={(event) => setParamInput(event.target.value)}
@@ -127,7 +130,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                 </div>
                 <Box mt={4} flex="1 0 auto" alignSelf="flex-end">
                     <Button
-                        mx={2}
+                        mr={4}
                         onClick={getList}
                         isLoading={loading}
                         isDisabled={!isOnline || !listType || (paramRequired && !paramInput.trim())}
@@ -135,14 +138,12 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                     >
                         Get List
                     </Button>
-                    <Button mx={2} onClick={clearOutput}>
-                        Clear Output
-                    </Button>
+                    <Button onClick={clearOutput}>Clear Output</Button>
                 </Box>
             </Flex>
             <Textarea
-                resize="none"
-                flex="1"
+                className={classes.area}
+                label="output container"
                 value={listOutput}
                 readOnly
                 placeholder="Output will be displayed here."

@@ -3,3 +3,33 @@
     margin-right: 0.25rem;
     white-space: nowrap;
 }
+
+.list {
+    margin-bottom: 1rem;
+    height: 20%;
+}
+
+.content {
+    flex: 2;
+    height: 100%;
+}
+
+@media screen and (min-width: 48em) {
+    .list {
+        width: 30%;
+        margin-bottom: 0;
+        height: 100%;
+    }
+}
+
+@media screen and (min-width: 62em) {
+    .list {
+        width: 25%;
+    }
+}
+
+@media screen and (min-width: 80em) {
+    .list {
+        width: 20%;
+    }
+}

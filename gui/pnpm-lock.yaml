@@ -3108,7 +3108,7 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       readable-web-to-node-stream: 2.0.0
-      strtok3: 6.2.0
+      strtok3: 6.2.1
       token-types: 2.1.1
       typedarray-to-buffer: 3.1.5
     dev: true
@@ -5636,8 +5636,8 @@ packages:
       escape-string-regexp: 1.0.5
     dev: true
 
-  /strtok3/6.2.0:
-    resolution: {integrity: sha512-hBbPN4+f9fypbfTs0NImALgzYcb6k/blFr2mJVX6bUOmJCbXe/trDHdIC+Ir5XUXRMGFvq487ecwLitDoHVoew==}
+  /strtok3/6.2.1:
+    resolution: {integrity: sha512-KVEUjM/+GSNxSS1xRlxCkBOTljK9IIwjLOmIjgBsTYFW5xt3QHxVYLsqFXqvwH1iXROcnDuv+Z1JH/Sm60HTVg==}
     engines: {node: '>=10'}
     dependencies:
       peek-readable: 4.0.0

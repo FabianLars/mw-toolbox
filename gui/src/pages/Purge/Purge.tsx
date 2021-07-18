@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Flex, Textarea, useToast } from '@chakra-ui/react';
+import { Button, Flex, useToast } from '@chakra-ui/react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { errorToast, successToast } from '@/helpers/toast';
+import { Textarea } from '@/components';
+import classes from './Purge.module.css';
 
 type Props = {
     isOnline: boolean;
@@ -43,13 +45,12 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
     return (
         <Flex direction="column" align="center" h="100%" w="100%">
             <Textarea
-                resize="none"
+                className={classes.area}
+                label="pages to purge"
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}
                 onBlur={() => invoke('cache_set', { key: 'purge-cache', value: areaValue })}
                 placeholder="Write exact page names here. Separated by newline."
-                flex="1"
-                mb={4}
             />
             <Flex direction="row" align="center" justify="center">
                 <Button

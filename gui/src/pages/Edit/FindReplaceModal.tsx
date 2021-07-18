@@ -11,7 +11,6 @@ import {
     ModalOverlay,
     Spacer,
 } from '@chakra-ui/react';
-import { InfoOutlineIcon } from '@chakra-ui/icons';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import classes from './FindReplaceModal.module.css';

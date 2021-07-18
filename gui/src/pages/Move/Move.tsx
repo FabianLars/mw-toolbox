@@ -1,7 +1,9 @@
-import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { errorToast, successToast } from '@/helpers/toast';
+import { Textarea } from '@/components';
+import classes from './Move.module.css';
 
 type Props = {
     isOnline: boolean;
@@ -42,22 +44,20 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
         <Flex direction="column" align="center" h="100%" w="100%">
             <Flex direction="row" align="center" justify="center" flex="1" w="100%" mb={4}>
                 <Textarea
-                    resize="none"
+                    className={classes.from}
+                    label="pages to move"
                     value={areaFrom}
                     onChange={(event) => setAreaFrom(event.target.value)}
                     onBlur={() => invoke('cache_set', { key: 'move-cache-from', value: areaFrom })}
                     placeholder="Write exact names of pages to move. Separated by newline."
-                    h="100%"
-                    mr={2}
                 />
                 <Textarea
-                    resize="none"
+                    className={classes.to}
+                    label="new names for pages"
                     value={areaTo}
                     onChange={(event) => setAreaTo(event.target.value)}
                     onBlur={() => invoke('cache_set', { key: 'move-cache-to', value: areaTo })}
                     placeholder="Write exact names of destinations. Separated by newline."
-                    h="100%"
-                    ml={2}
                 />
             </Flex>
             <Box>

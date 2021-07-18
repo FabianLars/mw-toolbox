@@ -1,7 +1,9 @@
-import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { errorToast, successToast } from '@/helpers/toast';
+import { Textarea } from '@/components';
+import classes from './Download.module.css';
 
 type Props = {
     isOnline: boolean;
@@ -34,13 +36,12 @@ const Download = ({ isOnline, setNavDisabled }: Props) => {
     return (
         <Flex direction="column" align="center" h="100%" w="100%">
             <Textarea
-                resize="none"
+                className={classes.area}
+                label="file names to download, including the File: prefix"
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}
                 onBlur={() => invoke('cache_set', { key: 'download-cache', value: areaValue })}
                 placeholder="Write exact page names here. Separated by newline. Inclusive 'File:' Prefix. Saved in your download folder."
-                flex="1"
-                mb={4}
             />
             <Box>
                 <Button
