@@ -1,9 +1,9 @@
-import { Button, Checkbox, Flex, Grid, GridItem, useDisclosure, useToast } from '@chakra-ui/react';
+import { Button, Flex, Grid, GridItem, useDisclosure, useToast } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import FindReplaceModal from './FindReplaceModal';
 import { listen, emit } from '@tauri-apps/api/event';
-import { Input, Label, Textarea } from '@/components';
+import { Checkbox, Input, Label, Textarea } from '@/components';
 import { errorToast, successToast } from '@/helpers/toast';
 import { removeFirst } from '@/helpers/array';
 import classes from './Edit.module.css';
@@ -240,6 +240,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                     {isRunning ? 'Stop' : 'Start'}
                                 </Button>
                                 <Checkbox
+                                    id="auto-save"
                                     isChecked={isAuto}
                                     onChange={(event) => {
                                         setIsAuto(event.target.checked);
@@ -251,7 +252,6 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                         });
                                     }}
                                     isDisabled={isRunning}
-                                    whiteSpace="nowrap"
                                 >
                                     Auto-Save
                                 </Checkbox>

@@ -1,0 +1,16 @@
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+}
+.wrapper > label {
+    margin-left: 0.5rem;
+}
+.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.disabled > * {
+    cursor: not-allowed;
+}

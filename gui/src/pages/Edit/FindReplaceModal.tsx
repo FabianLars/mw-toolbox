@@ -1,6 +1,5 @@
 import {
     Button,
-    Checkbox,
     Flex,
     Link,
     Modal,
@@ -14,7 +13,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import classes from './FindReplaceModal.module.css';
-import { Input } from '@/components';
+import { Checkbox, Input } from '@/components';
 
 type Pattern = {
     find: string;
@@ -102,7 +101,7 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns, initialRef }
                                     }
                                 />
                                 <Checkbox
-                                    verticalAlign="center"
+                                    id={'rgx' + index}
                                     className={classes.input}
                                     isChecked={localPatterns[index]['isRegex']}
                                     onChange={(event) =>

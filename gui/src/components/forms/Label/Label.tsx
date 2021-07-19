@@ -13,7 +13,7 @@ const Label = ({ children, className = '', htmlFor, isDisabled = false, isRequir
     return (
         <label
             htmlFor={htmlFor}
-            className={`${classes.label} ${isDisabled && classes.disabled} ${className}`}
+            className={`${classes.label} ${isDisabled ? classes.disabled : ''} ${className}`}
         >
             {children}
             {isRequired && (

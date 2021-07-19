@@ -1,8 +1,8 @@
 import { invoke } from '@tauri-apps/api/tauri';
 
 import React, { useEffect, useState } from 'react';
-import { Button, Checkbox, Divider, Flex, IconButton, useToast } from '@chakra-ui/react';
-import { Input, Label, Select } from '@/components';
+import { Button, Divider, Flex, IconButton, useToast } from '@chakra-ui/react';
+import { Checkbox, Input, Label, Select } from '@/components';
 
 import type { Profile } from '@/App';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
