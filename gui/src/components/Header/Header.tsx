@@ -1,10 +1,9 @@
 import React from 'react';
-import { Link as ReactLink, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
     Badge,
     Divider,
     Button,
-    Link,
     Menu,
     MenuButton,
     MenuItem,
@@ -24,21 +23,14 @@ type HeaderProps = {
     isOnline: boolean;
 };
 
-const HeaderItem = ({ children, isDisabled, to = '/' }: MenuProps): JSX.Element => {
+const HeaderItem = ({ children, isDisabled = false, to = '/' }: MenuProps): JSX.Element => {
     const location = useLocation().pathname;
     return (
         <Link
-            as={ReactLink}
             to={to}
-            borderTop="1px solid transparent"
-            borderTopColor={location === to ? 'gray.500' : 'transparent'}
-            px={4}
-            py={3}
-            borderRadius={5}
-            color={isDisabled ? 'red.700' : undefined}
-            pointerEvents={isDisabled ? 'none' : undefined}
-            _hover={{ bg: 'gray.700' }}
-            onClick={() => window.getSelection()?.removeAllRanges()}
+            className={`${classes.link} ${isDisabled ? classes.disabled : ''} ${
+                location == to ? classes.current : ''
+            }`}
         >
             {children}
         </Link>
@@ -87,28 +79,28 @@ const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
                         Show Navigation Menu
                     </MenuButton>
                     <MenuList>
-                        <MenuItem as={ReactLink} to="/">
+                        <MenuItem as={Link} to="/">
                             Account
                         </MenuItem>
-                        <MenuItem as={ReactLink} to="/Delete">
+                        <MenuItem as={Link} to="/Delete">
                             Delete
                         </MenuItem>
-                        <MenuItem as={ReactLink} to="/Download">
+                        <MenuItem as={Link} to="/Download">
                             Download
                         </MenuItem>
-                        <MenuItem as={ReactLink} to="/Edit">
+                        <MenuItem as={Link} to="/Edit">
                             Edit
                         </MenuItem>
-                        <MenuItem as={ReactLink} to="/List">
+                        <MenuItem as={Link} to="/List">
                             List
                         </MenuItem>
-                        <MenuItem as={ReactLink} to="/Move">
+                        <MenuItem as={Link} to="/Move">
                             Move
                         </MenuItem>
-                        <MenuItem as={ReactLink} to="/Purge">
+                        <MenuItem as={Link} to="/Purge">
                             Purge
                         </MenuItem>
-                        <MenuItem as={ReactLink} to="/Upload">
+                        <MenuItem as={Link} to="/Upload">
                             Upload
                         </MenuItem>
                     </MenuList>

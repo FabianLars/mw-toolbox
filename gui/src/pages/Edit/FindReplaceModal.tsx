@@ -1,6 +1,5 @@
 import {
     Button,
-    Link,
     Modal,
     ModalBody,
     ModalContent,
@@ -59,13 +58,15 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns, initialRef }
                 <ModalHeader>
                     Find & Replace
                     <div className={classes.regexinfo}>
-                        <Link
+                        <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={classes.link}
                             href="https://docs.rs/regex/"
-                            isExternal
                             title="Open Regex Documentation"
                         >
-                            Click here for the regex docs.
-                        </Link>
+                            Click here for the regex docs
+                        </a>
                     </div>
                 </ModalHeader>
                 <ModalBody>
