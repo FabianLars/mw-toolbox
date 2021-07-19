@@ -1,0 +1,24 @@
+.nav {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    width: 100%;
+    padding: 0.5rem;
+    border-bottom: 1px solid #deb992;
+}
+
+.spacer {
+    flex: 1;
+}
+
+.wide {
+    display: none;
+    height: 50px;
+    padding-right: 0.5rem;
+}
+
+@media screen and (min-width: 48em) {
+    .wide {
+        display: flex;
+    }
+}

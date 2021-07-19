@@ -1,6 +1,5 @@
 import {
     Button,
-    Flex,
     Link,
     Modal,
     ModalBody,
@@ -8,7 +7,6 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Spacer,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
@@ -71,9 +69,9 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns, initialRef }
                     </div>
                 </ModalHeader>
                 <ModalBody>
-                    <Flex direction="column" h="100%" w="100%">
+                    <div className={classes.container}>
                         {localPatterns.map((_, index) => (
-                            <Flex key={index} align="center">
+                            <div className={classes.entry} key={index}>
                                 <Input
                                     className={classes.input}
                                     placeholder="Find"
@@ -114,9 +112,9 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns, initialRef }
                                 >
                                     Regex
                                 </Checkbox>
-                            </Flex>
+                            </div>
                         ))}
-                    </Flex>
+                    </div>
                 </ModalBody>
                 <ModalFooter>
                     <Button
@@ -139,7 +137,7 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns, initialRef }
                     >
                         Clear all
                     </Button>
-                    <Spacer />
+                    <div className={classes.spacer}></div>
                     <Button colorScheme="blue" mr={2} onClick={onModalSave}>
                         Save
                     </Button>

@@ -1,4 +1,4 @@
-import { Button, Flex, useToast } from '@chakra-ui/react';
+import { Button, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { errorToast, successToast } from '@/helpers/toast';
@@ -41,8 +41,8 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
     }, []);
 
     return (
-        <Flex direction="column" align="center" h="100%" w="100%">
-            <Flex direction="row" align="center" justify="center" flex="1" w="100%" mb={4}>
+        <div className={classes.container}>
+            <div className={classes.fields}>
                 <Textarea
                     className={classes.from}
                     label="pages to move"
@@ -59,7 +59,7 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
                     onBlur={() => invoke('cache_set', { key: 'move-cache-to', value: areaTo })}
                     placeholder="Write exact names of destinations. Separated by newline."
                 />
-            </Flex>
+            </div>
             <div>
                 <Button
                     isLoading={isLoading}
@@ -76,7 +76,7 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
                     Start moving
                 </Button>
             </div>
-        </Flex>
+        </div>
     );
 };
 

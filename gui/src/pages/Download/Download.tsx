@@ -1,4 +1,4 @@
-import { Button, Flex, useToast } from '@chakra-ui/react';
+import { Button, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { errorToast, successToast } from '@/helpers/toast';
@@ -34,7 +34,7 @@ const Download = ({ isOnline, setNavDisabled }: Props) => {
     }, []);
 
     return (
-        <Flex direction="column" align="center" h="100%" w="100%">
+        <div className={classes.container}>
             <Textarea
                 className={classes.area}
                 label="file names to download, including the File: prefix"
@@ -54,7 +54,7 @@ const Download = ({ isOnline, setNavDisabled }: Props) => {
                     Download all
                 </Button>
             </div>
-        </Flex>
+        </div>
     );
 };
 

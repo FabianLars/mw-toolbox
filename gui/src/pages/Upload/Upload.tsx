@@ -1,4 +1,4 @@
-import { Button, Flex, useToast } from '@chakra-ui/react';
+import { Button, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
@@ -81,22 +81,12 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(isUploading || isWaiting), [isUploading, isWaiting]);
 
     return (
-        <Flex direction="column" align="center" h="100%" w="100%">
-            <Flex direction={['column', null, 'row']} align="center" w="100%" mb={4}>
-                <Flex
-                    mx={2}
-                    pb={[null, null, 2]}
-                    flex="1 0 auto"
-                    direction="column"
-                    justify="space-between"
-                    align="center"
-                    h={[null, null, '100%']}
-                    pr={[null, null, 4]}
-                    borderRight={[null, null, '1px solid rgba(255, 255, 255, 0.16)']}
-                >
+        <div className={classes.container}>
+            <div className={classes.controls}>
+                <div className={classes.count}>
                     <div className={classes.label}>Number of files</div>
                     {files.length}
-                </Flex>
+                </div>
                 <div
                     title="No effect on existing pages"
                     id="uploadtext-input"
@@ -148,7 +138,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                         {isUploading ? 'Cancel' : 'Upload'}
                     </Button>
                 </div>
-            </Flex>
+            </div>
             <FileList placeholder="Selected files will be displayed here.">
                 {files.map((f) => (
                     <div
@@ -166,7 +156,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                     </div>
                 ))}
             </FileList>
-        </Flex>
+        </div>
     );
 };
 

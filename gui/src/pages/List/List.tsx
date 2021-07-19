@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { invoke } from '@tauri-apps/api/tauri';
-import { Button, Flex, useToast } from '@chakra-ui/react';
+import { Button, useToast } from '@chakra-ui/react';
 
 import { errorToast } from '@/helpers/toast';
 import { Input, Label, Select, Textarea } from '@/components';
@@ -86,8 +86,8 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(loading), [loading]);
 
     return (
-        <Flex direction="column" align="center" h="100%" w="100%">
-            <Flex w="100%" mb={4} direction={['column', null, 'row']} align="center">
+        <div className={classes.container}>
+            <div className={classes.fields}>
                 <div className={classes.endpoint}>
                     <Label htmlFor="listtype" isRequired>
                         API Endpoint
@@ -140,7 +140,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                     </Button>
                     <Button onClick={clearOutput}>Clear Output</Button>
                 </div>
-            </Flex>
+            </div>
             <Textarea
                 className={classes.area}
                 label="output container"
@@ -148,7 +148,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                 readOnly
                 placeholder="Output will be displayed here."
             />
-        </Flex>
+        </div>
     );
 };
 

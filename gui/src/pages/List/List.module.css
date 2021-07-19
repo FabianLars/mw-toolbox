@@ -8,9 +8,24 @@
     align-self: flex-end;
 }
 
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
 .endpoint {
     flex: 1 1 auto;
     width: 100%;
+}
+
+.fields {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 1rem;
 }
 
 .parameter {
@@ -20,6 +35,10 @@
 }
 
 @media screen and (min-width: 48em) {
+    .fields {
+        flex-direction: row;
+    }
+
     .parameter {
         margin-top: 0;
     }

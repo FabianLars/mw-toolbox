@@ -1,4 +1,4 @@
-import { Button, Flex, useToast } from '@chakra-ui/react';
+import { Button, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Input, Label, Textarea } from '@/components';
@@ -39,7 +39,7 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
     }, []);
 
     return (
-        <Flex direction="column" align="center" w="100%" h="100%">
+        <div className={classes.container}>
             <div className={classes.input}>
                 <Label htmlFor="delete-reason">Delete reason</Label>
                 <Input
@@ -68,7 +68,7 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
                     Delete all
                 </Button>
             </div>
-        </Flex>
+        </div>
     );
 };
 

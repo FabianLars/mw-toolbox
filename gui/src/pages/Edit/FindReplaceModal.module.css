@@ -1,9 +1,25 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.entry {
+    display: flex;
+    align-items: center;
+}
+
+.input {
+    margin: 0.25rem;
+}
+
 .regexinfo {
     font-size: small;
     float: right;
     padding-top: 0.3rem;
 }
 
-.input {
-    margin: 0.25rem;
+.spacer {
+    flex: 1;
 }

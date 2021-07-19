@@ -3,17 +3,15 @@ import { Link as ReactLink, useLocation } from 'react-router-dom';
 import {
     Badge,
     Divider,
-    Flex,
     Button,
     Link,
     Menu,
     MenuButton,
     MenuItem,
     MenuList,
-    Spacer,
     Spinner,
 } from '@chakra-ui/react';
-import { readTextFile } from '@tauri-apps/api/fs';
+import classes from './Header.module.css';
 
 type MenuProps = {
     children: string;
@@ -50,15 +48,8 @@ const HeaderItem = ({ children, isDisabled, to = '/' }: MenuProps): JSX.Element 
 const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
     return (
         <>
-            <Flex
-                as="nav"
-                align="center"
-                justify="left"
-                w="100%"
-                p={2}
-                borderBottom="1px solid #deb992"
-            >
-                <Flex display={['none', null, 'flex']} h={'50px'} pr={2}>
+            <nav className={classes.nav}>
+                <div className={classes.wide}>
                     <HeaderItem isDisabled={isDisabled} to="/">
                         Account
                     </HeaderItem>
@@ -90,7 +81,7 @@ const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
                     <HeaderItem isDisabled={isDisabled} to="/Upload">
                         Upload
                     </HeaderItem>
-                </Flex>
+                </div>
                 <Menu isLazy>
                     <MenuButton as={Button} h="50px" display={[null, null, 'none']}>
                         Show Navigation Menu
@@ -122,7 +113,7 @@ const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
                         </MenuItem>
                     </MenuList>
                 </Menu>
-                <Spacer />
+                <div className={classes.spacer}></div>
                 {isDisabled ? (
                     <Spinner mr={2} color="red.700" />
                 ) : (
@@ -130,7 +121,7 @@ const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
                         {isOnline ? 'Online' : 'Offline'}
                     </Badge>
                 )}
-            </Flex>
+            </nav>
         </>
     );
 };

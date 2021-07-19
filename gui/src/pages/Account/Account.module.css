@@ -1,0 +1,33 @@
+.buttons {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    height: 40px;
+    margin-top: 0.5rem;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.profile {
+    display: flex;
+    width: 100%;
+    align-items: flex-end;
+}
+
+@media screen and (min-width: 48em) {
+    .container {
+        width: 75%;
+    }
+}
+
+@media screen and (min-width: 80em) {
+    .container {
+        width: 50%;
+    }
+}

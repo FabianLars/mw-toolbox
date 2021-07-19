@@ -1,12 +1,13 @@
 import { invoke } from '@tauri-apps/api/tauri';
 
 import React, { useEffect, useState } from 'react';
-import { Button, Divider, Flex, IconButton, useToast } from '@chakra-ui/react';
+import { Button, Divider, IconButton, useToast } from '@chakra-ui/react';
 import { Checkbox, Input, Label, Select } from '@/components';
 
 import type { Profile } from '@/App';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 import { errorToast } from '@/helpers/toast';
+import classes from './Account.module.css';
 
 type Props = {
     profiles: Profile[];
@@ -125,15 +126,8 @@ const Account = ({
     useEffect(() => setNavDisabled(logginin), [logginin]);
 
     return (
-        <Flex
-            as="main"
-            direction="column"
-            align="center"
-            /* second null: break menu */
-            w={['100%', null, '75%', null, '50%']}
-            justify="center"
-        >
-            <Flex w="100%" alignItems="flex-end">
+        <main className={classes.container}>
+            <div className={classes.profile}>
                 <div style={{ flex: 2, marginRight: '0.75rem' }}>
                     <Label htmlFor="profile-name" isRequired>
                         Profile Name
@@ -187,7 +181,7 @@ const Account = ({
                     icon={<CloseIcon />}
                     onClick={removeProfile}
                 />
-            </Flex>
+            </div>
             <Divider my={2} />
             <div className="w100">
                 <Label htmlFor="url" isRequired>
@@ -234,7 +228,7 @@ const Account = ({
                     placeholder="Generated via Special:BotPasswords"
                 />
             </div>
-            <Flex direction="row" w="100%" h="40px" justify="flex-end" mt={2}>
+            <div className={classes.buttons}>
                 <Checkbox
                     id="save-password"
                     name="savePassword"
@@ -252,8 +246,8 @@ const Account = ({
                 >
                     {profiles[currentProfile].isOnline ? 'Log out' : 'Log in'}
                 </Button>
-            </Flex>
-        </Flex>
+            </div>
+        </main>
     );
 };
 

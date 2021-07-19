@@ -1,4 +1,4 @@
-import { Button, Flex, useDisclosure, useToast } from '@chakra-ui/react';
+import { Button, useDisclosure, useToast } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import FindReplaceModal from './FindReplaceModal';
@@ -146,7 +146,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
 
     return (
         <>
-            <Flex w="100%" h="100%" direction={['column', null, 'row']}>
+            <div className={classes.container}>
                 <Textarea
                     className={classes.list}
                     label="list of pages"
@@ -165,7 +165,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                         invoke('cache_set', { key: 'edit-pagelist', value: pageList });
                     }}
                 />
-                <Flex direction="column" flex="1" ml={[null, null, 4]}>
+                <div className={classes.right}>
                     <Textarea
                         className={classes.content}
                         label="page content container"
@@ -207,12 +207,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                             />
                         </div>
                         <div className={classes.giControls}>
-                            <Flex
-                                direction="column"
-                                align="center"
-                                justify="space-between"
-                                h="100%"
-                            >
+                            <div className={classes.controls}>
                                 <Button
                                     w="100%"
                                     onClick={() => (isRunning ? stop() : start())}
@@ -259,11 +254,11 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                 >
                                     Save
                                 </Button>
-                            </Flex>
+                            </div>
                         </div>
                     </div>
-                </Flex>
-            </Flex>
+                </div>
+            </div>
 
             <FindReplaceModal
                 isOpen={isOpen}
