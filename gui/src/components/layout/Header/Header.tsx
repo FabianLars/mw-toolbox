@@ -1,16 +1,8 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import {
-    Badge,
-    Divider,
-    Button,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuList,
-    Spinner,
-} from '@chakra-ui/react';
+import { Badge, Button, Menu, MenuButton, MenuItem, MenuList, Spinner } from '@chakra-ui/react';
 import classes from './Header.module.css';
+import { Divider } from '@/components';
 
 type MenuProps = {
     children: string;
@@ -45,31 +37,31 @@ const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
                     <HeaderItem isDisabled={isDisabled} to="/">
                         Account
                     </HeaderItem>
-                    <Divider orientation="vertical" mx={1} />
+                    <Divider orientation="vertical" />
                     <HeaderItem isDisabled={isDisabled} to="/Delete">
                         Delete
                     </HeaderItem>
-                    <Divider orientation="vertical" mx={1} />
+                    <Divider orientation="vertical" />
                     <HeaderItem isDisabled={isDisabled} to="/Download">
                         Download
                     </HeaderItem>
-                    <Divider orientation="vertical" mx={1} />
+                    <Divider orientation="vertical" />
                     <HeaderItem isDisabled={isDisabled} to="/Edit">
                         Edit
                     </HeaderItem>
-                    <Divider orientation="vertical" mx={1} />
+                    <Divider orientation="vertical" />
                     <HeaderItem isDisabled={isDisabled} to="/List">
                         List
                     </HeaderItem>
-                    <Divider orientation="vertical" mx={1} />
+                    <Divider orientation="vertical" />
                     <HeaderItem isDisabled={isDisabled} to="/Move">
                         Move
                     </HeaderItem>
-                    <Divider orientation="vertical" mx={1} />
+                    <Divider orientation="vertical" />
                     <HeaderItem isDisabled={isDisabled} to="/Purge">
                         Purge
                     </HeaderItem>
-                    <Divider orientation="vertical" mx={1} />
+                    <Divider orientation="vertical" />
                     <HeaderItem isDisabled={isDisabled} to="/Upload">
                         Upload
                     </HeaderItem>

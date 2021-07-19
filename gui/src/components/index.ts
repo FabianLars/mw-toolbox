@@ -1,4 +1,4 @@
-import Header from './Header/Header';
 import { Checkbox, Input, Label, Select, Textarea } from './forms';
+import { Divider, Header } from './layout';
 
-export { Checkbox, Header, Input, Label, Select, Textarea };
+export { Checkbox, Divider, Header, Input, Label, Select, Textarea };

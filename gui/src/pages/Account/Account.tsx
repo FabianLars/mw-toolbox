@@ -1,8 +1,8 @@
 import { invoke } from '@tauri-apps/api/tauri';
 
 import React, { useEffect, useState } from 'react';
-import { Button, Divider, IconButton, useToast } from '@chakra-ui/react';
-import { Checkbox, Input, Label, Select } from '@/components';
+import { Button, IconButton, useToast } from '@chakra-ui/react';
+import { Checkbox, Divider, Input, Label, Select } from '@/components';
 
 import type { Profile } from '@/App';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
@@ -182,7 +182,7 @@ const Account = ({
                     onClick={removeProfile}
                 />
             </div>
-            <Divider my={2} />
+            <Divider />
             <div className="w100">
                 <Label htmlFor="url" isRequired>
                     API URL
@@ -197,7 +197,7 @@ const Account = ({
                     placeholder="Full api.php URL (https://wikiname.fandom.com/en/api.php)"
                 />
             </div>
-            <Divider my={2} />
+            <Divider />
             <div className="w100">
                 <Label htmlFor="username" isRequired>
                     Bot Loginname
@@ -212,7 +212,7 @@ const Account = ({
                     placeholder="Generated via Special:BotPasswords"
                 />
             </div>
-            <Divider my={2} />
+            <Divider />
             <div className="w100">
                 <Label htmlFor="password" isRequired>
                     Bot Password
@@ -238,7 +238,7 @@ const Account = ({
                 >
                     Remember password
                 </Checkbox>
-                <Divider orientation="vertical" mx={2} />
+                <Divider orientation="vertical" />
                 <Button
                     isDisabled={urlInvalid || usernameInvalid || passwordInvalid}
                     isLoading={logginin}
