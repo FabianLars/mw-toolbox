@@ -1,4 +1,4 @@
-import { Button, Flex, Grid, GridItem, useDisclosure, useToast } from '@chakra-ui/react';
+import { Button, Flex, useDisclosure, useToast } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import FindReplaceModal from './FindReplaceModal';
@@ -174,23 +174,16 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                         value={pageContent}
                         onChange={(event) => setPageContent(event.target.value)}
                     />
-                    <Grid
-                        pt={4}
-                        flex="1"
-                        templateColumns="repeat(7, 1fr)"
-                        templateRows="repeat(4, 1fr)"
-                        columnGap={4}
-                        maxH="250px"
-                    >
-                        <GridItem colSpan={[4, null, 2]} mt={2} overflow="hidden">
+                    <div className={classes.grid}>
+                        <div className={classes.giCurrent}>
                             Current page:{' '}
                             {isRunning
                                 ? isAuto
                                     ? 'Automated saving mode...'
                                     : currentPage
                                 : 'Not running!'}
-                        </GridItem>
-                        <GridItem rowStart={4}>
+                        </div>
+                        <div className={classes.giSetup}>
                             <Button
                                 mt={2}
                                 title="This will be processed before contents get displayed!"
@@ -199,13 +192,8 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                             >
                                 Setup Find & Replace
                             </Button>
-                        </GridItem>
-                        <GridItem
-                            colSpan={[6, null, null, 4]}
-                            colStart={[1, null, null, 3]}
-                            rowStart={[3, null, null, 1]}
-                            display="flex"
-                        >
+                        </div>
+                        <div className={classes.giSummary}>
                             <Label htmlFor="edit-summary" className={classes.label}>
                                 Edit summary:
                             </Label>
@@ -217,8 +205,8 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                     invoke('cache_set', { key: 'edit-summary', value: editSummary })
                                 }
                             />
-                        </GridItem>
-                        <GridItem rowSpan={4} colStart={7} colSpan={1}>
+                        </div>
+                        <div className={classes.giControls}>
                             <Flex
                                 direction="column"
                                 align="center"
@@ -272,8 +260,8 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                     Save
                                 </Button>
                             </Flex>
-                        </GridItem>
-                    </Grid>
+                        </div>
+                    </div>
                 </Flex>
             </Flex>
 
