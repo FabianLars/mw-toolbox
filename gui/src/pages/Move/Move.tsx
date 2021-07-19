@@ -1,4 +1,4 @@
-import { Box, Button, Flex, useToast } from '@chakra-ui/react';
+import { Button, Flex, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { errorToast, successToast } from '@/helpers/toast';
@@ -60,7 +60,7 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
                     placeholder="Write exact names of destinations. Separated by newline."
                 />
             </Flex>
-            <Box>
+            <div>
                 <Button
                     isLoading={isLoading}
                     isDisabled={
@@ -75,7 +75,7 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
                 >
                     Start moving
                 </Button>
-            </Box>
+            </div>
         </Flex>
     );
 };

@@ -1,4 +1,4 @@
-import { Box, Button, Flex, useToast } from '@chakra-ui/react';
+import { Button, Flex, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
@@ -94,7 +94,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                     pr={[null, null, 4]}
                     borderRight={[null, null, '1px solid rgba(255, 255, 255, 0.16)']}
                 >
-                    <Box fontWeight={500}>Number of files</Box>
+                    <div className={classes.label}>Number of files</div>
                     {files.length}
                 </Flex>
                 <div
@@ -116,7 +116,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                         }
                     />
                 </div>
-                <Box flex="1 0 auto" alignSelf="flex-end" mt={4}>
+                <div className={classes.buttons}>
                     <Button
                         mx={2}
                         isLoading={isWaiting}
@@ -147,19 +147,15 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                     >
                         {isUploading ? 'Cancel' : 'Upload'}
                     </Button>
-                </Box>
+                </div>
             </Flex>
             <FileList placeholder="Selected files will be displayed here.">
                 {files.map((f) => (
-                    <Box
+                    <div
                         key={f}
+                        className={classes.entry}
                         aria-label="click to remove item"
                         title="click to remove item"
-                        cursor="pointer"
-                        _hover={{
-                            color: 'red',
-                            backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                        }}
                         onClick={() => {
                             if (!isUploading) {
                                 setFiles((oldFiles) => oldFiles.filter((ff) => ff !== f));
@@ -167,7 +163,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                         }}
                     >
                         {f}
-                    </Box>
+                    </div>
                 ))}
             </FileList>
         </Flex>

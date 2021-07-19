@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { invoke } from '@tauri-apps/api/tauri';
-import { Box, Button, Flex, useToast } from '@chakra-ui/react';
+import { Button, Flex, useToast } from '@chakra-ui/react';
 
 import { errorToast } from '@/helpers/toast';
 import { Input, Label, Select, Textarea } from '@/components';
@@ -128,7 +128,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                         onChange={(event) => setParamInput(event.target.value)}
                     />
                 </div>
-                <Box mt={4} flex="1 0 auto" alignSelf="flex-end">
+                <div className={classes.buttons}>
                     <Button
                         mr={4}
                         onClick={getList}
@@ -139,7 +139,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                         Get List
                     </Button>
                     <Button onClick={clearOutput}>Clear Output</Button>
-                </Box>
+                </div>
             </Flex>
             <Textarea
                 className={classes.area}

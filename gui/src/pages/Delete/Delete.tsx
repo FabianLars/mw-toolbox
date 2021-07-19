@@ -1,4 +1,4 @@
-import { Box, Button, Flex, useToast } from '@chakra-ui/react';
+import { Button, Flex, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Input, Label, Textarea } from '@/components';
@@ -57,7 +57,7 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
                 onBlur={() => invoke('cache_set', { key: 'delete-pages', value: areaValue })}
                 placeholder="Write exact page names here. Separated by newline."
             ></Textarea>
-            <Box>
+            <div>
                 <Button
                     isLoading={isLoading}
                     isDisabled={!isOnline || areaValue.trim() === ''}
@@ -67,7 +67,7 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
                 >
                     Delete all
                 </Button>
-            </Box>
+            </div>
         </Flex>
     );
 };

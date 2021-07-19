@@ -1,3 +1,22 @@
+.buttons {
+    flex: 1 0 auto;
+    align-self: flex-end;
+    margin-top: 1rem;
+}
+
+.label {
+    font-weight: 500;
+}
+
+.entry {
+    cursor: pointer;
+}
+
+.entry:hover {
+    color: red;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
 .uploadtext {
     flex: 1 1 auto;
     width: 100%;
