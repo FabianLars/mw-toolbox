@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Badge, Button, Menu, MenuButton, MenuItem, MenuList, Spinner } from '@chakra-ui/react';
+import { Button, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import classes from './Header.module.css';
-import { Divider } from '@/components';
+import { Badge, Divider, Spinner } from '@/components';
 
 type MenuProps = {
     children: string;
@@ -98,10 +98,10 @@ const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
                     </MenuList>
                 </Menu>
                 <div className={classes.spacer}></div>
-                {isDisabled ? (
-                    <Spinner mr={2} color="red.700" />
+                {true /* isDisabled */ ? (
+                    <Spinner />
                 ) : (
-                    <Badge mr={2} colorScheme={isOnline ? 'green' : 'red'}>
+                    <Badge type={isOnline ? 'success' : 'error'}>
                         {isOnline ? 'Online' : 'Offline'}
                     </Badge>
                 )}
