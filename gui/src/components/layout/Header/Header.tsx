@@ -98,7 +98,7 @@ const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
                     </MenuList>
                 </Menu>
                 <div className={classes.spacer}></div>
-                {true /* isDisabled */ ? (
+                {isDisabled ? (
                     <Spinner />
                 ) : (
                     <Badge type={isOnline ? 'success' : 'error'}>
