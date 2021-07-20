@@ -5,7 +5,7 @@ const vite = require('vite-web-test-runner-plugin');
 
 module.exports = {
     plugins: [vite()],
-    //coverageConfig: { include: [ 'src/**/*.{js,jsx,ts,tsx}' ] }
+    //coverageConfig: { include: ['src/**/*.{js,jsx,ts,tsx}'] },
     testRunnerHtml: (testFramework) => `
     <html>
       <head>
