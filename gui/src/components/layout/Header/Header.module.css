@@ -13,7 +13,7 @@
     pointer-events: none;
 }
 .link:focus {
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6);
+    box-shadow: var(--shadow-outline);
 }
 .link:hover {
     background-color: #2d3748;

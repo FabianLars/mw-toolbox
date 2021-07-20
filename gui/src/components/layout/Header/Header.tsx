@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Button, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import classes from './Header.module.css';
+import Menu from './Menu';
 import { Badge, Divider, Spinner } from '@/components';
 
 type MenuProps = {
@@ -66,37 +66,7 @@ const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
                         Upload
                     </HeaderItem>
                 </div>
-                <Menu isLazy>
-                    <MenuButton as={Button} h="50px" display={[null, null, 'none']}>
-                        Show Navigation Menu
-                    </MenuButton>
-                    <MenuList>
-                        <MenuItem as={Link} to="/">
-                            Account
-                        </MenuItem>
-                        <MenuItem as={Link} to="/Delete">
-                            Delete
-                        </MenuItem>
-                        <MenuItem as={Link} to="/Download">
-                            Download
-                        </MenuItem>
-                        <MenuItem as={Link} to="/Edit">
-                            Edit
-                        </MenuItem>
-                        <MenuItem as={Link} to="/List">
-                            List
-                        </MenuItem>
-                        <MenuItem as={Link} to="/Move">
-                            Move
-                        </MenuItem>
-                        <MenuItem as={Link} to="/Purge">
-                            Purge
-                        </MenuItem>
-                        <MenuItem as={Link} to="/Upload">
-                            Upload
-                        </MenuItem>
-                    </MenuList>
-                </Menu>
+                <Menu />
                 <div className={classes.spacer}></div>
                 {isDisabled ? (
                     <Spinner />

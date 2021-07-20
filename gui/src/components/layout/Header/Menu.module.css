@@ -1,0 +1,79 @@
+.button {
+    white-space: nowrap;
+    padding: 0 1rem;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.08);
+    font-weight: 500;
+    height: 50px;
+    border-radius: 0.375rem;
+    transition-property: var(--transition-property);
+    transition-duration: var(--transition-duration);
+    /* overwrite :focus-visible */
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+.button:active {
+    background: rgba(255, 255, 255, 0.24);
+}
+.button:focus {
+    box-shadow: var(--shadow-outline);
+}
+.button:not(:active):hover {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.menu {
+    visibility: hidden;
+    position: absolute;
+    top: 66px;
+    background: #2d3748;
+    width: 220px;
+    padding: 0.25rem 0;
+    border-radius: 0.375rem;
+    border-width: 1px;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    z-index: 1;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 5px 10px,
+        rgba(0, 0, 0, 0.4) 0 15px 40px;
+    transition: transform 0.2s, opacity 0.2s, visibility linear 0.2s;
+    transform: scale(0.9);
+    opacity: 0;
+    transform-origin: top left;
+}
+
+.menu > a {
+    display: block;
+    padding: 0.4rem 0.8rem;
+    transition-property: background-color;
+    transition-duration: 50ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+    /* overwrite :focus-visible */
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+.menu > a:active {
+    background: rgba(255, 255, 255, 0.08);
+}
+.menu > a:not(:active):focus {
+    background: rgba(255, 255, 255, 0.06);
+}
+.menu > a:not(:active):hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.visible {
+    visibility: visible;
+    opacity: 1;
+    transform: scale(1);
+    transition: transform 0.2s, opacity 0.2s, visibility 0.2s;
+}
+
+@media screen and (min-width: 48em) {
+    .button {
+        display: none;
+    }
+    .menu {
+        display: none;
+    }
+}

@@ -13,6 +13,7 @@
     --border-color-focus: #63b3ed;
     --border-color-hover: rgba(255, 255, 255, 0.24);
     --border-color-invalid: #fc8181;
+    --shadow-outline: 0 0 0 3px rgba(66, 153, 225, 0.6);
     --box-shadow-focus: 0 0 0 1px #63b3ed;
     --box-shadow-invalid: 0 0 0 1px #fc8181;
     --color-red: #fc8181;
