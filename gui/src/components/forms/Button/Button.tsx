@@ -9,22 +9,25 @@ type Props = {
     onClick?: () => void;
     loadingText?: string;
     title?: string;
+    ['aria-label']?: string;
     children: React.ReactNode;
     ref?: React.RefObject<HTMLButtonElement>;
     colorScheme?: 'blue' | 'red' | 'default';
 };
 
-const Button = ({
-    className = '',
-    colorScheme = 'default',
-    isLoading,
-    isDisabled,
-    onClick,
-    loadingText,
-    title,
-    children,
-    ref,
-}: Props) => {
+const Button = (props: Props) => {
+    const {
+        className = '',
+        colorScheme = 'default',
+        isLoading,
+        isDisabled,
+        onClick,
+        loadingText,
+        title,
+        children,
+        ref,
+    } = props;
+
     return (
         <button
             ref={ref}
@@ -32,6 +35,7 @@ const Button = ({
             disabled={isDisabled || isLoading}
             className={`${classes.button} ${className} ${classes[colorScheme]}`}
             title={title}
+            aria-label={props['aria-label']}
             onClick={onClick}
         >
             {isLoading ? (

@@ -21,7 +21,13 @@
     background-repeat: no-repeat;
 }
 
-.select:hover {
+.select[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.select:not([disabled]):hover {
     border-color: var(--border-color-hover);
 }
 

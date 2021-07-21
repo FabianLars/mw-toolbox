@@ -20,7 +20,7 @@
     background: rgba(255, 255, 255, 0.24);
 }
 
-.default:not(:active):hover {
+.default:not(:active):not([disabled]):hover {
     background: rgba(255, 255, 255, 0.16);
 }
 
@@ -43,7 +43,7 @@
     background: #f56565;
 }
 .red:not(:active):hover {
-    background: #fc8181;
+    background: var(--color-red);
 }
 
 .button[disabled] {
