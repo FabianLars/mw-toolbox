@@ -1,8 +1,8 @@
 import { invoke } from '@tauri-apps/api/tauri';
 
 import React, { useEffect, useState } from 'react';
-import { Button, IconButton, useToast } from '@chakra-ui/react';
-import { Checkbox, Divider, Input, Label, Select } from '@/components';
+import { Button, IconButton } from '@chakra-ui/react';
+import { Checkbox, Divider, Input, Label, Select, toast } from '@/components';
 
 import type { Profile } from '@/App';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
@@ -28,7 +28,6 @@ const Account = ({
     const [urlInvalid, seturlInvalid] = useState(false);
     const [usernameInvalid, setUsernameInvalid] = useState(false);
     const [passwordInvalid, setPasswordInvalid] = useState(false);
-    const toast = useToast();
 
     const login = () => {
         setLoggingin(true);
@@ -46,7 +45,7 @@ const Account = ({
                     curr.map((p) => (p.isOnline = false));
                     return curr;
                 });
-                toast(errorToast(err));
+                errorToast(err);
             })
             .finally(() => setLoggingin(false));
     };

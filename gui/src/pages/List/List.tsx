@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { invoke } from '@tauri-apps/api/tauri';
-import { Button, useToast } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 
 import { errorToast } from '@/helpers/toast';
 import { Input, Label, Select, Textarea } from '@/components';
@@ -19,7 +19,6 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
     const [paramInfo, setParamInfo] = useState('');
     const [paramInput, setParamInput] = useState('');
     const [paramRequired, setParamRequired] = useState(true);
-    const toast = useToast();
 
     const getList = () => {
         if (listType !== '') {
@@ -35,7 +34,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                     setListOutput(output);
                     invoke('cache_set', { key: 'list-cache', value: output });
                 })
-                .catch((err) => toast(errorToast(err)))
+                .catch((err) => errorToast(err))
                 .finally(() => setLoading(false));
         }
     };

@@ -1,4 +1,4 @@
-import { Button, useToast } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Input, Label, Textarea } from '@/components';
@@ -14,7 +14,6 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
     const [areaValue, setAreaValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [reason, setReason] = useState('');
-    const toast = useToast();
 
     const deletePages = () => {
         setIsLoading(true);
@@ -22,8 +21,8 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
             pages: areaValue.split(/\r?\n/),
             reason,
         })
-            .then(() => toast(successToast('Delete successful')))
-            .catch((err) => toast(errorToast(err)))
+            .then(() => successToast('Delete successful'))
+            .catch((err) => errorToast(err))
             .finally(() => setIsLoading(false));
     };
 

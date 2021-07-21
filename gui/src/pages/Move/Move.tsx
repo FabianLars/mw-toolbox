@@ -1,4 +1,4 @@
-import { Button, useToast } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { errorToast, successToast } from '@/helpers/toast';
@@ -14,7 +14,6 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [areaFrom, setAreaFrom] = useState('');
     const [areaTo, setAreaTo] = useState('');
-    const toast = useToast();
 
     const movePages = () => {
         setIsLoading(true);
@@ -22,8 +21,8 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
             from: areaFrom.split(/\r?\n/),
             to: areaTo.split(/\r?\n/),
         })
-            .then(() => toast(successToast('Successfully moved pages')))
-            .catch((err) => toast(errorToast(err)))
+            .then(() => successToast('Successfully moved pages'))
+            .catch((err) => errorToast(err))
             .finally(() => setIsLoading(false));
     };
 

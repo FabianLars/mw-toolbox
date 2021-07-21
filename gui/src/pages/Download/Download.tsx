@@ -1,4 +1,4 @@
-import { Button, useToast } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { errorToast, successToast } from '@/helpers/toast';
@@ -13,15 +13,14 @@ type Props = {
 const Download = ({ isOnline, setNavDisabled }: Props) => {
     const [areaValue, setAreaValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const toast = useToast();
 
     const downloadFiles = () => {
         setIsLoading(true);
         invoke('download', {
             files: areaValue.split(/\r?\n/),
         })
-            .then(() => toast(successToast('Download successful', 'Check your download folder.')))
-            .catch((err) => toast(errorToast(err)))
+            .then(() => successToast('Download successful', 'Check your download folder.'))
+            .catch((err) => errorToast(err))
             .finally(() => setIsLoading(false));
     };
 

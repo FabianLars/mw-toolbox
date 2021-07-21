@@ -1,4 +1,4 @@
-import { Button, useDisclosure, useToast } from '@chakra-ui/react';
+import { Button, useDisclosure } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import FindReplaceModal from './FindReplaceModal';
@@ -31,7 +31,6 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
         { find: '', replace: '', isRegex: false },
     ]);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const toast = useToast();
     const initialRef = useRef<HTMLButtonElement>();
 
     const start = () => {
@@ -44,7 +43,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                 summary: editSummary,
             })
                 .catch((err) => {
-                    toast(errorToast(err));
+                    errorToast(err);
                 })
                 .finally(stop);
         } else {
@@ -83,7 +82,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                 })
                 .catch((err) => {
                     stop();
-                    toast(errorToast(err));
+                    errorToast(err);
                 })
                 .finally(() => setIsLoading(false));
         }
@@ -102,12 +101,12 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
             }) as Promise<string>
         )
             .then((res) => {
-                toast(successToast('Edit successful', res));
+                successToast('Edit successful', res);
                 getNextPage();
             })
             .catch((err) => {
                 setIsLoading(false);
-                toast(errorToast(err));
+                errorToast(err);
             });
     };
 

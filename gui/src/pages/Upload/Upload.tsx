@@ -1,4 +1,4 @@
-import { Button, useToast } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
@@ -18,7 +18,6 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
     const [isWaiting, setIsWaiting] = useState(false);
     const [uploadtext, setUploadtext] = useState('');
     const [files, setFiles] = useState<string[]>([]);
-    const toast = useToast();
 
     const clearList = () => {
         invoke('cache_set', { key: 'files-cache', value: '' });
@@ -34,7 +33,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                 }
             })
             .catch((err) => {
-                toast(errorToast(err));
+                errorToast(err);
             })
             .finally(() => setIsWaiting(false));
     };
@@ -47,8 +46,8 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                 files,
             }) as Promise<null>
         )
-            .then(() => toast(successToast('Upload complete')))
-            .catch((err) => toast(errorToast(err)))
+            .then(() => successToast('Upload complete'))
+            .catch((err) => errorToast(err))
             .finally(() => {
                 setIsWaiting(false);
                 setIsUploading(false);

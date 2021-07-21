@@ -9,14 +9,14 @@
     border-top-color: #718096;
 }
 .disabled {
-    color: red;
+    color: #9b2c2c;
     pointer-events: none;
 }
 .link:focus {
     box-shadow: var(--shadow-outline);
 }
 .link:hover {
-    background-color: #2d3748;
+    background: #2d3748;
 }
 
 .nav {
