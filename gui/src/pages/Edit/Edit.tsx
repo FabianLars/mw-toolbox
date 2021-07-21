@@ -1,9 +1,8 @@
-import { Button } from '@chakra-ui/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import FindReplaceModal from './FindReplaceModal';
 import { listen, emit } from '@tauri-apps/api/event';
-import { Checkbox, Input, Label, Textarea } from '@/components';
+import { Button, Checkbox, Input, Label, Textarea } from '@/components';
 import { errorToast, successToast } from '@/helpers/toast';
 import { removeFirst } from '@/helpers/array';
 import classes from './Edit.module.css';
@@ -187,7 +186,6 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                         </div>
                         <div className={classes.giSetup}>
                             <Button
-                                mt={2}
                                 title="This will be processed before contents get displayed!"
                                 onClick={onOpen}
                                 isDisabled={isLoading}
@@ -211,7 +209,6 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                         <div className={classes.giControls}>
                             <div className={classes.controls}>
                                 <Button
-                                    w="100%"
                                     onClick={() => (isRunning ? stop() : start())}
                                     isDisabled={!isOnline || isLoading || pageList.trim() === ''}
                                     title={
@@ -241,7 +238,6 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                     Auto-Save
                                 </Checkbox>
                                 <Button
-                                    w="100%"
                                     isDisabled={!isRunning || !currentPage}
                                     isLoading={isLoading}
                                     onClick={getNextPage}
@@ -249,7 +245,6 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                     Skip
                                 </Button>
                                 <Button
-                                    w="100%"
                                     isDisabled={!isRunning || !currentPage}
                                     isLoading={isLoading}
                                     onClick={save}

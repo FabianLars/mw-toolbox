@@ -18,6 +18,10 @@
     height: 100%;
 }
 
+.controls > button {
+    width: 100%;
+}
+
 .grid {
     display: grid;
     grid-column-gap: 1rem;
@@ -42,6 +46,10 @@
 
 .giSetup {
     grid-row-start: 4;
+}
+
+.giSetup > button {
+    margin-top: 0.5rem;
 }
 
 .giSummary {

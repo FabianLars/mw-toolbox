@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
 import { invoke } from '@tauri-apps/api/tauri';
-import { Button } from '@chakra-ui/react';
 
 import { errorToast } from '@/helpers/toast';
-import { Input, Label, Select, Textarea } from '@/components';
+import { Button, Input, Label, Select, Textarea } from '@/components';
 import classes from './List.module.css';
 
 type Props = {
@@ -129,7 +128,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                 </div>
                 <div className={classes.buttons}>
                     <Button
-                        mr={4}
+                        className={classes.mr}
                         onClick={getList}
                         isLoading={loading}
                         isDisabled={!isOnline || !listType || (paramRequired && !paramInput.trim())}

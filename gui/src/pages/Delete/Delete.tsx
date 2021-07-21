@@ -1,7 +1,6 @@
-import { Button } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
-import { Input, Label, Textarea } from '@/components';
+import { Button, Input, Label, Textarea } from '@/components';
 import { errorToast, successToast } from '@/helpers/toast';
 import classes from './Delete.module.css';
 

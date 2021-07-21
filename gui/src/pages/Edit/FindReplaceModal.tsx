@@ -1,8 +1,7 @@
-import { Button } from '@chakra-ui/react';
 import React, { useEffect, useState, useRef } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import classes from './FindReplaceModal.module.css';
-import { Checkbox, Input, Modal } from '@/components';
+import { Button, Checkbox, Input, Modal } from '@/components';
 
 type Pattern = {
     find: string;
@@ -110,7 +109,7 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
             footer={
                 <>
                     <Button
-                        mr={2}
+                        className={classes.mr}
                         onClick={() => {
                             if (localPatterns.length < 10)
                                 setLocalPatterns((old) =>
@@ -130,7 +129,7 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                         Clear all
                     </Button>
                     <div className={classes.spacer}></div>
-                    <Button colorScheme="blue" mr={2} onClick={onModalSave}>
+                    <Button className={classes.mr} colorScheme="blue" onClick={onModalSave}>
                         Save
                     </Button>
                     <Button onClick={onModalClose} ref={initialRef}>

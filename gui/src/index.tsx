@@ -15,15 +15,7 @@ const config: ThemeConfig = {
     initialColorMode: 'dark',
 };
 
-const styles = {
-    global: {
-        button: {
-            minWidth: 'unset !important',
-        },
-    },
-};
-
-const customTheme = extendTheme({ config, styles });
+const customTheme = extendTheme({ config });
 
 ReactDOM.render(
     <React.StrictMode>

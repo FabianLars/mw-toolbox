@@ -1,11 +1,10 @@
-import { Button } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
 import FileList from './FileList';
 import { emit, listen } from '@tauri-apps/api/event';
 import { errorToast, successToast } from '@/helpers/toast';
-import { Input, Label } from '@/components';
+import { Button, Input, Label } from '@/components';
 import classes from './Upload.module.css';
 
 type Props = {
@@ -107,7 +106,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                 </div>
                 <div className={classes.buttons}>
                     <Button
-                        mx={2}
+                        className={classes.mx}
                         isLoading={isWaiting}
                         isDisabled={isUploading}
                         onClick={openDialog}
@@ -115,7 +114,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                         Select File(s)
                     </Button>
                     <Button
-                        mx={2}
+                        className={classes.mx}
                         isLoading={isWaiting}
                         isDisabled={isUploading}
                         onClick={clearList}
@@ -123,7 +122,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                         Clear Filelist
                     </Button>
                     <Button
-                        ml={2}
+                        className={classes.mx}
                         isDisabled={isWaiting || !isOnline || !files[0]}
                         onClick={() => {
                             if (isUploading) {

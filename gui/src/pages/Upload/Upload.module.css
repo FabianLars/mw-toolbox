@@ -33,6 +33,14 @@
     font-weight: 500;
 }
 
+.mx {
+    margin: 0 0.5rem;
+}
+
+.ml {
+    margin-left: 0.5rem;
+}
+
 .entry {
     cursor: pointer;
 }

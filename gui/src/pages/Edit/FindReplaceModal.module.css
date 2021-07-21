@@ -32,6 +32,10 @@
     text-decoration: underline;
 }
 
+.mr {
+    margin-right: 0.5rem;
+}
+
 .regexinfo {
     font-size: small;
     float: right;

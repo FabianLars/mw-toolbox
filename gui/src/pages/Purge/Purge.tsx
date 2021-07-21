@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from '@chakra-ui/react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { errorToast, successToast } from '@/helpers/toast';
-import { Textarea } from '@/components';
+import { Button, Textarea } from '@/components';
 import classes from './Purge.module.css';
 
 type Props = {
@@ -62,7 +61,7 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
                             ? 'Please login first!'
                             : 'Clear server caches. This might take a while!'
                     }
-                    mx={2}
+                    className={classes.mx}
                 >
                     Purge all
                 </Button>
@@ -76,7 +75,7 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
                             ? 'Please login first!'
                             : 'Do a nulledit on every page. This might take a while!'
                     }
-                    mx={2}
+                    className={classes.mx}
                 >
                     Nulledit all
                 </Button>

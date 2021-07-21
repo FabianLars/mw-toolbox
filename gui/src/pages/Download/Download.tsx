@@ -1,8 +1,7 @@
-import { Button } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { errorToast, successToast } from '@/helpers/toast';
-import { Textarea } from '@/components';
+import { Button, Textarea } from '@/components';
 import classes from './Download.module.css';
 
 type Props = {

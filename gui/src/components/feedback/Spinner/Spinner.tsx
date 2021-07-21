@@ -1,9 +1,11 @@
 import React from 'react';
 import classes from './Spinner.module.css';
 
-const Spinner = () => {
+type Props = { className?: string };
+
+const Spinner = ({ className = '' }: Props) => {
     return (
-        <div className={classes.spinner}>
+        <div className={`${classes.spinner} ${className}`}>
             {/* <span className={classes.span}>Loading...</span> */}
         </div>
     );
