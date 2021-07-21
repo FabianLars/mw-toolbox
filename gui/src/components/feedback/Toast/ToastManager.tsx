@@ -7,11 +7,7 @@ export class ToastManager {
     private currentToast: React.ReactNode = null;
 
     constructor() {
-        document.getElementById('toast-container')?.remove();
-        const body = document.getElementsByTagName('body')[0] as HTMLBodyElement;
-        const toastContainer = document.createElement('div') as HTMLDivElement;
-        toastContainer.id = 'toast-container';
-        body.insertAdjacentElement('beforeend', toastContainer);
+        const toastContainer = document.getElementById('toast-portal') as HTMLDivElement;
         this.containerRef = toastContainer;
     }
 

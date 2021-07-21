@@ -21,7 +21,9 @@ const Toast = ({ children, destroy }: Props) => {
     }, [destroy]);
 
     useEffect(() => {
-        setShow(true);
+        setTimeout(() => {
+            setShow(true);
+        }, 1);
     }, []);
 
     return (

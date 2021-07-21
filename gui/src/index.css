@@ -46,7 +46,7 @@ body {
     width: 100%;
 }
 
-#toast-container {
+#toast-portal {
     position: fixed;
     bottom: 0;
     left: 0;

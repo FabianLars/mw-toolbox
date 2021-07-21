@@ -1,4 +1,4 @@
-import { Button, useDisclosure } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import FindReplaceModal from './FindReplaceModal';
@@ -30,8 +30,11 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
     const [patterns, setPatterns] = useState<Pattern[]>([
         { find: '', replace: '', isRegex: false },
     ]);
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    const initialRef = useRef<HTMLButtonElement>();
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    const onOpen = () => setIsOpen(true);
+    const onClose = () => setIsOpen(false);
 
     const start = () => {
         setIsRunning(true);
@@ -264,7 +267,6 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                 onClose={onClose}
                 patterns={patterns}
                 setPatterns={setPatterns}
-                initialRef={initialRef as React.RefObject<HTMLButtonElement>}
             />
         </>
     );

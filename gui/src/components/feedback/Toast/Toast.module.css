@@ -12,7 +12,7 @@
 
     transform: translateY(50px);
     visibility: hidden;
-    transition: opacity 0.2s, visibility linear 0.2s, transform 0.1s;
+    transition: opacity 0.2s, visibility linear 0.2s, transform 0.2s;
     opacity: 0;
 }
 
@@ -20,5 +20,5 @@
     opacity: 1;
     transform: translateY(0);
     visibility: visible;
-    transition: opacity 0.2s, visibility 0.2s, transform 0.1s;
+    transition: opacity 0.2s, visibility 0.2s, transform 0.2s;
 }
