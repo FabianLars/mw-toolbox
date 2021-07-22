@@ -11,11 +11,10 @@ type Props = {
     title?: string;
     ['aria-label']?: string;
     children: React.ReactNode;
-    ref?: React.RefObject<HTMLButtonElement>;
     colorScheme?: 'blue' | 'red' | 'default';
 };
 
-const Button = (props: Props) => {
+const Button = React.forwardRef((props: Props, ref) => {
     const {
         className = '',
         colorScheme = 'default',
@@ -25,12 +24,11 @@ const Button = (props: Props) => {
         loadingText,
         title,
         children,
-        ref,
     } = props;
 
     return (
         <button
-            ref={ref}
+            ref={ref as React.ForwardedRef<HTMLButtonElement>}
             type="button"
             disabled={isDisabled || isLoading}
             className={`${classes.button} ${className} ${classes[colorScheme]}`}
@@ -48,6 +46,6 @@ const Button = (props: Props) => {
             )}
         </button>
     );
-};
+});
 
 export default Button;
