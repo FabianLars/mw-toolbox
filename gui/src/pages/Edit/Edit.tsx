@@ -210,7 +210,11 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                             <div className={classes.controls}>
                                 <Button
                                     onClick={() => (isRunning ? stop() : start())}
-                                    isDisabled={!isOnline || isLoading || pageList.trim() === ''}
+                                    isDisabled={
+                                        !isOnline ||
+                                        isLoading ||
+                                        (!isRunning && pageList.trim() === '')
+                                    }
                                     title={
                                         !isOnline
                                             ? 'Please login first!'
