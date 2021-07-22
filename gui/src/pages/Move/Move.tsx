@@ -1,7 +1,8 @@
-import { Box, Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
-import { errorToast, successToast } from '../../helpers/toast';
+import { errorToast, successToast } from '@/helpers/toast';
+import { Button, Textarea } from '@/components';
+import classes from './Move.module.css';
 
 type Props = {
     isOnline: boolean;
@@ -12,7 +13,6 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [areaFrom, setAreaFrom] = useState('');
     const [areaTo, setAreaTo] = useState('');
-    const toast = useToast();
 
     const movePages = () => {
         setIsLoading(true);
@@ -20,8 +20,8 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
             from: areaFrom.split(/\r?\n/),
             to: areaTo.split(/\r?\n/),
         })
-            .then(() => toast(successToast('Successfully moved pages')))
-            .catch((err) => toast(errorToast(err)))
+            .then(() => successToast('Successfully moved pages'))
+            .catch((err) => errorToast(err))
             .finally(() => setIsLoading(false));
     };
 
@@ -39,28 +39,26 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
     }, []);
 
     return (
-        <Flex direction="column" align="center" h="100%" w="100%">
-            <Flex direction="row" align="center" justify="center" flex="1" w="100%" mb={4}>
+        <div className={classes.container}>
+            <div className={classes.fields}>
                 <Textarea
-                    resize="none"
+                    className={classes.from}
+                    label="pages to move"
                     value={areaFrom}
                     onChange={(event) => setAreaFrom(event.target.value)}
                     onBlur={() => invoke('cache_set', { key: 'move-cache-from', value: areaFrom })}
                     placeholder="Write exact names of pages to move. Separated by newline."
-                    h="100%"
-                    mr={2}
                 />
                 <Textarea
-                    resize="none"
+                    className={classes.to}
+                    label="new names for pages"
                     value={areaTo}
                     onChange={(event) => setAreaTo(event.target.value)}
                     onBlur={() => invoke('cache_set', { key: 'move-cache-to', value: areaTo })}
                     placeholder="Write exact names of destinations. Separated by newline."
-                    h="100%"
-                    ml={2}
                 />
-            </Flex>
-            <Box>
+            </div>
+            <div>
                 <Button
                     isLoading={isLoading}
                     isDisabled={
@@ -75,8 +73,8 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
                 >
                     Start moving
                 </Button>
-            </Box>
-        </Flex>
+            </div>
+        </div>
     );
 };
 

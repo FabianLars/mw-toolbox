@@ -1,0 +1,12 @@
+.area {
+    margin-bottom: 1rem;
+    flex: 1;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}

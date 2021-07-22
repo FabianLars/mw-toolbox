@@ -1,20 +1,11 @@
-import {
-    Button,
-    Checkbox,
-    Flex,
-    Grid,
-    GridItem,
-    Input,
-    Textarea,
-    useDisclosure,
-    useToast,
-} from '@chakra-ui/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import FindReplaceModal from './FindReplaceModal';
 import { listen, emit } from '@tauri-apps/api/event';
-import { errorToast, successToast } from '../../helpers/toast';
-import { removeFirst } from '../../helpers/array';
+import { Button, Checkbox, Input, Label, Textarea } from '@/components';
+import { errorToast, successToast } from '@/helpers/toast';
+import { removeFirst } from '@/helpers/array';
+import classes from './Edit.module.css';
 
 type Pattern = {
     find: string;
@@ -38,8 +29,11 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
     const [patterns, setPatterns] = useState<Pattern[]>([
         { find: '', replace: '', isRegex: false },
     ]);
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    const toast = useToast();
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    const onOpen = () => setIsOpen(true);
+    const onClose = () => setIsOpen(false);
 
     const start = () => {
         setIsRunning(true);
@@ -51,7 +45,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                 summary: editSummary,
             })
                 .catch((err) => {
-                    toast(errorToast(err));
+                    errorToast(err);
                 })
                 .finally(stop);
         } else {
@@ -90,7 +84,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                 })
                 .catch((err) => {
                     stop();
-                    toast(errorToast(err));
+                    errorToast(err);
                 })
                 .finally(() => setIsLoading(false));
         }
@@ -109,12 +103,12 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
             }) as Promise<string>
         )
             .then((res) => {
-                toast(successToast('Edit successful', res));
+                successToast('Edit successful', res);
                 getNextPage();
             })
             .catch((err) => {
                 setIsLoading(false);
-                toast(errorToast(err));
+                errorToast(err);
             });
     };
 
@@ -153,13 +147,11 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
 
     return (
         <>
-            <Flex w="100%" h="100%" direction={['column', null, 'row']}>
+            <div className={classes.container}>
                 <Textarea
-                    w={[null, null, '30%', '25%', '20%']}
+                    className={classes.list}
+                    label="list of pages"
                     isDisabled={isRunning}
-                    resize="none"
-                    mb={[4, null, 0]}
-                    h={['20%', null, '100%']}
                     placeholder="List of pages to operate on. Separated by newline."
                     value={pageList}
                     onChange={(event) => setPageList(event.target.value)}
@@ -174,67 +166,55 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                         invoke('cache_set', { key: 'edit-pagelist', value: pageList });
                     }}
                 />
-                <Flex direction="column" flex="1" ml={[null, null, 4]}>
+                <div className={classes.right}>
                     <Textarea
-                        flex="2"
+                        className={classes.content}
+                        label="page content container"
                         isDisabled={isAuto || isLoading || !isRunning}
-                        resize="none"
-                        h="100%"
                         placeholder="Page contents will be displayed here."
                         value={pageContent}
                         onChange={(event) => setPageContent(event.target.value)}
                     />
-                    <Grid
-                        pt={4}
-                        flex="1"
-                        templateColumns="repeat(7, 1fr)"
-                        templateRows="repeat(4, 1fr)"
-                        columnGap={4}
-                        maxH="250px"
-                    >
-                        <GridItem colSpan={[4, null, 2]} mt={2} overflow="hidden">
+                    <div className={classes.grid}>
+                        <div className={classes.giCurrent}>
                             Current page:{' '}
                             {isRunning
                                 ? isAuto
                                     ? 'Automated saving mode...'
                                     : currentPage
                                 : 'Not running!'}
-                        </GridItem>
-                        <GridItem rowStart={4}>
+                        </div>
+                        <div className={classes.giSetup}>
                             <Button
-                                mt={2}
                                 title="This will be processed before contents get displayed!"
                                 onClick={onOpen}
                                 isDisabled={isLoading}
                             >
                                 Setup Find & Replace
                             </Button>
-                        </GridItem>
-                        <GridItem
-                            colSpan={[6, null, 4]}
-                            colStart={[1, null, 3]}
-                            rowStart={[3, null, 1]}
-                        >
+                        </div>
+                        <div className={classes.giSummary}>
+                            <Label htmlFor="edit-summary" className={classes.label}>
+                                Edit summary:
+                            </Label>
                             <Input
-                                placeholder="Edit summary"
+                                id="edit-summary"
                                 value={editSummary}
                                 onChange={(event) => setEditSummary(event.target.value)}
                                 onBlur={() =>
                                     invoke('cache_set', { key: 'edit-summary', value: editSummary })
                                 }
                             />
-                        </GridItem>
-                        <GridItem rowSpan={4} colStart={7} colSpan={1}>
-                            <Flex
-                                direction="column"
-                                align="center"
-                                justify="space-between"
-                                h="100%"
-                            >
+                        </div>
+                        <div className={classes.giControls}>
+                            <div className={classes.controls}>
                                 <Button
-                                    w="100%"
                                     onClick={() => (isRunning ? stop() : start())}
-                                    isDisabled={!isOnline || isLoading || pageList.trim() === ''}
+                                    isDisabled={
+                                        !isOnline ||
+                                        isLoading ||
+                                        (!isRunning && pageList.trim() === '')
+                                    }
                                     title={
                                         !isOnline
                                             ? 'Please login first!'
@@ -246,6 +226,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                     {isRunning ? 'Stop' : 'Start'}
                                 </Button>
                                 <Checkbox
+                                    id="auto-save"
                                     isChecked={isAuto}
                                     onChange={(event) => {
                                         setIsAuto(event.target.checked);
@@ -257,12 +238,10 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                         });
                                     }}
                                     isDisabled={isRunning}
-                                    whiteSpace="nowrap"
                                 >
                                     Auto-Save
                                 </Checkbox>
                                 <Button
-                                    w="100%"
                                     isDisabled={!isRunning || !currentPage}
                                     isLoading={isLoading}
                                     onClick={getNextPage}
@@ -270,18 +249,17 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                     Skip
                                 </Button>
                                 <Button
-                                    w="100%"
                                     isDisabled={!isRunning || !currentPage}
                                     isLoading={isLoading}
                                     onClick={save}
                                 >
                                     Save
                                 </Button>
-                            </Flex>
-                        </GridItem>
-                    </Grid>
-                </Flex>
-            </Flex>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <FindReplaceModal
                 isOpen={isOpen}

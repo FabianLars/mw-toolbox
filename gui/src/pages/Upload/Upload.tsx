@@ -1,10 +1,11 @@
-import { Box, Button, Flex, FormControl, FormLabel, Input, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
 import FileList from './FileList';
 import { emit, listen } from '@tauri-apps/api/event';
-import { errorToast, successToast } from '../../helpers/toast';
+import { errorToast, successToast } from '@/helpers/toast';
+import { Button, Input, Label } from '@/components';
+import classes from './Upload.module.css';
 
 type Props = {
     isOnline: boolean;
@@ -16,7 +17,6 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
     const [isWaiting, setIsWaiting] = useState(false);
     const [uploadtext, setUploadtext] = useState('');
     const [files, setFiles] = useState<string[]>([]);
-    const toast = useToast();
 
     const clearList = () => {
         invoke('cache_set', { key: 'files-cache', value: '' });
@@ -32,7 +32,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                 }
             })
             .catch((err) => {
-                toast(errorToast(err));
+                errorToast(err);
             })
             .finally(() => setIsWaiting(false));
     };
@@ -45,8 +45,8 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                 files,
             }) as Promise<null>
         )
-            .then(() => toast(successToast('Upload complete')))
-            .catch((err) => toast(errorToast(err)))
+            .then(() => successToast('Upload complete'))
+            .catch((err) => errorToast(err))
             .finally(() => {
                 setIsWaiting(false);
                 setIsUploading(false);
@@ -79,30 +79,20 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(isUploading || isWaiting), [isUploading, isWaiting]);
 
     return (
-        <Flex direction="column" align="center" h="100%" w="100%">
-            <Flex direction={['column', null, 'row']} align="center" w="100%" mb={4}>
-                <Flex
-                    mx={2}
-                    pb={[null, null, 2]}
-                    flex="1 0 auto"
-                    direction="column"
-                    justify="space-between"
-                    align="center"
-                    h={[null, null, '100%']}
-                    pr={[null, null, 4]}
-                    borderRight={[null, null, '1px solid rgba(255, 255, 255, 0.16)']}
-                >
-                    <Box fontWeight={500}>Number of files</Box>
+        <div className={classes.container}>
+            <div className={classes.controls}>
+                <div className={classes.count}>
+                    <div className={classes.label}>Number of files</div>
                     {files.length}
-                </Flex>
-                <FormControl
+                </div>
+                <div
                     title="No effect on existing pages"
                     id="uploadtext-input"
-                    mx={2}
-                    flex="1 1 auto"
+                    className={classes.uploadtext}
                 >
-                    <FormLabel>Text for new file pages</FormLabel>
+                    <Label htmlFor="uploadtext-input">Text for new file pages</Label>
                     <Input
+                        id="uploadtext-input"
                         value={uploadtext}
                         isDisabled={isUploading || isWaiting}
                         onChange={(event) => setUploadtext(event.target.value)}
@@ -113,10 +103,10 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                             })
                         }
                     />
-                </FormControl>
-                <Box flex="1 0 auto" alignSelf="flex-end" mt={4}>
+                </div>
+                <div className={classes.buttons}>
                     <Button
-                        mx={2}
+                        className={classes.mx}
                         isLoading={isWaiting}
                         isDisabled={isUploading}
                         onClick={openDialog}
@@ -124,7 +114,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                         Select File(s)
                     </Button>
                     <Button
-                        mx={2}
+                        className={classes.mx}
                         isLoading={isWaiting}
                         isDisabled={isUploading}
                         onClick={clearList}
@@ -132,7 +122,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                         Clear Filelist
                     </Button>
                     <Button
-                        mx={2}
+                        className={classes.mx}
                         isDisabled={isWaiting || !isOnline || !files[0]}
                         onClick={() => {
                             if (isUploading) {
@@ -145,19 +135,15 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                     >
                         {isUploading ? 'Cancel' : 'Upload'}
                     </Button>
-                </Box>
-            </Flex>
+                </div>
+            </div>
             <FileList placeholder="Selected files will be displayed here.">
                 {files.map((f) => (
-                    <Box
+                    <div
                         key={f}
+                        className={classes.entry}
                         aria-label="click to remove item"
                         title="click to remove item"
-                        cursor="pointer"
-                        _hover={{
-                            color: 'red',
-                            backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                        }}
                         onClick={() => {
                             if (!isUploading) {
                                 setFiles((oldFiles) => oldFiles.filter((ff) => ff !== f));
@@ -165,10 +151,10 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                         }}
                     >
                         {f}
-                    </Box>
+                    </div>
                 ))}
             </FileList>
-        </Flex>
+        </div>
     );
 };
 

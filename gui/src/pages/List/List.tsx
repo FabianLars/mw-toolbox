@@ -1,19 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
 import { invoke } from '@tauri-apps/api/tauri';
-import {
-    Box,
-    Button,
-    Flex,
-    FormControl,
-    FormLabel,
-    Input,
-    Select,
-    Textarea,
-    useToast,
-} from '@chakra-ui/react';
 
-import { errorToast } from '../../helpers/toast';
+import { errorToast } from '@/helpers/toast';
+import { Button, Input, Label, Select, Textarea } from '@/components';
+import classes from './List.module.css';
 
 type Props = {
     isOnline: boolean;
@@ -27,7 +18,6 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
     const [paramInfo, setParamInfo] = useState('');
     const [paramInput, setParamInput] = useState('');
     const [paramRequired, setParamRequired] = useState(true);
-    const toast = useToast();
 
     const getList = () => {
         if (listType !== '') {
@@ -43,7 +33,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                     setListOutput(output);
                     invoke('cache_set', { key: 'list-cache', value: output });
                 })
-                .catch((err) => toast(errorToast(err)))
+                .catch((err) => errorToast(err))
                 .finally(() => setLoading(false));
         }
     };
@@ -94,11 +84,14 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(loading), [loading]);
 
     return (
-        <Flex direction="column" align="center" h="100%" w="100%">
-            <Flex w="100%" mb={4} direction={['column', null, 'row']} align="center">
-                <FormControl id="listtype-dropdown" mx={2} isRequired flex="1 1 auto">
-                    <FormLabel>API Endpoint</FormLabel>
+        <div className={classes.container}>
+            <div className={classes.fields}>
+                <div className={classes.endpoint}>
+                    <Label htmlFor="listtype" isRequired>
+                        API Endpoint
+                    </Label>
                     <Select
+                        id="listtype"
                         placeholder="Select type of list"
                         onChange={(event) => setListType(event.target.value)}
                     >
@@ -116,26 +109,26 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                         <option value="querypage">querypage</option>
                         <option value="search">search</option>
                     </Select>
-                </FormControl>
-                <FormControl
-                    id="parameter-input"
-                    mx={2}
-                    mt={[2, null, 0]}
-                    isRequired={paramRequired}
-                    isDisabled={!paramRequired}
-                    flex="1 1 auto"
-                >
-                    <FormLabel>Required Parameter</FormLabel>
+                </div>
+                <div title={paramInfo} className={classes.parameter}>
+                    <Label
+                        htmlFor="parameter"
+                        isRequired={paramRequired}
+                        isDisabled={!paramRequired}
+                    >
+                        Required Parameter
+                    </Label>
                     <Input
+                        isDisabled={!paramRequired}
+                        id="parameter"
                         placeholder={paramInfo}
-                        title={paramInfo}
                         value={paramInput}
                         onChange={(event) => setParamInput(event.target.value)}
                     />
-                </FormControl>
-                <Box mt={4} flex="1 0 auto" alignSelf="flex-end">
+                </div>
+                <div className={classes.buttons}>
                     <Button
-                        mx={2}
+                        className={classes.mr}
                         onClick={getList}
                         isLoading={loading}
                         isDisabled={!isOnline || !listType || (paramRequired && !paramInput.trim())}
@@ -143,19 +136,17 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                     >
                         Get List
                     </Button>
-                    <Button mx={2} onClick={clearOutput}>
-                        Clear Output
-                    </Button>
-                </Box>
-            </Flex>
+                    <Button onClick={clearOutput}>Clear Output</Button>
+                </div>
+            </div>
             <Textarea
-                resize="none"
-                flex="1"
+                className={classes.area}
+                label="output container"
                 value={listOutput}
                 readOnly
                 placeholder="Output will be displayed here."
             />
-        </Flex>
+        </div>
     );
 };
 

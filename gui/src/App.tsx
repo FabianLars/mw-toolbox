@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Account, Delete, Download, Edit, List, Move, Purge, Upload } from './pages';
-import { Center, Flex } from '@chakra-ui/react';
 import { Header } from './components';
+import classes from './App.module.css';
 
 export type Profile = {
     profile: string;
@@ -73,9 +73,9 @@ const App = () => {
 
     return (
         <Router>
-            <Flex direction="column" h="100vh" w="100vw" userSelect="none">
+            <div className={classes.container}>
                 <Header isDisabled={navDisabled} isOnline={profiles[currentProfile].isOnline} />
-                <Center flex="1 1 auto" overflow="hidden" p={4}>
+                <div className={classes.center}>
                     <Routes>
                         <Route
                             path="/"
@@ -153,8 +153,8 @@ const App = () => {
                             }
                         />
                     </Routes>
-                </Center>
-            </Flex>
+                </div>
+            </div>
         </Router>
     );
 };

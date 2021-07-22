@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Flex, Textarea, useToast } from '@chakra-ui/react';
 import { invoke } from '@tauri-apps/api/tauri';
-import { errorToast, successToast } from '../../helpers/toast';
+import { errorToast, successToast } from '@/helpers/toast';
+import { Button, Textarea } from '@/components';
+import classes from './Purge.module.css';
 
 type Props = {
     isOnline: boolean;
@@ -12,7 +13,6 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
     const [isPurging, setIsPurging] = useState(false);
     const [isNulling, setIsNulling] = useState(false);
     const [areaValue, setAreaValue] = useState('');
-    const toast = useToast();
 
     const purgePages = (isNulledit: boolean) => {
         if (isNulledit) {
@@ -24,8 +24,8 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
             pages: areaValue.split(/\r?\n/),
             isNulledit,
         })
-            .then(() => toast(successToast((isNulledit ? 'Nulledit' : 'Purge') + ' successful')))
-            .catch((err) => toast(errorToast(err)))
+            .then(() => successToast((isNulledit ? 'Nulledit' : 'Purge') + ' successful'))
+            .catch((err) => errorToast(err))
             .finally(() => {
                 setIsPurging(false);
                 setIsNulling(false);
@@ -41,17 +41,16 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
     }, []);
 
     return (
-        <Flex direction="column" align="center" h="100%" w="100%">
+        <div className={classes.container}>
             <Textarea
-                resize="none"
+                className={classes.area}
+                label="pages to purge"
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}
                 onBlur={() => invoke('cache_set', { key: 'purge-cache', value: areaValue })}
                 placeholder="Write exact page names here. Separated by newline."
-                flex="1"
-                mb={4}
             />
-            <Flex direction="row" align="center" justify="center">
+            <div className={classes.buttons}>
                 <Button
                     isLoading={isPurging}
                     isDisabled={!isOnline || isNulling || areaValue.trim() === ''}
@@ -62,7 +61,7 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
                             ? 'Please login first!'
                             : 'Clear server caches. This might take a while!'
                     }
-                    mx={2}
+                    className={classes.mx}
                 >
                     Purge all
                 </Button>
@@ -76,12 +75,12 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
                             ? 'Please login first!'
                             : 'Do a nulledit on every page. This might take a while!'
                     }
-                    mx={2}
+                    className={classes.mx}
                 >
                     Nulledit all
                 </Button>
-            </Flex>
-        </Flex>
+            </div>
+        </div>
     );
 };
 

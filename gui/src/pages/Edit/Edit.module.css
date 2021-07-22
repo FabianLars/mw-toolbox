@@ -1,0 +1,117 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.content {
+    flex: 2;
+    height: 100%;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.controls > button {
+    width: 100%;
+}
+
+.grid {
+    display: grid;
+    grid-column-gap: 1rem;
+    grid-template-rows: repeat(4, 1fr);
+    grid-template-columns: repeat(7, 1fr);
+    padding-top: 1rem;
+    flex: 1;
+    max-height: 250px;
+}
+
+.giControls {
+    grid-column: span 1 / span 1;
+    grid-row: span 4 / span 4;
+    grid-column-start: 7;
+}
+
+.giCurrent {
+    grid-column: span 4 / span 4;
+    margin-top: 0.5rem;
+    overflow: hidden;
+}
+
+.giSetup {
+    grid-row-start: 4;
+}
+
+.giSetup > button {
+    margin-top: 0.5rem;
+}
+
+.giSummary {
+    grid-column: span 6 / span 6;
+    grid-column-start: 1;
+    grid-row-start: 3;
+    display: flex;
+}
+
+.label {
+    margin-top: 0.5rem;
+    margin-right: 0.25rem;
+    white-space: nowrap;
+}
+
+.list {
+    margin-bottom: 1rem;
+    height: 20%;
+}
+
+.right {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+@media screen and (min-width: 48em) {
+    .container {
+        flex-direction: row;
+    }
+
+    .giCurrent {
+        grid-column: span 2 / span 2;
+    }
+
+    .list {
+        width: 30%;
+        margin-bottom: 0;
+        height: 100%;
+    }
+}
+
+@media screen and (min-width: 48em) {
+    .right {
+        margin-left: 1rem;
+    }
+}
+
+@media screen and (min-width: 62em) {
+    .giSummary {
+        grid-column: span 4 / span 4;
+        grid-column-start: 3;
+        grid-row-start: 1;
+    }
+
+    .list {
+        width: 25%;
+    }
+}
+
+@media screen and (min-width: 80em) {
+    .list {
+        width: 20%;
+    }
+}

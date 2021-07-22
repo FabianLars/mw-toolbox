@@ -44,9 +44,6 @@ jobs:
             - uses: actions/checkout@v2
 
             - uses: hecrj/setup-rust-action@v1
-              with:
-                  components: clippy
-                  rust-version: nightly
 
             - uses: actions/cache@v2
               with:

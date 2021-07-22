@@ -1,7 +1,8 @@
-import { Box, Button, Flex, Input, Textarea, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
-import { errorToast, successToast } from '../../helpers/toast';
+import { Button, Input, Label, Textarea } from '@/components';
+import { errorToast, successToast } from '@/helpers/toast';
+import classes from './Delete.module.css';
 
 type Props = {
     isOnline: boolean;
@@ -12,7 +13,6 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
     const [areaValue, setAreaValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [reason, setReason] = useState('');
-    const toast = useToast();
 
     const deletePages = () => {
         setIsLoading(true);
@@ -20,8 +20,8 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
             pages: areaValue.split(/\r?\n/),
             reason,
         })
-            .then(() => toast(successToast('Delete successful')))
-            .catch((err) => toast(errorToast(err)))
+            .then(() => successToast('Delete successful'))
+            .catch((err) => errorToast(err))
             .finally(() => setIsLoading(false));
     };
 
@@ -37,31 +37,25 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
     }, []);
 
     return (
-        <Flex direction="column" align="center" w="100%" h="100%">
-            <Input
-                w={['100%', null, '75%', '50%']}
-                alignSelf="flex-end"
-                aria-label="Delete reason"
-                placeholder="Delete reason"
-                value={reason}
-                onChange={(event) => setReason(event.target.value)}
-                onBlur={() =>
-                    invoke('cache_set', {
-                        key: 'delete-reason',
-                        value: reason,
-                    })
-                }
-            />
+        <div className={classes.container}>
+            <div className={classes.input}>
+                <Label htmlFor="delete-reason">Delete reason</Label>
+                <Input
+                    id="delete-reason"
+                    value={reason}
+                    onChange={(event) => setReason(event.target.value)}
+                    onBlur={() => invoke('cache_set', { key: 'delete-reaseon', value: reason })}
+                />
+            </div>
             <Textarea
-                resize="none"
+                className={classes.area}
+                label="pages to delete"
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}
                 onBlur={() => invoke('cache_set', { key: 'delete-pages', value: areaValue })}
                 placeholder="Write exact page names here. Separated by newline."
-                flex="1"
-                my={4}
-            />
-            <Box>
+            ></Textarea>
+            <div>
                 <Button
                     isLoading={isLoading}
                     isDisabled={!isOnline || areaValue.trim() === ''}
@@ -71,8 +65,8 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
                 >
                     Delete all
                 </Button>
-            </Box>
-        </Flex>
+            </div>
+        </div>
     );
 };
 

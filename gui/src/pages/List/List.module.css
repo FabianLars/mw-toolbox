@@ -1,0 +1,49 @@
+.area {
+    flex: 1;
+}
+
+.buttons {
+    margin-top: 1rem;
+    flex: 1 0 auto;
+    align-self: flex-end;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.endpoint {
+    flex: 1 1 auto;
+    width: 100%;
+}
+
+.fields {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.mr {
+    margin-right: 1rem;
+}
+
+.parameter {
+    margin: 0.5rem 1rem 0;
+    flex: 1 1 auto;
+    width: 100%;
+}
+
+@media screen and (min-width: 48em) {
+    .fields {
+        flex-direction: row;
+    }
+
+    .parameter {
+        margin-top: 0;
+    }
+}

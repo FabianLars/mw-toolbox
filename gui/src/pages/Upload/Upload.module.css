@@ -1,0 +1,70 @@
+.buttons {
+    flex: 1 0 auto;
+    align-self: flex-end;
+    margin-top: 1rem;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.count {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1 0 auto;
+    margin: 0 0.5rem;
+}
+
+.label {
+    font-weight: 500;
+}
+
+.mx {
+    margin: 0 0.5rem;
+}
+
+.ml {
+    margin-left: 0.5rem;
+}
+
+.entry {
+    cursor: pointer;
+}
+
+.entry:hover {
+    color: red;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.uploadtext {
+    flex: 1 1 auto;
+    width: 100%;
+    margin: 0 0.5rem;
+}
+
+@media screen and (min-width: 48em) {
+    .controls {
+        flex-direction: row;
+    }
+
+    .count {
+        padding-bottom: 0.5rem;
+        height: 100%;
+        padding-right: 1rem;
+        border-right: 1px solid rgba(255, 255, 255, 0.16);
+    }
+}

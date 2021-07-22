@@ -1,22 +1,11 @@
 import { invoke } from '@tauri-apps/api/tauri';
 
 import React, { useEffect, useState } from 'react';
-import {
-    Button,
-    Checkbox,
-    Divider,
-    Flex,
-    FormControl,
-    FormLabel,
-    IconButton,
-    Input,
-    Select,
-    useToast,
-} from '@chakra-ui/react';
+import { Button, Checkbox, Divider, Input, Label, Select, toast } from '@/components';
 
-import type { Profile } from '../../App';
-import { AddIcon, CloseIcon } from '@chakra-ui/icons';
-import { errorToast } from '../../helpers/toast';
+import type { Profile } from '@/App';
+import { errorToast } from '@/helpers/toast';
+import classes from './Account.module.css';
 
 type Props = {
     profiles: Profile[];
@@ -37,7 +26,6 @@ const Account = ({
     const [urlInvalid, seturlInvalid] = useState(false);
     const [usernameInvalid, setUsernameInvalid] = useState(false);
     const [passwordInvalid, setPasswordInvalid] = useState(false);
-    const toast = useToast();
 
     const login = () => {
         setLoggingin(true);
@@ -55,7 +43,7 @@ const Account = ({
                     curr.map((p) => (p.isOnline = false));
                     return curr;
                 });
-                toast(errorToast(err));
+                errorToast(err);
             })
             .finally(() => setLoggingin(false));
     };
@@ -135,33 +123,27 @@ const Account = ({
     useEffect(() => setNavDisabled(logginin), [logginin]);
 
     return (
-        <Flex
-            as="main"
-            direction="column"
-            align="center"
-            /* second null: break menu */
-            w={['100%', null, '75%', null, '50%']}
-            justify="center"
-        >
-            <Flex w="100%" alignItems="flex-end">
-                <FormControl
-                    flex="2"
-                    mr={3}
-                    id="profile-name"
-                    isRequired
-                    isInvalid={profiles[currentProfile].profile.trim() === ''}
-                >
-                    <FormLabel>Profile Name</FormLabel>
+        <main className={classes.container}>
+            <div className={classes.profile}>
+                <div style={{ flex: 2, marginRight: '0.75rem' }}>
+                    <Label htmlFor="profile-name" isRequired>
+                        Profile Name
+                    </Label>
                     <Input
+                        id="profile-name"
                         name="profile"
                         value={profiles[currentProfile].profile}
                         onChange={handleInput}
                         isDisabled={profiles[currentProfile].isOnline}
+                        isRequired
+                        isInvalid={profiles[currentProfile].profile.trim() === ''}
                         placeholder="Profile name"
                     />
-                </FormControl>
-                <FormControl flex="1" id="profile-select" isRequired>
-                    <FormLabel>Select Profile</FormLabel>
+                </div>
+                <div className="w100" style={{ flex: 1 }}>
+                    <Label htmlFor="profile-select" isRequired>
+                        Select Profile
+                    </Label>
                     <Select
                         value={currentProfile}
                         onChange={(event) => setCurrentProfile(parseInt(event.target.value))}
@@ -173,62 +155,88 @@ const Account = ({
                             </option>
                         ))}
                     </Select>
-                </FormControl>
-                <IconButton
+                </div>
+                <Button
                     isDisabled={
                         logginin || profiles.length >= 10 || profiles[currentProfile].isOnline
                     }
-                    w={10}
-                    mx={3}
+                    className={classes.add}
                     title="Add additional profile"
                     aria-label="Add additional profile"
-                    icon={<AddIcon />}
                     onClick={addProfile}
-                />
-                <IconButton
+                >
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <path
+                            fill="rgba(255,255,255,0.96)"
+                            d="M0,12a1.5,1.5,0,0,0,1.5,1.5h8.75a.25.25,0,0,1,.25.25V22.5a1.5,1.5,0,0,0,3,0V13.75a.25.25,0,0,1,.25-.25H22.5a1.5,1.5,0,0,0,0-3H13.75a.25.25,0,0,1-.25-.25V1.5a1.5,1.5,0,0,0-3,0v8.75a.25.25,0,0,1-.25.25H1.5A1.5,1.5,0,0,0,0,12Z"
+                        ></path>
+                    </svg>
+                </Button>
+                <Button
                     colorScheme="red"
                     isDisabled={
                         logginin || profiles.length <= 1 || profiles[currentProfile].isOnline
                     }
-                    w={10}
+                    className={classes.remove}
                     title="Remove current profile"
                     aria-label="Remove current profile"
-                    icon={<CloseIcon />}
                     onClick={removeProfile}
-                />
-            </Flex>
-            <Divider my={2} />
-            <FormControl id="url" isRequired isInvalid={urlInvalid}>
-                <FormLabel>API URL</FormLabel>
+                >
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <path
+                            fill="#1a202c"
+                            d="M.439,21.44a1.5,1.5,0,0,0,2.122,2.121L11.823,14.3a.25.25,0,0,1,.354,0l9.262,9.263a1.5,1.5,0,1,0,2.122-2.121L14.3,12.177a.25.25,0,0,1,0-.354l9.263-9.262A1.5,1.5,0,0,0,21.439.44L12.177,9.7a.25.25,0,0,1-.354,0L2.561.44A1.5,1.5,0,0,0,.439,2.561L9.7,11.823a.25.25,0,0,1,0,.354Z"
+                        ></path>
+                    </svg>
+                </Button>
+            </div>
+            <Divider />
+            <div className="w100">
+                <Label htmlFor="url" isRequired>
+                    API URL
+                </Label>
                 <Input
+                    id="url"
                     value={profiles[currentProfile].url}
                     onChange={handleInput}
                     isDisabled={logginin || profiles[currentProfile].isOnline}
+                    isRequired
+                    isInvalid={urlInvalid}
                     placeholder="Full api.php URL (https://wikiname.fandom.com/en/api.php)"
                 />
-            </FormControl>
-            <Divider my={2} />
-            <FormControl id="username" isRequired isInvalid={usernameInvalid}>
-                <FormLabel>Bot Loginname</FormLabel>
+            </div>
+            <Divider />
+            <div className="w100">
+                <Label htmlFor="username" isRequired>
+                    Bot Loginname
+                </Label>
                 <Input
+                    id="username"
                     value={profiles[currentProfile].username}
                     onChange={handleInput}
                     isDisabled={logginin || profiles[currentProfile].isOnline}
+                    isRequired
+                    isInvalid={usernameInvalid}
                     placeholder="Generated via Special:BotPasswords"
                 />
-            </FormControl>
-            <Divider my={2} />
-            <FormControl id="password" isRequired isInvalid={passwordInvalid}>
-                <FormLabel>Bot Password</FormLabel>
+            </div>
+            <Divider />
+            <div className="w100">
+                <Label htmlFor="password" isRequired>
+                    Bot Password
+                </Label>
                 <Input
+                    id="password"
                     value={profiles[currentProfile].password}
                     onChange={handleInput}
                     isDisabled={logginin || profiles[currentProfile].isOnline}
-                    type="password"
+                    isPassword
+                    isRequired
+                    isInvalid={passwordInvalid}
                     placeholder="Generated via Special:BotPasswords"
                 />
-            </FormControl>
-            <Flex direction="row" w="100%" h="40px" justify="flex-end" mt={2}>
+            </div>
+            <div className={classes.buttons}>
                 <Checkbox
                     id="save-password"
                     name="savePassword"
@@ -238,7 +246,7 @@ const Account = ({
                 >
                     Remember password
                 </Checkbox>
-                <Divider orientation="vertical" mx={2} />
+                <Divider orientation="vertical" />
                 <Button
                     isDisabled={urlInvalid || usernameInvalid || passwordInvalid}
                     isLoading={logginin}
@@ -246,8 +254,8 @@ const Account = ({
                 >
                     {profiles[currentProfile].isOnline ? 'Log out' : 'Log in'}
                 </Button>
-            </Flex>
-        </Flex>
+            </div>
+        </main>
     );
 };
 

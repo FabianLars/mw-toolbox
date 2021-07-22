@@ -1,0 +1,22 @@
+.area {
+    flex: 1;
+    margin-bottom: 1rem;
+}
+
+.buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.mx {
+    margin: 0 0.5rem;
+}

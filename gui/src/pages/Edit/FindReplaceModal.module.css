@@ -1,0 +1,47 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.entry {
+    display: flex;
+    align-items: center;
+}
+
+.input {
+    margin: 0.25rem;
+}
+
+.link {
+    transition-property: var(--transition-property);
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    cursor: pointer;
+    text-decoration: none;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+.link:focus {
+    box-shadow: var(--shadow-outline);
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+.mr {
+    margin-right: 0.5rem;
+}
+
+.regexinfo {
+    font-size: small;
+    float: right;
+    padding-top: 0.3rem;
+}
+
+.spacer {
+    flex: 1;
+}

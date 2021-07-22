@@ -1,21 +1,7 @@
-import {
-    Button,
-    Checkbox,
-    Flex,
-    IconButton,
-    Input,
-    Link,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    ModalOverlay,
-    Spacer,
-} from '@chakra-ui/react';
-import { InfoOutlineIcon } from '@chakra-ui/icons';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
+import classes from './FindReplaceModal.module.css';
+import { Button, Checkbox, Input, Modal } from '@/components';
 
 type Pattern = {
     find: string;
@@ -28,10 +14,12 @@ type Props = {
     onClose: () => void;
     patterns: Pattern[];
     setPatterns: React.Dispatch<React.SetStateAction<Pattern[]>>;
+    initialRef?: React.RefObject<HTMLButtonElement>;
 };
 
 const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => {
     const [localPatterns, setLocalPatterns] = useState<Pattern[]>([]);
+    const initialRef = useRef<HTMLButtonElement>(null);
 
     const onModalClose = () => {
         const arr = patterns.map((obj) => Object.assign({}, obj));
@@ -50,77 +38,78 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
     }, [patterns]);
 
     return (
-        <Modal onClose={onModalClose} isOpen={isOpen} isCentered size="xl">
-            <ModalOverlay />
-            <ModalContent>
-                <ModalHeader>Find & Replace</ModalHeader>
-                <ModalBody>
-                    <Flex direction="column" h="100%" w="100%">
-                        {localPatterns.map((_, index) => (
-                            <Flex key={index} align="center">
-                                <Input
-                                    m={1}
-                                    placeholder="Find"
-                                    value={localPatterns[index]['find'] || ''}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') onModalSave();
-                                    }}
-                                    onChange={(event) =>
-                                        setLocalPatterns((oldArr) => {
-                                            const values = [...oldArr];
-                                            values[index]['find'] = event.target.value;
-                                            return values;
-                                        })
-                                    }
-                                />
-                                <Input
-                                    m={1}
-                                    placeholder="Replace"
-                                    value={localPatterns[index]['replace'] || ''}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') onModalSave();
-                                    }}
-                                    onChange={(event) =>
-                                        setLocalPatterns((oldArr) => {
-                                            const values = [...oldArr];
-                                            values[index]['replace'] = event.target.value;
-                                            return values;
-                                        })
-                                    }
-                                />
-                                <Checkbox
-                                    verticalAlign="center"
-                                    m={1}
-                                    isChecked={localPatterns[index]['isRegex']}
-                                    onChange={(event) =>
-                                        setLocalPatterns((oldArr) => {
-                                            const values = [...oldArr];
-                                            values[index]['isRegex'] = event.target.checked;
-                                            return values;
-                                        })
-                                    }
-                                >
-                                    Regex
-                                </Checkbox>
-                                <Link
-                                    href="https://docs.rs/regex/"
-                                    isExternal
-                                    title="Open Regex Documentation"
-                                >
-                                    <IconButton
-                                        mt={2}
-                                        variant="link"
-                                        icon={<InfoOutlineIcon />}
-                                        aria-label="Infos about Regular Expressions"
-                                    />
-                                </Link>
-                            </Flex>
-                        ))}
-                    </Flex>
-                </ModalBody>
-                <ModalFooter>
+        <Modal
+            onClose={onModalClose}
+            isOpen={isOpen}
+            initialFocusRef={initialRef}
+            header={
+                <>
+                    Find & Replace
+                    <div className={classes.regexinfo}>
+                        <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={classes.link}
+                            href="https://docs.rs/regex/"
+                            title="Open Regex Documentation"
+                        >
+                            Click here for the regex docs
+                        </a>
+                    </div>
+                </>
+            }
+            body={
+                <div className={classes.container}>
+                    {localPatterns.map((_, index) => (
+                        <div className={classes.entry} key={index}>
+                            <Input
+                                className={classes.input}
+                                placeholder="Find"
+                                label="text to find"
+                                value={localPatterns[index]['find'] || ''}
+                                onChange={(event) =>
+                                    setLocalPatterns((oldArr) => {
+                                        const values = [...oldArr];
+                                        values[index]['find'] = event.target.value;
+                                        return values;
+                                    })
+                                }
+                            />
+                            <Input
+                                className={classes.input}
+                                placeholder="Replace"
+                                label="replacement text"
+                                value={localPatterns[index]['replace'] || ''}
+                                onChange={(event) =>
+                                    setLocalPatterns((oldArr) => {
+                                        const values = [...oldArr];
+                                        values[index]['replace'] = event.target.value;
+                                        return values;
+                                    })
+                                }
+                            />
+                            <Checkbox
+                                id={'rgx' + index}
+                                className={classes.input}
+                                isChecked={localPatterns[index]['isRegex']}
+                                onChange={(event) =>
+                                    setLocalPatterns((oldArr) => {
+                                        const values = [...oldArr];
+                                        values[index]['isRegex'] = event.target.checked;
+                                        return values;
+                                    })
+                                }
+                            >
+                                Regex
+                            </Checkbox>
+                        </div>
+                    ))}
+                </div>
+            }
+            footer={
+                <>
                     <Button
-                        mr={2}
+                        className={classes.mr}
                         onClick={() => {
                             if (localPatterns.length < 10)
                                 setLocalPatterns((old) =>
@@ -139,14 +128,16 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
                     >
                         Clear all
                     </Button>
-                    <Spacer />
-                    <Button colorScheme="blue" mr={2} onClick={onModalSave}>
+                    <div className={classes.spacer}></div>
+                    <Button className={classes.mr} colorScheme="blue" onClick={onModalSave}>
                         Save
                     </Button>
-                    <Button onClick={onModalClose}>Cancel</Button>
-                </ModalFooter>
-            </ModalContent>
-        </Modal>
+                    <Button onClick={onModalClose} ref={initialRef}>
+                        Cancel
+                    </Button>
+                </>
+            }
+        />
     );
 };
 

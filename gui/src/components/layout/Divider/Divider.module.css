@@ -1,0 +1,18 @@
+.hr {
+    opacity: 0.6;
+    border: 0;
+    border-color: var(--border-color);
+    border-style: solid;
+}
+
+.horizontal {
+    border-bottom-width: 1px;
+    margin: 0.25rem 0;
+    width: 100%;
+}
+
+.vertical {
+    border-left-width: 1px;
+    margin: 0 0.25rem;
+    height: 100%;
+}
