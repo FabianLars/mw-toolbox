@@ -23,11 +23,15 @@ const Toast = ({ children, destroy }: Props) => {
     useEffect(() => {
         setTimeout(() => {
             setShow(true);
-        }, 1);
+        }, 100);
     }, []);
 
     return (
-        <div role="alert" className={`${classes.toast} ${show ? classes.visible : ''}`}>
+        <div
+            onClick={() => destroy()}
+            role="alert"
+            className={`${classes.toast} ${show ? classes.visible : ''}`}
+        >
             {children}
         </div>
     );
