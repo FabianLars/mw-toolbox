@@ -2,6 +2,7 @@
     white-space: nowrap;
     padding: 0 1rem;
     appearance: none;
+    -webkit-appearance: none;
     background: rgba(255, 255, 255, 0.08);
     font-weight: 500;
     height: 50px;

@@ -1,5 +1,6 @@
 .area {
     appearance: none;
+    -webkit-appearance: none;
     background: inherit;
     border: 1px solid var(--border-color);
     border-radius: 0.35rem;

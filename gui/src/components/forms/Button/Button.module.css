@@ -1,9 +1,11 @@
 .button {
     appearance: none;
+    -webkit-appearance: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     user-select: none;
+    -webkit-user-select: none;
     white-space: nowrap;
     outline: 2px solid transparent;
     outline-offset: 2px;
