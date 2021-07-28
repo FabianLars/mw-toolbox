@@ -17,6 +17,9 @@ use mw_tools::WikiClient;
 
 mod cmd;
 
+#[cfg(target_os = "macos")]
+mod menu;
+
 // There is nothing we can do if init fails, so let's panic in the disco.
 static CLIENT: Lazy<AsyncMutex<WikiClient>> =
     Lazy::new(|| AsyncMutex::new(WikiClient::new().unwrap()));
@@ -27,7 +30,7 @@ static CANCEL_UPLOAD: AtomicBool = AtomicBool::new(false);
 fn main() {
     pretty_env_logger::init();
 
-    tauri::Builder::default()
+    let builder = tauri::Builder::default()
         .on_page_load(|window, _| {
             window.listen("cancel-upload", move |_| {
                 CANCEL_UPLOAD.store(true, Ordering::Relaxed)
@@ -53,7 +56,12 @@ fn main() {
             cmd::purge,
             cmd::update_profile_store,
             cmd::upload
-        ])
+        ]);
+
+    #[cfg(target_os = "macos")]
+    let builder = builder.menu(menu::menu());
+
+    builder
         .run(tauri::generate_context!())
         .expect("error while running application");
 }

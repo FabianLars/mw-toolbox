@@ -1247,6 +1247,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "gtk-source-sys"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "010ad29f87606c4bc91fe4ab6762cab3d5155af7100e59c1af9c6d9aba5df689"
+dependencies = [
+ "bitflags",
+ "cairo-sys-rs",
+ "gdk-pixbuf-sys",
+ "gdk-sys",
+ "gio-sys",
+ "glib-sys",
+ "gobject-sys",
+ "gtk-sys",
+ "libc",
+ "pkg-config",
+]
+
+[[package]]
 name = "gtk-sys"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2848,9 +2866,9 @@ checksum = "2579985fda508104f7587689507983eadd6a6e84dd35d6d115361f530916fa0d"
 
 [[package]]
 name = "siphasher"
-version = "0.3.5"
+version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cbce6d4507c7e4a3962091436e56e95290cb71fa302d0d270e32130b75fbff27"
+checksum = "729a25c17d72b06c68cb47955d44fda88ad2d3e7d77e025663fdd69b93dd71a1"
 
 [[package]]
 name = "slab"
@@ -2887,6 +2905,30 @@ dependencies = [
  "libc",
  "pkg-config",
  "system-deps",
+]
+
+[[package]]
+name = "sourceview"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6197ca40c697b552b8d27cfa9d8ee15267037ac071f4c1010749625ba2fc8f79"
+dependencies = [
+ "bitflags",
+ "cairo-rs",
+ "gdk",
+ "gdk-pixbuf",
+ "gdk-pixbuf-sys",
+ "gdk-sys",
+ "gio",
+ "gio-sys",
+ "glib",
+ "glib-sys",
+ "gobject-sys",
+ "gtk",
+ "gtk-source-sys",
+ "gtk-sys",
+ "libc",
+ "pango",
 ]
 
 [[package]]
@@ -3113,6 +3155,7 @@ dependencies = [
  "raw-window-handle",
  "scopeguard",
  "serde",
+ "sourceview",
  "unicode-segmentation",
  "winapi",
  "x11-dl",
