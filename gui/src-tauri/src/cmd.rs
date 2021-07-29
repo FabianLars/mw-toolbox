@@ -218,7 +218,11 @@ pub async fn upload(text: &str, files: Vec<&str>, window: tauri::Window) -> Resu
     let mut file_iter = files.iter();
     while !CANCEL_UPLOAD.load(Ordering::Relaxed) {
         if let Some(file) = file_iter.next() {
-            api::upload::upload(&*CLIENT.lock().await, file, Some(text)).await?;
+            // Check if path resolves to a file. Skip upload otherwise.
+            if std::fs::metadata(file)?.is_file() {
+                api::upload::upload(&*CLIENT.lock().await, file, Some(text)).await?;
+            }
+            // Emit uploaded event no matter if it's a file or a folder, to remove it from the frontend.
             window
                 .emit("file-uploaded", file)
                 .map_err(|err| ToolsError::Other(err.to_string()))?;

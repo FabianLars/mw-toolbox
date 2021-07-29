@@ -57,6 +57,12 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
         const unlistenUploaded = listen('file-uploaded', ({ payload }) => {
             setFiles((oldFiles) => oldFiles.filter((f) => f !== payload));
         });
+        // FIXME: Change this to 'tauri://file-drop' on next tauri release
+        const unlistenFileDrop = listen('tauri://file-drop-hover', (res: { payload: string[] }) => {
+            if (res.payload[0]) {
+                setFiles((oldFiles) => [...new Set([...oldFiles, ...(res.payload as string[])])]);
+            }
+        });
         (invoke('cache_get', { key: 'files-cache' }) as Promise<string[] | null>).then((res) =>
             setFiles(res ?? []),
         );
@@ -66,6 +72,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
 
         return () => {
             unlistenUploaded.then((f) => f());
+            unlistenFileDrop.then((f) => f());
         };
     }, []);
 
@@ -137,7 +144,11 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                     </Button>
                 </div>
             </div>
-            <FileList placeholder="Selected files will be displayed here.">
+            <FileList
+                placeholder="Selected files will be displayed here.
+            You can also drop files on here to add them to the list.
+            Paths resolving to folders will be skipped without an error."
+            >
                 {files.map((f) => (
                     <div
                         key={f}
