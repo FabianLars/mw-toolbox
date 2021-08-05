@@ -1,3 +1,4 @@
+import { getCurrent, PhysicalSize } from '@tauri-apps/api/window';
 import React from 'react';
 import classes from './Select.module.css';
 
@@ -33,6 +34,15 @@ const Select = ({
             disabled={isDisabled}
             onChange={onChange}
             value={value}
+            // TODO: remove this once MS gets their shit together
+            onMouseOver={async () => {
+                const window = getCurrent();
+                const size = await window.innerSize();
+                const tempSize = new PhysicalSize(size.width + 1, size.height);
+                const currSize = new PhysicalSize(size.width, size.height);
+                await window.setSize(tempSize);
+                await window.setSize(currSize);
+            }}
         >
             {placeholder && <option value="">{placeholder}</option>}
             {children}
