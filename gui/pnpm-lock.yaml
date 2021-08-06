@@ -552,8 +552,8 @@ packages:
       '@types/serve-static': 1.13.10
     dev: true
 
-  /@types/http-assert/1.5.1:
-    resolution: {integrity: sha512-PGAK759pxyfXE78NbKxyfRcWYA/KwW17X290cNev/qAsn9eQIxkH4shoNBafH37wewhDG/0p1cHPbK6+SzZjWQ==}
+  /@types/http-assert/1.5.2:
+    resolution: {integrity: sha512-Ddzuzv/bB2prZnJKlS1sEYhaeT50wfJjhcTTTQLjEsEZJlk3XB4Xohieyq+P4VXIzg7lrQ1Spd/PfRnBpQsdqA==}
     dev: true
 
   /@types/http-cache-semantics/4.0.1:
@@ -602,7 +602,7 @@ packages:
       '@types/accepts': 1.3.5
       '@types/content-disposition': 0.5.4
       '@types/cookies': 0.7.7
-      '@types/http-assert': 1.5.1
+      '@types/http-assert': 1.5.2
       '@types/http-errors': 1.8.1
       '@types/keygrip': 1.0.2
       '@types/koa-compose': 3.2.5
