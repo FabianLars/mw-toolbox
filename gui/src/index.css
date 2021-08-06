@@ -33,16 +33,10 @@
     word-wrap: break-word;
 
     color: var(--font-color);
-
     border-width: 0;
     border-style: solid;
     border-color: rgba(255, 255, 255, 0.16);
-
-    /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; */
-    /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
-
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     text-decoration: none;
 }
 
