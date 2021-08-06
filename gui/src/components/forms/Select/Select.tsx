@@ -28,7 +28,7 @@ const Select = ({
     return (
         <select
             aria-label={label}
-            className={`${classes.select} ${className}`}
+            className={`${classes.select} ${className} ${window.OS ?? ''}`}
             id={id}
             name={name}
             disabled={isDisabled}

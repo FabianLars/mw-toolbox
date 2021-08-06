@@ -38,6 +38,7 @@ fn main() {
             window.listen("cancel-autoedit", move |_| {
                 CANCEL_EDIT.store(true, Ordering::Relaxed)
             });
+            let _ = window.eval(&format!("window.OS='{}'", std::env::consts::OS));
         })
         .manage(Mutex::new(HashMap::<String, Value>::new()))
         .invoke_handler(tauri::generate_handler![

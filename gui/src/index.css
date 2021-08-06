@@ -56,6 +56,11 @@ body {
     font-size: 16px;
 }
 
+/* Fix text inside select/input on windows */
+.windows {
+    padding-bottom: 1px;
+}
+
 .w100 {
     width: 100%;
 }

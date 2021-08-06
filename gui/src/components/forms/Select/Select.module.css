@@ -7,7 +7,7 @@
     height: 2.5rem;
     outline: 2px solid transparent;
     outline-offset: 2px;
-    padding: 0 2rem 1px 1rem;
+    padding: 0 2rem 0 1rem;
     transition-duration: var(--transition-duration);
     transition-property: var(--transition-property);
     width: 100%;
