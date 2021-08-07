@@ -93,5 +93,10 @@ jobs:
             - name: Type check
               run: pnpm tsc
 
+            - name: Create vite cache
+              # not pre-bundling the dependencies makes the test itself fail
+              continue-on-error: true
+              run: pnpm test
+
             - name: Run tests
               run: pnpm test
