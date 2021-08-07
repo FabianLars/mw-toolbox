@@ -91,7 +91,7 @@ jobs:
                   run_install: true
 
             - name: Type check
-              run: pnpm type-check
+              run: pnpm tsc
 
             - name: Run tests
               run: pnpm test
