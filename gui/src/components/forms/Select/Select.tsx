@@ -35,14 +35,20 @@ const Select = ({
             onChange={onChange}
             value={value}
             // TODO: remove this once MS gets their shit together
-            onMouseOver={async () => {
-                const window = getCurrent();
-                const size = await window.innerSize();
-                const tempSize = new PhysicalSize(size.width + 1, size.height);
-                const currSize = new PhysicalSize(size.width, size.height);
-                await window.setSize(tempSize);
-                await window.setSize(currSize);
-            }}
+            onMouseOver={
+                window.OS == 'windows'
+                    ? async () => {
+                          console.log('test');
+
+                          const window = getCurrent();
+                          const size = await window.innerSize();
+                          const tempSize = new PhysicalSize(size.width + 1, size.height);
+                          const currSize = new PhysicalSize(size.width, size.height);
+                          await window.setSize(tempSize);
+                          await window.setSize(currSize);
+                      }
+                    : undefined
+            }
         >
             {placeholder && <option value="">{placeholder}</option>}
             {children}
