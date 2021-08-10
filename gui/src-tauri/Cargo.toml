@@ -11,6 +11,9 @@ version = "0.1.0"
 # default = [ "custom-protocol" ]
 custom-protocol = ["tauri/custom-protocol"]
 
+[build-dependencies]
+tauri-build = "1.0.0-beta.3"
+
 [dependencies]
 anyhow = "1"
 mw-tools = {path = "../../crates/mw-tools"}
@@ -28,9 +31,6 @@ unescape = "0.1"
 
 [target.'cfg(target_os="macos")'.dependencies]
 tauri = {version = "1.0.0-beta.5", features = ["dialog-open", "reqwest-client", "shell-open", "updater", "menu"] }
-
-[build-dependencies]
-tauri-build = "1.0.0-beta.3"
 
 [[bin]]
 name = "mw-toolbox"
