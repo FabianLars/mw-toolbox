@@ -1814,9 +1814,9 @@ dependencies = [
 
 [[package]]
 name = "native-tls"
-version = "0.2.7"
+version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b8d96b2e1c8da3957d58100b09f102c6d9cfdfced01b7ec5a8974044bb09dbd4"
+checksum = "48ba9f7719b5a0f42f338907614285fb5fd70e53858141f69898a1fb7203b24d"
 dependencies = [
  "lazy_static",
  "libc",
@@ -2134,11 +2134,11 @@ dependencies = [
 
 [[package]]
 name = "phf"
-version = "0.9.1"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b21b531851d1d86a90bd62dd79be87ce2d90b7bcb6afbae07813921d6156696a"
+checksum = "b2ac8b67553a7ca9457ce0e526948cad581819238f4a9d1ea74545851fa24f37"
 dependencies = [
- "phf_macros 0.9.1",
+ "phf_macros 0.9.0",
  "phf_shared 0.9.0",
  "proc-macro-hack",
 ]
@@ -2189,9 +2189,9 @@ dependencies = [
 
 [[package]]
 name = "phf_macros"
-version = "0.9.1"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ef44ec4684c899a8ab0c2330beb2b6852842e60458cc83721c333b5dbc04ece6"
+checksum = "b706f5936eb50ed880ae3009395b43ed19db5bff2ebd459c95e7bf013a89ab86"
 dependencies = [
  "phf_generator 0.9.1",
  "phf_shared 0.9.0",
@@ -3156,9 +3156,9 @@ dependencies = [
 
 [[package]]
 name = "tar"
-version = "0.4.35"
+version = "0.4.36"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7d779dc6aeff029314570f666ec83f19df7280bb36ef338442cfa8c604021b80"
+checksum = "8190d9cdacf6ee1b080605fd719b58d80a9fcbcea64db6744b26f743da02e447"
 dependencies = [
  "filetime",
  "libc",
@@ -3295,7 +3295,7 @@ dependencies = [
  "heck",
  "html5ever",
  "kuchiki",
- "phf 0.9.1",
+ "phf 0.9.0",
  "proc-macro2",
  "quote",
  "serde",
