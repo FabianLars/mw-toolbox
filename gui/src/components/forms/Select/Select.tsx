@@ -38,8 +38,6 @@ const Select = ({
             onMouseOver={
                 window.OS == 'windows'
                     ? async () => {
-                          console.log('test');
-
                           const window = getCurrent();
                           const size = await window.innerSize();
                           const tempSize = new PhysicalSize(size.width + 1, size.height);
