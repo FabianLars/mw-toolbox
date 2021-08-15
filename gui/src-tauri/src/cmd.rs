@@ -11,32 +11,46 @@ use crate::{CANCEL_EDIT, CANCEL_UPLOAD, CLIENT};
 type Cache = parking_lot::Mutex<HashMap<String, Value>>;
 type Result<T, E = ToolsError> = core::result::Result<T, E>;
 
+/// Struct to store users. Each profile is stored in a new instance.
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Profile {
+    /// Name of the profile
     profile: String,
+    /// Username of the account
     username: String,
+    /// Password of the account
     password: String,
+    /// Wiki-URL of the account
     url: String,
+    /// Whether the login credentials should be saved locally.
     #[serde(rename = "savePassword")]
     save_password: bool,
 }
 
+/// Return value of [get_page].
 #[derive(Debug, Serialize)]
 pub struct GetPage {
+    /// Page content
     content: String,
+    /// Whether the content got edited via regex or not.
     edited: bool,
 }
 
+/// Struct for Find&Replace operations. Each operation is stored in a new instance.
 #[derive(Clone, Debug, Deserialize)]
 pub struct FindReplace {
+    /// Value to replace
     #[serde(default)]
     pub find: String,
+    /// Value to insert
     #[serde(default)]
     pub replace: String,
+    /// Whether find and replace fields should be interpreted as a regular expression.
     #[serde(rename = "isRegex", default)]
     pub is_regex: bool,
 }
 
+/// Get json-compatible ([serde_json::Value]) objects from runtime cache.
 #[command]
 pub fn cache_get(key: String, cache: tauri::State<Cache>) -> Option<Value> {
     if let Some(v) = cache.lock().get(&key) {
@@ -47,27 +61,31 @@ pub fn cache_get(key: String, cache: tauri::State<Cache>) -> Option<Value> {
     }
 }
 
+/// Store json-compatible ([serde_json::Value]) objects in runtime cache.
 #[command]
 pub fn cache_set(key: String, value: Value, cache: tauri::State<Cache>) -> bool {
     cache.lock().insert(key, value).is_some()
 }
 
+/// Command to delete pages.
 #[command]
 pub async fn delete(pages: Vec<&str>, reason: Option<&str>) -> Result<()> {
-    let client = CLIENT.lock().await;
-    api::delete::delete(&*client, &pages, reason).await
+    api::delete::delete(&*CLIENT.lock().await, &pages, reason).await
 }
 
+/// Command to download files.
 #[command]
 pub async fn download(files: Vec<&str>) -> Result<()> {
     api::download::download(&*CLIENT.lock().await, &files).await
 }
 
+/// Command to save edited pages.
 #[command]
 pub async fn edit(title: &str, content: &str, summary: Option<&str>) -> Result<String> {
     api::edit::edit(&*CLIENT.lock().await, title, content, summary).await
 }
 
+/// Command that runs the editor in auto-save mode.
 #[command]
 pub async fn auto_edit(
     titles: Vec<&str>,
@@ -98,6 +116,7 @@ pub async fn auto_edit(
     Ok(())
 }
 
+/// Command to get page content. Runs Find&Replace operations before returning.
 #[command]
 pub async fn get_page(page: &str, patterns: Vec<FindReplace>) -> Result<GetPage> {
     let mut s = api::parse::get_page_content(&*CLIENT.lock().await, page).await?;
@@ -126,6 +145,7 @@ pub async fn get_page(page: &str, patterns: Vec<FindReplace>) -> Result<GetPage>
     Ok(GetPage { content: s, edited })
 }
 
+/// Command to get locally saved users and the index of the last active profile.
 #[command]
 pub async fn init() -> (Vec<Profile>, usize) {
     storage::load_secure::<(Vec<Profile>, usize)>("oB9uBQDs")
@@ -133,6 +153,7 @@ pub async fn init() -> (Vec<Profile>, usize) {
         .unwrap_or_default()
 }
 
+/// Command to get wiki-generated page lists.
 #[command]
 pub async fn list(listtype: &str, param: Option<&str>) -> Result<Vec<String>> {
     let client = CLIENT.lock().await;
@@ -157,6 +178,7 @@ pub async fn list(listtype: &str, param: Option<&str>) -> Result<Vec<String>> {
     }
 }
 
+/// Command to login.
 #[command]
 pub async fn login(profiles: Vec<Profile>, current: usize) -> Result<usize> {
     let current_profile = &profiles[current];
@@ -172,11 +194,13 @@ pub async fn login(profiles: Vec<Profile>, current: usize) -> Result<usize> {
         .and(Ok(current))
 }
 
+/// Command to logout.
 #[command]
 pub async fn logout() -> Result<()> {
     CLIENT.lock().await.logout().await
 }
 
+/// Command to move pages.
 #[command]
 pub async fn rename(from: Vec<String>, to: Vec<String>) -> Result<()> {
     api::rename::rename(
@@ -189,6 +213,7 @@ pub async fn rename(from: Vec<String>, to: Vec<String>) -> Result<()> {
     .await
 }
 
+/// Command to purge or nulledit pages.
 #[command]
 pub async fn purge(is_nulledit: bool, pages: Vec<&str>) -> Result<()> {
     let client = CLIENT.lock().await;
@@ -199,6 +224,7 @@ pub async fn purge(is_nulledit: bool, pages: Vec<&str>) -> Result<()> {
     }
 }
 
+/// Command to update locally saved users.
 #[command]
 pub async fn update_profile_store(mut profiles: Vec<Profile>, current: usize) -> Result<()> {
     for p in profiles.iter_mut() {
@@ -212,6 +238,7 @@ pub async fn update_profile_store(mut profiles: Vec<Profile>, current: usize) ->
         .map_err(|err| ToolsError::Other(err.to_string()))
 }
 
+/// Command to upload files.
 #[command]
 pub async fn upload(text: &str, files: Vec<&str>, window: tauri::Window) -> Result<()> {
     CANCEL_UPLOAD.store(false, Ordering::Relaxed);
