@@ -12,7 +12,7 @@ Input files need to be formatted with newline seperation (eg 1 wiki article per 
     -   run "pnpm|yarn|npm start" to start the dev server
     -   run "pnpm|yarn|npm tauri dev" to start the tauri app
 -   CLI usage (development):
-    -   run via "cargo run \<command\> (\<args if needed\>)"
+    -   run via "cargo run \<command\> (\<args if needed\>) inside cli folder"
         -   these commands need FANDOM_BOT_NAME, FANDOM_BOT_PASSWORD and/or RIOT_API_KEY (depends on command) environment variables as of now
             -   Fandom login data can be provided via:
                 "cargo run [--loginname \<name\>|-n \<name\>] and [--loginpassword \<pw\>|-p \<pw\>]"

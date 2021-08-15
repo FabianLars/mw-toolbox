@@ -5,40 +5,38 @@ specifiers:
   '@testing-library/react': ^12.0.0
   '@types/chai': ^4.2.21
   '@types/mocha': ^9.0.0
-  '@types/react': ^17.0.17
+  '@types/react': ^17.0.18
   '@types/react-dom': ^17.0.9
   '@vitejs/plugin-react-refresh': ^1.3.6
-  '@web/test-runner': ^0.13.15
+  '@web/test-runner': ^0.13.16
   chai: ^4.3.4
-  history: ^5.0.0
+  history: ^5.0.1
   minimal-tauri-cli: ^1.0.0-beta.5
   prettier: ^2.3.2
   react: ^17.0.2
   react-dom: ^17.0.2
   react-focus-lock: ^2.5.2
-  react-router: ^6.0.0-beta.0
-  react-router-dom: ^6.0.0-beta.0
+  react-router-dom: ^6.0.0-beta.1
   typescript: ^4.3.5
   vite: ^2.4.4
   vite-web-test-runner-plugin: ^0.1.0
 
 dependencies:
   '@tauri-apps/api': 1.0.0-beta.5
-  history: 5.0.0
+  history: 5.0.1
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
-  react-focus-lock: 2.5.2_9280ae23271fd1e8184f767af1a90e55
-  react-router: 6.0.0-beta.0_history@5.0.0+react@17.0.2
-  react-router-dom: 6.0.0-beta.0_d9087d3b29103f1c99eb8571e6a2a0c4
+  react-focus-lock: 2.5.2_d94f33b06fdce27140dc5b0a474a21a8
+  react-router-dom: 6.0.0-beta.1_94912414cd94cc5bc891cce65dd59788
 
 devDependencies:
   '@testing-library/react': 12.0.0_react-dom@17.0.2+react@17.0.2
   '@types/chai': 4.2.21
   '@types/mocha': 9.0.0
-  '@types/react': 17.0.17
+  '@types/react': 17.0.18
   '@types/react-dom': 17.0.9
   '@vitejs/plugin-react-refresh': 1.3.6
-  '@web/test-runner': 0.13.15
+  '@web/test-runner': 0.13.16
   chai: 4.3.4
   minimal-tauri-cli: 1.0.0-beta.5
   prettier: 2.3.2
@@ -563,11 +561,11 @@ packages:
   /@types/react-dom/17.0.9:
     resolution: {integrity: sha512-wIvGxLfgpVDSAMH5utdL9Ngm5Owu0VsGmldro3ORLXV8CShrL8awVj06NuEXFQ5xyaYfdca7Sgbk/50Ri1GdPg==}
     dependencies:
-      '@types/react': 17.0.17
+      '@types/react': 17.0.18
     dev: true
 
-  /@types/react/17.0.17:
-    resolution: {integrity: sha512-nrfi7I13cAmrd0wje8czYpf5SFbryczCtPzFc6ijqvdjKcyA3tCvGxwchOUlxb2ucBPuJ9Y3oUqKrRqZvrz0lw==}
+  /@types/react/17.0.18:
+    resolution: {integrity: sha512-YTLgu7oS5zvSqq49X5Iue5oAbVGhgPc5Au29SJC4VeE17V6gASoOxVkUDy9pXFMRFxCWCD9fLeweNFizo3UzOg==}
     dependencies:
       '@types/prop-types': 15.7.4
       '@types/scheduler': 0.16.2
@@ -673,8 +671,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@web/dev-server-rollup/0.3.8:
-    resolution: {integrity: sha512-IoQh/mcqssyCL3nNB4dAwcV3VMZfwAcRw2TDFnY4bKnPnkZSOSFR3R+SuyvwhvvnG14NmnNE6RA2Lf7lt7AsmA==}
+  /@web/dev-server-rollup/0.3.9:
+    resolution: {integrity: sha512-8NOV8GxcDXk9u+hsVYllGiMhcORYMFK+LtLT4HIg3+emW64j0MynttowBoOFpgwv7YOuVQ6lWe1kmJxiI+TRdg==}
     engines: {node: '>=10.0.0'}
     dependencies:
       '@web/dev-server-core': 0.3.13
@@ -688,8 +686,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@web/dev-server/0.1.20:
-    resolution: {integrity: sha512-jn+X91xfTlTtidQFPp/o9HvbYCdFMGwc7gA8NBHv+PTPSIu79wxQESV2DONKFMyR0RXshMvT3mwQwlIvPEzuBg==}
+  /@web/dev-server/0.1.21:
+    resolution: {integrity: sha512-au4ALDpojQj16seFYufSlFJCARkHZvC/L2sHsphqsY1lMEB/zLLg4XDpCcyF5t49SfB9glI1c8jgOnyHuofhnw==}
     engines: {node: '>=10.0.0'}
     hasBin: true
     dependencies:
@@ -698,7 +696,7 @@ packages:
       '@types/command-line-args': 5.2.0
       '@web/config-loader': 0.1.3
       '@web/dev-server-core': 0.3.13
-      '@web/dev-server-rollup': 0.3.8
+      '@web/dev-server-rollup': 0.3.9
       camelcase: 6.2.0
       chalk: 4.1.2
       command-line-args: 5.2.0
@@ -723,12 +721,12 @@ packages:
       parse5: 6.0.1
     dev: true
 
-  /@web/test-runner-chrome/0.10.1:
-    resolution: {integrity: sha512-6c03MdW8UfeZHZSjQZk1po/2uN8aimVXft76PttGbd3M6EM98dN5uKBwz3cbPuy49XyqzwkhktrYhlmBZAtU8w==}
+  /@web/test-runner-chrome/0.10.2:
+    resolution: {integrity: sha512-Casm5au6/bYa8iA87Zw93r5PkfEhDYRVRKB15HjkmTHGRNYZ5054QzANUpk6c8b8NV9Wd6gXqsZs7rdcdDdFmw==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@web/test-runner-core': 0.10.20
-      '@web/test-runner-coverage-v8': 0.4.7
+      '@web/test-runner-coverage-v8': 0.4.8
       chrome-launcher: 0.14.0
       puppeteer-core: 9.1.1
     transitivePeerDependencies:
@@ -737,8 +735,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@web/test-runner-commands/0.5.9:
-    resolution: {integrity: sha512-jd3roAqchJ5t4onINaKm413IvL1XZTuwqyMPONEuRSVDz34Hi/qQliP2KWatUHbE8d8Tvy8UWBKaKz1YtIFYNw==}
+  /@web/test-runner-commands/0.5.10:
+    resolution: {integrity: sha512-ByVvJl3p5DfQraRj4U40rLxkHLEkPgAHDJvdznGFPHgxi4lg2GdNSnhVou14W0pyomUDCfG5gl2Lj33M/GLGLQ==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@web/test-runner-core': 0.10.20
@@ -786,8 +784,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@web/test-runner-coverage-v8/0.4.7:
-    resolution: {integrity: sha512-S0RRG3BQrpUoCq7qihnFx7p1ozMMyDhKOchBZcFDzzar0LpWbsNcDImYZhACgHv2QLabMRzwP95Vf9Tsf99p4A==}
+  /@web/test-runner-coverage-v8/0.4.8:
+    resolution: {integrity: sha512-Ib0AscR8Xf9E/V7rf3XOVQTe4vKIbwSTupxV1xGgzj3x4RKUuMUg9FLz9EigZ5iN0mOzZKDllyRS523hbdhDtA==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@web/test-runner-core': 0.10.20
@@ -800,8 +798,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@web/test-runner-mocha/0.7.3:
-    resolution: {integrity: sha512-EbJydgh9Peo74SR0WjAEXs9X64ec41RaSXp4yXCup7jzvzH/5mQd2kZ/ga9F8Jh3zcKknR+s59JLVivgc5Ni7A==}
+  /@web/test-runner-mocha/0.7.4:
+    resolution: {integrity: sha512-EvAz6eCyBpVyXUq/bTSYpSwcSd/jH8XY+vAwS/xprWNo2WFY0LW0FcwcuWdq4LckDxTZVXaGb1dj3lDfEsOeVw==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@types/mocha': 8.2.3
@@ -812,18 +810,18 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@web/test-runner/0.13.15:
-    resolution: {integrity: sha512-LxGVk0ixqTiecUK2LzqtuCzMO1kdIi+cce1+yaOKdoA7hre+XDNkrxT0ep6OEJjdgo1HL/uynXYE8MXeC5gkuw==}
+  /@web/test-runner/0.13.16:
+    resolution: {integrity: sha512-eFPxxuqgLzyAOa7WEYTMi+DXWrqxU3tpuH4bCiTfDDx7uRRF/tbKA0PrQ1zv2BfSyZP1tQ+nfc6ehJQrBPUBNQ==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
       '@web/browser-logs': 0.2.4
       '@web/config-loader': 0.1.3
-      '@web/dev-server': 0.1.20
-      '@web/test-runner-chrome': 0.10.1
-      '@web/test-runner-commands': 0.5.9
+      '@web/dev-server': 0.1.21
+      '@web/test-runner-chrome': 0.10.2
+      '@web/test-runner-commands': 0.5.10
       '@web/test-runner-core': 0.10.20
-      '@web/test-runner-mocha': 0.7.3
+      '@web/test-runner-mocha': 0.7.4
       camelcase: 6.2.0
       chalk: 4.1.2
       command-line-args: 5.2.0
@@ -980,7 +978,7 @@ packages:
     dependencies:
       caniuse-lite: 1.0.30001251
       colorette: 1.3.0
-      electron-to-chromium: 1.3.805
+      electron-to-chromium: 1.3.806
       escalade: 3.1.1
       node-releases: 1.1.74
     dev: true
@@ -1313,8 +1311,8 @@ packages:
     resolution: {integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=}
     dev: true
 
-  /electron-to-chromium/1.3.805:
-    resolution: {integrity: sha512-uUJF59M6pNSRHQaXwdkaNB4BhSQ9lldRdG1qCjlrAFkynPGDc5wPoUcYEQQeQGmKyAWJPvGkYAWmtVrxWmDAkg==}
+  /electron-to-chromium/1.3.806:
+    resolution: {integrity: sha512-AH/otJLAAecgyrYp0XK1DPiGVWcOgwPeJBOLeuFQ5l//vhQhwC9u6d+GijClqJAmsHG4XDue81ndSQPohUu0xA==}
     dev: true
 
   /emoji-regex/8.0.0:
@@ -1561,8 +1559,8 @@ packages:
       function-bind: 1.1.1
     dev: true
 
-  /history/5.0.0:
-    resolution: {integrity: sha512-3NyRMKIiFSJmIPdq7FxkNMJkQ7ZEtVblOQ38VtKaA0zZMW1Eo6Q6W8oDKEflr1kNNTItSnk4JMCO1deeSgbLLg==}
+  /history/5.0.1:
+    resolution: {integrity: sha512-5qC/tFUKfVci5kzgRxZxN5Mf1CV8NmJx9ByaPX0YTLx5Vz3Svh7NYp6eA4CpDq4iA9D0C1t8BNIfvQIrUI3mVw==}
     dependencies:
       '@babel/runtime': 7.15.3
     dev: false
@@ -2251,7 +2249,7 @@ packages:
       scheduler: 0.20.2
     dev: false
 
-  /react-focus-lock/2.5.2_9280ae23271fd1e8184f767af1a90e55:
+  /react-focus-lock/2.5.2_d94f33b06fdce27140dc5b0a474a21a8:
     resolution: {integrity: sha512-WzpdOnEqjf+/A3EH9opMZWauag7gV0BxFl+EY4ElA4qFqYsUsBLnmo2sELbN5OC30S16GAWMy16B9DLPpdJKAQ==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0
@@ -2261,7 +2259,7 @@ packages:
       prop-types: 15.7.2
       react: 17.0.2
       react-clientside-effect: 1.2.5_react@17.0.2
-      use-callback-ref: 1.2.5_9280ae23271fd1e8184f767af1a90e55
+      use-callback-ref: 1.2.5_d94f33b06fdce27140dc5b0a474a21a8
       use-sidecar: 1.0.5_react@17.0.2
     transitivePeerDependencies:
       - '@types/react'
@@ -2280,28 +2278,26 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /react-router-dom/6.0.0-beta.0_d9087d3b29103f1c99eb8571e6a2a0c4:
-    resolution: {integrity: sha512-36yNNGMT8RB9FRPL9nKJi6HKDkgOakU+o/2hHpSzR6e37gN70MpOU6QQlmif4oAWWBwjyGc3ZNOMFCsFuHUY5w==}
+  /react-router-dom/6.0.0-beta.1_94912414cd94cc5bc891cce65dd59788:
+    resolution: {integrity: sha512-tgbY5yy9vC8NFFQAobbPeCBgJDVsWuqw6pQEECUuBntfPMfpBP8Dx1sgOAYPGF13yAxc+h+Piml109ACrcZ3ng==}
     peerDependencies:
       history: '>=5'
       react: '>=16.8'
       react-dom: '>=16.8'
     dependencies:
-      history: 5.0.0
-      prop-types: 15.7.2
+      history: 5.0.1
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-      react-router: 6.0.0-beta.0_history@5.0.0+react@17.0.2
+      react-router: 6.0.0-beta.1_history@5.0.1+react@17.0.2
     dev: false
 
-  /react-router/6.0.0-beta.0_history@5.0.0+react@17.0.2:
-    resolution: {integrity: sha512-VgMdfpVcmFQki/LZuLh8E/MNACekDetz4xqft+a6fBZvvJnVqKbLqebF7hyoawGrV1HcO5tVaUang2Og4W2j1Q==}
+  /react-router/6.0.0-beta.1_history@5.0.1+react@17.0.2:
+    resolution: {integrity: sha512-Y0Pkb9/lYVKl+DGu8a9ZGXFmwczRZrCvoWIIej128wyjXtPrmcraPCy7VHQEgeQ3ps2+YbgIZcTro4FjOoN7HQ==}
     peerDependencies:
       history: '>=5'
       react: '>=16.8'
     dependencies:
-      history: 5.0.0
-      prop-types: 15.7.2
+      history: 5.0.1
       react: 17.0.2
     dev: false
 
@@ -2629,7 +2625,7 @@ packages:
     engines: {node: '>= 0.8'}
     dev: true
 
-  /use-callback-ref/1.2.5_9280ae23271fd1e8184f767af1a90e55:
+  /use-callback-ref/1.2.5_d94f33b06fdce27140dc5b0a474a21a8:
     resolution: {integrity: sha512-gN3vgMISAgacF7sqsLPByqoePooY3n2emTH59Ur5d/M8eg4WTWu1xp8i8DHjohftIyEx0S08RiYxbffr4j8Peg==}
     engines: {node: '>=8.5.0'}
     peerDependencies:
@@ -2639,7 +2635,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': 17.0.17
+      '@types/react': 17.0.18
       react: 17.0.2
     dev: false
 

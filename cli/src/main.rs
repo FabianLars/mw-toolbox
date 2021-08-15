@@ -3,7 +3,7 @@
 use std::path::PathBuf;
 
 use anyhow::{anyhow, Result};
-use clap::Clap;
+use clap::{ArgEnum, Clap};
 use tokio::{fs, io::AsyncWriteExt};
 
 use api::rename::Destination;
@@ -66,7 +66,7 @@ enum Subcommand {
     },
 }
 
-#[derive(Clap, Debug, PartialEq)]
+#[derive(ArgEnum, Debug, PartialEq)]
 enum LeagueType {
     Champs,
     Champions,
@@ -78,7 +78,7 @@ enum LeagueType {
     Set,
 }
 
-#[derive(Clap, Debug, PartialEq)]
+#[derive(ArgEnum, Debug, PartialEq)]
 enum ListType {
     Allimages,
     Allpages,
