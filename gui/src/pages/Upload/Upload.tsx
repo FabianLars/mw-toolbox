@@ -57,8 +57,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
         const unlistenUploaded = listen('file-uploaded', ({ payload }) => {
             setFiles((oldFiles) => oldFiles.filter((f) => f !== payload));
         });
-        // FIXME: Change this to 'tauri://file-drop' on next tauri release
-        const unlistenFileDrop = listen('tauri://file-drop-hover', (res: { payload: string[] }) => {
+        const unlistenFileDrop = listen('tauri://file-drop', (res: { payload: string[] }) => {
             if (res.payload[0]) {
                 setFiles((oldFiles) => [...new Set([...oldFiles, ...(res.payload as string[])])]);
             }
