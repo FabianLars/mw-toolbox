@@ -12,7 +12,7 @@ version = "0.1.0"
 custom-protocol = ["tauri/custom-protocol"]
 
 [build-dependencies]
-tauri-build = "1.0.0-beta.3"
+tauri-build = "1.0.0-beta.4"
 
 [dependencies]
 anyhow = "1"
