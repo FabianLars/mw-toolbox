@@ -37,8 +37,8 @@ jobs:
               uses: actions/cache@v2
               with:
                   path: ~/.pnpm-store
-                  key: ${{ runner.os }}-pnpm-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: ${{ runner.os }}-pnpm-cache-
+                  key: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-
 
             - uses: pnpm/action-setup@v2
               with:

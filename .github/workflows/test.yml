@@ -27,8 +27,8 @@ jobs:
                       ~/.cargo/registry
                       ~/.cargo/git
                       target
-                  key: ${{ runner.os }}-cache-test-${{ hashFiles('**/Cargo.lock') }}
-                  restore-keys: ${{ runner.os }}-cache-test-
+                  key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-${{ hashFiles('**/Cargo.lock') }}
+                  restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-
 
             - name: Install webkit2gtk
               run: |
@@ -51,8 +51,8 @@ jobs:
                       ~/.cargo/registry
                       ~/.cargo/git
                       target
-                  key: ${{ runner.os }}-cache-test-${{ hashFiles('**/Cargo.lock') }}
-                  restore-keys: ${{ runner.os }}-cache-test-
+                  key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-${{ hashFiles('**/Cargo.lock') }}
+                  restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-
 
             - name: Install webkit2gtk
               run: |
@@ -81,17 +81,15 @@ jobs:
                       ~/.cargo/registry
                       ~/.cargo/git
                       target
-                  key: ${{ runner.os }}-cache-test-${{ hashFiles('**/Cargo.lock') }}
-                  restore-keys: ${{ runner.os }}-cache-test-
+                  key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-${{ hashFiles('**/Cargo.lock') }}
+                  restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-
 
             - name: Cache pnpm modules
               uses: actions/cache@v2
-              env:
-                  cache-name: cache-pnpm-modules
               with:
                   path: ~/.pnpm-store
-                  key: ${{ runner.os }}-pnpm-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: ${{ runner.os }}-pnpm-cache-
+                  key: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-
 
             - uses: pnpm/action-setup@v2
               with:
@@ -124,12 +122,10 @@ jobs:
 
             - name: Cache pnpm modules
               uses: actions/cache@v2
-              env:
-                  cache-name: cache-pnpm-modules
               with:
                   path: ~/.pnpm-store
-                  key: ${{ runner.os }}-pnpm-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: ${{ runner.os }}-pnpm-cache-
+                  key: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-
 
             - uses: pnpm/action-setup@v2
               with:
