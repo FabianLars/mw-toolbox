@@ -72,6 +72,7 @@ jobs:
                 working-directory: gui
 
         strategy:
+            fail-fast: false
             matrix:
                 platform: [macos-latest, ubuntu-latest, windows-latest]
 
