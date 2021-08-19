@@ -35,7 +35,7 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(isNulling || isPurging), [isNulling, isPurging]);
 
     useEffect(() => {
-        (invoke('cache_get', { key: 'purge-cache' }) as Promise<string | null>).then((cache) => {
+        invoke<string | null>('cache_get', { key: 'purge-cache' }).then((cache) => {
             if (cache) setAreaValue(cache);
         });
     }, []);

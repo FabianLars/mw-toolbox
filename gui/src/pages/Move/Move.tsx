@@ -28,12 +28,10 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(isLoading), [isLoading]);
 
     useEffect(() => {
-        (invoke('cache_get', { key: 'move-cache-from' }) as Promise<string | null>).then(
-            (cache) => {
-                if (cache) setAreaFrom(cache);
-            },
-        );
-        (invoke('cache_get', { key: 'move-cache-to' }) as Promise<string | null>).then((cache) => {
+        invoke<string | null>('cache_get', { key: 'move-cache-from' }).then((cache) => {
+            if (cache) setAreaFrom(cache);
+        });
+        invoke<string | null>('cache_get', { key: 'move-cache-to' }).then((cache) => {
             if (cache) setAreaTo(cache);
         });
     }, []);

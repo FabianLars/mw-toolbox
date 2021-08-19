@@ -26,7 +26,7 @@ const Download = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(isLoading), [isLoading]);
 
     useEffect(() => {
-        (invoke('cache_get', { key: 'download-cache' }) as Promise<string | null>).then((cache) => {
+        invoke<string | null>('cache_get', { key: 'download-cache' }).then((cache) => {
             if (cache) setAreaValue(cache);
         });
     }, []);

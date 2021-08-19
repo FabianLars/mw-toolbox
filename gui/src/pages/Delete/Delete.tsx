@@ -28,10 +28,10 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(isLoading), [isLoading]);
 
     useEffect(() => {
-        (invoke('cache_get', { key: 'delete-reason' }) as Promise<string | null>).then((cache) => {
+        invoke<string | null>('cache_get', { key: 'delete-reason' }).then((cache) => {
             if (cache) setReason(cache);
         });
-        (invoke('cache_get', { key: 'delete-pages' }) as Promise<string | null>).then((cache) => {
+        invoke<string | null>('cache_get', { key: 'delete-pages' }).then((cache) => {
             if (cache) setAreaValue(cache);
         });
     }, []);

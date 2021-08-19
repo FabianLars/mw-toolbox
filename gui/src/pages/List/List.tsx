@@ -22,12 +22,10 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
     const getList = () => {
         if (listType !== '') {
             setLoading(true);
-            (
-                invoke('list', {
-                    listtype: listType,
-                    param: paramInput || null,
-                }) as Promise<string[]>
-            )
+            invoke<string[]>('list', {
+                listtype: listType,
+                param: paramInput || null,
+            })
                 .then((res) => {
                     const output = res.join('\n');
                     setListOutput(output);
@@ -44,7 +42,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
     };
 
     useEffect(() => {
-        (invoke('cache_get', { key: 'list-cache' }) as Promise<string | null>).then((res) =>
+        invoke<string | null>('cache_get', { key: 'list-cache' }).then((res) =>
             setListOutput(res ?? ''),
         );
     }, []);

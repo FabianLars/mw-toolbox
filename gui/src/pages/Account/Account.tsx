@@ -29,7 +29,7 @@ const Account = ({
 
     const login = () => {
         setLoggingin(true);
-        (invoke('login', { profiles, current: currentProfile }) as Promise<number>)
+        invoke<number>('login', { profiles, current: currentProfile })
             .then((res) => {
                 setProfiles((old) => {
                     const curr = [...old];
@@ -50,7 +50,7 @@ const Account = ({
 
     const logout = () => {
         setLoggingin(true);
-        (invoke('logout') as Promise<any>).finally(() => {
+        invoke<any>('logout').finally(() => {
             setLoggingin(false);
             setProfiles((old) => {
                 const curr = [...old];

@@ -73,12 +73,10 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
             setIsRunning(false);
             setIsLoading(false);
         } else {
-            (
-                invoke('get_page', {
-                    page: curr,
-                    patterns: patterns,
-                }) as Promise<{ content: string; edited: boolean }>
-            )
+            invoke<{ content: string; edited: boolean }>('get_page', {
+                page: curr,
+                patterns: patterns,
+            })
                 .then(({ content }) => {
                     setPageContent(content);
                 })
@@ -92,16 +90,14 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
 
     const save = () => {
         setIsLoading(true);
-        (
-            invoke('edit', {
-                title: currentPage,
-                content: pageContent
-                    .replace(/[\u007F-\u009F\u200B]/g, '')
-                    .replace(/…/g, '...')
-                    .trim(),
-                summary: editSummary || null,
-            }) as Promise<string>
-        )
+        invoke<string>('edit', {
+            title: currentPage,
+            content: pageContent
+                .replace(/[\u007F-\u009F\u200B]/g, '')
+                .replace(/…/g, '...')
+                .trim(),
+            summary: editSummary || null,
+        })
             .then((res) => {
                 successToast('Edit successful', res);
                 getNextPage();

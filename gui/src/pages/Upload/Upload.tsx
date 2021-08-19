@@ -25,7 +25,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
 
     const openDialog = () => {
         setIsWaiting(true);
-        (open({ multiple: true, directory: false }) as Promise<string[]>)
+        open({ multiple: true, directory: false })
             .then((res) => {
                 if (res) {
                     setFiles((oldFiles) => [...new Set([...oldFiles, ...res])]);
@@ -39,12 +39,10 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
 
     const startUpload = () => {
         setIsUploading(true);
-        (
-            invoke('upload', {
-                text: uploadtext,
-                files,
-            }) as Promise<null>
-        )
+        invoke('upload', {
+            text: uploadtext,
+            files,
+        })
             .then(() => successToast('Upload complete'))
             .catch((err) => errorToast(err))
             .finally(() => {
@@ -59,13 +57,13 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
         });
         const unlistenFileDrop = listen('tauri://file-drop', (res: { payload: string[] }) => {
             if (res.payload[0]) {
-                setFiles((oldFiles) => [...new Set([...oldFiles, ...(res.payload as string[])])]);
+                setFiles((oldFiles) => [...new Set([...oldFiles, ...res.payload])]);
             }
         });
-        (invoke('cache_get', { key: 'files-cache' }) as Promise<string[] | null>).then((res) =>
+        invoke<string[] | null>('cache_get', { key: 'files-cache' }).then((res) =>
             setFiles(res ?? []),
         );
-        (invoke('cache_get', { key: 'uploadtext-cache' }) as Promise<string | null>).then((res) =>
+        invoke<string | null>('cache_get', { key: 'uploadtext-cache' }).then((res) =>
             setUploadtext(res ?? ''),
         );
 
