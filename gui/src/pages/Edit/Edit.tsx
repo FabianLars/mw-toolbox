@@ -3,6 +3,7 @@ import { invoke } from '@tauri-apps/api/tauri';
 import FindReplaceModal from './FindReplaceModal';
 import { listen, emit } from '@tauri-apps/api/event';
 import { Button, Checkbox, Input, Label, Textarea } from '@/components';
+import { getCache, setCache } from '@/helpers/invoke';
 import { errorToast, successToast } from '@/helpers/toast';
 import { removeFirst } from '@/helpers/array';
 import classes from './Edit.module.css';
@@ -121,11 +122,11 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
             setPageList((old) => removeFirst(old.split(/\r?\n/), payload).join('\n'));
         });
 
-        const getCache = async () => {
-            const list: string | null = await invoke('cache_get', { key: 'edit-pagelist' });
-            const patts: Pattern[] | null = await invoke('cache_get', { key: 'edit-patterns' });
-            const summary: string | null = await invoke('cache_get', { key: 'edit-summary' });
-            const auto: boolean | null = await invoke('cache_get', { key: 'edit-isauto' });
+        const init = async () => {
+            const list = await getCache<string>('edit-pagelist');
+            const patts = await getCache<Pattern[]>('edit-patterns');
+            const summary = await getCache<string>('edit-summary');
+            const auto = await getCache<boolean>('edit-isauto');
 
             if (list) setPageList(list);
             if (patts) setPatterns(patts);
@@ -133,7 +134,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
             if (auto) setIsAuto(auto);
         };
 
-        getCache();
+        init();
 
         return () => {
             unlistenEdited.then((f) => f());
@@ -159,7 +160,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                 .filter(Boolean)
                                 .join('\n');
                         });
-                        invoke('cache_set', { key: 'edit-pagelist', value: pageList });
+                        setCache('edit-pagelist', pageList);
                     }}
                 />
                 <div className={classes.right}>
@@ -197,9 +198,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                 id="edit-summary"
                                 value={editSummary}
                                 onChange={(event) => setEditSummary(event.target.value)}
-                                onBlur={() =>
-                                    invoke('cache_set', { key: 'edit-summary', value: editSummary })
-                                }
+                                onBlur={() => setCache('edit-summary', editSummary)}
                             />
                         </div>
                         <div className={classes.giControls}>
@@ -227,12 +226,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props) => {
                                     onChange={(event) => {
                                         setIsAuto(event.target.checked);
                                     }}
-                                    onBlur={() => {
-                                        invoke('cache_set', {
-                                            key: 'edit-isauto',
-                                            value: isAuto,
-                                        });
-                                    }}
+                                    onBlur={() => setCache('edit-isauto', isAuto)}
                                     isDisabled={isRunning}
                                 >
                                     Auto-Save

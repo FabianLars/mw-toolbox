@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { invoke } from '@tauri-apps/api/tauri';
-import classes from './FindReplaceModal.module.css';
+
 import { Button, Checkbox, Input, Modal } from '@/components';
+import { setCache } from '@/helpers/invoke';
+import classes from './FindReplaceModal.module.css';
 
 type Pattern = {
     find: string;
@@ -30,7 +31,7 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => 
     const onModalSave = () => {
         const arr = localPatterns.map((obj) => Object.assign({}, obj));
         setPatterns(arr);
-        invoke('cache_set', { key: 'edit-patterns', value: arr }).finally(onClose);
+        setCache('edit-patterns', arr).finally(onClose);
     };
 
     useEffect(() => {

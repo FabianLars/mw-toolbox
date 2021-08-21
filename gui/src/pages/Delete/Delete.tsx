@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Button, Input, Label, Textarea } from '@/components';
+import { getCache, setCache } from '@/helpers/invoke';
 import { errorToast, successToast } from '@/helpers/toast';
 import classes from './Delete.module.css';
 
@@ -28,10 +29,10 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(isLoading), [isLoading]);
 
     useEffect(() => {
-        invoke<string | null>('cache_get', { key: 'delete-reason' }).then((cache) => {
+        getCache<string>('delete-reason').then((cache) => {
             if (cache) setReason(cache);
         });
-        invoke<string | null>('cache_get', { key: 'delete-pages' }).then((cache) => {
+        getCache<string>('delete-pages').then((cache) => {
             if (cache) setAreaValue(cache);
         });
     }, []);
@@ -44,7 +45,7 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
                     id="delete-reason"
                     value={reason}
                     onChange={(event) => setReason(event.target.value)}
-                    onBlur={() => invoke('cache_set', { key: 'delete-reaseon', value: reason })}
+                    onBlur={() => setCache('delete-reaseon', reason)}
                 />
             </div>
             <Textarea
@@ -52,7 +53,7 @@ const Delete = ({ isOnline, setNavDisabled }: Props) => {
                 label="pages to delete"
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}
-                onBlur={() => invoke('cache_set', { key: 'delete-pages', value: areaValue })}
+                onBlur={() => setCache('delete-pages', areaValue)}
                 placeholder="Write exact page names here. Separated by newline."
             ></Textarea>
             <div>

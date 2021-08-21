@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
+import { getCache, setCache } from '@/helpers/invoke';
 import { errorToast, successToast } from '@/helpers/toast';
 import { Button, Textarea } from '@/components';
 import classes from './Purge.module.css';
@@ -35,7 +36,7 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(isNulling || isPurging), [isNulling, isPurging]);
 
     useEffect(() => {
-        invoke<string | null>('cache_get', { key: 'purge-cache' }).then((cache) => {
+        getCache<string>('purge-cache').then((cache) => {
             if (cache) setAreaValue(cache);
         });
     }, []);
@@ -47,7 +48,7 @@ const Purge = ({ isOnline, setNavDisabled }: Props) => {
                 label="pages to purge"
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}
-                onBlur={() => invoke('cache_set', { key: 'purge-cache', value: areaValue })}
+                onBlur={() => setCache('purge-cache', areaValue)}
                 placeholder="Write exact page names here. Separated by newline."
             />
             <div className={classes.buttons}>

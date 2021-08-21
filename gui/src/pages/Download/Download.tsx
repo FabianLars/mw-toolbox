@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
+import { getCache, setCache } from '@/helpers/invoke';
 import { errorToast, successToast } from '@/helpers/toast';
 import { Button, Textarea } from '@/components';
 import classes from './Download.module.css';
@@ -26,7 +27,7 @@ const Download = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(isLoading), [isLoading]);
 
     useEffect(() => {
-        invoke<string | null>('cache_get', { key: 'download-cache' }).then((cache) => {
+        getCache<string>('download-cache').then((cache) => {
             if (cache) setAreaValue(cache);
         });
     }, []);
@@ -38,7 +39,7 @@ const Download = ({ isOnline, setNavDisabled }: Props) => {
                 label="file names to download, including the File: prefix"
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}
-                onBlur={() => invoke('cache_set', { key: 'download-cache', value: areaValue })}
+                onBlur={() => setCache('download-cache', areaValue)}
                 placeholder="Write exact page names here. Separated by newline. Inclusive 'File:' Prefix. Saved in your download folder."
             />
             <div>

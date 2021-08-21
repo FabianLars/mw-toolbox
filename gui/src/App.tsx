@@ -3,6 +3,7 @@ import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Account, Delete, Download, Edit, List, Move, Purge, Upload } from './pages';
 import { Header } from './components';
+import { getCache, setCache } from '@/helpers/invoke';
 import classes from './App.module.css';
 
 export type Profile = {
@@ -38,7 +39,7 @@ const App = () => {
         if (!!window.__TAURI__) {
             (async () => {
                 setNavDisabled(true);
-                const cache: Profile[] | null = await invoke('cache_get', { key: 'profiles' });
+                const cache = await getCache<Profile[]>('profiles');
                 if (cache) {
                     setProfiles(cache);
                 } else {
@@ -57,10 +58,7 @@ const App = () => {
     // This exists to handle reloads
     useEffect(() => {
         if (mounted.current) {
-            invoke('cache_set', {
-                key: 'profiles',
-                value: profiles,
-            });
+            setCache('profiles', profiles);
             // OnProfileRemoved
             if (profiles.length < oldProfilesLen) {
                 invoke('update_profile_store', { profiles, current: 0 });

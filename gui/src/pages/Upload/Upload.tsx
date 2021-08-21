@@ -3,6 +3,7 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
 import FileList from './FileList';
 import { emit, listen } from '@tauri-apps/api/event';
+import { getCache, setCache } from '@/helpers/invoke';
 import { errorToast, successToast } from '@/helpers/toast';
 import { Button, Input, Label } from '@/components';
 import classes from './Upload.module.css';
@@ -19,7 +20,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
     const [files, setFiles] = useState<string[]>([]);
 
     const clearList = () => {
-        invoke('cache_set', { key: 'files-cache', value: '' });
+        setCache('files-cache', '');
         setFiles([]);
     };
 
@@ -60,12 +61,8 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                 setFiles((oldFiles) => [...new Set([...oldFiles, ...res.payload])]);
             }
         });
-        invoke<string[] | null>('cache_get', { key: 'files-cache' }).then((res) =>
-            setFiles(res ?? []),
-        );
-        invoke<string | null>('cache_get', { key: 'uploadtext-cache' }).then((res) =>
-            setUploadtext(res ?? ''),
-        );
+        getCache<string[]>('files-cache').then((res) => setFiles(res ?? []));
+        getCache<string>('uploadtext-cache').then((res) => setUploadtext(res ?? ''));
 
         return () => {
             unlistenUploaded.then((f) => f());
@@ -76,7 +73,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
     // componentWillUnmount with files state
     useEffect(() => {
         return () => {
-            invoke('cache_set', { key: 'files-cache', value: files });
+            setCache('files-cache', files);
         };
     }, [files]);
 
@@ -100,12 +97,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props) => {
                         value={uploadtext}
                         isDisabled={isUploading || isWaiting}
                         onChange={(event) => setUploadtext(event.target.value)}
-                        onBlur={() =>
-                            invoke('cache_set', {
-                                key: 'uploadtext-cache',
-                                value: uploadtext,
-                            })
-                        }
+                        onBlur={() => setCache('uploadtext-cache', uploadtext)}
                     />
                 </div>
                 <div className={classes.buttons}>

@@ -4,6 +4,7 @@ import { invoke } from '@tauri-apps/api/tauri';
 
 import { errorToast } from '@/helpers/toast';
 import { Button, Input, Label, Select, Textarea } from '@/components';
+import { getCache, setCache } from '@/helpers/invoke';
 import classes from './List.module.css';
 
 type Props = {
@@ -29,7 +30,7 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
                 .then((res) => {
                     const output = res.join('\n');
                     setListOutput(output);
-                    invoke('cache_set', { key: 'list-cache', value: output });
+                    setCache('list-cache', output);
                 })
                 .catch((err) => errorToast(err))
                 .finally(() => setLoading(false));
@@ -37,14 +38,12 @@ const List = ({ isOnline, setNavDisabled }: Props) => {
     };
 
     const clearOutput = () => {
-        invoke('cache_set', { key: 'list-cache', value: '' });
+        setCache('list-cache', '');
         setListOutput('');
     };
 
     useEffect(() => {
-        invoke<string | null>('cache_get', { key: 'list-cache' }).then((res) =>
-            setListOutput(res ?? ''),
-        );
+        getCache<string>('list-cache').then((res) => setListOutput(res ?? ''));
     }, []);
 
     useEffect(() => {

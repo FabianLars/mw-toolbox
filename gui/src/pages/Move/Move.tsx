@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
+import { getCache, setCache } from '@/helpers/invoke';
 import { errorToast, successToast } from '@/helpers/toast';
 import { Button, Textarea } from '@/components';
 import classes from './Move.module.css';
@@ -28,10 +29,10 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
     useEffect(() => setNavDisabled(isLoading), [isLoading]);
 
     useEffect(() => {
-        invoke<string | null>('cache_get', { key: 'move-cache-from' }).then((cache) => {
+        getCache<string>('move-cache-from').then((cache) => {
             if (cache) setAreaFrom(cache);
         });
-        invoke<string | null>('cache_get', { key: 'move-cache-to' }).then((cache) => {
+        getCache<string>('move-cache-to').then((cache) => {
             if (cache) setAreaTo(cache);
         });
     }, []);
@@ -44,7 +45,7 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
                     label="pages to move"
                     value={areaFrom}
                     onChange={(event) => setAreaFrom(event.target.value)}
-                    onBlur={() => invoke('cache_set', { key: 'move-cache-from', value: areaFrom })}
+                    onBlur={() => setCache('move-cache-from', areaFrom)}
                     placeholder="Write exact names of pages to move. Separated by newline."
                 />
                 <Textarea
@@ -52,7 +53,7 @@ const Move = ({ isOnline, setNavDisabled }: Props) => {
                     label="new names for pages"
                     value={areaTo}
                     onChange={(event) => setAreaTo(event.target.value)}
-                    onBlur={() => invoke('cache_set', { key: 'move-cache-to', value: areaTo })}
+                    onBlur={() => setCache('move-cache-to', areaTo)}
                     placeholder="Write exact names of destinations. Separated by newline."
                 />
             </div>
