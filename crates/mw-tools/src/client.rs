@@ -6,11 +6,14 @@ use crate::{
     response::{login::Login, token::Token, Ignore},
 };
 
-#[derive(Clone, Debug, Default)]
+/// A wrapper around [reqwest::Client] to interact with the mediawiki API.
+///
+/// Intended to use with functions provided in the [api](crate::api) module.
+#[derive(Clone, Debug)]
 pub struct WikiClient {
     client: Client,
     url: String,
-    loginname: String,
+    username: String,
     password: String,
     csrf_token: String,
 }
@@ -29,6 +32,9 @@ enum ApiResponse<T> {
 }
 
 impl WikiClient {
+    /// Construct a new `WikiClient`.
+    ///
+    /// Just like [reqwest::ClientBuilder], this method fails if a TLS backend cannot be initialized, or the resolver cannot load the system configuration.
     pub fn new() -> Result<Self, ToolsError> {
         Ok(Self {
             client: Client::builder()
@@ -40,60 +46,40 @@ impl WikiClient {
                     " using rust/reqwest",
                 ))
                 .build()?,
-            ..Self::default()
+            url: String::new(),
+            username: String::new(),
+            password: String::new(),
+            csrf_token: String::new(),
         })
     }
 
-    pub async fn new_logged_in<S: Into<String>>(
-        url: S,
-        loginname: S,
-        password: S,
-    ) -> Result<Self, ToolsError> {
-        let mut client = Self {
-            client: Client::builder()
-                .cookie_store(true)
-                .user_agent(concat!(
-                    env!("CARGO_PKG_NAME"),
-                    "/",
-                    env!("CARGO_PKG_VERSION"),
-                    " using rust/reqwest",
-                ))
-                .build()?,
-            url: url.into(),
-            loginname: loginname.into(),
-            password: password.into(),
-            ..Self::default()
-        };
-        client.login().await?;
-        Ok(client)
+    /// Set the URL to the mediawiki API (pointing to api.php, including the scheme).
+    pub fn with_url<S: Into<String>>(mut self, url: S) -> Self {
+        self.url = url.into();
+        self
     }
 
-    // TODO: Validate URL
-    pub fn from<S: Into<String>>(url: S) -> Result<Self, ToolsError> {
-        Ok(Self {
-            client: Client::builder()
-                .cookie_store(true)
-                .user_agent(concat!(
-                    env!("CARGO_PKG_NAME"),
-                    "/",
-                    env!("CARGO_PKG_VERSION"),
-                    " using rust/reqwest",
-                ))
-                .build()?,
-            url: url.into(),
-            ..Self::default()
-        })
+    /// Set username and password, created via Special:BotPasswords.
+    pub fn with_credentials<S: Into<String>>(mut self, username: S, password: S) -> Self {
+        self.username = username.into();
+        self.password = password.into();
+        self
     }
 
-    pub fn url<S: Into<String>>(&mut self, url: S) {
+    /// Set the URL to the mediawiki API (pointing to api.php, including the scheme).
+    pub fn set_url<S: Into<String>>(&mut self, url: S) {
         self.url = url.into();
     }
 
-    pub fn credentials<S: Into<String>>(&mut self, loginname: S, password: S) {
-        self.loginname = loginname.into();
+    /// Set username and password, created via Special:BotPasswords.
+    pub fn set_credentials<S: Into<String>>(&mut self, username: S, password: S) {
+        self.username = username.into();
         self.password = password.into();
     }
 
+    /// log into the mediawiki API.
+    ///
+    /// If successful, this method also requests an edit token which is needed for some endpoints.
     pub async fn login(&mut self) -> Result<(), ToolsError> {
         let json: Token = self
             .get(&[("action", "query"), ("meta", "tokens"), ("type", "login")])
@@ -109,7 +95,7 @@ impl WikiClient {
         let res: Login = self
             .post(&[
                 ("action", "login"),
-                ("lgname", &self.loginname),
+                ("lgname", &self.username),
                 ("lgpassword", &self.password),
                 ("lgtoken", &token),
             ])
@@ -124,6 +110,11 @@ impl WikiClient {
         self.request_csrf_token().await
     }
 
+    /// Log out of the mediawiki API.
+    ///
+    /// Note: This doesn't remove the stored values for `url`, `username` and `password`.
+    ///
+    /// You generally don't need to call this, except if you want to switch the wiki or user without creating a new Client.
     pub async fn logout(&mut self) -> Result<(), ToolsError> {
         self.post::<Ignore>(&[("action", "logout"), ("token", &self.csrf_token)])
             .await?;
@@ -135,20 +126,33 @@ impl WikiClient {
         Ok(())
     }
 
+    /// Get a reference to the inner [reqwest::Client].
     pub fn client(&self) -> &Client {
         &self.client
     }
 
-    pub fn logged_in(&self) -> bool {
+    /// Check if the client is logged into the API.
+    pub fn is_online(&self) -> bool {
         !self.csrf_token.is_empty()
     }
 
+    /// Send a GET request with query parameters.
+    /// You need to specify a response type which implements [serde::de::DeserializeOwned].
+    ///
+    /// If you don't care about the response, use [serde::de::IgnoredAny].
+    /// # Example
+    /// ```no_run
+    /// // request the page content in wikitext form.
+    ///let res: serde_json::Value = client
+    ///    .get(&[("action", "parse"), ("prop", "wikitext"), ("page", "Page Title")])
+    ///    .await?;
+    /// ```
     pub async fn get<T: DeserializeOwned>(
         &self,
         parameters: &[(&str, &str)],
     ) -> Result<T, ToolsError> {
         loop {
-            // It's fine to create a new request every iteration, because we almost never need a second one
+            // It's fine to create a new request every iteration, because we almost never need a second one.
             let res: ApiResponse<T> = self
                 .client
                 .get(&self.url)
@@ -181,6 +185,19 @@ impl WikiClient {
         }
     }
 
+    /// Send a POST request with parameters added as a form body.
+    ///
+    /// You need to specify a response type which implements [serde::de::DeserializeOwned].
+    ///
+    /// If you don't care about the response, use [serde::de::IgnoredAny].
+    /// # Example
+    /// ```no_run
+    /// // Purge the server cache for a page and ignore the result.
+    ///client.post::<Ignore>(&[
+    ///    ("action", "purge"),
+    ///    ("titles", "Page Title"),
+    ///]).await?;
+    /// ```
     pub async fn post<T: DeserializeOwned>(
         &self,
         parameters: &[(&str, &str)],
@@ -195,7 +212,7 @@ impl WikiClient {
         };
 
         loop {
-            // It's fine to create a new request every iteration, because we almost never need a second one
+            // It's fine to create a new request every iteration, because we almost never need a second try
             let res: ApiResponse<T> = self
                 .client
                 .post(&self.url)
@@ -228,6 +245,7 @@ impl WikiClient {
         }
     }
 
+    // get a new edit token
     async fn request_csrf_token(&mut self) -> Result<(), ToolsError> {
         let res: Token = self
             .get(&[("action", "query"), ("meta", "tokens"), ("type", "csrf")])
@@ -249,7 +267,8 @@ impl WikiClient {
         Ok(())
     }
 
-    pub async fn send_multipart(
+    // upload a file via a multipart/form-data request
+    pub(crate) async fn send_multipart(
         &self,
         parameters: &[(&str, &str)],
         file_part: reqwest::multipart::Part,

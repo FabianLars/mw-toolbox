@@ -120,7 +120,11 @@ async fn main() -> Result<()> {
     pretty_env_logger::init();
 
     let cli = Cli::parse();
-    let client = WikiClient::new_logged_in(&cli.url, &cli.name, &cli.password).await?;
+    let mut client = WikiClient::new()?
+        .with_url(&cli.url)
+        .with_credentials(&cli.name, &cli.password);
+    client.login().await?;
+    let client = client;
 
     match cli.command {
         Subcommand::Delete { input } => {
