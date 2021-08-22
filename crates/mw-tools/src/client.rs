@@ -195,7 +195,7 @@ impl WikiClient {
     /// If you don't care about the response, use [serde::de::IgnoredAny].
     /// # Example
     /// ```no_run
-    /// # async fn test_get() -> Result<(), mw_tools::error::ToolsError> {
+    /// # async fn test_post() -> Result<(), mw_tools::error::ToolsError> {
     /// # use serde::de::IgnoredAny;
     /// # let client = mw_tools::WikiClient::new()?;
     /// // Purge the server cache for a page and ignore the result.
