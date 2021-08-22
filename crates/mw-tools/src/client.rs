@@ -142,10 +142,13 @@ impl WikiClient {
     /// If you don't care about the response, use [serde::de::IgnoredAny].
     /// # Example
     /// ```no_run
+    /// # async fn test_get() -> Result<(), mw_tools::error::ToolsError> {
+    /// # let client = mw_tools::WikiClient::new()?;
     /// // request the page content in wikitext form.
     ///let res: serde_json::Value = client
     ///    .get(&[("action", "parse"), ("prop", "wikitext"), ("page", "Page Title")])
     ///    .await?;
+    /// # Ok(())}
     /// ```
     pub async fn get<T: DeserializeOwned>(
         &self,
@@ -192,11 +195,15 @@ impl WikiClient {
     /// If you don't care about the response, use [serde::de::IgnoredAny].
     /// # Example
     /// ```no_run
+    /// # async fn test_get() -> Result<(), mw_tools::error::ToolsError> {
+    /// # use serde::de::IgnoredAny;
+    /// # let client = mw_tools::WikiClient::new()?;
     /// // Purge the server cache for a page and ignore the result.
-    ///client.post::<Ignore>(&[
+    ///client.post::<IgnoredAny>(&[
     ///    ("action", "purge"),
     ///    ("titles", "Page Title"),
     ///]).await?;
+    /// # Ok(())}
     /// ```
     pub async fn post<T: DeserializeOwned>(
         &self,
