@@ -1,7 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@tauri-apps/api': ^1.0.0-beta.6
+  '@tauri-apps/api': ^1.0.0-beta.8
   '@testing-library/react': ^12.0.0
   '@types/chai': ^4.2.21
   '@types/mocha': ^9.0.0
@@ -11,7 +11,7 @@ specifiers:
   '@web/test-runner': ^0.13.16
   chai: ^4.3.4
   history: ^5.0.1
-  minimal-tauri-cli: ^0.0.0-beta.6
+  minimal-tauri-cli: ^1.0.0-beta.7
   prettier: ^2.3.2
   react: ^17.0.2
   react-dom: ^17.0.2
@@ -22,7 +22,7 @@ specifiers:
   vite-web-test-runner-plugin: ^0.1.0
 
 dependencies:
-  '@tauri-apps/api': 1.0.0-beta.6
+  '@tauri-apps/api': 1.0.0-beta.8
   history: 5.0.1
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
@@ -38,7 +38,7 @@ devDependencies:
   '@vitejs/plugin-react-refresh': 1.3.6
   '@web/test-runner': 0.13.16
   chai: 4.3.4
-  minimal-tauri-cli: 0.0.0-beta.6
+  minimal-tauri-cli: 1.0.0-beta.7
   prettier: 2.3.2
   typescript: 4.3.5
   vite: 2.5.0
@@ -363,8 +363,8 @@ packages:
       picomatch: 2.3.0
     dev: true
 
-  /@tauri-apps/api/1.0.0-beta.6:
-    resolution: {integrity: sha512-RQ3AI6Fb8LAbP/r6M2r1rEbJLEGBu0BjwcjDbyFD/L/m97kugEep+VQjHATAS7nUAU1X6LmftswZo0JPMX1PzQ==}
+  /@tauri-apps/api/1.0.0-beta.8:
+    resolution: {integrity: sha512-a56lXB7XvQ4+fKtT0pxpkjTSKhyrQ1Vmjyvt2ox3mT9xw3l7s8IOKHJ1WuqW6TA6xdoy3Cyja3Z3prw8hflS7g==}
     engines: {node: '>= 12.13.0', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
     dev: false
 
@@ -643,8 +643,8 @@ packages:
       semver: 7.3.5
     dev: true
 
-  /@web/dev-server-core/0.3.13:
-    resolution: {integrity: sha512-bGJHPeFRWATNfuL9Pp2LfqhnmqhBCc5eOO5AWQa0X+WQAwHiFo6xZNfsvsnJ1gvxXgsE4jKBAGu9lQRisvFRFA==}
+  /@web/dev-server-core/0.3.14:
+    resolution: {integrity: sha512-QHWGbkLI7qZVkELd6a7R4llRF9zydwbZagAeiJRvOIIiDhG5Uu9DfAWAQL+RSCb2hqBlEnaVAK4keNffKol4rQ==}
     engines: {node: '>=10.0.0'}
     dependencies:
       '@types/koa': 2.13.4
@@ -652,7 +652,7 @@ packages:
       '@web/parse5-utils': 1.3.0
       chokidar: 3.5.2
       clone: 2.1.2
-      es-module-lexer: 0.4.1
+      es-module-lexer: 0.7.1
       get-stream: 6.0.1
       is-stream: 2.0.1
       isbinaryfile: 4.0.8
@@ -675,10 +675,10 @@ packages:
     resolution: {integrity: sha512-8NOV8GxcDXk9u+hsVYllGiMhcORYMFK+LtLT4HIg3+emW64j0MynttowBoOFpgwv7YOuVQ6lWe1kmJxiI+TRdg==}
     engines: {node: '>=10.0.0'}
     dependencies:
-      '@web/dev-server-core': 0.3.13
+      '@web/dev-server-core': 0.3.14
       chalk: 4.1.2
       parse5: 6.0.1
-      rollup: 2.56.2
+      rollup: 2.56.3
       whatwg-url: 9.1.0
     transitivePeerDependencies:
       - bufferutil
@@ -686,8 +686,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@web/dev-server/0.1.21:
-    resolution: {integrity: sha512-au4ALDpojQj16seFYufSlFJCARkHZvC/L2sHsphqsY1lMEB/zLLg4XDpCcyF5t49SfB9glI1c8jgOnyHuofhnw==}
+  /@web/dev-server/0.1.22:
+    resolution: {integrity: sha512-8PZxz2PGK9Ndr0C2LtWHrTzPKkDYTP/IvEMs9nrIebQWxvVjxI/HpvNfli3ivvCtvvcJFI26FvfWaAWDq14GgQ==}
     engines: {node: '>=10.0.0'}
     hasBin: true
     dependencies:
@@ -695,7 +695,7 @@ packages:
       '@rollup/plugin-node-resolve': 11.2.1
       '@types/command-line-args': 5.2.0
       '@web/config-loader': 0.1.3
-      '@web/dev-server-core': 0.3.13
+      '@web/dev-server-core': 0.3.14
       '@web/dev-server-rollup': 0.3.9
       camelcase: 6.2.0
       chalk: 4.1.2
@@ -760,7 +760,7 @@ packages:
       '@types/istanbul-reports': 3.0.1
       '@types/uuid': 8.3.1
       '@web/browser-logs': 0.2.4
-      '@web/dev-server-core': 0.3.13
+      '@web/dev-server-core': 0.3.14
       chalk: 4.1.2
       chokidar: 3.5.2
       cli-cursor: 3.1.0
@@ -817,7 +817,7 @@ packages:
     dependencies:
       '@web/browser-logs': 0.2.4
       '@web/config-loader': 0.1.3
-      '@web/dev-server': 0.1.21
+      '@web/dev-server': 0.1.22
       '@web/test-runner-chrome': 0.10.2
       '@web/test-runner-commands': 0.5.11
       '@web/test-runner-core': 0.10.20
@@ -978,7 +978,7 @@ packages:
     dependencies:
       caniuse-lite: 1.0.30001251
       colorette: 1.3.0
-      electron-to-chromium: 1.3.814
+      electron-to-chromium: 1.3.816
       escalade: 3.1.1
       node-releases: 1.1.75
     dev: true
@@ -1311,8 +1311,8 @@ packages:
     resolution: {integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=}
     dev: true
 
-  /electron-to-chromium/1.3.814:
-    resolution: {integrity: sha512-0mH03cyjh6OzMlmjauGg0TLd87ErIJqWiYxMcOLKf5w6p0YEOl7DJAj7BDlXEFmCguY5CQaKVOiMjAMODO2XDw==}
+  /electron-to-chromium/1.3.816:
+    resolution: {integrity: sha512-/AvJPIJldO0NkwkfpUD7u1e4YEGRFBQpFuvl9oGCcVgWOObsZB1loxVGeVUJB9kmvfsBUUChPYdgRzx6+AKNyg==}
     dev: true
 
   /emoji-regex/8.0.0:
@@ -1334,8 +1334,8 @@ packages:
     resolution: {integrity: sha512-cJp8qf5t2cXmVZJjZVrcU4ODFJeQOcUyjJEtPFtWO+3N6JPM6vCe4Sfv3cwIs/qS7gnUo/fvKX/mDCVQZq+P7A==}
     dev: true
 
-  /es-module-lexer/0.4.1:
-    resolution: {integrity: sha512-ooYciCUtfw6/d2w56UVeqHPcoCFAiJdz5XOkYpv/Txl1HMUozpXjz/2RIQgqwKdXNDPSF1W7mJCFse3G+HDyAA==}
+  /es-module-lexer/0.7.1:
+    resolution: {integrity: sha512-MgtWFl5No+4S3TmhDmCz2ObFGm6lEpTnzbQi+Dd+pw4mlTIZTmM2iAs5gRlmx5zS9luzobCSBSI90JM/1/JgOw==}
     dev: true
 
   /esbuild/0.12.22:
@@ -1945,8 +1945,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /minimal-tauri-cli/0.0.0-beta.6:
-    resolution: {integrity: sha512-qZ6vqI+Tr0CNYezHgHmtiHsHviXuREnJ9HUf1Gc5a5Ln5zyEg0fSlfiAn11RLEgTiAKBEYCn5h57S4dWbvPgUw==}
+  /minimal-tauri-cli/1.0.0-beta.7:
+    resolution: {integrity: sha512-ZrGfWdl1Q1v1dXGyOBUoQPr4Kyg+02LOLi1ypgVYg1cm9z1p+mtWPnYAYYtYJ3e8eGpgbpKbPeRhjh60neXlpA==}
     hasBin: true
     dev: true
 
@@ -2368,8 +2368,8 @@ packages:
       glob: 7.1.7
     dev: true
 
-  /rollup/2.56.2:
-    resolution: {integrity: sha512-s8H00ZsRi29M2/lGdm1u8DJpJ9ML8SUOpVVBd33XNeEeL3NVaTiUcSBHzBdF3eAyR0l7VSpsuoVUGrRHq7aPwQ==}
+  /rollup/2.56.3:
+    resolution: {integrity: sha512-Au92NuznFklgQCUcV96iXlxUbHuB1vQMaH76DHl5M11TotjOHwqk9CwcrT78+Tnv4FN9uTBxq6p4EJoYkpyekg==}
     engines: {node: '>=10.0.0'}
     hasBin: true
     optionalDependencies:
@@ -2689,7 +2689,7 @@ packages:
       esbuild: 0.12.22
       postcss: 8.3.6
       resolve: 1.20.0
-      rollup: 2.56.2
+      rollup: 2.56.3
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
