@@ -18,7 +18,7 @@ specifiers:
   react-focus-lock: ^2.5.2
   react-router-dom: ^6.0.0-beta.2
   typescript: ^4.3.5
-  vite: ^2.5.0
+  vite: ^2.5.1
   vite-web-test-runner-plugin: ^0.1.0
 
 dependencies:
@@ -41,8 +41,8 @@ devDependencies:
   minimal-tauri-cli: 1.0.0-beta.7
   prettier: 2.3.2
   typescript: 4.3.5
-  vite: 2.5.0
-  vite-web-test-runner-plugin: 0.1.0_vite@2.5.0
+  vite: 2.5.1
+  vite-web-test-runner-plugin: 0.1.0_vite@2.5.1
 
 packages:
 
@@ -254,7 +254,7 @@ packages:
     resolution: {integrity: sha512-30A3lP+sRL6ml8uhoJSs+8jwpKzbw8CqBvDc1laeptxPm5FahumJxirigcbD2qTs71Sonvj1cyZB0OKGAmxQ+A==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      core-js-pure: 3.16.2
+      core-js-pure: 3.16.3
       regenerator-runtime: 0.13.9
     dev: true
 
@@ -368,8 +368,8 @@ packages:
     engines: {node: '>= 12.13.0', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
     dev: false
 
-  /@testing-library/dom/8.1.0:
-    resolution: {integrity: sha512-kmW9alndr19qd6DABzQ978zKQ+J65gU2Rzkl8hriIetPnwpesRaK4//jEQyYh8fEALmGhomD/LBQqt+o+DL95Q==}
+  /@testing-library/dom/8.1.1:
+    resolution: {integrity: sha512-PkyaKetl+at2XWhTVUL8Lpjdl0rFMZ2DCEOQexXFjg1TumMXOtxGTVFf1AIxdh11DFu9w/AO8gZcP3XnVwR8YA==}
     engines: {node: '>=12'}
     dependencies:
       '@babel/code-frame': 7.14.5
@@ -390,7 +390,7 @@ packages:
       react-dom: '*'
     dependencies:
       '@babel/runtime': 7.15.3
-      '@testing-library/dom': 8.1.0
+      '@testing-library/dom': 8.1.1
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
     dev: true
@@ -978,7 +978,7 @@ packages:
     dependencies:
       caniuse-lite: 1.0.30001251
       colorette: 1.3.0
-      electron-to-chromium: 1.3.816
+      electron-to-chromium: 1.3.817
       escalade: 3.1.1
       node-releases: 1.1.75
     dev: true
@@ -1191,8 +1191,8 @@ packages:
       keygrip: 1.1.0
     dev: true
 
-  /core-js-pure/3.16.2:
-    resolution: {integrity: sha512-oxKe64UH049mJqrKkynWp6Vu0Rlm/BTXO/bJZuN2mmR3RtOFNepLlSWDd1eo16PzHpQAoNG97rLU1V/YxesJjw==}
+  /core-js-pure/3.16.3:
+    resolution: {integrity: sha512-6In+2RwN0FT5yK0ZnhDP5rco/NnuuFZhHauQizZiHo5lDnqAvq8Phxcpy3f+prJOqtKodt/cftBl/GTOW0kiqQ==}
     requiresBuild: true
     dev: true
 
@@ -1311,8 +1311,8 @@ packages:
     resolution: {integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=}
     dev: true
 
-  /electron-to-chromium/1.3.816:
-    resolution: {integrity: sha512-/AvJPIJldO0NkwkfpUD7u1e4YEGRFBQpFuvl9oGCcVgWOObsZB1loxVGeVUJB9kmvfsBUUChPYdgRzx6+AKNyg==}
+  /electron-to-chromium/1.3.817:
+    resolution: {integrity: sha512-Vw0Faepf2Id9Kf2e97M/c99qf168xg86JLKDxivvlpBQ9KDtjSeX0v+TiuSE25PqeQfTz+NJs375b64ca3XOIQ==}
     dev: true
 
   /emoji-regex/8.0.0:
@@ -1569,12 +1569,12 @@ packages:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
     dev: true
 
-  /http-assert/1.4.1:
-    resolution: {integrity: sha512-rdw7q6GTlibqVVbXr0CKelfV5iY8G2HqEUkhSk297BMbSpSL8crXC+9rjKoMcZZEsksX30le6f/4ul4E28gegw==}
+  /http-assert/1.5.0:
+    resolution: {integrity: sha512-uPpH7OKX4H25hBmU6G1jWNaqJGpTXxey+YOUizJUAgu0AjLUeC8D73hTrhvDS5D+GJN1DN1+hhc/eF/wpxtp0w==}
     engines: {node: '>= 0.8'}
     dependencies:
       deep-equal: 1.0.1
-      http-errors: 1.7.3
+      http-errors: 1.8.0
     dev: true
 
   /http-errors/1.6.3:
@@ -1835,7 +1835,7 @@ packages:
       encodeurl: 1.0.2
       escape-html: 1.0.3
       fresh: 0.5.2
-      http-assert: 1.4.1
+      http-assert: 1.5.0
       http-errors: 1.8.0
       is-generator-function: 1.0.10
       koa-compose: 4.1.0
@@ -2673,16 +2673,16 @@ packages:
     engines: {node: '>= 0.8'}
     dev: true
 
-  /vite-web-test-runner-plugin/0.1.0_vite@2.5.0:
+  /vite-web-test-runner-plugin/0.1.0_vite@2.5.1:
     resolution: {integrity: sha512-AXrkMbtU/QW9mJWzl0j7Zn9UKKwMo4zQw4BPeS4TknwF/tIMqluFdb9J2+QbLIUP72TeiAgobpS72oo/c7kDPw==}
     peerDependencies:
       vite: 2.x
     dependencies:
-      vite: 2.5.0
+      vite: 2.5.1
     dev: true
 
-  /vite/2.5.0:
-    resolution: {integrity: sha512-Dn4B+g54PJsMG5WCc4QeFy1ygMXRdTtFrUPegqfk4+vzVQcbF/DqqmI/1bxezArzbujBJg/67QeT5wz8edfJVQ==}
+  /vite/2.5.1:
+    resolution: {integrity: sha512-FwmLbbz8MB1pBs9dKoRDgpiqoijif8hSK1+NNUYc12/cnf+pM2UFhhQ1rcpXgbMhm/5c2USZdVAf0FSkSxaFDA==}
     engines: {node: '>=12.2.0'}
     hasBin: true
     dependencies:
