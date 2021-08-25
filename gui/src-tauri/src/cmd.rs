@@ -50,18 +50,13 @@ pub struct FindReplace {
     pub is_regex: bool,
 }
 
-/// Get json-compatible ([serde_json::Value]) objects from runtime cache.
+/// Get json-compatible ([`serde_json::Value`]) objects from runtime cache.
 #[command]
-pub fn cache_get(key: String, cache: tauri::State<Cache>) -> Option<Value> {
-    if let Some(v) = cache.lock().get(&key) {
-        let v = v.to_owned();
-        Some(v)
-    } else {
-        None
-    }
+pub fn cache_get(key: &str, cache: tauri::State<Cache>) -> Option<Value> {
+    cache.lock().get(key).map(|v| v.to_owned())
 }
 
-/// Store json-compatible ([serde_json::Value]) objects in runtime cache.
+/// Store json-compatible ([`serde_json::Value`]) objects in runtime cache.
 #[command]
 pub fn cache_set(key: String, value: Value, cache: tauri::State<Cache>) -> bool {
     cache.lock().insert(key, value).is_some()
@@ -130,13 +125,13 @@ pub async fn get_page(page: &str, patterns: Vec<FindReplace>) -> Result<GetPage>
                     .replace_all(&s, unescape::unescape(&pat.replace).unwrap_or(pat.replace))
                     .to_string();
                 if new != s {
-                    edited = true
+                    edited = true;
                 }
                 s = new;
             } else {
                 let new = s.replace(&pat.find, &pat.replace);
                 if new != s {
-                    edited = true
+                    edited = true;
                 }
                 s = new;
             }
@@ -227,7 +222,7 @@ pub async fn purge(is_nulledit: bool, pages: Vec<&str>) -> Result<()> {
 /// Command to update locally saved users.
 #[command]
 pub async fn update_profile_store(mut profiles: Vec<Profile>, current: usize) -> Result<()> {
-    for p in profiles.iter_mut() {
+    for p in &mut profiles {
         if !p.save_password {
             p.password = "".to_string();
         }

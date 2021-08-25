@@ -36,11 +36,11 @@ fn main() {
         .on_page_load(|window, _| {
             // Listener to cancel file upload.
             window.listen("cancel-upload", move |_| {
-                CANCEL_UPLOAD.store(true, Ordering::Relaxed)
+                CANCEL_UPLOAD.store(true, Ordering::Relaxed);
             });
             // Listener to cancel editing in auto-save mode.
             window.listen("cancel-autoedit", move |_| {
-                CANCEL_EDIT.store(true, Ordering::Relaxed)
+                CANCEL_EDIT.store(true, Ordering::Relaxed);
             });
             // add OS as global window wariable, because Windows is Windows i guess.
             // Used on Windows for:
