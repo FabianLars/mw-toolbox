@@ -1,24 +1,24 @@
-use reqwest::{Client, Response};
+use reqwest::{Client as ReqwestClient, Response};
 use serde::de::DeserializeOwned;
 
 use crate::{
-    error::ToolsError,
     response::{login::Login, token::Token, Ignore},
+    Error,
 };
 
-/// A wrapper around [reqwest::Client] to interact with the mediawiki API.
+/// A wrapper around [`reqwest::Client`] to interact with the mediawiki API.
 ///
-/// Intended to use with functions provided in the [api](crate::api) module.
+/// Intended to use with functions provided in the [`api`](crate::api) module.
 #[derive(Clone, Debug)]
-pub struct WikiClient {
-    client: Client,
+pub struct Client {
+    client: ReqwestClient,
     url: String,
     username: String,
     password: String,
     csrf_token: String,
 }
 
-impl AsRef<WikiClient> for WikiClient {
+impl AsRef<Client> for Client {
     fn as_ref(&self) -> &Self {
         self
     }
@@ -31,13 +31,13 @@ enum ApiResponse<T> {
     Failure { errors: Vec<crate::response::Error> },
 }
 
-impl WikiClient {
-    /// Construct a new `WikiClient`.
+impl Client {
+    /// Construct a new `Client`.
     ///
-    /// Just like [reqwest::ClientBuilder], this method fails if a TLS backend cannot be initialized, or the resolver cannot load the system configuration.
-    pub fn new() -> Result<Self, ToolsError> {
+    /// Just like [`reqwest::ClientBuilder`], this method fails if a TLS backend cannot be initialized, or the resolver cannot load the system configuration.
+    pub fn new() -> Result<Self, Error> {
         Ok(Self {
-            client: Client::builder()
+            client: ReqwestClient::builder()
                 .cookie_store(true)
                 .user_agent(concat!(
                     env!("CARGO_PKG_NAME"),
@@ -80,7 +80,7 @@ impl WikiClient {
     /// log into the mediawiki API.
     ///
     /// If successful, this method also requests an edit token which is needed for some endpoints.
-    pub async fn login(&mut self) -> Result<(), ToolsError> {
+    pub async fn login(&mut self) -> Result<(), Error> {
         let json: Token = self
             .get(&[("action", "query"), ("meta", "tokens"), ("type", "login")])
             .await?;
@@ -89,7 +89,7 @@ impl WikiClient {
 
         let token = match json.query.tokens.logintoken {
             Some(t) => t,
-            None => return Err(ToolsError::TokenNotFound(format!("{:?}", json))),
+            None => return Err(Error::TokenNotFound(format!("{:?}", json))),
         };
 
         let res: Login = self
@@ -104,7 +104,7 @@ impl WikiClient {
         log::debug!("login request completed: {:?}", res);
 
         if let Some(r) = res.login.reason {
-            return Err(ToolsError::LoginFailed(r.description));
+            return Err(Error::LoginFailed(r.description));
         };
 
         self.request_csrf_token().await
@@ -115,7 +115,7 @@ impl WikiClient {
     /// Note: This doesn't remove the stored values for `url`, `username` and `password`.
     ///
     /// You generally don't need to call this, except if you want to switch the wiki or user without creating a new Client.
-    pub async fn logout(&mut self) -> Result<(), ToolsError> {
+    pub async fn logout(&mut self) -> Result<(), Error> {
         self.post::<Ignore>(&[("action", "logout"), ("token", &self.csrf_token)])
             .await?;
 
@@ -126,8 +126,9 @@ impl WikiClient {
         Ok(())
     }
 
-    /// Get a reference to the inner [reqwest::Client].
-    pub fn client(&self) -> &Client {
+    /// Get a reference to the inner [`reqwest::Client`].
+    #[must_use]
+    pub fn client(&self) -> &ReqwestClient {
         &self.client
     }
 
@@ -137,23 +138,20 @@ impl WikiClient {
     }
 
     /// Send a GET request with query parameters.
-    /// You need to specify a response type which implements [serde::de::DeserializeOwned].
+    /// You need to specify a response type which implements [`serde::de::DeserializeOwned`].
     ///
-    /// If you don't care about the response, use [serde::de::IgnoredAny].
+    /// If you don't care about the response, use [`serde::de::IgnoredAny`].
     /// # Example
     /// ```no_run
-    /// # async fn test_get() -> Result<(), mw_tools::error::ToolsError> {
-    /// # let client = mw_tools::WikiClient::new()?;
+    /// # async fn test_get() -> Result<(), mw_tools::Error> {
+    /// # let client = mw_tools::Client::new()?;
     /// // request the page content in wikitext form.
     ///let res: serde_json::Value = client
     ///    .get(&[("action", "parse"), ("prop", "wikitext"), ("page", "Page Title")])
     ///    .await?;
     /// # Ok(())}
     /// ```
-    pub async fn get<T: DeserializeOwned>(
-        &self,
-        parameters: &[(&str, &str)],
-    ) -> Result<T, ToolsError> {
+    pub async fn get<T: DeserializeOwned>(&self, parameters: &[(&str, &str)]) -> Result<T, Error> {
         loop {
             // It's fine to create a new request every iteration, because we almost never need a second one.
             let res: ApiResponse<T> = self
@@ -168,10 +166,10 @@ impl WikiClient {
                 .send()
                 .await
                 .and_then(|res| res.error_for_status())
-                .map_err(ToolsError::from)?
+                .map_err(Error::from)?
                 .json()
                 .await
-                .map_err(ToolsError::from)?;
+                .map_err(Error::from)?;
             match res {
                 ApiResponse::Success(r) => return Ok(r),
                 ApiResponse::Failure { mut errors } => {
@@ -181,7 +179,7 @@ impl WikiClient {
                         tokio::time::sleep(tokio::time::Duration::from_secs(15)).await;
                         continue;
                     } else {
-                        return Err(ToolsError::MediaWikiApi(err));
+                        return Err(Error::MediaWikiApi(err));
                     }
                 }
             };
@@ -190,14 +188,14 @@ impl WikiClient {
 
     /// Send a POST request with parameters added as a form body.
     ///
-    /// You need to specify a response type which implements [serde::de::DeserializeOwned].
+    /// You need to specify a response type which implements [`serde::de::DeserializeOwned`].
     ///
-    /// If you don't care about the response, use [serde::de::IgnoredAny].
+    /// If you don't care about the response, use [`serde::de::IgnoredAny`].
     /// # Example
     /// ```no_run
-    /// # async fn test_post() -> Result<(), mw_tools::error::ToolsError> {
+    /// # async fn test_post() -> Result<(), mw_tools::Error> {
     /// # use serde::de::IgnoredAny;
-    /// # let client = mw_tools::WikiClient::new()?;
+    /// # let client = mw_tools::Client::new()?;
     /// // Purge the server cache for a page and ignore the result.
     ///client.post::<IgnoredAny>(&[
     ///    ("action", "purge"),
@@ -205,10 +203,7 @@ impl WikiClient {
     ///]).await?;
     /// # Ok(())}
     /// ```
-    pub async fn post<T: DeserializeOwned>(
-        &self,
-        parameters: &[(&str, &str)],
-    ) -> Result<T, ToolsError> {
+    pub async fn post<T: DeserializeOwned>(&self, parameters: &[(&str, &str)]) -> Result<T, Error> {
         let parameters = if parameters
             .iter()
             .any(|(x, y)| *x == "action" && ["delete", "edit", "move", "upload"].contains(y))
@@ -232,10 +227,10 @@ impl WikiClient {
                 .send()
                 .await
                 .and_then(|res| res.error_for_status())
-                .map_err(ToolsError::from)?
+                .map_err(Error::from)?
                 .json()
                 .await
-                .map_err(ToolsError::from)?;
+                .map_err(Error::from)?;
             match res {
                 ApiResponse::Success(r) => return Ok(r),
                 ApiResponse::Failure { mut errors } => {
@@ -245,7 +240,7 @@ impl WikiClient {
                         tokio::time::sleep(tokio::time::Duration::from_secs(15)).await;
                         continue;
                     } else {
-                        return Err(ToolsError::MediaWikiApi(err));
+                        return Err(Error::MediaWikiApi(err));
                     }
                 }
             };
@@ -253,7 +248,7 @@ impl WikiClient {
     }
 
     // get a new edit token
-    async fn request_csrf_token(&mut self) -> Result<(), ToolsError> {
+    async fn request_csrf_token(&mut self) -> Result<(), Error> {
         let res: Token = self
             .get(&[("action", "query"), ("meta", "tokens"), ("type", "csrf")])
             .await?;
@@ -262,13 +257,13 @@ impl WikiClient {
 
         if let Some(token) = res.query.tokens.csrftoken {
             if token.as_str() == "+\\\\" {
-                return Err(ToolsError::TokenNotFound(
+                return Err(Error::TokenNotFound(
                     "token was '+\\\\' aka empty".to_string(),
                 ));
             }
             self.csrf_token = token;
         } else {
-            return Err(ToolsError::TokenNotFound(format!("{:?}", res)));
+            return Err(Error::TokenNotFound(format!("{:?}", res)));
         }
 
         Ok(())
@@ -279,7 +274,7 @@ impl WikiClient {
         &self,
         parameters: &[(&str, &str)],
         file_part: reqwest::multipart::Part,
-    ) -> Result<Response, ToolsError> {
+    ) -> Result<Response, Error> {
         let mut form = reqwest::multipart::Form::new().part("file", file_part);
         let parameters = [
             parameters,

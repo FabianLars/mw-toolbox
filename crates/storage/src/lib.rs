@@ -29,7 +29,7 @@ pub fn encrypt(data: &[u8]) -> Result<Vec<u8>> {
         .encrypt(nonce, data)
         .map_err(|e| anyhow!("Error encrypting value: {:?}", e))?;
 
-    ciphertext.splice(0..0, rng_nonce.iter().cloned());
+    ciphertext.splice(0..0, rng_nonce.iter().copied());
 
     Ok(ciphertext)
 }
@@ -48,7 +48,7 @@ pub fn decrypt(data: &[u8]) -> Result<Vec<u8>> {
         .decrypt(nonce, ciphertext)
         .map_err(|e| anyhow!("Error decrypting value: {:?}", e))?;
 
-    Ok(plaintext.to_vec())
+    Ok(plaintext)
 }
 
 pub async fn save<T: Serialize>(name: &str, object: T) -> Result<()> {

@@ -6,12 +6,12 @@ use anyhow::{anyhow, Error, Result};
 use futures::{join, prelude::*, try_join};
 use regex::Regex;
 use reqwest::header::{HeaderMap, ACCEPT, AUTHORIZATION};
-use reqwest::Client;
+use reqwest::Client as ReqwestClient;
 use select::{document::Document, predicate::Class};
 use serde::{Deserialize, Serialize};
 use tokio::{fs::File, io::AsyncWriteExt};
 
-use mw_tools::WikiClient;
+use mw_tools::Client;
 
 type Ignore = serde::de::IgnoredAny;
 
@@ -101,7 +101,7 @@ struct Parse {
 }
 
 pub async fn champs() -> Result<()> {
-    let client = Client::new();
+    let client = ReqwestClient::new();
 
     let fut1 = async {
         let response: Vec<SummaryEntry> = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/champion-summary.json").send().await.map_err(|e| anyhow!("Couldn't get champion-summary.json: {}", e))?.json().map_err(|e| anyhow!("Couldn't convert champion-summary.json to vec: {}", e)).await?;
@@ -116,7 +116,7 @@ pub async fn champs() -> Result<()> {
 
     let mut champions = HashMap::new();
 
-    for c in summary.iter() {
+    for c in &summary {
         if c.id == -1 {
             continue;
         };
@@ -130,7 +130,7 @@ pub async fn champs() -> Result<()> {
         champions.insert(temp.id, temp);
     }
 
-    for (s, c) in skins.iter() {
+    for (s, c) in &skins {
         let skinpart: Vec<char> = s.chars().rev().take(3).collect();
         let skinid = format!("{}{}{}", skinpart[2], skinpart[1], skinpart[0]).parse::<i32>()?;
         let champstring: String = s.chars().take(c.id.to_string().len() - 3).collect();
@@ -155,7 +155,7 @@ pub async fn champs() -> Result<()> {
     Ok(())
 }
 
-pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result<()> {
+pub async fn discounts<C: AsRef<Client>>(client: C, path: PathBuf) -> Result<()> {
     let client = client.as_ref();
     let lockfile = std::fs::read_to_string(path)?;
     // 0: "LeagueClient", 1: PID, 2: Port, 3: Auth, 4: Protocol
@@ -165,7 +165,7 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result
     let mut headers = HeaderMap::new();
     headers.insert(ACCEPT, "application/json".parse()?);
     headers.insert(AUTHORIZATION, format!("Basic {}", auth).parse()?);
-    let unsafe_client = Client::builder()
+    let unsafe_client = ReqwestClient::builder()
         .danger_accept_invalid_certs(true)
         .default_headers(headers)
         .cookie_store(true)
@@ -247,7 +247,7 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result
                     champ: champions_wapi[&champ_id].name.clone(),
                     skin: Some(skin),
                     discount,
-                })
+                });
             }
             _ => {
                 continue;
@@ -280,7 +280,7 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result
 |discount     = {}
 }}}}"#,
             c.champ, c.discount
-        ))
+        ));
     }
 
     for s in &skins {
@@ -297,7 +297,7 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result
             // unwrapping here is save
             s.skin.as_ref().unwrap(),
             s.discount
-        ))
+        ));
     }
 
     let full_template = format!(
@@ -329,7 +329,7 @@ pub async fn discounts<C: AsRef<WikiClient>>(client: C, path: PathBuf) -> Result
 }
 
 #[cfg(feature = "riot-api")]
-pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
+pub async fn rotation<C: AsRef<Client>>(client: C) -> Result<()> {
     let client = client.as_ref();
     let riot_api_url = format!(
         "https://euw1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key={}",
@@ -440,7 +440,7 @@ pub async fn rotation<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     Ok(())
 }
 
-pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
+pub async fn set<C: AsRef<Client>>(client: C) -> Result<()> {
     let mut skin: String = String::new();
     let mut set: String = String::new();
     let mut universe: String = String::new();
@@ -724,7 +724,7 @@ pub async fn set<C: AsRef<WikiClient>>(client: C) -> Result<()> {
     Ok(())
 }
 
-pub async fn positions<C: AsRef<WikiClient>>(client: C) -> Result<()> {
+pub async fn positions<C: AsRef<Client>>(client: C) -> Result<()> {
     let client = client.as_ref();
     let opgg = "https://euw.op.gg/champion/statistics";
 

@@ -1,6 +1,6 @@
-use crate::{error::ToolsError, response::edit::Edit, response::Ignore, WikiClient};
+use crate::{response::edit::Edit, response::Ignore, Client, Error};
 
-pub async fn nulledit(client: &WikiClient, titles: &[&str]) -> Result<(), ToolsError> {
+pub async fn nulledit(client: &Client, titles: &[&str]) -> Result<(), Error> {
     for title in titles {
         client
             .post::<Ignore>(&[
@@ -19,11 +19,11 @@ pub async fn nulledit(client: &WikiClient, titles: &[&str]) -> Result<(), ToolsE
 }
 
 pub async fn edit(
-    client: &WikiClient,
+    client: &Client,
     title: &str,
     content: &str,
     summary: Option<&str>,
-) -> Result<String, ToolsError> {
+) -> Result<String, Error> {
     let res: Edit = client
         .post(&[
             ("action", "edit"),

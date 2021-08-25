@@ -1,5 +1,4 @@
 use serde::{de::IgnoredAny, Deserialize, Serialize};
-use thiserror::Error;
 
 pub(crate) mod delete;
 pub(crate) mod download;
@@ -13,7 +12,7 @@ pub(crate) mod upload;
 
 pub(crate) type Ignore = IgnoredAny;
 
-#[derive(Debug, Deserialize, Error, Serialize)]
+#[derive(Debug, Deserialize, Serialize, thiserror::Error)]
 #[error("API returned an error: \"{code}\". Description: \"{description}\"")]
 pub struct Error {
     pub(crate) code: String,

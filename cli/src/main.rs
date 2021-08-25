@@ -7,7 +7,7 @@ use clap::{ArgEnum, Clap};
 use tokio::{fs, io::AsyncWriteExt};
 
 use api::rename::Destination;
-use mw_tools::{api, WikiClient};
+use mw_tools::{api, Client};
 
 #[derive(Clap, Debug, PartialEq)]
 enum Subcommand {
@@ -120,7 +120,7 @@ async fn main() -> Result<()> {
     pretty_env_logger::init();
 
     let cli = Cli::parse();
-    let mut client = WikiClient::new()?
+    let mut client = Client::new()?
         .with_url(&cli.url)
         .with_credentials(&cli.name, &cli.password);
     client.login().await?;
@@ -130,7 +130,7 @@ async fn main() -> Result<()> {
         Subcommand::Delete { input } => {
             let contents = fs::read_to_string(input).await?;
             let titles: Vec<&str> = contents.lines().collect();
-            api::delete::delete(&client, &titles, None).await?
+            api::delete::delete(&client, &titles, None).await?;
         }
         Subcommand::List {
             list_type,
@@ -149,28 +149,16 @@ async fn main() -> Result<()> {
             } else {
                 let res = match list_type {
                     ListType::Allimages => api::list::allimages(&client).await?,
-                    ListType::Allpages => {
-                        api::list::allpages(&client, parameter.as_deref()).await?
-                    }
+                    ListType::Allpages => api::list::allpages(&client, parameter.as_deref()).await?,
                     ListType::Alllinks => api::list::alllinks(&client).await?,
                     ListType::Allcategories => api::list::allcategories(&client).await?,
-                    ListType::Backlinks => {
-                        api::list::backlinks(&client, &parameter.ok_or_else(|| anyhow!("parameter 'bltitle' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Backlinks for help."))?).await?
-                    }
-                    ListType::Categorymembers => {
-                        api::list::categorymembers(&client, &parameter.ok_or_else(|| anyhow!("parameter 'cmtitle' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Categorymembers for help."))?).await?
-                    }
-                    ListType::Embeddedin => {
-                        api::list::embeddedin(&client, &parameter.ok_or_else(|| anyhow!("parameter 'eititle' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Embeddedin for help."))?).await?
-                    }
-                    ListType::Imageusage => {
-                        api::list::imageusage(&client, &parameter.ok_or_else(|| anyhow!("parameter 'iutitle' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Imageusage for help."))?).await?
-                    }
+                    ListType::Backlinks => api::list::backlinks(&client, &parameter.ok_or_else(|| anyhow!("parameter 'bltitle' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Backlinks for help."))?).await?,
+                    ListType::Categorymembers => api::list::categorymembers(&client, &parameter.ok_or_else(|| anyhow!("parameter 'cmtitle' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Categorymembers for help."))?).await?,
+                    ListType::Embeddedin => api::list::embeddedin(&client, &parameter.ok_or_else(|| anyhow!("parameter 'eititle' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Embeddedin for help."))?).await?,
+                    ListType::Imageusage => api::list::imageusage(&client, &parameter.ok_or_else(|| anyhow!("parameter 'iutitle' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Imageusage for help."))?).await?,
                     ListType::Search => api::list::search(&client, &parameter.ok_or_else(|| anyhow!("parameter 'srsearch' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Search for help."))?).await?,
                     ListType::Protectedtitles => api::list::protectedtitles(&client).await?,
-                    ListType::Querypage => {
-                        api::list::querypage(&client, &parameter.ok_or_else(|| anyhow!("parameter 'qppage' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Querypage for help."))?).await?
-                    }
+                    ListType::Querypage => api::list::querypage(&client, &parameter.ok_or_else(|| anyhow!("parameter 'qppage' required. Visit https://www.mediawiki.org/wiki/Special:MyLanguage/API:Querypage for help."))?).await?,
                     ListType::Allinfoboxes => api::list::allinfoboxes(&client).await?,
                     _ => vec![String::new()],
                 };
@@ -206,17 +194,17 @@ async fn main() -> Result<()> {
             } else {
                 Some(Destination::Plain(to))
             };
-            api::rename::rename(&client, from, to, prepend.as_deref(), append.as_deref()).await?
+            api::rename::rename(&client, from, to, prepend.as_deref(), append.as_deref()).await?;
         }
         Subcommand::Nulledit { input } => {
             let contents = fs::read_to_string(input).await?;
             let titles: Vec<&str> = contents.lines().collect();
-            api::edit::nulledit(&client, &titles).await?
+            api::edit::nulledit(&client, &titles).await?;
         }
         Subcommand::Purge { input, recursive } => {
             let contents = fs::read_to_string(input).await?;
             let titles: Vec<&str> = contents.lines().collect();
-            api::purge::purge(&client, &titles, recursive).await?
+            api::purge::purge(&client, &titles, recursive).await?;
         }
         Subcommand::Upload { input, text } => {
             let mut files: Vec<PathBuf> = Vec::new();
@@ -227,12 +215,12 @@ async fn main() -> Result<()> {
                     match entry {
                         Ok(entry) => files.push(entry.path()),
                         Err(err) => println!("Invalid path in dir: {:?}\nProceeding...", err),
-                    }
+                    };
                 }
             } else {
                 return Err(anyhow!("Invalid path given!"));
             }
-            api::upload::upload_multiple(&client, &files, text.as_deref()).await?
+            api::upload::upload_multiple(&client, &files, text.as_deref()).await?;
         }
         #[cfg(feature = "league-wiki")]
         Subcommand::League { league_type, path } => match league_type {
@@ -243,14 +231,14 @@ async fn main() -> Result<()> {
                     None => get_client_path()?,
                 };
 
-                league::discounts(&client, path).await?
+                league::discounts(&client, path).await?;
             }
             LeagueType::Positions => league::positions(&client).await?,
             LeagueType::Rotation | LeagueType::Rotations => {
                 #[cfg(not(feature = "riot-api"))]
                 return Err(anyhow!("Did you forget to set the riot-api feature flag?"));
                 #[cfg(feature = "riot-api")]
-                league::rotation(&client).await?
+                league::rotation(&client).await?;
             }
             LeagueType::Set => league::set(&client).await?,
         },

@@ -1,30 +1,29 @@
 use std::collections::HashMap;
 
 use crate::{
-    error::ToolsError,
     response::list::{List, Namespaces, Querypage},
-    WikiClient,
+    Client, Error,
 };
 
-type Result<T, E = ToolsError> = core::result::Result<T, E>;
+type Result<T, E = Error> = core::result::Result<T, E>;
 
-pub async fn allcategories(client: &WikiClient) -> Result<Vec<String>> {
+pub async fn allcategories(client: &Client) -> Result<Vec<String>> {
     get_from_api(client, "allcategories", "ac", None).await
 }
 
-pub async fn allimages(client: &WikiClient) -> Result<Vec<String>> {
+pub async fn allimages(client: &Client) -> Result<Vec<String>> {
     get_from_api(client, "allimages", "ai", None).await
 }
 
-pub async fn allinfoboxes(client: &WikiClient) -> Result<Vec<String>> {
+pub async fn allinfoboxes(client: &Client) -> Result<Vec<String>> {
     get_from_api(client, "allinfoboxes", "", None).await
 }
 
-pub async fn alllinks(client: &WikiClient) -> Result<Vec<String>> {
+pub async fn alllinks(client: &Client) -> Result<Vec<String>> {
     get_from_api(client, "alllinks", "al", None).await
 }
 
-pub async fn allpages(client: &WikiClient, parameter: Option<&str>) -> Result<Vec<String>> {
+pub async fn allpages(client: &Client, parameter: Option<&str>) -> Result<Vec<String>> {
     if let Some(param) = parameter {
         if param == "all" {
             let mut temp: Vec<String> = Vec::new();
@@ -66,7 +65,7 @@ pub async fn allpages(client: &WikiClient, parameter: Option<&str>) -> Result<Ve
     get_from_api(client, "allpages", "ap", None).await
 }
 
-pub async fn backlinks(client: &WikiClient, parameter: &str) -> Result<Vec<String>> {
+pub async fn backlinks(client: &Client, parameter: &str) -> Result<Vec<String>> {
     get_from_api(
         client,
         "backlinks",
@@ -76,7 +75,7 @@ pub async fn backlinks(client: &WikiClient, parameter: &str) -> Result<Vec<Strin
     .await
 }
 
-pub async fn categorymembers(client: &WikiClient, parameter: &str) -> Result<Vec<String>> {
+pub async fn categorymembers(client: &Client, parameter: &str) -> Result<Vec<String>> {
     get_from_api(
         client,
         "categorymembers",
@@ -86,7 +85,7 @@ pub async fn categorymembers(client: &WikiClient, parameter: &str) -> Result<Vec
     .await
 }
 
-pub async fn embeddedin(client: &WikiClient, parameter: &str) -> Result<Vec<String>> {
+pub async fn embeddedin(client: &Client, parameter: &str) -> Result<Vec<String>> {
     get_from_api(
         client,
         "embeddedin",
@@ -96,7 +95,7 @@ pub async fn embeddedin(client: &WikiClient, parameter: &str) -> Result<Vec<Stri
     .await
 }
 
-pub async fn exturlusage(client: &WikiClient) -> Result<HashMap<String, Vec<String>>> {
+pub async fn exturlusage(client: &Client) -> Result<HashMap<String, Vec<String>>> {
     let api_res = get_from_api(client, "exturlusage", "eu", None).await?;
     let mut results: HashMap<String, Vec<String>> = HashMap::new();
 
@@ -105,13 +104,13 @@ pub async fn exturlusage(client: &WikiClient) -> Result<HashMap<String, Vec<Stri
         results
             .entry(split[0].to_string())
             .or_insert_with(Vec::new)
-            .push(split[1].to_string())
+            .push(split[1].to_string());
     }
 
     Ok(results)
 }
 
-pub async fn imageusage(client: &WikiClient, parameter: &str) -> Result<Vec<String>> {
+pub async fn imageusage(client: &Client, parameter: &str) -> Result<Vec<String>> {
     get_from_api(
         client,
         "imageusage",
@@ -121,11 +120,11 @@ pub async fn imageusage(client: &WikiClient, parameter: &str) -> Result<Vec<Stri
     .await
 }
 
-pub async fn protectedtitles(client: &WikiClient) -> Result<Vec<String>> {
+pub async fn protectedtitles(client: &Client) -> Result<Vec<String>> {
     get_from_api(client, "protectedtitles", "pt", None).await
 }
 
-pub async fn querypage(client: &WikiClient, parameter: &str) -> Result<Vec<String>> {
+pub async fn querypage(client: &Client, parameter: &str) -> Result<Vec<String>> {
     get_from_api(
         client,
         "querypage",
@@ -135,7 +134,7 @@ pub async fn querypage(client: &WikiClient, parameter: &str) -> Result<Vec<Strin
     .await
 }
 
-pub async fn search(client: &WikiClient, parameter: &str) -> Result<Vec<String>> {
+pub async fn search(client: &Client, parameter: &str) -> Result<Vec<String>> {
     get_from_api(
         client,
         "search",
@@ -146,7 +145,7 @@ pub async fn search(client: &WikiClient, parameter: &str) -> Result<Vec<String>>
 }
 
 async fn get_from_api(
-    api: &WikiClient,
+    api: &Client,
     long: &str,
     short: &str,
     parameter: Option<&str>,
@@ -184,9 +183,9 @@ async fn get_from_api(
                 }
 
                 if let Some(c) = json.querycontinue {
-                    continue_from = c.from
+                    continue_from = c.from;
                 } else {
-                    has_next = false
+                    has_next = false;
                 };
             }
         }
@@ -223,9 +222,9 @@ async fn get_from_api(
                 }
 
                 if let Some(c) = json.querycontinue {
-                    continue_from = c.from
+                    continue_from = c.from;
                 } else {
-                    has_next = false
+                    has_next = false;
                 };
             }
         }

@@ -1,10 +1,6 @@
-use crate::{error::ToolsError, response::Ignore, WikiClient};
+use crate::{response::Ignore, Client, Error};
 
-pub async fn purge(
-    client: &WikiClient,
-    titles: &[&str],
-    recursive: bool,
-) -> Result<(), ToolsError> {
+pub async fn purge(client: &Client, titles: &[&str], recursive: bool) -> Result<(), Error> {
     for chunk in titles.chunks(50) {
         client
             .post::<Ignore>(&[

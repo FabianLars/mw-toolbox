@@ -1,8 +1,5 @@
-use serde::Serialize;
-use thiserror::Error;
-
-#[derive(Debug, Error)]
-pub enum ToolsError {
+#[derive(Debug, thiserror::Error)]
+pub enum Error {
     /// MediaWiki API Errors
     #[error(transparent)]
     MediaWikiApi(#[from] super::response::Error),
@@ -37,25 +34,25 @@ pub enum ToolsError {
     Other(String),
 }
 
-impl ToolsError {
+impl Error {
     pub const fn code(&self) -> &'static str {
         match self {
-            ToolsError::MediaWikiApi(_) => "MediaWikiaApi",
-            ToolsError::TokenNotFound(_) => "TokenNotFound",
-            ToolsError::LoginFailed(_) => "LoginFailed",
-            ToolsError::IoError(_) => "IoError",
-            ToolsError::Timeout(_) => "Timeout",
-            ToolsError::StatusCode(_) => "StatusCode",
-            ToolsError::RequestFailed(_) => "RequestFailed",
-            ToolsError::ParsingFailed(_) => "ParsingFailed",
-            ToolsError::HttpClient(_) => "HttpClient",
-            ToolsError::InvalidInput(_) => "InvalidInput",
-            ToolsError::Other(_) => "Other",
+            Error::MediaWikiApi(_) => "MediaWikiaApi",
+            Error::TokenNotFound(_) => "TokenNotFound",
+            Error::LoginFailed(_) => "LoginFailed",
+            Error::IoError(_) => "IoError",
+            Error::Timeout(_) => "Timeout",
+            Error::StatusCode(_) => "StatusCode",
+            Error::RequestFailed(_) => "RequestFailed",
+            Error::ParsingFailed(_) => "ParsingFailed",
+            Error::HttpClient(_) => "HttpClient",
+            Error::InvalidInput(_) => "InvalidInput",
+            Error::Other(_) => "Other",
         }
     }
 }
 
-impl From<reqwest::Error> for ToolsError {
+impl From<reqwest::Error> for Error {
     fn from(source: reqwest::Error) -> Self {
         if source.is_timeout() {
             Self::Timeout(source.to_string())
@@ -71,7 +68,7 @@ impl From<reqwest::Error> for ToolsError {
     }
 }
 
-impl Serialize for ToolsError {
+impl serde::Serialize for Error {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::ser::Serializer,

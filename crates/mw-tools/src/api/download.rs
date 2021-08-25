@@ -5,12 +5,11 @@ use regex::Regex;
 use tokio::{fs::File, io::AsyncWriteExt};
 
 use crate::{
-    error::ToolsError,
     response::download::{Imageinfo, Page},
-    WikiClient,
+    Client, Error,
 };
 
-pub async fn download(client: &WikiClient, files: &[&str]) -> Result<(), ToolsError> {
+pub async fn download(client: &Client, files: &[&str]) -> Result<(), Error> {
     let path = directories_next::UserDirs::new()
         .and_then(|p| p.download_dir().map(|p| p.to_path_buf()))
         .expect("Can't find user's download folder!");
@@ -66,11 +65,11 @@ async fn inner(
     mut path: PathBuf,
     regex: &Regex,
     page: &Page,
-) -> Result<(), ToolsError> {
+) -> Result<(), Error> {
     let imageinfo = page
         .imageinfo
         .as_ref()
-        .ok_or_else(|| ToolsError::InvalidInput("invalid wiki response".to_string()))?;
+        .ok_or_else(|| Error::InvalidInput("invalid wiki response".to_string()))?;
     let file_contents = client.get(&imageinfo[0].url).send().await?.bytes().await?;
 
     let file_name = page.title.splitn(2, ':').last().unwrap_or_default(/*This can't happen*/);

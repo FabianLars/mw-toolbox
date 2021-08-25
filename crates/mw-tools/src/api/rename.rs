@@ -1,33 +1,33 @@
-use crate::{error::ToolsError, response::rename::Rename, WikiClient};
+use crate::{response::rename::Rename, Client, Error};
 
 pub async fn rename(
-    client: &WikiClient,
+    client: &Client,
     from: Vec<String>,
     to: Option<Destination>,
     prepend: Option<&str>,
     append: Option<&str>,
-) -> Result<(), ToolsError> {
+) -> Result<(), Error> {
     let mut actual_destination: Vec<String> = Vec::new();
 
     match to {
         Some(inner_to) => match inner_to {
             Destination::Plain(dest) => {
                 if from.len() != dest.len() {
-                    return Err(ToolsError::InvalidInput(
+                    return Err(Error::InvalidInput(
                         "amount of from/to pages is not the same".to_string(),
                     ));
                 }
                 actual_destination = dest;
             }
             Destination::Replace((replace, with)) => {
-                from.iter().for_each(|x| {
+                for x in &from {
                     actual_destination.push(x.replace(&replace, &with));
-                });
+                }
             }
         },
         None => {
             if prepend.is_none() && append.is_none() {
-                return Err(ToolsError::InvalidInput(
+                return Err(Error::InvalidInput(
                     "at least one of 'to', 'prepend' or 'append' needed".to_string(),
                 ));
             }
@@ -36,18 +36,18 @@ pub async fn rename(
     }
 
     if prepend.is_some() || append.is_some() {
-        actual_destination.iter_mut().for_each(|x| {
+        for x in &mut actual_destination {
             if let Some(p) = &prepend {
-                x.insert_str(0, p)
+                x.insert_str(0, p);
             }
             if let Some(a) = &prepend {
-                x.push_str(a)
+                x.push_str(a);
             }
-        });
+        }
     }
 
     for (x, y) in from.iter().zip(actual_destination.iter()) {
-        let response: Result<Rename, ToolsError> = client
+        let response: Result<Rename, Error> = client
             .post(&[
                 ("action", "move"),
                 ("from", x),
@@ -68,7 +68,7 @@ pub async fn rename(
                 x,
                 y,
                 match err {
-                    ToolsError::MediaWikiApi(err) => format!("{} - {}", err.code, err.description),
+                    Error::MediaWikiApi(err) => format!("{} - {}", err.code, err.description),
                     _ => err.code().to_string(),
                 }
             ),

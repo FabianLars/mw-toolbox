@@ -1,9 +1,10 @@
 #![forbid(unsafe_code)]
 
-pub use client::WikiClient;
+pub use client::Client;
+pub use error::Error;
 
 mod client;
+mod error;
 
 pub mod api;
-pub mod error;
 pub mod response;

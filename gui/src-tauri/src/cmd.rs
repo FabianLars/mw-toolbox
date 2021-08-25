@@ -4,12 +4,12 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::command;
 
-use mw_tools::{api, error::ToolsError};
+use mw_tools::{api, Error};
 
 use crate::{CANCEL_EDIT, CANCEL_UPLOAD, CLIENT};
 
 type Cache = parking_lot::Mutex<HashMap<String, Value>>;
-type Result<T, E = ToolsError> = core::result::Result<T, E>;
+type Result<T, E = Error> = core::result::Result<T, E>;
 
 /// Struct to store users. Each profile is stored in a new instance.
 #[derive(Debug, Default, Serialize, Deserialize)]
@@ -105,12 +105,12 @@ pub async fn auto_edit(
             let _ = api::edit::edit(&*CLIENT.lock().await, t, &gp.content, summary).await?;
             window
                 .emit("page-edited", t)
-                .map_err(|_| ToolsError::Other("Couldn't emit event to window".to_string()))?;
+                .map_err(|_| Error::Other("Couldn't emit event to window".to_string()))?;
             tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
         } else {
             window
                 .emit("page-skipped", t)
-                .map_err(|_| ToolsError::Other("Couldn't emit event to window".to_string()))?;
+                .map_err(|_| Error::Other("Couldn't emit event to window".to_string()))?;
         }
     }
     Ok(())
@@ -124,8 +124,8 @@ pub async fn get_page(page: &str, patterns: Vec<FindReplace>) -> Result<GetPage>
     for pat in patterns {
         if !pat.find.is_empty() {
             if pat.is_regex {
-                let re = regex::Regex::new(&pat.find)
-                    .map_err(|err| ToolsError::Other(err.to_string()))?;
+                let re =
+                    regex::Regex::new(&pat.find).map_err(|err| Error::Other(err.to_string()))?;
                 let new = re
                     .replace_all(&s, unescape::unescape(&pat.replace).unwrap_or(pat.replace))
                     .to_string();
@@ -171,7 +171,7 @@ pub async fn list(listtype: &str, param: Option<&str>) -> Result<Vec<String>> {
         "protectedtitles" => api::list::protectedtitles(&*client).await,
         "querypage" => api::list::querypage(&*client, param).await,
         "allinfoboxes" => api::list::allinfoboxes(&*client).await,
-        _ => Err(ToolsError::InvalidInput(format!(
+        _ => Err(Error::InvalidInput(format!(
             "Invalid listtype provided: \"{}\"",
             listtype
         ))),
@@ -235,7 +235,7 @@ pub async fn update_profile_store(mut profiles: Vec<Profile>, current: usize) ->
 
     storage::save_secure("oB9uBQDs", (profiles, current))
         .await
-        .map_err(|err| ToolsError::Other(err.to_string()))
+        .map_err(|err| Error::Other(err.to_string()))
 }
 
 /// Command to upload files.
@@ -252,7 +252,7 @@ pub async fn upload(text: &str, files: Vec<&str>, window: tauri::Window) -> Resu
             // Emit uploaded event no matter if it's a file or a folder, to remove it from the frontend.
             window
                 .emit("file-uploaded", file)
-                .map_err(|err| ToolsError::Other(err.to_string()))?;
+                .map_err(|err| Error::Other(err.to_string()))?;
         } else {
             break;
         }
