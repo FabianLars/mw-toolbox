@@ -3,8 +3,7 @@
         "distDir": "../dist",
         "devPath": "http://localhost:3000",
         "beforeDevCommand": "",
-        "beforeBuildCommand": "pnpm build",
-        "withGlobalTauri": true
+        "beforeBuildCommand": "pnpm build"
     },
     "tauri": {
         "bundle": {
