@@ -1,7 +1,9 @@
 # mw-toolbox
 
 some tools to interact with http://leagueoflegends.fandom.com/de/wiki/
+
 uses limited editing rate of ~1-2 edits per second according to fandoms rules
+
 Interaction with Riot's API only via CLI + feature flag "riot-api" (just "update rotation" for now)
 
 Input files need to be formatted with newline seperation (eg 1 wiki article per line)
