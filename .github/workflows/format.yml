@@ -1,49 +1,49 @@
 name: Format
 
 on:
-    workflow_dispatch:
-    pull_request:
-    push:
-        branches:
-            - main
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
-    rust:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: hecrj/setup-rust-action@v1
-              with:
-                  components: rustfmt
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hecrj/setup-rust-action@v1
+        with:
+          components: rustfmt
 
-            - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-            - name: Check format
-              run: cargo fmt --all -- --check
+      - name: Check format
+        run: cargo fmt --all -- --check
 
-    js:
-        runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: gui
-        steps:
-            - uses: actions/checkout@v2
+  js:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gui
+    steps:
+      - uses: actions/checkout@v2
 
-            - name: Setup Node
-              uses: actions/setup-node@v1
-              with:
-                  node-version: '16'
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16'
 
-            - name: Cache pnpm modules
-              uses: actions/cache@v2
-              with:
-                  path: ~/.pnpm-store
-                  key: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-
 
-            - uses: pnpm/action-setup@v2
-              with:
-                  version: 6.x.x
-                  run_install: true
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 6.x.x
+          run_install: true
 
-            - name: Check Prettier compliance
-              run: pnpm lint
+      - name: Check Prettier compliance
+        run: pnpm lint

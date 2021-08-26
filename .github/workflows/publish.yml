@@ -1,120 +1,120 @@
 name: Publish app
 
 on:
-    create:
+  create:
 
 env:
-    WTOOLS_AEAD_KEY: ${{ secrets.WTOOLS_AEAD_KEY }}
-    TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-    REMOTE_HOST: ${{ secrets.SERVER_IP }}
-    REMOTE_USER: ${{ secrets.USERNAME }}
-    SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  WTOOLS_AEAD_KEY: ${{ secrets.WTOOLS_AEAD_KEY }}
+  TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+  REMOTE_HOST: ${{ secrets.SERVER_IP }}
+  REMOTE_USER: ${{ secrets.USERNAME }}
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
 jobs:
-    mw-toolbox:
-        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+  mw-toolbox:
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
 
-        strategy:
-            matrix:
-                platform: [macos-latest, ubuntu-latest, windows-latest]
+    strategy:
+      matrix:
+        platform: [macos-latest, ubuntu-latest, windows-latest]
 
-        runs-on: ${{ matrix.platform }}
+    runs-on: ${{ matrix.platform }}
 
-        steps:
-            - uses: actions/checkout@v2
+    steps:
+      - uses: actions/checkout@v2
 
-            - name: Prepare folders on update server
-              if: runner.os == 'Linux'
-              uses: appleboy/ssh-action@master
-              with:
-                  host: ${{ env.REMOTE_HOST }}
-                  username: ${{ env.REMOTE_USER }}
-                  key: ${{ env.SSH_PRIVATE_KEY }}
-                  script: |
-                      cd ~/wwwcdn/releases/mw-toolbox/
-                      rm -rf previous/
-                      mv latest/ previous
-                      mkdir -p latest/win64 latest/linux latest/darwin
+      - name: Prepare folders on update server
+        if: runner.os == 'Linux'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.REMOTE_HOST }}
+          username: ${{ env.REMOTE_USER }}
+          key: ${{ env.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/wwwcdn/releases/mw-toolbox/
+            rm -rf previous/
+            mv latest/ previous
+            mkdir -p latest/win64 latest/linux latest/darwin
 
-            - name: Setup rust
-              uses: hecrj/setup-rust-action@v1
+      - name: Setup rust
+        uses: hecrj/setup-rust-action@v1
 
-            - name: Setup node
-              uses: actions/setup-node@v1
-              with:
-                  node-version: '16'
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16'
 
-            - name: Install dependencies (ubuntu only)
-              if: runner.os == 'Linux'
-              run: |
-                  sudo apt update
-                  sudo apt install -y libwebkit2gtk-4.0-dev librsvg2-dev patchelf
+      - name: Install dependencies (ubuntu only)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update
+          sudo apt install -y libwebkit2gtk-4.0-dev librsvg2-dev patchelf
 
-            # No need for rust cache for release build as it gets cleared every week
-            - name: Create cache for pnpm modules
-              uses: actions/cache@v2
-              with:
-                  path: ~/.pnpm-store
-                  key: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-
+      # No need for rust cache for release build as it gets cleared every week
+      - name: Create cache for pnpm modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-
 
-            - name: Install pnpm and project dependencies
-              uses: pnpm/action-setup@v2
-              with:
-                  version: 6.x.x
-                  run_install: |
-                      - cwd: gui
+      - name: Install pnpm and project dependencies
+        uses: pnpm/action-setup@v2
+        with:
+          version: 6.x.x
+          run_install: |
+            - cwd: gui
 
-            - name: Build app
-              run: |
-                  cd gui
-                  pnpm tauri build
+      - name: Build app
+        run: |
+          cd gui
+          pnpm tauri build
 
-            - name: Upload files to the update server (Windows)
-              if: runner.os == 'Windows'
-              uses: SamKirkland/FTP-Deploy-Action@4.1.0
-              with:
-                  server: ${{ env.REMOTE_HOST }}
-                  protocol: ftps
-                  username: ftpuser
-                  password: ${{ secrets.FTP_PASSWORD }}
-                  local-dir: 'target/release/bundle/msi/'
-                  server-dir: 'releases/mw-toolbox/latest/win64/'
+      - name: Upload files to the update server (Windows)
+        if: runner.os == 'Windows'
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        with:
+          server: ${{ env.REMOTE_HOST }}
+          protocol: ftps
+          username: ftpuser
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: 'target/release/bundle/msi/'
+          server-dir: 'releases/mw-toolbox/latest/win64/'
 
-            - name: Upload files to the update server (Linux)
-              if: runner.os == 'Linux'
-              uses: easingthemes/ssh-deploy@main
-              with:
-                  SOURCE: 'target/release/bundle/appimage/'
-                  TARGET: '~/wwwcdn/releases/mw-toolbox/latest/linux/'
+      - name: Upload files to the update server (Linux)
+        if: runner.os == 'Linux'
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SOURCE: 'target/release/bundle/appimage/'
+          TARGET: '~/wwwcdn/releases/mw-toolbox/latest/linux/'
 
-            - name: Upload files to the update server (macOS)
-              if: runner.os == 'macOS'
-              uses: easingthemes/ssh-deploy@main
-              with:
-                  SOURCE: 'target/release/bundle/macos/'
-                  TARGET: '~/wwwcdn/releases/mw-toolbox/latest/darwin/'
+      - name: Upload files to the update server (macOS)
+        if: runner.os == 'macOS'
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SOURCE: 'target/release/bundle/macos/'
+          TARGET: '~/wwwcdn/releases/mw-toolbox/latest/darwin/'
 
-            - name: Upload release assets (Windows)
-              if: runner.os == 'Windows'
-              uses: ncipollo/release-action@v1
-              with:
-                  allowUpdates: true
-                  artifacts: target/release/bundle/msi/mw-toolbox_*.msi
-                  token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload release assets (Windows)
+        if: runner.os == 'Windows'
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: target/release/bundle/msi/mw-toolbox_*.msi
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Upload release assets (Linux)
-              if: runner.os == 'Linux'
-              uses: ncipollo/release-action@v1
-              with:
-                  allowUpdates: true
-                  artifacts: target/release/bundle/appimage/mw-toolbox_*.AppImage
-                  token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload release assets (Linux)
+        if: runner.os == 'Linux'
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: target/release/bundle/appimage/mw-toolbox_*.AppImage
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Upload release assets (macOS)
-              if: runner.os == 'macOS'
-              uses: ncipollo/release-action@v1
-              with:
-                  allowUpdates: true
-                  artifacts: target/release/bundle/macos/mw-toolbox.app
-                  token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload release assets (macOS)
+        if: runner.os == 'macOS'
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: target/release/bundle/macos/mw-toolbox.app
+          token: ${{ secrets.GITHUB_TOKEN }}

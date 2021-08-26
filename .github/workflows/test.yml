@@ -1,144 +1,144 @@
 name: Test
 
 on:
-    workflow_dispatch:
-    pull_request:
-    push:
-        branches:
-            - main
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
 
 env:
-    WTOOLS_AEAD_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  WTOOLS_AEAD_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
 jobs:
-    rust-clippy:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
+  rust-clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
 
-            - uses: hecrj/setup-rust-action@v1
-              with:
-                  components: clippy
-                  rust-version: nightly
+      - uses: hecrj/setup-rust-action@v1
+        with:
+          components: clippy
+          rust-version: nightly
 
-            - uses: actions/cache@v2
-              with:
-                  path: |
-                      ~/.cargo/registry
-                      ~/.cargo/git
-                      target
-                  key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-${{ hashFiles('**/Cargo.lock') }}
-                  restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-
 
-            - name: Install webkit2gtk
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libappindicator3-dev
+      - name: Install webkit2gtk
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libappindicator3-dev
 
-            - name: Run clippy
-              run: cargo clippy --workspace --no-default-features --features server
+      - name: Run clippy
+        run: cargo clippy --workspace --no-default-features --features server
 
-    rust-test:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
+  rust-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
 
-            - uses: hecrj/setup-rust-action@v1
+      - uses: hecrj/setup-rust-action@v1
 
-            - uses: actions/cache@v2
-              with:
-                  path: |
-                      ~/.cargo/registry
-                      ~/.cargo/git
-                      target
-                  key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-${{ hashFiles('**/Cargo.lock') }}
-                  restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-
 
-            - name: Install webkit2gtk
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libappindicator3-dev
+      - name: Install webkit2gtk
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libappindicator3-dev
 
-            - name: Run tests
-              run: cargo test --workspace --no-default-features --features server
+      - name: Run tests
+        run: cargo test --workspace --no-default-features --features server
 
-    bundle-tauri-debug:
-        strategy:
-            fail-fast: false
-            matrix:
-                platform: [macos-latest, ubuntu-latest, windows-latest]
+  bundle-tauri-debug:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-latest, ubuntu-latest, windows-latest]
 
-        runs-on: ${{ matrix.platform }}
+    runs-on: ${{ matrix.platform }}
 
-        steps:
-            - uses: actions/checkout@v2
+    steps:
+      - uses: actions/checkout@v2
 
-            - uses: hecrj/setup-rust-action@v1
+      - uses: hecrj/setup-rust-action@v1
 
-            - uses: actions/cache@v2
-              with:
-                  path: |
-                      ~/.cargo/registry
-                      ~/.cargo/git
-                      target
-                  key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-${{ hashFiles('**/Cargo.lock') }}
-                  restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-
 
-            - name: Cache pnpm modules
-              uses: actions/cache@v2
-              with:
-                  path: ~/.pnpm-store
-                  key: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-
 
-            - uses: pnpm/action-setup@v2
-              with:
-                  version: 6.x.x
-                  run_install: |
-                      - cwd: gui
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 6.x.x
+          run_install: |
+            - cwd: gui
 
-            - name: Install linux dependencies
-              if: runner.os == 'Linux'
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libappindicator3-dev
+      - name: Install linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libappindicator3-dev
 
-            - name: tauri build
-              run: cd gui && pnpm tauri build -- --debug
+      - name: tauri build
+        run: cd gui && pnpm tauri build -- --debug
 
-    js:
-        runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: gui
+  js:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gui
 
-        steps:
-            - uses: actions/checkout@v2
+    steps:
+      - uses: actions/checkout@v2
 
-            - name: Setup Node
-              uses: actions/setup-node@v1
-              with:
-                  node-version: '16'
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16'
 
-            - name: Cache pnpm modules
-              uses: actions/cache@v2
-              with:
-                  path: ~/.pnpm-store
-                  key: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-
 
-            - uses: pnpm/action-setup@v2
-              with:
-                  version: 6.x.x
-                  run_install: true
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 6.x.x
+          run_install: true
 
-            - name: Type check
-              run: pnpm tsc
+      - name: Type check
+        run: pnpm tsc
 
-            - name: Create vite cache
-              # not pre-bundling the dependencies makes the test itself fail
-              continue-on-error: true
-              run: pnpm test
+      - name: Create vite cache
+        # not pre-bundling the dependencies makes the test itself fail
+        continue-on-error: true
+        run: pnpm test
 
-            - name: Run tests
-              run: pnpm test
+      - name: Run tests
+        run: pnpm test
