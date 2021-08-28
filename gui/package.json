@@ -1,10 +1,5 @@
 {
-    "name": "mw-toolbox",
-    "version": "0.1.0",
-    "description": "",
     "private": true,
-    "author": "",
-    "license": "MIT",
     "scripts": {
         "start": "vite",
         "build": "vite build",
