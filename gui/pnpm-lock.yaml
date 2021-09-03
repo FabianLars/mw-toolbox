@@ -16,7 +16,7 @@ specifiers:
   react: 17.0.2
   react-dom: 17.0.2
   react-focus-lock: 2.5.2
-  react-router-dom: 6.0.0-beta.2
+  react-router-dom: 6.0.0-beta.3
   typescript: 4.4.2
   vite: 2.5.3
   vite-web-test-runner-plugin: 0.1.0
@@ -27,7 +27,7 @@ dependencies:
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
   react-focus-lock: 2.5.2_4cd822c6044f4c1a7e1f1fea0e728f12
-  react-router-dom: 6.0.0-beta.2_94912414cd94cc5bc891cce65dd59788
+  react-router-dom: 6.0.0-beta.3_94912414cd94cc5bc891cce65dd59788
 
 devDependencies:
   '@testing-library/react': 12.0.0_react-dom@17.0.2+react@17.0.2
@@ -979,7 +979,7 @@ packages:
     dependencies:
       caniuse-lite: 1.0.30001252
       colorette: 1.3.0
-      electron-to-chromium: 1.3.829
+      electron-to-chromium: 1.3.830
       escalade: 3.1.1
       node-releases: 1.1.75
     dev: true
@@ -1324,8 +1324,8 @@ packages:
     resolution: {integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=}
     dev: true
 
-  /electron-to-chromium/1.3.829:
-    resolution: {integrity: sha512-5EXDbvsaLRxS1UOfRr8Hymp3dR42bvBNPgzVuPwUFj3v66bpvDUcNwwUywQUQYn/scz26/3Sgd3fNVGQOlVwvQ==}
+  /electron-to-chromium/1.3.830:
+    resolution: {integrity: sha512-gBN7wNAxV5vl1430dG+XRcQhD4pIeYeak6p6rjdCtlz5wWNwDad8jwvphe5oi1chL5MV6RNRikfffBBiFuj+rQ==}
     dev: true
 
   /emoji-regex/8.0.0:
@@ -2288,8 +2288,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /react-router-dom/6.0.0-beta.2_94912414cd94cc5bc891cce65dd59788:
-    resolution: {integrity: sha512-ZOauHu+clEYCRsW77F21/q6Ou5zmJvL6FvKsbmvO+J+4e7OXglh0VJy8yph8xoz20Ak5UYDExubE6n5+2QP1pw==}
+  /react-router-dom/6.0.0-beta.3_94912414cd94cc5bc891cce65dd59788:
+    resolution: {integrity: sha512-F5HC/mEdZQvBNbxEFDfRfd1b+DPcNeHZgoreH98NJEJe3G1uonWatdtj+tVQ3VnUbg0TzCXa4mzKFZMey90v7A==}
     peerDependencies:
       history: '>=5'
       react: '>=16.8'
@@ -2298,11 +2298,11 @@ packages:
       history: 5.0.1
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-      react-router: 6.0.0-beta.2_history@5.0.1+react@17.0.2
+      react-router: 6.0.0-beta.3_history@5.0.1+react@17.0.2
     dev: false
 
-  /react-router/6.0.0-beta.2_history@5.0.1+react@17.0.2:
-    resolution: {integrity: sha512-oyVEfpVT9VbClWaZNNShfprq8HA5rSLfo/ZsXFT08/6mldM6onHzqr6Lc1ybBYEB7/c+rr1VOA99as7hEoAoXw==}
+  /react-router/6.0.0-beta.3_history@5.0.1+react@17.0.2:
+    resolution: {integrity: sha512-5fSBKgb0VaUrMi1RJxeZZMyGkjGSd9HtoWtc2XIcBFc01l7y6jBg5mVkmifjhhdSlamE3y6E6RXpfzCWqEBPPA==}
     peerDependencies:
       history: '>=5'
       react: '>=16.8'
