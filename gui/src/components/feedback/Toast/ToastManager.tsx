@@ -11,7 +11,7 @@ export class ToastManager {
         this.containerRef = toastContainer;
     }
 
-    public show(message: React.ReactNode) {
+    public show(message: React.ReactNode): void {
         if (this.currentToast) {
             this.destroy();
         }
@@ -20,7 +20,7 @@ export class ToastManager {
         this.render();
     }
 
-    public destroy() {
+    public destroy(): void {
         this.currentToast = null;
         ReactDOM.unmountComponentAtNode(this.containerRef);
     }

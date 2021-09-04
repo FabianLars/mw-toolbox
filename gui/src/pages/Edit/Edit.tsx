@@ -19,7 +19,7 @@ type Props = {
     setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Edit = ({ isOnline, setNavDisabled }: Props) => {
+const Edit = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
     const [isRunning, setIsRunning] = useState(false);
     const [isAuto, setIsAuto] = useState(false);
     const [isLoading, setIsLoading] = useState(false);

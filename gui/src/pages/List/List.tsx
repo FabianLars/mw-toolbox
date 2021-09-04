@@ -12,7 +12,7 @@ type Props = {
     setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const List = ({ isOnline, setNavDisabled }: Props) => {
+const List = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
     const [loading, setLoading] = useState(false);
     const [listOutput, setListOutput] = useState('');
     const [listType, setListType] = useState('');

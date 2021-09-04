@@ -13,14 +13,21 @@ type Props = {
     initialFocusRef?: React.RefObject<FocusableElement>;
 };
 
-const Modal = ({ header, body, footer, isOpen, onClose, initialFocusRef }: Props) => {
+const Modal = ({
+    header,
+    body,
+    footer,
+    isOpen,
+    onClose,
+    initialFocusRef,
+}: Props): JSX.Element | null => {
     if (!isOpen) return null;
 
     const [show, setShow] = useState(false);
 
     const overlayRef = useRef(null);
 
-    const closeModal = (e: any) => {
+    const closeModal = (e: React.MouseEvent<HTMLDivElement>) => {
         if (overlayRef.current === e.target) {
             onClose();
         }

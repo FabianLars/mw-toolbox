@@ -10,7 +10,7 @@ type Props = {
     setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Delete = ({ isOnline, setNavDisabled }: Props) => {
+const Delete = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
     const [areaValue, setAreaValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [reason, setReason] = useState('');

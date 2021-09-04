@@ -15,7 +15,7 @@ export type Profile = {
     isOnline: boolean;
 };
 
-const App = () => {
+const App = (): JSX.Element => {
     // useRef to make useEffect skip the change from useState
     const mounted = useRef(false);
     // Init dummy object to prevent errors on startup
@@ -36,7 +36,7 @@ const App = () => {
     // Init user state from cache or default
     // This exists to handle reloads
     useEffect(() => {
-        if (!!window.__TAURI__) {
+        if (window.__TAURI__) {
             (async () => {
                 setNavDisabled(true);
                 const cache = await getCache<Profile[]>('profiles');

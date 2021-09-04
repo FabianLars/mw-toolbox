@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import classes from './Menu.module.css';
 
-const Menu = () => {
+const Menu = (): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const firstRun = useRef(true);
     const clickedOpen = useRef(false);
@@ -34,7 +34,7 @@ const Menu = () => {
     }, [isOpen]);
 
     // close menu on click
-    useEffect!(() => {
+    useEffect(() => {
         if (!isOpen) return;
 
         const handleClicks = () => {

@@ -10,7 +10,7 @@ type Props = {
     setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Purge = ({ isOnline, setNavDisabled }: Props) => {
+const Purge = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
     const [isPurging, setIsPurging] = useState(false);
     const [isNulling, setIsNulling] = useState(false);
     const [areaValue, setAreaValue] = useState('');

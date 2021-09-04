@@ -24,7 +24,7 @@ const Select = ({
     value,
     onChange,
     children,
-}: Props) => {
+}: Props): JSX.Element => {
     return (
         <select
             aria-label={label}

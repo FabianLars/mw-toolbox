@@ -25,7 +25,7 @@ const Textarea = ({
     value,
     onBlur,
     onChange,
-}: Props) => {
+}: Props): JSX.Element => {
     return (
         <textarea
             aria-label={label}

@@ -1,7 +1,7 @@
 import { invoke } from '@tauri-apps/api/tauri';
 
 import React, { useEffect, useState } from 'react';
-import { Button, Checkbox, Divider, Input, Label, Select, toast } from '@/components';
+import { Button, Checkbox, Divider, Input, Label, Select } from '@/components';
 
 import type { Profile } from '@/App';
 import { errorToast } from '@/helpers/toast';
@@ -21,7 +21,7 @@ const Account = ({
     currentProfile,
     setCurrentProfile,
     setNavDisabled,
-}: Props) => {
+}: Props): JSX.Element => {
     const [logginin, setLoggingin] = useState(false);
     const [urlInvalid, seturlInvalid] = useState(false);
     const [usernameInvalid, setUsernameInvalid] = useState(false);
@@ -50,7 +50,7 @@ const Account = ({
 
     const logout = () => {
         setLoggingin(true);
-        invoke<any>('logout').finally(() => {
+        invoke<never>('logout').finally(() => {
             setLoggingin(false);
             setProfiles((old) => {
                 const curr = [...old];
@@ -91,13 +91,14 @@ const Account = ({
     }: React.ChangeEvent<HTMLInputElement>) => {
         setProfiles((old) => {
             const curr = [...old];
-            //@ts-ignore omg dynamic object indexing is sooo annoying in typescript
+            // @ts-ignore omg dynamic object indexing is sooo annoying in typescript
             curr[currentProfile][name || id] = id === 'save-password' ? checked : value;
             return curr;
         });
     };
 
     // using useEffect for this to not rely on input events for validity-checks
+    // useful when switching profiles via dropdown and loading profiles from cache
     useEffect(() => {
         const curr = profiles[currentProfile];
         if (

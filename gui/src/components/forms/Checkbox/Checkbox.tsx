@@ -21,7 +21,7 @@ const Checkbox = ({
     onBlur,
     onChange,
     children,
-}: Props) => {
+}: Props): JSX.Element => {
     return (
         <div className={`${classes.wrapper} ${isDisabled ? classes.disabled : ''} ${className}`}>
             <input

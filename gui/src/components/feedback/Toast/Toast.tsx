@@ -6,7 +6,7 @@ type Props = {
     destroy: () => void;
 };
 
-const Toast = ({ children, destroy }: Props) => {
+const Toast = ({ children, destroy }: Props): JSX.Element => {
     const [show, setShow] = useState(false);
 
     useEffect(() => {

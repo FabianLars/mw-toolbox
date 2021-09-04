@@ -10,7 +10,7 @@ type Props = {
     setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Download = ({ isOnline, setNavDisabled }: Props) => {
+const Download = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
     const [areaValue, setAreaValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 

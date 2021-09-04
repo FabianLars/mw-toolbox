@@ -13,7 +13,7 @@ type Props = {
     setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Upload = ({ isOnline, setNavDisabled }: Props) => {
+const Upload = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
     const [isUploading, setIsUploading] = useState(false);
     const [isWaiting, setIsWaiting] = useState(false);
     const [uploadtext, setUploadtext] = useState('');
