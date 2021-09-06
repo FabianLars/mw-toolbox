@@ -27,8 +27,8 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-
+          key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-clippy-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-clippy-
 
       - name: Install webkit2gtk
         run: |
@@ -86,8 +86,8 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-
+          key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-tauri-debug-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-tauri-debug-
 
       - name: Cache pnpm modules
         uses: actions/cache@v2
