@@ -14,18 +14,19 @@ pub async fn download(client: &Client, files: &[&str]) -> Result<(), Error> {
         .and_then(|p| p.download_dir().map(|p| p.to_path_buf()))
         .expect("Can't find user's download folder!");
 
+    let len = files.len() - 1;
     let mut titles = String::new();
     let mut infos: Vec<crate::response::download::Page> = Vec::new();
 
     let rgxp = Regex::new(r#"[<>:"/\|?*]+"#).unwrap();
 
-    for f in files {
+    for (i, f) in files.iter().enumerate() {
         if !titles.is_empty() {
             titles.push('|');
         }
         titles.push_str(f);
 
-        if titles.len() >= 1500 {
+        if titles.len() >= 1500 || i >= len {
             let mut file_infos: Imageinfo = client
                 .get(&[
                     ("action", "query"),
