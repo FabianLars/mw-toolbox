@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use futures::StreamExt;
+use futures_util::{stream, StreamExt};
 use regex::Regex;
 use tokio::{fs::File, io::AsyncWriteExt};
 
@@ -42,7 +42,7 @@ pub async fn download(client: &Client, files: &[&str]) -> Result<(), Error> {
         }
     }
 
-    futures::stream::iter(infos)
+    stream::iter(infos)
         .for_each_concurrent(8, |page| {
             download_and_save(client.client().clone(), path.clone(), &rgxp, page)
         })

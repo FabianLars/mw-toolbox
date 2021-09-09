@@ -3,7 +3,7 @@
 use std::{collections::HashMap, path::PathBuf};
 
 use anyhow::{anyhow, Error, Result};
-use futures::{join, prelude::*, try_join};
+use futures_util::future::join;
 use regex::Regex;
 use reqwest::header::{HeaderMap, ACCEPT, AUTHORIZATION};
 use reqwest::Client as ReqwestClient;
@@ -104,19 +104,19 @@ pub async fn champs() -> Result<()> {
     let client = ReqwestClient::new();
 
     let fut1 = async {
-        let response: Vec<SummaryEntry> = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/champion-summary.json").send().await.map_err(|e| anyhow!("Couldn't get champion-summary.json: {}", e))?.json().map_err(|e| anyhow!("Couldn't convert champion-summary.json to vec: {}", e)).await?;
+        let response: Vec<SummaryEntry> = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/champion-summary.json").send().await?.json().await?;
         Ok::<Vec<SummaryEntry>, Error>(response)
-    }.map_err(|_| anyhow!("Can't get or convert champion-summary.json"));
+    };
     let fut2 = async {
-        let response: HashMap<String, ChampSrc> = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").send().await.map_err(|e| anyhow!("Couldn't get skins.json: {}", e))?.json().map_err(|e| anyhow!("Couldn't convert skins.json to hashmap: {}", e)).await?;
+        let response: HashMap<String, ChampSrc> = client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").send().await?.json().await?;
         Ok::<HashMap<String, ChampSrc>, Error>(response)
-    }.map_err(|_| anyhow!("Can't get or convert skins.json"));
+    };
 
-    let (summary, skins) = try_join!(fut1, fut2)?;
+    let (summary, skins) = join(fut1, fut2).await;
 
     let mut champions = HashMap::new();
 
-    for c in &summary {
+    for c in &summary? {
         if c.id == -1 {
             continue;
         };
@@ -130,7 +130,7 @@ pub async fn champs() -> Result<()> {
         champions.insert(temp.id, temp);
     }
 
-    for (s, c) in &skins {
+    for (s, c) in &skins? {
         let skinpart: Vec<char> = s.chars().rev().take(3).collect();
         let skinid = format!("{}{}{}", skinpart[2], skinpart[1], skinpart[0]).parse::<i32>()?;
         let champstring: String = s.chars().take(c.id.to_string().len() - 3).collect();
@@ -441,13 +441,6 @@ pub async fn rotation<C: AsRef<Client>>(client: C) -> Result<()> {
 }
 
 pub async fn set<C: AsRef<Client>>(client: C) -> Result<()> {
-    let mut skin: String = String::new();
-    let mut set: String = String::new();
-    let mut universe: String = String::new();
-    let mut icons: String = String::new();
-    let mut iconsets: String = String::new();
-    let mut champion: String = String::new();
-    let mut tft: String = String::new();
     let client = client.as_ref();
     let ext_client = client.client();
     let lua_regex = Regex::new(r#""(?P<k>\w+)":"#)?;
@@ -468,258 +461,169 @@ pub async fn set<C: AsRef<Client>>(client: C) -> Result<()> {
         format!("return {}", lua)
     };
 
-    let fut_skin = async {
-        skin = ext_client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").send().await?.text().await?.replace(" ", " ").replace("Hexerei-Miss Fortune \"", "Hexerei-Miss Fortune\"");
-        Ok::<(), Error>(())
-    }.map_err(|_| anyhow!("Can't get skins.json"));
-    let fut_set = async {
-        set = ext_client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skinlines.json").send().await?.text().await?.replace(" ", " ");
-        Ok::<(), Error>(())
-    }.map_err(|_| anyhow!("Can't get skinlines.json"));
-    let fut_universe = async {
-        universe = ext_client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/universes.json").send().await?.text().await?.replace(" ", " ");
-        Ok::<(), Error>(())
-    }.map_err(|_| anyhow!("Can't get universes.json"));
-    let fut_icons = async {
-        icons = ext_client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icons.json").send().await?.text().await?.replace(" ", " ");
-        Ok::<(), Error>(())
-    }.map_err(|_| anyhow!("Can't get universes.json"));
-    let fut_iconsets = async {
-        iconsets = ext_client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icon-sets.json").send().await?.text().await?.replace(" ", " ");
-        Ok::<(), Error>(())
-    }.map_err(|_| anyhow!("Can't get universes.json"));
-    let fut_champion = async {
-        let patches: Vec<String> = ext_client
-            .get("https://ddragon.leagueoflegends.com/api/versions.json")
-            .send()
-            .await?
-            .json()
-            .await?;
-        champion = ext_client
-            .get(&format!(
-                "http://ddragon.leagueoflegends.com/cdn/{}/data/de_DE/champion.json",
-                patches[0]
-            ))
-            .send()
-            .await?
-            .text()
-            .await?
-            .replace(" ", " ");
-        Ok::<(), Error>(())
-    }
-    .map_err(|_| anyhow!("Can't get universes.json"));
-    let fut_tft = async {
-        tft = ext_client
-            .get("http://raw.communitydragon.org/latest/cdragon/tft/de_de.json")
-            .send()
-            .await
-            .expect("Can't get universes.json")
-            .text()
-            .await?
-            .replace(" ", " ");
-        Ok::<(), Error>(())
-    }
-    .map_err(|_| anyhow!("Can't get universes.json"));
+    let skin = ext_client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skins.json").send().await?.text().await?.replace(" ", " ").replace("Hexerei-Miss Fortune \"", "Hexerei-Miss Fortune\"");
 
-    try_join!(
-        fut_skin,
-        fut_set,
-        fut_universe,
-        fut_icons,
-        fut_iconsets,
-        fut_champion,
-        fut_tft
-    )?;
+    let set = ext_client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/skinlines.json").send().await?.text().await?.replace(" ", " ");
 
-    let fut_skin = async {
-        client
-            .post::<Ignore>(&[
-                ("action", "edit"),
-                ("summary", "automated update"),
-                ("bot", ""),
-                ("title", "Vorlage:Set/skins.json"),
-                ("text", &skin),
-            ])
-            .await
-    }
-    .map_err(|_| anyhow!("Can't edit skins.json"));
-    let fut_set = async {
-        client
-            .post::<Ignore>(&[
-                ("action", "edit"),
-                ("summary", "automated update"),
-                ("bot", ""),
-                ("title", "Vorlage:Set/sets.json"),
-                ("text", &set),
-            ])
-            .await
-    }
-    .map_err(|_| anyhow!("Can't edit skinlines.json"));
-    let fut_universe = async {
-        client
-            .post::<Ignore>(&[
-                ("action", "edit"),
-                ("summary", "automated update"),
-                ("bot", ""),
-                ("title", "Vorlage:Set/universes.json"),
-                ("text", &universe),
-            ])
-            .await
-    }
-    .map_err(|_| anyhow!("Can't edit universes.json"));
-    let fut_icons = async {
-        client
-            .post::<Ignore>(&[
-                ("action", "edit"),
-                ("summary", "automated update"),
-                ("bot", ""),
-                ("title", "Vorlage:Set/icons.json"),
-                ("text", &icons),
-            ])
-            .await
-    }
-    .map_err(|_| anyhow!("Can't edit universes.json"));
-    let fut_iconsets = async {
-        client
-            .post::<Ignore>(&[
-                ("action", "edit"),
-                ("summary", "automated update"),
-                ("bot", ""),
-                ("title", "Vorlage:Set/iconsets.json"),
-                ("text", &iconsets),
-            ])
-            .await
-    }
-    .map_err(|_| anyhow!("Can't edit universes.json"));
-    let fut_champion = async {
-        client
-            .post::<Ignore>(&[
-                ("action", "edit"),
-                ("summary", "automated update"),
-                ("bot", ""),
-                ("title", "Vorlage:Set/champion.json"),
-                ("text", &champion),
-            ])
-            .await
-    }
-    .map_err(|_| anyhow!("Can't edit universes.json"));
-    let fut_tft = async {
-        client
-            .post::<Ignore>(&[
-                ("action", "edit"),
-                ("summary", "automated update"),
-                ("bot", ""),
-                ("title", "Vorlage:Set/TFT.json"),
-                ("text", &tft),
-            ])
-            .await
-    }
-    .map_err(|_| anyhow!("Can't edit universes.json"));
+    let universe = ext_client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/universes.json").send().await?.text().await?.replace(" ", " ");
 
-    try_join!(
-        fut_skin,
-        fut_set,
-        fut_universe,
-        fut_icons,
-        fut_iconsets,
-        fut_champion,
-        fut_tft
-    )?;
+    let icons = ext_client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icons.json").send().await?.text().await?.replace(" ", " ");
 
-    let fut_skin = async {
-        client
-            .post::<Ignore>(&[
-                ("action", "edit"),
-                ("summary", "automated update"),
-                ("bot", ""),
-                ("title", "Modul:Set/skins.src"),
-                ("text", &convert(skin)),
-            ])
-            .await
-    }
-    .map_err(|_| anyhow!("Can't edit skins.src"));
-    let fut_set = async {
-        client
-            .post::<Ignore>(&[
-                ("action", "edit"),
-                ("summary", "automated update"),
-                ("bot", ""),
-                ("title", "Modul:Set/sets.src"),
-                ("text", &convert(set)),
-            ])
-            .await
-    }
-    .map_err(|_| anyhow!("Can't edit skinlines.src"));
-    let fut_universe = async {
-        client
-            .post::<Ignore>(&[
-                ("action", "edit"),
-                ("summary", "automated update"),
-                ("bot", ""),
-                ("title", "Modul:Set/universes.src"),
-                ("text", &convert(universe)),
-            ])
-            .await
-    }
-    .map_err(|_| anyhow!("Can't edit universes.src"));
-    let fut_icons = async {
-        client
-            .post::<Ignore>(&[
-                ("action", "edit"),
-                ("summary", "automated update"),
-                ("bot", ""),
-                ("title", "Modul:Set/icons.src"),
-                ("text", &convert(icons)),
-            ])
-            .await
-    }
-    .map_err(|_| anyhow!("Can't edit universes.src"));
-    let fut_iconsets = async {
-        client
-            .post::<Ignore>(&[
-                ("action", "edit"),
-                ("summary", "automated update"),
-                ("bot", ""),
-                ("title", "Modul:Set/iconsets.json"),
-                ("text", &convert(iconsets)),
-            ])
-            .await
-    }
-    .map_err(|_| anyhow!("Can't edit universes.src"));
-    let fut_champion = async {
-        client
-            .post::<Ignore>(&[
-                ("action", "edit"),
-                ("summary", "automated update"),
-                ("bot", ""),
-                ("title", "Modul:Set/champion.src"),
-                ("text", &convert(champion)),
-            ])
-            .await
-    }
-    .map_err(|_| anyhow!("Can't edit universes.src"));
-    let fut_tft = async {
-        client
-            .post::<Ignore>(&[
-                ("action", "edit"),
-                ("summary", "automated update"),
-                ("bot", ""),
-                ("title", "Modul:Set/TFT.src"),
-                ("text", &convert(tft)),
-            ])
-            .await
-    }
-    .map_err(|_| anyhow!("Can't edit universes.src"));
+    let iconsets = ext_client.get("https://raw.communitydragon.org/pbe/plugins/rcp-be-lol-game-data/global/de_de/v1/summoner-icon-sets.json").send().await?.text().await?.replace(" ", " ");
 
-    try_join!(
-        fut_skin,
-        fut_set,
-        fut_universe,
-        fut_icons,
-        fut_iconsets,
-        fut_champion,
-        fut_tft
-    )?;
+    let patches: Vec<String> = ext_client
+        .get("https://ddragon.leagueoflegends.com/api/versions.json")
+        .send()
+        .await?
+        .json()
+        .await?;
+    let champion = ext_client
+        .get(&format!(
+            "http://ddragon.leagueoflegends.com/cdn/{}/data/de_DE/champion.json",
+            patches[0]
+        ))
+        .send()
+        .await?
+        .text()
+        .await?
+        .replace(" ", " ");
+
+    let tft = ext_client
+        .get("http://raw.communitydragon.org/latest/cdragon/tft/de_de.json")
+        .send()
+        .await
+        .expect("Can't get universes.json")
+        .text()
+        .await?
+        .replace(" ", " ");
+
+    let _ = client
+        .post::<Ignore>(&[
+            ("action", "edit"),
+            ("summary", "automated update"),
+            ("bot", ""),
+            ("title", "Vorlage:Set/skins.json"),
+            ("text", &skin),
+        ])
+        .await?;
+    let _ = client
+        .post::<Ignore>(&[
+            ("action", "edit"),
+            ("summary", "automated update"),
+            ("bot", ""),
+            ("title", "Vorlage:Set/sets.json"),
+            ("text", &set),
+        ])
+        .await?;
+    let _ = client
+        .post::<Ignore>(&[
+            ("action", "edit"),
+            ("summary", "automated update"),
+            ("bot", ""),
+            ("title", "Vorlage:Set/universes.json"),
+            ("text", &universe),
+        ])
+        .await?;
+    let _ = client
+        .post::<Ignore>(&[
+            ("action", "edit"),
+            ("summary", "automated update"),
+            ("bot", ""),
+            ("title", "Vorlage:Set/icons.json"),
+            ("text", &icons),
+        ])
+        .await?;
+    let _ = client
+        .post::<Ignore>(&[
+            ("action", "edit"),
+            ("summary", "automated update"),
+            ("bot", ""),
+            ("title", "Vorlage:Set/iconsets.json"),
+            ("text", &iconsets),
+        ])
+        .await?;
+    let _ = client
+        .post::<Ignore>(&[
+            ("action", "edit"),
+            ("summary", "automated update"),
+            ("bot", ""),
+            ("title", "Vorlage:Set/champion.json"),
+            ("text", &champion),
+        ])
+        .await?;
+    let _ = client
+        .post::<Ignore>(&[
+            ("action", "edit"),
+            ("summary", "automated update"),
+            ("bot", ""),
+            ("title", "Vorlage:Set/TFT.json"),
+            ("text", &tft),
+        ])
+        .await;
+
+    let _ = client
+        .post::<Ignore>(&[
+            ("action", "edit"),
+            ("summary", "automated update"),
+            ("bot", ""),
+            ("title", "Modul:Set/skins.src"),
+            ("text", &convert(skin)),
+        ])
+        .await;
+    let _ = client
+        .post::<Ignore>(&[
+            ("action", "edit"),
+            ("summary", "automated update"),
+            ("bot", ""),
+            ("title", "Modul:Set/sets.src"),
+            ("text", &convert(set)),
+        ])
+        .await;
+    let _ = client
+        .post::<Ignore>(&[
+            ("action", "edit"),
+            ("summary", "automated update"),
+            ("bot", ""),
+            ("title", "Modul:Set/universes.src"),
+            ("text", &convert(universe)),
+        ])
+        .await;
+    let _ = client
+        .post::<Ignore>(&[
+            ("action", "edit"),
+            ("summary", "automated update"),
+            ("bot", ""),
+            ("title", "Modul:Set/icons.src"),
+            ("text", &convert(icons)),
+        ])
+        .await;
+    let _ = client
+        .post::<Ignore>(&[
+            ("action", "edit"),
+            ("summary", "automated update"),
+            ("bot", ""),
+            ("title", "Modul:Set/iconsets.json"),
+            ("text", &convert(iconsets)),
+        ])
+        .await;
+    let _ = client
+        .post::<Ignore>(&[
+            ("action", "edit"),
+            ("summary", "automated update"),
+            ("bot", ""),
+            ("title", "Modul:Set/champion.src"),
+            ("text", &convert(champion)),
+        ])
+        .await;
+    let _ = client
+        .post::<Ignore>(&[
+            ("action", "edit"),
+            ("summary", "automated update"),
+            ("bot", ""),
+            ("title", "Modul:Set/TFT.src"),
+            ("text", &convert(tft)),
+        ])
+        .await;
 
     Ok(())
 }
@@ -731,14 +635,15 @@ pub async fn positions<C: AsRef<Client>>(client: C) -> Result<()> {
     let mut positions: Vec<(String, String)> = Vec::new();
     let mut new_champdata: Vec<String> = Vec::new();
 
-    let (resp, resp2) = join!(
+    let (resp, resp2) = join(
         client.client().get(opgg).send(),
         client.get(&[
             ("action", "parse"),
             ("page", "Module:Champion/data"),
             ("prop", "wikitext"),
-        ])
-    );
+        ]),
+    )
+    .await;
     let resp = resp?.text().await?;
     let document = Document::from(resp.as_str());
 

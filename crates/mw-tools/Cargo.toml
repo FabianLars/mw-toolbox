@@ -7,7 +7,7 @@ version = "0.1.0"
 
 [dependencies]
 directories-next = "2"
-futures = "0.3"
+futures-util = {version = "0.3", default-features = false, features = ["alloc"]}
 log = "0.4"
 regex = "1"
 reqwest = {version = "0.11", features = ["json", "cookies", "multipart"]}
