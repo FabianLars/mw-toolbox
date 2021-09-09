@@ -12,13 +12,13 @@ specifiers:
   chai: 4.3.4
   history: 5.0.1
   minimal-tauri-cli: 1.0.0-beta.7
-  prettier: 2.3.2
+  prettier: 2.4.0
   react: 17.0.2
   react-dom: 17.0.2
   react-focus-lock: 2.5.2
   react-router-dom: 6.0.0-beta.3
   typescript: 4.4.2
-  vite: 2.5.5
+  vite: 2.5.6
   vite-web-test-runner-plugin: 0.1.0
 
 dependencies:
@@ -39,10 +39,10 @@ devDependencies:
   '@web/test-runner': 0.13.17
   chai: 4.3.4
   minimal-tauri-cli: 1.0.0-beta.7
-  prettier: 2.3.2
+  prettier: 2.4.0
   typescript: 4.4.2
-  vite: 2.5.5
-  vite-web-test-runner-plugin: 0.1.0_vite@2.5.5
+  vite: 2.5.6
+  vite-web-test-runner-plugin: 0.1.0_vite@2.5.6
 
 packages:
 
@@ -2151,8 +2151,8 @@ packages:
       source-map-js: 0.6.2
     dev: true
 
-  /prettier/2.3.2:
-    resolution: {integrity: sha512-lnJzDfJ66zkMy58OL5/NY5zp70S7Nz6KqcKkXYzn2tMVrNxvbqaBpg7H3qHaLxCJ5lNMsGuM8+ohS7cZrthdLQ==}
+  /prettier/2.4.0:
+    resolution: {integrity: sha512-DsEPLY1dE5HF3BxCRBmD4uYZ+5DCbvatnolqTqcxEgKVZnL2kUfyu7b8pPQ5+hTBkdhU9SLUmK0/pHb07RE4WQ==}
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: true
@@ -2683,16 +2683,16 @@ packages:
     engines: {node: '>= 0.8'}
     dev: true
 
-  /vite-web-test-runner-plugin/0.1.0_vite@2.5.5:
+  /vite-web-test-runner-plugin/0.1.0_vite@2.5.6:
     resolution: {integrity: sha512-AXrkMbtU/QW9mJWzl0j7Zn9UKKwMo4zQw4BPeS4TknwF/tIMqluFdb9J2+QbLIUP72TeiAgobpS72oo/c7kDPw==}
     peerDependencies:
       vite: 2.x
     dependencies:
-      vite: 2.5.5
+      vite: 2.5.6
     dev: true
 
-  /vite/2.5.5:
-    resolution: {integrity: sha512-VuPw2sS5j+JzkBQ8Mkhb5GodcGp2YcljwumzFfEraICwMVkTDvh9+noogwtFg+JIHJD5iwpcJhqWIzqIYMKc5Q==}
+  /vite/2.5.6:
+    resolution: {integrity: sha512-P++qzXuOPhTql8iDamsatlJfD7/yGi8NCNwzyqkB2p0jrNJC567WEdXiKn3hQ+ZV8amQmB2dTH6svo3Z2tJ6MQ==}
     engines: {node: '>=12.2.0'}
     hasBin: true
     dependencies:
