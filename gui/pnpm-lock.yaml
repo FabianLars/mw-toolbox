@@ -16,7 +16,7 @@ specifiers:
   react: 17.0.2
   react-dom: 17.0.2
   react-focus-lock: 2.5.2
-  react-router-dom: 6.0.0-beta.3
+  react-router-dom: 6.0.0-beta.4
   typescript: 4.4.3
   vite: 2.5.6
   vite-web-test-runner-plugin: 0.1.0
@@ -27,7 +27,7 @@ dependencies:
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
   react-focus-lock: 2.5.2_6e44cfea672f844fe365824ce49901bd
-  react-router-dom: 6.0.0-beta.3_94912414cd94cc5bc891cce65dd59788
+  react-router-dom: 6.0.0-beta.4_94912414cd94cc5bc891cce65dd59788
 
 devDependencies:
   '@testing-library/react': 12.0.0_react-dom@17.0.2+react@17.0.2
@@ -2288,8 +2288,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /react-router-dom/6.0.0-beta.3_94912414cd94cc5bc891cce65dd59788:
-    resolution: {integrity: sha512-F5HC/mEdZQvBNbxEFDfRfd1b+DPcNeHZgoreH98NJEJe3G1uonWatdtj+tVQ3VnUbg0TzCXa4mzKFZMey90v7A==}
+  /react-router-dom/6.0.0-beta.4_94912414cd94cc5bc891cce65dd59788:
+    resolution: {integrity: sha512-yppoRR8S7FxNMG6OGFn9DPJBPLsjeIuQa7GYnkRlgOSTBSPhAQpD6z7rvRzZnesQ9r6W+ibD9RvnqTcna4w/Pg==}
     peerDependencies:
       history: '>=5'
       react: '>=16.8'
@@ -2298,11 +2298,11 @@ packages:
       history: 5.0.1
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-      react-router: 6.0.0-beta.3_history@5.0.1+react@17.0.2
+      react-router: 6.0.0-beta.4_history@5.0.1+react@17.0.2
     dev: false
 
-  /react-router/6.0.0-beta.3_history@5.0.1+react@17.0.2:
-    resolution: {integrity: sha512-5fSBKgb0VaUrMi1RJxeZZMyGkjGSd9HtoWtc2XIcBFc01l7y6jBg5mVkmifjhhdSlamE3y6E6RXpfzCWqEBPPA==}
+  /react-router/6.0.0-beta.4_history@5.0.1+react@17.0.2:
+    resolution: {integrity: sha512-48JRRZJOwmfOKM12Tv3WjmNkVb2NpSEgDTWC4+MEJaud0+eyLJxqy62CKzOydMlk7hrfRFpC/elUYSZAuyx3qA==}
     peerDependencies:
       history: '>=5'
       react: '>=16.8'
