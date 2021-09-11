@@ -1,4 +1,17 @@
 {
     "extends": ["config:base"],
-    "lockFileMaintenance": { "enabled": true }
+    "lockFileMaintenance": { "enabled": true },
+    "packageRules": [
+        {
+            "automerge": true,
+            "automergeType": "branch",
+            "matchUpdateTypes": ["patch", "pin", "digest"]
+        },
+        {
+            "automerge": true,
+            "automergeType": "branch",
+            "matchUpdateTypes": ["minor"],
+            "matchCurrentVersion": ">=1.0.0"
+        }
+    ]
 }
