@@ -368,8 +368,8 @@ packages:
     engines: {node: '>= 12.13.0', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
     dev: false
 
-  /@testing-library/dom/8.3.0:
-    resolution: {integrity: sha512-4Eu+ExT7UhesxcRjumD7kAXv/8xhl5j2wgp2FROReXDg+Y+ArzPpU+GEN0+0m0SYlOu9hBtvNuBrzTKqyEB1Sw==}
+  /@testing-library/dom/8.5.0:
+    resolution: {integrity: sha512-O0fmHFaPlqaYCpa/cBL0cvroMridb9vZsMLacgIqrlxj+fd+bGF8UfAgwsLCHRF84KLBafWlm9CuOvxeNTlodw==}
     engines: {node: '>=12'}
     dependencies:
       '@babel/code-frame': 7.14.5
@@ -390,7 +390,7 @@ packages:
       react-dom: '*'
     dependencies:
       '@babel/runtime': 7.15.4
-      '@testing-library/dom': 8.3.0
+      '@testing-library/dom': 8.5.0
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
     dev: true

@@ -6,7 +6,10 @@ use anyhow::{anyhow, Result};
 use chacha20poly1305::aead::{Aead, NewAead};
 use chacha20poly1305::{Key, XChaCha20Poly1305, XNonce};
 use once_cell::sync::Lazy;
-use rand::prelude::*;
+use rand_chacha::{
+    rand_core::{RngCore, SeedableRng},
+    ChaCha20Rng,
+};
 use serde::{de::DeserializeOwned, Serialize};
 use tokio::{fs::File, io::AsyncWriteExt};
 
@@ -22,7 +25,7 @@ pub fn encrypt(data: &[u8]) -> Result<Vec<u8>> {
     let aead = XChaCha20Poly1305::new(cryptkey);
 
     let mut rng_nonce = [0u8; 24];
-    rand_chacha::ChaCha20Rng::from_entropy().fill(&mut rng_nonce[..]);
+    ChaCha20Rng::from_entropy().fill_bytes(&mut rng_nonce[..]);
 
     let nonce = XNonce::from_slice(&rng_nonce);
     let mut ciphertext = aead
@@ -110,17 +113,17 @@ mod tests {
     }
     #[tokio::test]
     async fn storage() {
-        use rand::{distributions::Alphanumeric, Rng};
+        use rand::{distributions::Alphanumeric, thread_rng, Rng};
 
-        let bool = rand::thread_rng().gen_bool(0.5);
+        let bool = thread_rng().gen_bool(0.5);
 
-        let usize: usize = rand::thread_rng().gen();
+        let usize: usize = thread_rng().gen();
 
         let mut map = HashMap::new();
         map.insert(
             "libtest".to_string(),
             String::from_utf8(
-                rand::thread_rng()
+                thread_rng()
                     .sample_iter(&Alphanumeric)
                     .take(32)
                     .collect::<Vec<u8>>(),
@@ -129,7 +132,7 @@ mod tests {
         );
 
         let string = String::from_utf8(
-            rand::thread_rng()
+            thread_rng()
                 .sample_iter(&Alphanumeric)
                 .take(32)
                 .collect::<Vec<u8>>(),
