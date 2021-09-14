@@ -379,7 +379,7 @@ packages:
       chalk: 4.1.2
       dom-accessibility-api: 0.5.7
       lz-string: 1.4.4
-      pretty-format: 27.1.1
+      pretty-format: 27.2.0
     dev: true
 
   /@testing-library/react/12.1.0_react-dom@17.0.2+react@17.0.2:
@@ -569,7 +569,7 @@ packages:
     dependencies:
       '@types/prop-types': 15.7.4
       '@types/scheduler': 0.16.2
-      csstype: 3.0.8
+      csstype: 3.0.9
     dev: true
 
   /@types/resolve/1.17.1:
@@ -977,9 +977,9 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001256
+      caniuse-lite: 1.0.30001257
       colorette: 1.4.0
-      electron-to-chromium: 1.3.836
+      electron-to-chromium: 1.3.838
       escalade: 3.1.1
       node-releases: 1.1.75
     dev: true
@@ -1025,8 +1025,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /caniuse-lite/1.0.30001256:
-    resolution: {integrity: sha512-QirrvMLmB4txNnxiaG/xbm6FSzv9LqOZ3Jp9VtCYb3oPIfCHpr/oGn38pFq0udwlkctvXQgPthaXqJ76DaYGnA==}
+  /caniuse-lite/1.0.30001257:
+    resolution: {integrity: sha512-JN49KplOgHSXpIsVSF+LUyhD8PUp6xPpAXeRrrcBh4KBeP7W864jHn6RvzJgDlrReyeVjMFJL3PLpPvKIxlIHA==}
     dev: true
 
   /chai/4.3.4:
@@ -1197,8 +1197,8 @@ packages:
     requiresBuild: true
     dev: true
 
-  /csstype/3.0.8:
-    resolution: {integrity: sha512-jXKhWqXPmlUeoQnF/EhTtTl4C9SnrxSH/jZUih3jmO6lBKr99rP3/+FmrMj4EFpOXzMtXHAZkd3x0E6h6Fgflw==}
+  /csstype/3.0.9:
+    resolution: {integrity: sha512-rpw6JPxK6Rfg1zLOYCSwle2GFOOsnjmDYDaBwEcwoOg4qlsIVCN789VkBZDJAGi4T07gI4YSutR43t9Zz4Lzuw==}
     dev: true
 
   /debounce/1.2.1:
@@ -1324,8 +1324,8 @@ packages:
     resolution: {integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=}
     dev: true
 
-  /electron-to-chromium/1.3.836:
-    resolution: {integrity: sha512-Ney3pHOJBWkG/AqYjrW0hr2AUCsao+2uvq9HUlRP8OlpSdk/zOHOUJP7eu0icDvePC9DlgffuelP4TnOJmMRUg==}
+  /electron-to-chromium/1.3.838:
+    resolution: {integrity: sha512-65O6UJiyohFAdX/nc6KJ0xG/4zOn7XCO03kQNNbCeMRGxlWTLzc6Uyi0tFNQuuGWqySZJi8CD2KXPXySVYmzMA==}
     dev: true
 
   /emoji-regex/8.0.0:
@@ -1351,8 +1351,8 @@ packages:
     resolution: {integrity: sha512-MgtWFl5No+4S3TmhDmCz2ObFGm6lEpTnzbQi+Dd+pw4mlTIZTmM2iAs5gRlmx5zS9luzobCSBSI90JM/1/JgOw==}
     dev: true
 
-  /esbuild/0.12.26:
-    resolution: {integrity: sha512-YmTkhPKjvTJ+G5e96NyhGf69bP+hzO0DscqaVJTi5GM34uaD4Ecj7omu5lJO+NrxCUBRhy2chONLK1h/2LwoXA==}
+  /esbuild/0.12.28:
+    resolution: {integrity: sha512-pZ0FrWZXlvQOATlp14lRSk1N9GkeJ3vLIwOcUoo3ICQn9WNR4rWoNi81pbn6sC1iYUy7QPqNzI3+AEzokwyVcA==}
     hasBin: true
     requiresBuild: true
     dev: true
@@ -2157,8 +2157,8 @@ packages:
     hasBin: true
     dev: true
 
-  /pretty-format/27.1.1:
-    resolution: {integrity: sha512-zdBi/xlstKJL42UH7goQti5Hip/B415w1Mfj+WWWYMBylAYtKESnXGUtVVcMVid9ReVjypCotUV6CEevYPHv2g==}
+  /pretty-format/27.2.0:
+    resolution: {integrity: sha512-KyJdmgBkMscLqo8A7K77omgLx5PWPiXJswtTtFV7XgVZv2+qPk6UivpXXO+5k6ZEbWIbLoKdx1pZ6ldINzbwTA==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
     dependencies:
       '@jest/types': 27.1.1
@@ -2696,7 +2696,7 @@ packages:
     engines: {node: '>=12.2.0'}
     hasBin: true
     dependencies:
-      esbuild: 0.12.26
+      esbuild: 0.12.28
       postcss: 8.3.6
       resolve: 1.20.0
       rollup: 2.56.3
