@@ -31,11 +31,6 @@ jobs:
           key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-clippy-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-clippy-
 
-      - name: Install webkit2gtk
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libappindicator3-dev
-
       - name: Run clippy
         run: cargo clippy --workspace
 
@@ -54,11 +49,6 @@ jobs:
             target
           key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-
-
-      - name: Install webkit2gtk
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libappindicator3-dev
 
       - name: Run tests
         run: cargo test --workspace
