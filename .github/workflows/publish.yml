@@ -48,7 +48,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt update
-          sudo apt install -y libwebkit2gtk-4.0-dev librsvg2-dev patchelf
+          sudo apt install -y libwebkit2gtk-4.0-dev libgtk-3-dev libappindicator3-dev librsvg2-dev patchelf
 
       # No need for rust cache for release build as it gets cleared every week
       - name: Create cache for pnpm modules
