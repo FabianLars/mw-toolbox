@@ -1,1 +1,0 @@
-cargo run -p mw-cli --features league-wiki league discount

@@ -2,7 +2,6 @@
 members = [
   "cli",
   "crates/mw-tools",
-  "crates/league",
   "crates/storage",
   "gui/src-tauri",
 ]

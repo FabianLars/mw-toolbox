@@ -55,27 +55,6 @@ enum Subcommand {
         #[clap(short, long)]
         text: Option<String>,
     },
-
-    #[cfg(feature = "league-wiki")]
-    League {
-        #[clap(arg_enum)]
-        league_type: LeagueType,
-
-        #[clap(short, long, parse(from_os_str))]
-        path: Option<PathBuf>,
-    },
-}
-
-#[derive(ArgEnum, Debug, PartialEq)]
-enum LeagueType {
-    Champs,
-    Champions,
-    Discount,
-    Discounts,
-    Positions,
-    Rotation,
-    Rotations,
-    Set,
 }
 
 #[derive(ArgEnum, Debug, PartialEq)]
@@ -222,45 +201,6 @@ async fn main() -> Result<()> {
             }
             api::upload::upload_multiple(&client, &files, text.as_deref()).await?;
         }
-        #[cfg(feature = "league-wiki")]
-        Subcommand::League { league_type, path } => match league_type {
-            LeagueType::Champs | LeagueType::Champions => league::champs().await?,
-            LeagueType::Discount | LeagueType::Discounts => {
-                let path = match path {
-                    Some(p) => p,
-                    None => get_client_path()?,
-                };
-
-                league::discounts(&client, path).await?;
-            }
-            LeagueType::Positions => league::positions(&client).await?,
-            LeagueType::Rotation | LeagueType::Rotations => {
-                #[cfg(not(feature = "riot-api"))]
-                return Err(anyhow!("Did you forget to set the riot-api feature flag?"));
-                #[cfg(feature = "riot-api")]
-                league::rotation(&client).await?;
-            }
-            LeagueType::Set => league::set(&client).await?,
-        },
     }
     Ok(())
-}
-
-#[cfg(feature = "league-wiki")]
-fn get_client_path() -> Result<PathBuf> {
-    use sysinfo::{ProcessExt, RefreshKind, System, SystemExt};
-
-    let system = System::new_with_specifics(RefreshKind::new().with_processes());
-
-    let process = system.process_by_name("LeagueClient.exe");
-
-    if let Some(p) = process.get(0) {
-        if let Some(path) = p.exe().parent() {
-            let mut path = path.to_path_buf();
-            path.push("lockfile");
-            return Ok(path);
-        }
-    }
-
-    Err(anyhow!("Can't find lockfile. Make sure that the League Client is running. If it still doesn't work, try specifying the path to the lockfile yourself."))
 }
