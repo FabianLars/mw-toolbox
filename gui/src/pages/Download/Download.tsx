@@ -20,7 +20,7 @@ const Download = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
             files: areaValue.split(/\r?\n/),
         })
             .then(() => successToast('Download successful', 'Check your download folder.'))
-            .catch((err) => errorToast(err))
+            .catch(errorToast)
             .finally(() => setIsLoading(false));
     };
 
@@ -40,7 +40,7 @@ const Download = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}
                 onBlur={() => setCache('download-cache', areaValue)}
-                placeholder="Write exact page names here. Separated by newline. Inclusive 'File:' Prefix. Saved in your download folder."
+                placeholder="Write exact page names here, including the 'File:' prefix. Separated by newline. Saved in your download folder."
             />
             <div>
                 <Button

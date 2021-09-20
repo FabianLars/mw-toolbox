@@ -22,7 +22,7 @@ const Delete = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
             reason,
         })
             .then(() => successToast('Delete successful'))
-            .catch((err) => errorToast(err))
+            .catch(errorToast)
             .finally(() => setIsLoading(false));
     };
 

@@ -45,9 +45,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                 patterns,
                 summary: editSummary,
             })
-                .catch((err) => {
-                    errorToast(err);
-                })
+                .catch(errorToast)
                 .finally(stop);
         } else {
             getNextPage();

@@ -1,6 +1,6 @@
-import { getCurrent, PhysicalSize } from '@tauri-apps/api/window';
 import React from 'react';
 import classes from './Select.module.css';
+import { getCurrent, PhysicalSize } from '@tauri-apps/api/window';
 
 type Props = {
     label?: string;
@@ -12,6 +12,16 @@ type Props = {
     value?: string | number;
     onChange: React.ChangeEventHandler<HTMLSelectElement>;
     children: React.ReactNode;
+};
+
+const fixPosition = async () => {
+    if (window.OS !== 'windows') return;
+    const w = getCurrent();
+    const size = await w.innerSize();
+    const tempSize = new PhysicalSize(size.width + 1, size.height);
+    const currSize = new PhysicalSize(size.width, size.height);
+    await w.setSize(tempSize);
+    await w.setSize(currSize);
 };
 
 const Select = ({
@@ -35,18 +45,7 @@ const Select = ({
             onChange={onChange}
             value={value}
             // TODO: remove this once MS gets their shit together
-            onMouseOver={
-                window.OS == 'windows'
-                    ? async () => {
-                          const window = getCurrent();
-                          const size = await window.innerSize();
-                          const tempSize = new PhysicalSize(size.width + 1, size.height);
-                          const currSize = new PhysicalSize(size.width, size.height);
-                          await window.setSize(tempSize);
-                          await window.setSize(currSize);
-                      }
-                    : undefined
-            }
+            onMouseOver={fixPosition}
         >
             {placeholder && <option value="">{placeholder}</option>}
             {children}

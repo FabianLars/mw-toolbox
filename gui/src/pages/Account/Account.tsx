@@ -6,6 +6,7 @@ import { Button, Checkbox, Divider, Input, Label, Select } from '@/components';
 import type { Profile } from '@/App';
 import { errorToast } from '@/helpers/toast';
 import classes from './Account.module.css';
+import { CloseIcon, PlusIcon } from '@/components/icons';
 
 type Props = {
     profiles: Profile[];
@@ -166,12 +167,7 @@ const Account = ({
                     aria-label="Add additional profile"
                     onClick={addProfile}
                 >
-                    <svg viewBox="0 0 24 24" focusable="false">
-                        <path
-                            fill="rgba(255,255,255,0.96)"
-                            d="M0,12a1.5,1.5,0,0,0,1.5,1.5h8.75a.25.25,0,0,1,.25.25V22.5a1.5,1.5,0,0,0,3,0V13.75a.25.25,0,0,1,.25-.25H22.5a1.5,1.5,0,0,0,0-3H13.75a.25.25,0,0,1-.25-.25V1.5a1.5,1.5,0,0,0-3,0v8.75a.25.25,0,0,1-.25.25H1.5A1.5,1.5,0,0,0,0,12Z"
-                        ></path>
-                    </svg>
+                    <PlusIcon />
                 </Button>
                 <Button
                     colorScheme="red"
@@ -183,12 +179,7 @@ const Account = ({
                     aria-label="Remove current profile"
                     onClick={removeProfile}
                 >
-                    <svg viewBox="0 0 24 24" focusable="false">
-                        <path
-                            fill="#1a202c"
-                            d="M.439,21.44a1.5,1.5,0,0,0,2.122,2.121L11.823,14.3a.25.25,0,0,1,.354,0l9.262,9.263a1.5,1.5,0,1,0,2.122-2.121L14.3,12.177a.25.25,0,0,1,0-.354l9.263-9.262A1.5,1.5,0,0,0,21.439.44L12.177,9.7a.25.25,0,0,1-.354,0L2.561.44A1.5,1.5,0,0,0,.439,2.561L9.7,11.823a.25.25,0,0,1,0,.354Z"
-                        ></path>
-                    </svg>
+                    <CloseIcon />
                 </Button>
             </div>
             <Divider />

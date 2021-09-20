@@ -22,7 +22,7 @@ const Move = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
             to: areaTo.split(/\r?\n/),
         })
             .then(() => successToast('Successfully moved pages'))
-            .catch((err) => errorToast(err))
+            .catch(errorToast)
             .finally(() => setIsLoading(false));
     };
 

@@ -32,9 +32,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                     setFiles((oldFiles) => [...new Set([...oldFiles, ...res])]);
                 }
             })
-            .catch((err) => {
-                errorToast(err);
-            })
+            .catch(errorToast)
             .finally(() => setIsWaiting(false));
     };
 
@@ -45,7 +43,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
             files,
         })
             .then(() => successToast('Upload complete'))
-            .catch((err) => errorToast(err))
+            .catch(errorToast)
             .finally(() => {
                 setIsWaiting(false);
                 setIsUploading(false);

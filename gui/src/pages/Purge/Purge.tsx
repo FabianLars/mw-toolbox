@@ -26,7 +26,7 @@ const Purge = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
             isNulledit,
         })
             .then(() => successToast((isNulledit ? 'Nulledit' : 'Purge') + ' successful'))
-            .catch((err) => errorToast(err))
+            .catch(errorToast)
             .finally(() => {
                 setIsPurging(false);
                 setIsNulling(false);

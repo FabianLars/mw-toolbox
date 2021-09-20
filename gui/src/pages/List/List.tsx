@@ -32,7 +32,7 @@ const List = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                     setListOutput(output);
                     setCache('list-cache', output);
                 })
-                .catch((err) => errorToast(err))
+                .catch(errorToast)
                 .finally(() => setLoading(false));
         }
     };
