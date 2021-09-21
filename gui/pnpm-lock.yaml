@@ -3,7 +3,7 @@ lockfileVersion: 5.3
 specifiers:
   '@tauri-apps/api': 1.0.0-beta.8
   '@testing-library/react': 12.1.0
-  '@types/chai': 4.2.21
+  '@types/chai': 4.2.22
   '@types/mocha': 9.0.0
   '@types/react': 17.0.22
   '@types/react-dom': 17.0.9
@@ -31,7 +31,7 @@ dependencies:
 
 devDependencies:
   '@testing-library/react': 12.1.0_react-dom@17.0.2+react@17.0.2
-  '@types/chai': 4.2.21
+  '@types/chai': 4.2.22
   '@types/mocha': 9.0.0
   '@types/react': 17.0.22
   '@types/react-dom': 17.0.9
@@ -416,8 +416,8 @@ packages:
       '@types/node': 16.9.2
     dev: true
 
-  /@types/chai/4.2.21:
-    resolution: {integrity: sha512-yd+9qKmJxm496BOV9CMNaey8TWsikaZOwMRwPHQIjcOJM9oV+fi9ZMNw3JsVnbEEbo2gRTDnGEBv8pjyn67hNg==}
+  /@types/chai/4.2.22:
+    resolution: {integrity: sha512-tFfcE+DSTzWAgifkjik9AySNqIyNoYwmR+uecPwwD/XRNfvOjmC/FjCxpiUGDkDVDphPfCUecSQVFw+lN3M3kQ==}
     dev: true
 
   /@types/co-body/6.1.0:
