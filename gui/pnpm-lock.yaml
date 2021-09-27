@@ -2,7 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@tauri-apps/api': 1.0.0-beta.8
-  '@testing-library/react': 12.1.0
+  '@testing-library/react': 12.1.1
   '@types/chai': 4.2.22
   '@types/mocha': 9.0.0
   '@types/react': 17.0.24
@@ -30,7 +30,7 @@ dependencies:
   react-router-dom: 6.0.0-beta.5_94912414cd94cc5bc891cce65dd59788
 
 devDependencies:
-  '@testing-library/react': 12.1.0_react-dom@17.0.2+react@17.0.2
+  '@testing-library/react': 12.1.1_react-dom@17.0.2+react@17.0.2
   '@types/chai': 4.2.22
   '@types/mocha': 9.0.0
   '@types/react': 17.0.24
@@ -382,8 +382,8 @@ packages:
       pretty-format: 27.2.0
     dev: true
 
-  /@testing-library/react/12.1.0_react-dom@17.0.2+react@17.0.2:
-    resolution: {integrity: sha512-Ge3Ht3qXE82Yv9lyPpQ7ZWgzo/HgOcHu569Y4ZGWcZME38iOFiOg87qnu6hTEa8jTJVL7zYovnvD3GE2nsNIoQ==}
+  /@testing-library/react/12.1.1_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-JDyWbvMuedEpP6SPL4Cvbhk59TVxQ3pwuR6ZfJHdRsHuxDd/ziSMA3nVM3fViaSbsQhuQFE/mvFrPrvQbL5kRQ==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '*'
