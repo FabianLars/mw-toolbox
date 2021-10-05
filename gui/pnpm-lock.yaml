@@ -18,7 +18,7 @@ specifiers:
   react-focus-lock: 2.5.2
   react-router-dom: 6.0.0-beta.5
   typescript: 4.4.3
-  vite: 2.6.2
+  vite: 2.6.3
   vite-web-test-runner-plugin: 0.1.0
 
 dependencies:
@@ -41,8 +41,8 @@ devDependencies:
   minimal-tauri-cli: 1.0.0-beta.7
   prettier: 2.4.1
   typescript: 4.4.3
-  vite: 2.6.2
-  vite-web-test-runner-plugin: 0.1.0_vite@2.6.2
+  vite: 2.6.3
+  vite-web-test-runner-plugin: 0.1.0_vite@2.6.3
 
 packages:
 
@@ -2816,16 +2816,16 @@ packages:
     engines: {node: '>= 0.8'}
     dev: true
 
-  /vite-web-test-runner-plugin/0.1.0_vite@2.6.2:
+  /vite-web-test-runner-plugin/0.1.0_vite@2.6.3:
     resolution: {integrity: sha512-AXrkMbtU/QW9mJWzl0j7Zn9UKKwMo4zQw4BPeS4TknwF/tIMqluFdb9J2+QbLIUP72TeiAgobpS72oo/c7kDPw==}
     peerDependencies:
       vite: 2.x
     dependencies:
-      vite: 2.6.2
+      vite: 2.6.3
     dev: true
 
-  /vite/2.6.2:
-    resolution: {integrity: sha512-HSIg9U15LOnbD3CUxX364Pdrm7DUjftuBljowGxvkFHgDZU/SKPqApg9t86MX/Qq1VCO7wS+mGJHlfuTF7c0Sg==}
+  /vite/2.6.3:
+    resolution: {integrity: sha512-mLiN4WR8zpmn04khhBf7YvC3FHrGhZt9S6xm53uDWgtYcUVNtV5LXHLI2Sc4SpL8jd/dsSIHzRxj7JTIu+MTDQ==}
     engines: {node: '>=12.2.0'}
     hasBin: true
     peerDependencies:
