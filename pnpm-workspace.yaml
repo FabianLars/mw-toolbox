@@ -1,2 +1,3 @@
 packages:
   - 'gui'
+# workspace file needed to fix renovate lock-file-maintenance

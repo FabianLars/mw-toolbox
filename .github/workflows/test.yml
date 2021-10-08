@@ -7,8 +7,7 @@ on:
     branches:
       - main
       - 'renovate/**'
-    branches-ignore:
-      - 'renovate/lock-file-maintenance'
+      - '!renovate/lock-file-maintenance'
 
 env:
   WTOOLS_AEAD_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
@@ -33,7 +32,7 @@ jobs:
             target
           key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-clippy-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-clippy-
-          
+
       - name: Install linux dependencies
         if: runner.os == 'Linux'
         run: |
@@ -58,7 +57,7 @@ jobs:
             target
           key: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cache-${{secrets.CLEAR_CACHE}}-test-
-          
+
       - name: Install linux dependencies
         if: runner.os == 'Linux'
         run: |
