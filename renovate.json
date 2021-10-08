@@ -1,5 +1,6 @@
 {
     "extends": ["config:base"],
+    "labels": ["dependencies"],
     "lockFileMaintenance": {
         "enabled": true,
         "schedule": ["before 5am"]
