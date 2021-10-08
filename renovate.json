@@ -2,7 +2,7 @@
     "extends": ["config:base"],
     "lockFileMaintenance": {
         "enabled": true,
-        "schedule": ["before 5 am"]
+        "schedule": ["before 5am"]
     },
     "packageRules": [
         {
