@@ -7,6 +7,8 @@ on:
     branches:
       - main
       - 'renovate/**'
+    branches-ignore:
+      - 'renovate/lock-file-maintenance'
 
 env:
   WTOOLS_AEAD_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
