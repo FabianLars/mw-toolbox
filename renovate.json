@@ -3,7 +3,7 @@
     "labels": ["dependencies"],
     "lockFileMaintenance": {
         "enabled": true,
-        "schedule": ["before 5am"]
+        "schedule": ["before 5am on Monday and Friday"]
     },
     "packageRules": [
         {
