@@ -13,8 +13,6 @@ use crate::{
 pub struct Client {
     client: ReqwestClient,
     url: String,
-    username: String,
-    password: String,
     csrf_token: String,
 }
 
@@ -32,10 +30,15 @@ enum ApiResponse<T> {
 }
 
 impl Client {
-    /// Construct a new `Client`.
+    /// Construct a new `Client` with an URL to the mediawiki API (pointing to api.php, including the scheme).
     ///
+    /// You can provide an empty String if you don't have the actual URL yet and change it later with [set_url](Self::set_url).
+    ///
+    /// Either way, there needs to be a correct URL present before logging in!
+    ///
+    /// # Errors
     /// Just like [`reqwest::ClientBuilder`], this method fails if a TLS backend cannot be initialized, or the resolver cannot load the system configuration.
-    pub fn new() -> Result<Self, Error> {
+    pub fn new<S: Into<String>>(url: S) -> Result<Self, Error> {
         Ok(Self {
             client: ReqwestClient::builder()
                 .cookie_store(true)
@@ -46,24 +49,9 @@ impl Client {
                     " using rust/reqwest",
                 ))
                 .build()?,
-            url: String::new(),
-            username: String::new(),
-            password: String::new(),
+            url: url.into(),
             csrf_token: String::new(),
         })
-    }
-
-    /// Set the URL to the mediawiki API (pointing to api.php, including the scheme).
-    pub fn with_url<S: Into<String>>(mut self, url: S) -> Self {
-        self.url = url.into();
-        self
-    }
-
-    /// Set username and password, created via Special:BotPasswords.
-    pub fn with_credentials<S: Into<String>>(mut self, username: S, password: S) -> Self {
-        self.username = username.into();
-        self.password = password.into();
-        self
     }
 
     /// Set the URL to the mediawiki API (pointing to api.php, including the scheme).
@@ -71,16 +59,10 @@ impl Client {
         self.url = url.into();
     }
 
-    /// Set username and password, created via Special:BotPasswords.
-    pub fn set_credentials<S: Into<String>>(&mut self, username: S, password: S) {
-        self.username = username.into();
-        self.password = password.into();
-    }
-
     /// log into the mediawiki API.
     ///
     /// If successful, this method also requests an edit token which is needed for some endpoints.
-    pub async fn login(&mut self) -> Result<(), Error> {
+    pub async fn login(&mut self, username: &str, password: &str) -> Result<(), Error> {
         let json: Token = self
             .get(&[("action", "query"), ("meta", "tokens"), ("type", "login")])
             .await?;
@@ -95,8 +77,8 @@ impl Client {
         let res: Login = self
             .post(&[
                 ("action", "login"),
-                ("lgname", &self.username),
-                ("lgpassword", &self.password),
+                ("lgname", username),
+                ("lgpassword", password),
                 ("lgtoken", &token),
             ])
             .await?;
@@ -112,7 +94,7 @@ impl Client {
 
     /// Log out of the mediawiki API.
     ///
-    /// Note: This doesn't remove the stored values for `url`, `username` and `password`.
+    /// Note: This doesn't remove the stored URL.
     ///
     /// You generally don't need to call this, except if you want to switch the wiki or user without creating a new Client.
     pub async fn logout(&mut self) -> Result<(), Error> {
@@ -121,7 +103,7 @@ impl Client {
 
         log::debug!("logout successful");
 
-        self.csrf_token = "".to_string();
+        self.csrf_token.clear();
 
         Ok(())
     }
@@ -144,7 +126,7 @@ impl Client {
     /// # Example
     /// ```no_run
     /// # async fn test_get() -> Result<(), mw_tools::Error> {
-    /// # let client = mw_tools::Client::new()?;
+    /// # let client = mw_tools::Client::new("")?;
     /// // request the page content in wikitext form.
     ///let res: serde_json::Value = client
     ///    .get(&[("action", "parse"), ("prop", "wikitext"), ("page", "Page Title")])
@@ -195,7 +177,7 @@ impl Client {
     /// ```no_run
     /// # async fn test_post() -> Result<(), mw_tools::Error> {
     /// # use serde::de::IgnoredAny;
-    /// # let client = mw_tools::Client::new()?;
+    /// # let client = mw_tools::Client::new("")?;
     /// // Purge the server cache for a page and ignore the result.
     ///client.post::<IgnoredAny>(&[
     ///    ("action", "purge"),

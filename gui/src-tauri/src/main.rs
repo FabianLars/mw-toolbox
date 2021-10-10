@@ -22,7 +22,7 @@ mod menu;
 
 /// The Client for the wiki API, wrapped inside tokio's async Mutex to be usable in async tauri commands.
 // There is nothing we can do if init fails, so let's panic in the disco.
-static CLIENT: Lazy<AsyncMutex<Client>> = Lazy::new(|| AsyncMutex::new(Client::new().unwrap()));
+static CLIENT: Lazy<AsyncMutex<Client>> = Lazy::new(|| AsyncMutex::new(Client::new("").unwrap()));
 
 /// Global boolean to cancel editing in auto-save mode.
 static CANCEL_EDIT: AtomicBool = AtomicBool::new(false);

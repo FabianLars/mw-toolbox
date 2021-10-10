@@ -99,10 +99,8 @@ async fn main() -> Result<()> {
     pretty_env_logger::init();
 
     let cli = Cli::parse();
-    let mut client = Client::new()?
-        .with_url(&cli.url)
-        .with_credentials(&cli.name, &cli.password);
-    client.login().await?;
+    let mut client = Client::new(&cli.url)?;
+    client.login(&cli.name, &cli.password).await?;
     let client = client;
 
     match cli.command {

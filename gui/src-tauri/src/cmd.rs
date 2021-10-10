@@ -180,9 +180,10 @@ pub async fn login(profiles: Vec<Profile>, current: usize) -> Result<usize> {
 
     let mut client = CLIENT.lock().await;
     client.set_url(&current_profile.url);
-    client.set_credentials(&current_profile.username, &current_profile.password);
 
-    client.login().await?;
+    client
+        .login(&current_profile.username, &current_profile.password)
+        .await?;
 
     update_profile_store(profiles, current)
         .await
