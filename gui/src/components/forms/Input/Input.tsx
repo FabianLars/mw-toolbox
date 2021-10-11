@@ -33,7 +33,7 @@ const Input = ({
     return (
         <input
             aria-label={label}
-            className={`${classes.input} ${className} ${window.OS ?? ''}`}
+            className={`${classes.input} ${className} ${window.OS}`}
             id={id}
             type={isPassword ? 'password' : undefined}
             name={name}

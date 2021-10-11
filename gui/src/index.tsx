@@ -5,7 +5,7 @@ import './index.css';
 
 declare global {
     interface Window {
-        OS?: string;
+        OS: string;
         //__TAURI__: {};
     }
 }
