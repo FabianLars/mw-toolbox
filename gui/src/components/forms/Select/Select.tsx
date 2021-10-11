@@ -14,16 +14,6 @@ type Props = {
     children: React.ReactNode;
 };
 
-const fixPosition = async () => {
-    if (window.OS !== 'windows') return;
-    const w = getCurrent();
-    const size = await w.innerSize();
-    const tempSize = new PhysicalSize(size.width + 1, size.height);
-    const currSize = new PhysicalSize(size.width, size.height);
-    await w.setSize(tempSize);
-    await w.setSize(currSize);
-};
-
 const Select = ({
     label,
     className = '',
@@ -44,8 +34,6 @@ const Select = ({
             disabled={isDisabled}
             onChange={onChange}
             value={value}
-            // TODO: remove this once MS gets their shit together
-            onMouseOver={fixPosition}
         >
             {placeholder && <option value="">{placeholder}</option>}
             {children}
