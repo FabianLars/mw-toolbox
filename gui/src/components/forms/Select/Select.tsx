@@ -1,6 +1,6 @@
-import React from 'react';
+import { listen } from '@tauri-apps/api/event';
+import React, { useEffect, useRef } from 'react';
 import classes from './Select.module.css';
-import { getCurrent, PhysicalSize } from '@tauri-apps/api/window';
 
 type Props = {
     label?: string;
@@ -25,6 +25,17 @@ const Select = ({
     onChange,
     children,
 }: Props): JSX.Element => {
+    const selRef = useRef<HTMLSelectElement>(null);
+
+    useEffect(() => {
+        if (window.OS !== 'windows') return;
+
+        const u = listen('tauri://move', () => selRef.current?.blur());
+        return () => {
+            u.then((f) => f());
+        };
+    }, []);
+
     return (
         <select
             aria-label={label}
@@ -34,6 +45,7 @@ const Select = ({
             disabled={isDisabled}
             onChange={onChange}
             value={value}
+            ref={selRef}
         >
             {placeholder && <option value="">{placeholder}</option>}
             {children}
