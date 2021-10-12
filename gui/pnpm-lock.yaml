@@ -17,7 +17,7 @@ specifiers:
   react-dom: 17.0.2
   react-focus-lock: 2.5.2
   react-router-dom: 6.0.0-beta.6
-  typescript: 4.4.3
+  typescript: 4.4.4
   vite: 2.6.7
   vite-web-test-runner-plugin: 0.1.0
 
@@ -40,7 +40,7 @@ devDependencies:
   chai: 4.3.4
   minimal-tauri-cli: 1.0.0-beta.7
   prettier: 2.4.1
-  typescript: 4.4.3
+  typescript: 4.4.4
   vite: 2.6.7
   vite-web-test-runner-plugin: 0.1.0_vite@2.6.7
 
@@ -2745,8 +2745,8 @@ packages:
       mime-types: 2.1.33
     dev: true
 
-  /typescript/4.4.3:
-    resolution: {integrity: sha512-4xfscpisVgqqDfPaJo5vkd+Qd/ItkoagnHpufr+i2QCHBsNYp+G7UAoyFl8aPtx879u38wPV65rZ8qbGZijalA==}
+  /typescript/4.4.4:
+    resolution: {integrity: sha512-DqGhF5IKoBl8WNf8C1gu8q0xZSInh9j1kJJMqT3a94w1JzVaBU4EXOSMrz9yDqMT0xt3selp83fuFMQ0uzv6qA==}
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: true
