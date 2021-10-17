@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import classes from './Header.module.css';
 import Menu from './Menu';
 import { Badge, Divider, Spinner } from '@/components';
+import { routes } from '@/helpers/consts';
 
 type MenuProps = {
     children: string;
@@ -23,6 +24,7 @@ const HeaderItem = ({ children, isDisabled = false, to = '/' }: MenuProps): JSX.
             className={`${classes.link} ${isDisabled ? classes.disabled : ''} ${
                 location == to ? classes.current : ''
             }`}
+            onAuxClick={(e) => e.preventDefault()}
         >
             {children}
         </Link>
@@ -34,37 +36,14 @@ const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
         <>
             <nav className={classes.nav}>
                 <div className={classes.wide}>
-                    <HeaderItem isDisabled={isDisabled} to="/">
-                        Account
-                    </HeaderItem>
-                    <Divider orientation="vertical" />
-                    <HeaderItem isDisabled={isDisabled} to="/Delete">
-                        Delete
-                    </HeaderItem>
-                    <Divider orientation="vertical" />
-                    <HeaderItem isDisabled={isDisabled} to="/Download">
-                        Download
-                    </HeaderItem>
-                    <Divider orientation="vertical" />
-                    <HeaderItem isDisabled={isDisabled} to="/Edit">
-                        Edit
-                    </HeaderItem>
-                    <Divider orientation="vertical" />
-                    <HeaderItem isDisabled={isDisabled} to="/List">
-                        List
-                    </HeaderItem>
-                    <Divider orientation="vertical" />
-                    <HeaderItem isDisabled={isDisabled} to="/Move">
-                        Move
-                    </HeaderItem>
-                    <Divider orientation="vertical" />
-                    <HeaderItem isDisabled={isDisabled} to="/Purge">
-                        Purge
-                    </HeaderItem>
-                    <Divider orientation="vertical" />
-                    <HeaderItem isDisabled={isDisabled} to="/Upload">
-                        Upload
-                    </HeaderItem>
+                    {routes.map((v, i) => (
+                        <React.Fragment key={'head' + i}>
+                            {i !== 0 ? <Divider orientation="vertical" /> : undefined}
+                            <HeaderItem to={v} isDisabled={isDisabled}>
+                                {v.substring(1) || 'Account'}
+                            </HeaderItem>
+                        </React.Fragment>
+                    ))}
                 </div>
                 <Menu />
                 <div className={classes.spacer}></div>

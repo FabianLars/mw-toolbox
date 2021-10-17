@@ -1,3 +1,4 @@
+import { routes } from '@/helpers/consts';
 import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import classes from './Menu.module.css';
@@ -135,78 +136,19 @@ const Menu = (): JSX.Element => {
                 tabIndex={-1}
                 className={`${classes.menu} ${isOpen ? classes.visible : ''}`}
             >
-                <Link
-                    to="/"
-                    ref={itemRefs[0]}
-                    onKeyDown={handleItemKeyDown}
-                    tabIndex={-1}
-                    role="menuitem"
-                >
-                    Account
-                </Link>
-                <Link
-                    to="/Delete"
-                    ref={itemRefs[1]}
-                    onKeyDown={handleItemKeyDown}
-                    tabIndex={-1}
-                    role="menuitem"
-                >
-                    Delete
-                </Link>
-                <Link
-                    to="/Download"
-                    ref={itemRefs[2]}
-                    onKeyDown={handleItemKeyDown}
-                    tabIndex={-1}
-                    role="menuitem"
-                >
-                    Download
-                </Link>
-                <Link
-                    to="/Edit"
-                    ref={itemRefs[3]}
-                    onKeyDown={handleItemKeyDown}
-                    tabIndex={-1}
-                    role="menuitem"
-                >
-                    Edit
-                </Link>
-                <Link
-                    to="/List"
-                    ref={itemRefs[4]}
-                    onKeyDown={handleItemKeyDown}
-                    tabIndex={-1}
-                    role="menuitem"
-                >
-                    List
-                </Link>
-                <Link
-                    to="/Move"
-                    ref={itemRefs[5]}
-                    onKeyDown={handleItemKeyDown}
-                    tabIndex={-1}
-                    role="menuitem"
-                >
-                    Move
-                </Link>
-                <Link
-                    to="/Purge"
-                    ref={itemRefs[6]}
-                    onKeyDown={handleItemKeyDown}
-                    tabIndex={-1}
-                    role="menuitem"
-                >
-                    Purge
-                </Link>
-                <Link
-                    to="/Upload"
-                    ref={itemRefs[7]}
-                    onKeyDown={handleItemKeyDown}
-                    tabIndex={-1}
-                    role="menuitem"
-                >
-                    Upload
-                </Link>
+                {routes.map((v, i) => (
+                    <Link
+                        to={v}
+                        key={'menu' + i}
+                        ref={itemRefs[i]}
+                        onKeyDown={handleItemKeyDown}
+                        tabIndex={-1}
+                        role="menuitem"
+                        onAuxClick={(e) => e.preventDefault()}
+                    >
+                        {v.substring(1) || 'Account'}
+                    </Link>
+                ))}
             </div>
         </>
     );

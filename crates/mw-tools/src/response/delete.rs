@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct Delete {
-    delete: Response,
+    pub(crate) delete: Response,
 }
 
 #[derive(Debug, Deserialize)]
