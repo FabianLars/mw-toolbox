@@ -6,6 +6,8 @@ on:
   push:
     branches:
       - main
+      - 'renovate/**'
+      - '!renovate/lock-file-maintenance'
 
 jobs:
   rust:
@@ -45,5 +47,5 @@ jobs:
           version: 6.x.x
           run_install: true
 
-      - name: Check Prettier compliance
-        run: pnpm lint
+      - name: Check prettier/eslint/tsc compliance
+        run: pnpm check

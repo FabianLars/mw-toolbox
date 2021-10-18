@@ -49,4 +49,6 @@ const Button = forwardRef((props: Props, ref) => {
     );
 });
 
+Button.displayName = 'MwtButton';
+
 export default Button;

@@ -3,6 +3,7 @@ import cls from './Header.module.css';
 import Menu from './Menu';
 import { Badge, Divider, Spinner } from '@/components';
 import { routes } from '@/helpers/consts';
+import { Fragment } from 'react';
 
 type MenuProps = {
     children: string;
@@ -36,12 +37,12 @@ const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
             <nav className={cls.nav}>
                 <div className={cls.wide}>
                     {routes.map((v, i) => (
-                        <React.Fragment key={'head' + i}>
+                        <Fragment key={'head' + i}>
                             {i !== 0 ? <Divider orientation="vertical" /> : undefined}
                             <HeaderItem to={v} isDisabled={isDisabled}>
                                 {v.substring(1) || 'Account'}
                             </HeaderItem>
-                        </React.Fragment>
+                        </Fragment>
                     ))}
                 </div>
                 <Menu />

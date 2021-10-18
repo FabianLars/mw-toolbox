@@ -92,6 +92,7 @@ const Account = ({
     }: React.ChangeEvent<HTMLInputElement>) => {
         setProfiles((old) => {
             const curr = [...old];
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore omg dynamic object indexing is sooo annoying in typescript
             curr[currentProfile][name || id] = id === 'save-password' ? checked : value;
             return curr;

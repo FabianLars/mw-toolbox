@@ -142,9 +142,6 @@ jobs:
           version: 6.x.x
           run_install: true
 
-      - name: Type check
-        run: pnpm tsc
-
       - name: Create vite cache
         # not pre-bundling the dependencies makes the test itself fail
         continue-on-error: true
