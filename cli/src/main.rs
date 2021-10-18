@@ -3,13 +3,13 @@
 use std::path::PathBuf;
 
 use anyhow::{anyhow, Result};
-use clap::{ArgEnum, Clap};
+use clap::{ArgEnum, Parser};
 use tokio::{fs, io::AsyncWriteExt};
 
 use api::rename::Destination;
 use mw_tools::{api, Client};
 
-#[derive(Clap, Debug, PartialEq)]
+#[derive(Parser, Debug, PartialEq)]
 enum Subcommand {
     Delete {
         /// uses newline separation
@@ -57,7 +57,7 @@ enum Subcommand {
     },
 }
 
-#[derive(ArgEnum, Debug, PartialEq)]
+#[derive(ArgEnum, Clone, Debug, PartialEq)]
 enum ListType {
     Allimages,
     Allpages,
@@ -77,7 +77,7 @@ enum ListType {
     Allinfoboxes,
 }
 
-#[derive(Clap, Debug, PartialEq)]
+#[derive(Parser, Debug, PartialEq)]
 struct Cli {
     #[clap(subcommand)]
     command: Subcommand,
