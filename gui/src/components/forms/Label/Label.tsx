@@ -1,5 +1,4 @@
-import React from 'react';
-import classes from './Label.module.css';
+import cls from './Label.module.css';
 
 type Props = {
     className?: string;
@@ -19,11 +18,11 @@ const Label = ({
     return (
         <label
             htmlFor={htmlFor}
-            className={`${classes.label} ${isDisabled ? classes.disabled : ''} ${className}`}
+            className={`${cls.label} ${isDisabled ? cls.disabled : ''} ${className}`}
         >
             {children}
             {isRequired && (
-                <span className={classes.indicator} aria-hidden>
+                <span className={cls.indicator} aria-hidden>
                     *
                 </span>
             )}

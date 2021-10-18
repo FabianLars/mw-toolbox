@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Account, Delete, Download, Edit, List, Move, Purge, Upload } from './pages';
 import { Header } from './components';
 import { getCache, setCache } from '@/helpers/invoke';
-import classes from './App.module.css';
+import cls from './App.module.css';
 
 export type Profile = {
     profile: string;
@@ -71,9 +71,9 @@ const App = (): JSX.Element => {
 
     return (
         <Router>
-            <div className={classes.container}>
+            <div className={cls.container}>
                 <Header isDisabled={navDisabled} isOnline={profiles[currentProfile].isOnline} />
-                <div className={classes.center}>
+                <div className={cls.center}>
                     <Routes>
                         <Route
                             path="/"

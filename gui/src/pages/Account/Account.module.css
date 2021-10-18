@@ -37,6 +37,14 @@
     width: 100%;
     align-items: flex-end;
 }
+.profile > div:first-child {
+    flex: 2;
+    margin-right: 0.75rem;
+}
+.profile > div.w100 {
+    width: 100%;
+    flex: 1;
+}
 
 @media screen and (min-width: 48em) {
     .container {

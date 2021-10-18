@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Button, Input, Label, Textarea } from '@/components';
 import { getCache, setCache } from '@/helpers/invoke';
 import { errorToast, successToast } from '@/helpers/toast';
-import classes from './Delete.module.css';
+import cls from './Delete.module.css';
 
 type Props = {
     isOnline: boolean;
@@ -38,8 +38,8 @@ const Delete = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
     }, []);
 
     return (
-        <div className={classes.container}>
-            <div className={classes.input}>
+        <div className={cls.container}>
+            <div className={cls.input}>
                 <Label htmlFor="delete-reason">Delete reason</Label>
                 <Input
                     id="delete-reason"
@@ -49,7 +49,7 @@ const Delete = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                 />
             </div>
             <Textarea
-                className={classes.area}
+                className={cls.area}
                 label="pages to delete"
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}

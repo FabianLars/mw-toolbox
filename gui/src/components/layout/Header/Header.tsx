@@ -1,6 +1,5 @@
-import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import classes from './Header.module.css';
+import cls from './Header.module.css';
 import Menu from './Menu';
 import { Badge, Divider, Spinner } from '@/components';
 import { routes } from '@/helpers/consts';
@@ -21,8 +20,8 @@ const HeaderItem = ({ children, isDisabled = false, to = '/' }: MenuProps): JSX.
     return (
         <Link
             to={to}
-            className={`${classes.link} ${isDisabled ? classes.disabled : ''} ${
-                location == to ? classes.current : ''
+            className={`${cls.link} ${isDisabled ? cls.disabled : ''} ${
+                location == to ? cls.current : ''
             }`}
             onAuxClick={(e) => e.preventDefault()}
         >
@@ -34,8 +33,8 @@ const HeaderItem = ({ children, isDisabled = false, to = '/' }: MenuProps): JSX.
 const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
     return (
         <>
-            <nav className={classes.nav}>
-                <div className={classes.wide}>
+            <nav className={cls.nav}>
+                <div className={cls.wide}>
                     {routes.map((v, i) => (
                         <React.Fragment key={'head' + i}>
                             {i !== 0 ? <Divider orientation="vertical" /> : undefined}
@@ -46,7 +45,7 @@ const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
                     ))}
                 </div>
                 <Menu />
-                <div className={classes.spacer}></div>
+                <div className={cls.spacer}></div>
                 {isDisabled ? (
                     <Spinner />
                 ) : (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
 import FileList from './FileList';
@@ -6,7 +6,13 @@ import { emit, listen } from '@tauri-apps/api/event';
 import { getCache, setCache } from '@/helpers/invoke';
 import { errorToast, successToast } from '@/helpers/toast';
 import { Button, Input, Label } from '@/components';
-import classes from './Upload.module.css';
+import cls from './Upload.module.css';
+
+enum Action {
+    None,
+    Wait,
+    Upload,
+}
 
 type Props = {
     isOnline: boolean;
@@ -14,8 +20,7 @@ type Props = {
 };
 
 const Upload = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
-    const [isUploading, setIsUploading] = useState(false);
-    const [isWaiting, setIsWaiting] = useState(false);
+    const [status, setStatus] = useState(Action.None);
     const [uploadtext, setUploadtext] = useState('');
     const [files, setFiles] = useState<string[]>([]);
 
@@ -25,7 +30,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
     };
 
     const openDialog = () => {
-        setIsWaiting(true);
+        setStatus(Action.Wait);
         open({ multiple: true, directory: false })
             .then((res) => {
                 if (res) {
@@ -33,11 +38,11 @@ const Upload = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                 }
             })
             .catch(errorToast)
-            .finally(() => setIsWaiting(false));
+            .finally(() => setStatus(Action.None));
     };
 
     const startUpload = () => {
-        setIsUploading(true);
+        setStatus(Action.Upload);
         invoke('upload', {
             text: uploadtext,
             files,
@@ -45,8 +50,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
             .then(() => successToast('Upload complete'))
             .catch(errorToast)
             .finally(() => {
-                setIsWaiting(false);
-                setIsUploading(false);
+                setStatus(Action.None);
             });
     };
 
@@ -75,59 +79,59 @@ const Upload = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
         };
     }, [files]);
 
-    useEffect(() => setNavDisabled(isUploading || isWaiting), [isUploading, isWaiting]);
+    useEffect(() => setNavDisabled(status !== Action.None), [status]);
 
     return (
-        <div className={classes.container}>
-            <div className={classes.controls}>
-                <div className={classes.count}>
-                    <div className={classes.label}>Number of files</div>
+        <div className={cls.container}>
+            <div className={cls.controls}>
+                <div className={cls.count}>
+                    <div className={cls.label}>Number of files</div>
                     {files.length}
                 </div>
                 <div
                     title="No effect on existing pages"
                     id="uploadtext-input"
-                    className={classes.uploadtext}
+                    className={cls.uploadtext}
                 >
                     <Label htmlFor="uploadtext-input">Text for new file pages</Label>
                     <Input
                         id="uploadtext-input"
                         value={uploadtext}
-                        isDisabled={isUploading || isWaiting}
+                        isDisabled={status !== Action.None}
                         onChange={(event) => setUploadtext(event.target.value)}
                         onBlur={() => setCache('uploadtext-cache', uploadtext)}
                     />
                 </div>
-                <div className={classes.buttons}>
+                <div className={cls.buttons}>
                     <Button
-                        className={classes.mx}
-                        isLoading={isWaiting}
-                        isDisabled={isUploading}
+                        className={cls.mx}
+                        isLoading={status === Action.Wait}
+                        isDisabled={status === Action.Upload}
                         onClick={openDialog}
                     >
                         Select File(s)
                     </Button>
                     <Button
-                        className={classes.mx}
-                        isLoading={isWaiting}
-                        isDisabled={isUploading}
+                        className={cls.mx}
+                        isLoading={status === Action.Wait}
+                        isDisabled={status === Action.Upload}
                         onClick={clearList}
                     >
                         Clear Filelist
                     </Button>
                     <Button
-                        className={classes.mx}
-                        isDisabled={isWaiting || !isOnline || !files[0]}
+                        className={cls.mx}
+                        isDisabled={status === Action.Wait || !isOnline || !files[0]}
                         onClick={() => {
-                            if (isUploading) {
-                                emit('cancel-upload').finally(() => setIsWaiting(true));
+                            if (status === Action.Upload) {
+                                emit('cancel-upload').finally(() => setStatus(Action.Wait));
                             } else {
                                 startUpload();
                             }
                         }}
                         title={!isOnline ? 'Please login first!' : 'This might take a while!'}
                     >
-                        {isUploading ? 'Cancel' : 'Upload'}
+                        {status === Action.Upload ? 'Cancel' : 'Upload'}
                     </Button>
                 </div>
             </div>
@@ -139,11 +143,11 @@ const Upload = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                 {files.map((f) => (
                     <div
                         key={f}
-                        className={classes.entry}
+                        className={cls.entry}
                         aria-label="click to remove item"
                         title="click to remove item"
                         onClick={() => {
-                            if (!isUploading) {
+                            if (status === Action.None) {
                                 setFiles((oldFiles) => oldFiles.filter((ff) => ff !== f));
                             }
                         }}

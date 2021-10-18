@@ -1,5 +1,4 @@
-import React from 'react';
-import classes from './Textarea.module.css';
+import cls from './Textarea.module.css';
 
 type Props = {
     label?: string;
@@ -30,7 +29,7 @@ const Textarea = ({
         <textarea
             aria-label={label}
             placeholder={placeholder}
-            className={`${classes.area} ${className}`}
+            className={`${cls.area} ${className}`}
             id={id}
             name={name}
             disabled={isDisabled}

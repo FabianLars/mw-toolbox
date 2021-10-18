@@ -1,5 +1,4 @@
 import { Badge, toast } from '@/components';
-import React from 'react';
 
 const errorToast = (error: { code: string; description: string }): void => {
     // TODO: log description to status bar or something

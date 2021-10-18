@@ -1,5 +1,4 @@
-import React from 'react';
-import classes from './Checkbox.module.css';
+import cls from './Checkbox.module.css';
 
 type Props = {
     className?: string;
@@ -23,7 +22,7 @@ const Checkbox = ({
     children,
 }: Props): JSX.Element => {
     return (
-        <div className={`${classes.wrapper} ${isDisabled ? classes.disabled : ''} ${className}`}>
+        <div className={`${cls.wrapper} ${isDisabled ? cls.disabled : ''} ${className}`}>
             <input
                 id={id}
                 name={name}
@@ -34,7 +33,7 @@ const Checkbox = ({
                 aria-disabled={isDisabled}
                 disabled={isDisabled}
             />
-            <label className={classes.label} htmlFor={id}>
+            <label className={cls.label} htmlFor={id}>
                 {children}
             </label>
         </div>

@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { invoke } from '@tauri-apps/api/tauri';
 
 import { errorToast } from '@/helpers/toast';
 import { Button, Input, Label, Select, Textarea } from '@/components';
 import { getCache, setCache } from '@/helpers/invoke';
-import classes from './List.module.css';
+import cls from './List.module.css';
+import { categories } from '@/helpers/consts';
 
 type Props = {
     isOnline: boolean;
@@ -81,9 +82,9 @@ const List = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
     useEffect(() => setNavDisabled(loading), [loading]);
 
     return (
-        <div className={classes.container}>
-            <div className={classes.fields}>
-                <div className={classes.endpoint}>
+        <div className={cls.container}>
+            <div className={cls.fields}>
+                <div className={cls.endpoint}>
                     <Label htmlFor="listtype" isRequired>
                         API Endpoint
                     </Label>
@@ -92,22 +93,14 @@ const List = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                         placeholder="Select type of list"
                         onChange={(event) => setListType(event.target.value)}
                     >
-                        <option value="allcategories">allcategories</option>
-                        <option value="allimages">allimages</option>
-                        <option value="allinfoboxes">allinfoboxes</option>
-                        <option value="alllinks">alllinks</option>
-                        <option value="allpages">allpages</option>
-                        <option value="backlinks">backlinks</option>
-                        <option value="categorymembers">categorymembers</option>
-                        <option value="embeddedin">embeddedin</option>
-                        <option value="exturlusage">exturlusage</option>
-                        <option value="imageusage">imageusage</option>
-                        <option value="protectedtitles">protectedtitles</option>
-                        <option value="querypage">querypage</option>
-                        <option value="search">search</option>
+                        {categories.map((v) => (
+                            <option value={v} key={v}>
+                                {v}
+                            </option>
+                        ))}
                     </Select>
                 </div>
-                <div title={paramInfo} className={classes.parameter}>
+                <div title={paramInfo} className={cls.parameter}>
                     <Label
                         htmlFor="parameter"
                         isRequired={paramRequired}
@@ -123,9 +116,9 @@ const List = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                         onChange={(event) => setParamInput(event.target.value)}
                     />
                 </div>
-                <div className={classes.buttons}>
+                <div className={cls.buttons}>
                     <Button
-                        className={classes.mr}
+                        className={cls.mr}
                         onClick={getList}
                         isLoading={loading}
                         isDisabled={!isOnline || !listType || (paramRequired && !paramInput.trim())}
@@ -137,7 +130,7 @@ const List = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                 </div>
             </div>
             <Textarea
-                className={classes.area}
+                className={cls.area}
                 label="output container"
                 value={listOutput}
                 readOnly

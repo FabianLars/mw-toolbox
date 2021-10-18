@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { getCache, setCache } from '@/helpers/invoke';
 import { errorToast, successToast } from '@/helpers/toast';
 import { Button, Textarea } from '@/components';
-import classes from './Purge.module.css';
+import cls from './Purge.module.css';
+
+enum Action {
+    None,
+    Purge,
+    Null,
+}
 
 type Props = {
     isOnline: boolean;
@@ -11,16 +17,13 @@ type Props = {
 };
 
 const Purge = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
-    const [isPurging, setIsPurging] = useState(false);
-    const [isNulling, setIsNulling] = useState(false);
+    const [status, setStatus] = useState(Action.None);
     const [areaValue, setAreaValue] = useState('');
 
     const purgePages = (isNulledit: boolean) => {
-        if (isNulledit) {
-            setIsNulling(true);
-        } else {
-            setIsPurging(true);
-        }
+        setNavDisabled(true);
+        setStatus(isNulledit ? Action.Null : Action.Purge);
+
         invoke('purge', {
             pages: areaValue.split(/\r?\n/),
             isNulledit,
@@ -28,12 +31,10 @@ const Purge = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
             .then(() => successToast((isNulledit ? 'Nulledit' : 'Purge') + ' successful'))
             .catch(errorToast)
             .finally(() => {
-                setIsPurging(false);
-                setIsNulling(false);
+                setNavDisabled(false);
+                setStatus(Action.None);
             });
     };
-
-    useEffect(() => setNavDisabled(isNulling || isPurging), [isNulling, isPurging]);
 
     useEffect(() => {
         getCache<string>('purge-cache').then((cache) => {
@@ -42,19 +43,19 @@ const Purge = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
     }, []);
 
     return (
-        <div className={classes.container}>
+        <div className={cls.container}>
             <Textarea
-                className={classes.area}
+                className={cls.area}
                 label="pages to purge"
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}
                 onBlur={() => setCache('purge-cache', areaValue)}
                 placeholder="Write exact page names here. Separated by newline."
             />
-            <div className={classes.buttons}>
+            <div className={cls.buttons}>
                 <Button
-                    isLoading={isPurging}
-                    isDisabled={!isOnline || isNulling || areaValue.trim() === ''}
+                    isLoading={status === Action.Purge}
+                    isDisabled={!isOnline || status === Action.Null || areaValue.trim() === ''}
                     onClick={() => purgePages(false)}
                     loadingText="Purging"
                     title={
@@ -62,13 +63,13 @@ const Purge = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                             ? 'Please login first!'
                             : 'Clear server caches. This might take a while!'
                     }
-                    className={classes.mx}
+                    className={cls.mx}
                 >
                     Purge all
                 </Button>
                 <Button
-                    isLoading={isNulling}
-                    isDisabled={!isOnline || isPurging || areaValue.trim() === ''}
+                    isLoading={status === Action.Null}
+                    isDisabled={!isOnline || status === Action.Purge || areaValue.trim() === ''}
                     onClick={() => purgePages(true)}
                     loadingText="Saving nulledits"
                     title={
@@ -76,7 +77,7 @@ const Purge = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                             ? 'Please login first!'
                             : 'Do a nulledit on every page. This might take a while!'
                     }
-                    className={classes.mx}
+                    className={cls.mx}
                 >
                     Nulledit all
                 </Button>

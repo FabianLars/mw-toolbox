@@ -1,8 +1,8 @@
 import { FocusableElement } from '@/helpers/types';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import FocusLock from 'react-focus-lock';
-import classes from './Modal.module.css';
+import cls from './Modal.module.css';
 
 type Props = {
     header?: React.ReactNode;
@@ -51,27 +51,27 @@ const Modal = ({
     return ReactDOM.createPortal(
         <>
             <div
-                className={`${classes.overlay} ${show ? classes.visible : ''}`}
+                className={`${cls.overlay} ${show ? cls.visible : ''}`}
                 ref={overlayRef}
                 onClick={closeModal}
             />
             <FocusLock returnFocus>
                 <section
                     id="modal"
-                    className={`${classes.modal} ${show ? classes.visible : ''}`}
+                    className={`${cls.modal} ${show ? cls.visible : ''}`}
                     role="dialog"
                     tabIndex={-1}
                     aria-modal="true"
                     aria-labelledby={`modal-header`}
                     aria-describedby={`modal-body`}
                 >
-                    <header id="modal-header" className={classes.header}>
+                    <header id="modal-header" className={cls.header}>
                         {header}
                     </header>
-                    <div id="modal-body" className={classes.body}>
+                    <div id="modal-body" className={cls.body}>
                         {body}
                     </div>
-                    <footer className={classes.footer}>{footer}</footer>
+                    <footer className={cls.footer}>{footer}</footer>
                 </section>
             </FocusLock>
         </>,

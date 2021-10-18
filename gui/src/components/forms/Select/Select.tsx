@@ -1,6 +1,6 @@
 import { listen } from '@tauri-apps/api/event';
-import React, { useEffect, useRef } from 'react';
-import classes from './Select.module.css';
+import { useEffect, useRef } from 'react';
+import cls from './Select.module.css';
 
 type Props = {
     label?: string;
@@ -39,7 +39,7 @@ const Select = ({
     return (
         <select
             aria-label={label}
-            className={`${classes.select} ${className} ${window.OS}`}
+            className={`${cls.select} ${className} ${window.OS}`}
             id={id}
             name={name}
             disabled={isDisabled}

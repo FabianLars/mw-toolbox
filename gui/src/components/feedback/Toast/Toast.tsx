@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import classes from './Toast.module.css';
+import { useEffect, useState } from 'react';
+import cls from './Toast.module.css';
 
 type Props = {
     children: React.ReactNode;
@@ -30,7 +30,7 @@ const Toast = ({ children, destroy }: Props): JSX.Element => {
         <div
             onClick={() => destroy()}
             role="alert"
-            className={`${classes.toast} ${show ? classes.visible : ''}`}
+            className={`${cls.toast} ${show ? cls.visible : ''}`}
         >
             {children}
         </div>

@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import { Button, Checkbox, Input, Modal } from '@/components';
 import { setCache } from '@/helpers/invoke';
-import classes from './FindReplaceModal.module.css';
+import cls from './FindReplaceModal.module.css';
 
 type Pattern = {
     find: string;
@@ -46,11 +46,11 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props): JS
             header={
                 <>
                     Find & Replace
-                    <div className={classes.regexinfo}>
+                    <div className={cls.regexinfo}>
                         <a
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={classes.link}
+                            className={cls.link}
                             href="https://docs.rs/regex/"
                             title="Open Regex Documentation"
                         >
@@ -60,11 +60,11 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props): JS
                 </>
             }
             body={
-                <div className={classes.container}>
+                <div className={cls.container}>
                     {localPatterns.map((_, index) => (
-                        <div className={classes.entry} key={index}>
+                        <div className={cls.entry} key={index}>
                             <Input
-                                className={classes.input}
+                                className={cls.input}
                                 placeholder="Find"
                                 label="text to find"
                                 value={localPatterns[index]['find'] || ''}
@@ -77,7 +77,7 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props): JS
                                 }
                             />
                             <Input
-                                className={classes.input}
+                                className={cls.input}
                                 placeholder="Replace"
                                 label="replacement text"
                                 value={localPatterns[index]['replace'] || ''}
@@ -91,7 +91,7 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props): JS
                             />
                             <Checkbox
                                 id={'rgx' + index}
-                                className={classes.input}
+                                className={cls.input}
                                 isChecked={localPatterns[index]['isRegex']}
                                 onChange={(event) =>
                                     setLocalPatterns((oldArr) => {
@@ -110,7 +110,7 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props): JS
             footer={
                 <>
                     <Button
-                        className={classes.mr}
+                        className={cls.mr}
                         onClick={() => {
                             if (localPatterns.length < 10)
                                 setLocalPatterns((old) =>
@@ -129,8 +129,8 @@ const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props): JS
                     >
                         Clear all
                     </Button>
-                    <div className={classes.spacer}></div>
-                    <Button className={classes.mr} colorScheme="blue" onClick={onModalSave}>
+                    <div className={cls.spacer}></div>
+                    <Button className={cls.mr} colorScheme="blue" onClick={onModalSave}>
                         Save
                     </Button>
                     <Button onClick={onModalClose} ref={initialRef}>

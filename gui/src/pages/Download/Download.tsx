@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { getCache, setCache } from '@/helpers/invoke';
 import { errorToast, successToast } from '@/helpers/toast';
 import { Button, Textarea } from '@/components';
-import classes from './Download.module.css';
+import cls from './Download.module.css';
 
 type Props = {
     isOnline: boolean;
@@ -33,9 +33,9 @@ const Download = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
     }, []);
 
     return (
-        <div className={classes.container}>
+        <div className={cls.container}>
             <Textarea
-                className={classes.area}
+                className={cls.area}
                 label="file names to download, including the File: prefix"
                 value={areaValue}
                 onChange={(event) => setAreaValue(event.target.value)}

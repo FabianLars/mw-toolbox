@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import FindReplaceModal from './FindReplaceModal';
 import { listen, emit } from '@tauri-apps/api/event';
@@ -6,7 +6,7 @@ import { Button, Checkbox, Input, Label, Textarea } from '@/components';
 import { getCache, setCache } from '@/helpers/invoke';
 import { errorToast, successToast } from '@/helpers/toast';
 import { removeFirst } from '@/helpers/array';
-import classes from './Edit.module.css';
+import cls from './Edit.module.css';
 
 type Pattern = {
     find: string;
@@ -142,9 +142,9 @@ const Edit = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
 
     return (
         <>
-            <div className={classes.container}>
+            <div className={cls.container}>
                 <Textarea
-                    className={classes.list}
+                    className={cls.list}
                     label="list of pages"
                     isDisabled={isRunning}
                     placeholder="List of pages to operate on. Separated by newline."
@@ -161,17 +161,17 @@ const Edit = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                         setCache('edit-pagelist', pageList);
                     }}
                 />
-                <div className={classes.right}>
+                <div className={cls.right}>
                     <Textarea
-                        className={classes.content}
+                        className={cls.content}
                         label="page content container"
                         isDisabled={isAuto || isLoading || !isRunning}
                         placeholder="Page contents will be displayed here."
                         value={pageContent}
                         onChange={(event) => setPageContent(event.target.value)}
                     />
-                    <div className={classes.grid}>
-                        <div className={classes.giCurrent}>
+                    <div className={cls.grid}>
+                        <div className={cls.giCurrent}>
                             Current page:{' '}
                             {isRunning
                                 ? isAuto
@@ -179,7 +179,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                                     : currentPage
                                 : 'Not running!'}
                         </div>
-                        <div className={classes.giSetup}>
+                        <div className={cls.giSetup}>
                             <Button
                                 title="This will be processed before contents get displayed!"
                                 onClick={onOpen}
@@ -188,8 +188,8 @@ const Edit = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                                 Setup Find & Replace
                             </Button>
                         </div>
-                        <div className={classes.giSummary}>
-                            <Label htmlFor="edit-summary" className={classes.label}>
+                        <div className={cls.giSummary}>
+                            <Label htmlFor="edit-summary" className={cls.label}>
                                 Edit summary:
                             </Label>
                             <Input
@@ -199,8 +199,8 @@ const Edit = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                                 onBlur={() => setCache('edit-summary', editSummary)}
                             />
                         </div>
-                        <div className={classes.giControls}>
-                            <div className={classes.controls}>
+                        <div className={cls.giControls}>
+                            <div className={cls.controls}>
                                 <Button
                                     onClick={() => (isRunning ? stop() : start())}
                                     isDisabled={

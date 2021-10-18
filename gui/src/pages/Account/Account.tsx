@@ -1,11 +1,11 @@
 import { invoke } from '@tauri-apps/api/tauri';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Checkbox, Divider, Input, Label, Select } from '@/components';
 
 import type { Profile } from '@/App';
 import { errorToast } from '@/helpers/toast';
-import classes from './Account.module.css';
+import cls from './Account.module.css';
 import { CloseIcon, PlusIcon } from '@/components/icons';
 
 type Props = {
@@ -125,9 +125,9 @@ const Account = ({
     useEffect(() => setNavDisabled(logginin), [logginin]);
 
     return (
-        <main className={classes.container}>
-            <div className={classes.profile}>
-                <div style={{ flex: 2, marginRight: '0.75rem' }}>
+        <main className={cls.container}>
+            <div className={cls.profile}>
+                <div>
                     <Label htmlFor="profile-name" isRequired>
                         Profile Name
                     </Label>
@@ -142,7 +142,7 @@ const Account = ({
                         placeholder="Profile name"
                     />
                 </div>
-                <div className="w100" style={{ flex: 1 }}>
+                <div className="w100">
                     <Label htmlFor="profile-select" isRequired>
                         Select Profile
                     </Label>
@@ -162,7 +162,7 @@ const Account = ({
                     isDisabled={
                         logginin || profiles.length >= 10 || profiles[currentProfile].isOnline
                     }
-                    className={classes.add}
+                    className={cls.add}
                     title="Add additional profile"
                     aria-label="Add additional profile"
                     onClick={addProfile}
@@ -174,7 +174,7 @@ const Account = ({
                     isDisabled={
                         logginin || profiles.length <= 1 || profiles[currentProfile].isOnline
                     }
-                    className={classes.remove}
+                    className={cls.remove}
                     title="Remove current profile"
                     aria-label="Remove current profile"
                     onClick={removeProfile}
@@ -228,7 +228,7 @@ const Account = ({
                     placeholder="Generated via Special:BotPasswords"
                 />
             </div>
-            <div className={classes.buttons}>
+            <div className={cls.buttons}>
                 <Checkbox
                     id="save-password"
                     name="savePassword"

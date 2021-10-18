@@ -1,6 +1,7 @@
 import { Spinner } from '@/components/feedback';
-import React from 'react';
-import classes from './Button.module.css';
+import { forwardRef } from 'react';
+
+import cls from './Button.module.css';
 
 type Props = {
     className?: string;
@@ -14,7 +15,7 @@ type Props = {
     colorScheme?: 'blue' | 'red' | 'default';
 };
 
-const Button = React.forwardRef((props: Props, ref) => {
+const Button = forwardRef((props: Props, ref) => {
     const {
         className = '',
         colorScheme = 'default',
@@ -31,14 +32,14 @@ const Button = React.forwardRef((props: Props, ref) => {
             ref={ref as React.ForwardedRef<HTMLButtonElement>}
             type="button"
             disabled={isDisabled || isLoading}
-            className={`${classes.button} ${className} ${classes[colorScheme]}`}
+            className={`${cls.button} ${className} ${cls[colorScheme]}`}
             title={title}
             aria-label={props['aria-label']}
             onClick={onClick}
         >
             {isLoading ? (
                 <>
-                    <Spinner className={classes.spinner} />
+                    <Spinner className={cls.spinner} />
                     {loadingText}
                 </>
             ) : (

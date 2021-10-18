@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { getCache, setCache } from '@/helpers/invoke';
 import { errorToast, successToast } from '@/helpers/toast';
 import { Button, Textarea } from '@/components';
-import classes from './Move.module.css';
+import cls from './Move.module.css';
 
 type Props = {
     isOnline: boolean;
@@ -38,10 +38,10 @@ const Move = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
     }, []);
 
     return (
-        <div className={classes.container}>
-            <div className={classes.fields}>
+        <div className={cls.container}>
+            <div className={cls.fields}>
                 <Textarea
-                    className={classes.from}
+                    className={cls.from}
                     label="pages to move"
                     value={areaFrom}
                     onChange={(event) => setAreaFrom(event.target.value)}
@@ -49,7 +49,7 @@ const Move = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                     placeholder="Write exact names of pages to move. Separated by newline."
                 />
                 <Textarea
-                    className={classes.to}
+                    className={cls.to}
                     label="new names for pages"
                     value={areaTo}
                     onChange={(event) => setAreaTo(event.target.value)}

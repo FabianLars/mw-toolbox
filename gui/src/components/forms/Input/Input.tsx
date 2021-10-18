@@ -1,5 +1,4 @@
-import React from 'react';
-import classes from './Input.module.css';
+import cls from './Input.module.css';
 
 type Props = {
     label?: string;
@@ -33,7 +32,7 @@ const Input = ({
     return (
         <input
             aria-label={label}
-            className={`${classes.input} ${className} ${window.OS}`}
+            className={`${cls.input} ${className} ${window.OS}`}
             id={id}
             type={isPassword ? 'password' : undefined}
             name={name}

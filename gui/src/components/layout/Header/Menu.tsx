@@ -1,7 +1,7 @@
 import { routes } from '@/helpers/consts';
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import classes from './Menu.module.css';
+import cls from './Menu.module.css';
 
 const Menu = (): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
@@ -120,7 +120,7 @@ const Menu = (): JSX.Element => {
                 aria-haspopup="menu"
                 aria-expanded={isOpen}
                 aria-controls="menu-list"
-                className={classes.button}
+                className={cls.button}
                 onClick={handleButtonClick}
                 onKeyDown={handleButtonKeyDown}
                 ref={buttonRef}
@@ -134,7 +134,7 @@ const Menu = (): JSX.Element => {
                 role="menu"
                 aria-orientation="vertical"
                 tabIndex={-1}
-                className={`${classes.menu} ${isOpen ? classes.visible : ''}`}
+                className={`${cls.menu} ${isOpen ? cls.visible : ''}`}
             >
                 {routes.map((v, i) => (
                     <Link
