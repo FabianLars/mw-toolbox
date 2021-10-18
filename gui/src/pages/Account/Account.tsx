@@ -3,10 +3,10 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { useEffect, useState } from 'react';
 import { Button, Checkbox, Divider, Input, Label, Select } from '@/components';
 
-import type { Profile } from '@/App';
 import { errorToast } from '@/helpers/toast';
 import cls from './Account.module.css';
 import { CloseIcon, PlusIcon } from '@/components/icons';
+import type { Profile } from '@/helpers/types';
 
 type Props = {
     profiles: Profile[];
@@ -92,8 +92,6 @@ const Account = ({
     }: React.ChangeEvent<HTMLInputElement>) => {
         setProfiles((old) => {
             const curr = [...old];
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore omg dynamic object indexing is sooo annoying in typescript
             curr[currentProfile][name || id] = id === 'save-password' ? checked : value;
             return curr;
         });

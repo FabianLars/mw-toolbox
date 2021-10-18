@@ -1,4 +1,4 @@
-import { FocusableElement } from '@/helpers/types';
+import type { FocusableElement } from '@/helpers/types';
 import { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import FocusLock from 'react-focus-lock';

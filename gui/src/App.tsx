@@ -5,15 +5,7 @@ import { Account, Delete, Download, Edit, List, Move, Purge, Upload } from './pa
 import { Header } from './components';
 import { getCache, setCache } from '@/helpers/invoke';
 import cls from './App.module.css';
-
-export type Profile = {
-    profile: string;
-    username: string;
-    password: string;
-    url: string;
-    savePassword: boolean;
-    isOnline: boolean;
-};
+import type { Profile } from './helpers/types';
 
 const App = (): JSX.Element => {
     // useRef to make useEffect skip the change from useState
