@@ -7,17 +7,17 @@ specifiers:
   '@types/mocha': 9.0.0
   '@types/react': 17.0.30
   '@types/react-dom': 17.0.9
-  '@typescript-eslint/eslint-plugin': ^5.0.0
-  '@typescript-eslint/parser': ^5.0.0
+  '@typescript-eslint/eslint-plugin': 5.0.0
+  '@typescript-eslint/parser': 5.0.0
   '@vitejs/plugin-react-refresh': 1.3.6
   '@web/test-runner': 0.13.20
   chai: 4.3.4
-  eslint: ^8.0.1
-  eslint-config-prettier: ^8.3.0
-  eslint-plugin-react: ^7.26.1
+  eslint: 8.0.1
+  eslint-config-prettier: 8.3.0
+  eslint-plugin-react: 7.26.1
   history: 5.0.1
   minimal-tauri-cli: 1.0.0-beta.7
-  npm-run-all: ^4.1.5
+  npm-run-all: 4.1.5
   prettier: 2.4.1
   react: 17.0.2
   react-dom: 17.0.2
@@ -415,7 +415,7 @@ packages:
       chalk: 4.1.2
       dom-accessibility-api: 0.5.9
       lz-string: 1.4.4
-      pretty-format: 27.3.0
+      pretty-format: 27.3.1
     dev: true
 
   /@testing-library/react/12.1.2_react-dom@17.0.2+react@17.0.2:
@@ -799,7 +799,7 @@ packages:
       get-stream: 6.0.1
       is-stream: 2.0.1
       isbinaryfile: 4.0.8
-      koa: 2.13.3
+      koa: 2.13.4
       koa-etag: 4.0.0
       koa-send: 5.0.1
       koa-static: 5.0.0
@@ -1170,7 +1170,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001269
-      electron-to-chromium: 1.3.871
+      electron-to-chromium: 1.3.872
       escalade: 3.1.1
       node-releases: 2.0.0
       picocolors: 1.0.0
@@ -1551,8 +1551,8 @@ packages:
     resolution: {integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=}
     dev: true
 
-  /electron-to-chromium/1.3.871:
-    resolution: {integrity: sha512-qcLvDUPf8DSIMWarHT2ptgcqrYg62n3vPA7vhrOF24d8UNzbUBaHu2CySiENR3nEDzYgaN60071t0F6KLYMQ7Q==}
+  /electron-to-chromium/1.3.872:
+    resolution: {integrity: sha512-qG96atLFY0agKyEETiBFNhpRLSXGSXOBuhXWpbkYqrLKKASpRyRBUtfkn0ZjIf/yXfA7FA4nScVOMpXSHFlUCQ==}
     dev: true
 
   /emoji-regex/8.0.0:
@@ -2624,8 +2624,8 @@ packages:
       - supports-color
     dev: true
 
-  /koa/2.13.3:
-    resolution: {integrity: sha512-XhXIoR+ylAwqG3HhXwnMPQAM/4xfywz52OvxZNmxmTWGGHsvmBv4NSIhURha6yMuvEex1WdtplUTHnxnKpQiGw==}
+  /koa/2.13.4:
+    resolution: {integrity: sha512-43zkIKubNbnrULWlHdN5h1g3SEKXOEzoAlRsHOTFpnlDu8JlAOZSMJBLULusuXRequboiwJcj5vtYXKB3k7+2g==}
     engines: {node: ^4.8.4 || ^6.10.1 || ^7.10.1 || >= 8.1.4}
     dependencies:
       accepts: 1.3.7
@@ -3129,8 +3129,8 @@ packages:
     hasBin: true
     dev: true
 
-  /pretty-format/27.3.0:
-    resolution: {integrity: sha512-Nkdd0xmxZdjCe6GoJomHnrLcCYGYzZKI/fRnUX0sCwDai2mmCHJfC9Ecx33lYgaxAFS/pJCAqhfxmWlm1wNVag==}
+  /pretty-format/27.3.1:
+    resolution: {integrity: sha512-DR/c+pvFc52nLimLROYjnXPtolawm+uWDxr4FjuLDLUn+ktWnSN851KoHwHzzqq6rfCOjkzN8FLgDrSub6UDuA==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
     dependencies:
       '@jest/types': 27.2.5
