@@ -124,7 +124,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                         isDisabled={status === Action.Wait || !isOnline || !files[0]}
                         onClick={() => {
                             if (status === Action.Upload) {
-                                emit('cancel-upload').finally(() => setStatus(Action.Wait));
+                                emit('cancel-action').finally(() => setStatus(Action.Wait));
                             } else {
                                 startUpload();
                             }

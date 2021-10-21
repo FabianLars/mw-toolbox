@@ -54,7 +54,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
 
     const stop = () => {
         if (isAuto) {
-            emit('cancel-autoedit');
+            emit('cancel-action');
         }
         setPageList((state) => currentPage + '\n' + state);
         setPageContent('');

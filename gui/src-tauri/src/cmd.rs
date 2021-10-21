@@ -6,7 +6,7 @@ use tauri::command;
 
 use mw_tools::{api, Error};
 
-use crate::{CANCEL_EDIT, CANCEL_UPLOAD, CLIENT};
+use crate::{CANCEL_ACTION, CLIENT};
 
 type Cache = parking_lot::Mutex<HashMap<String, Value>>;
 type Result<T, E = Error> = core::result::Result<T, E>;
@@ -88,10 +88,10 @@ pub async fn auto_edit(
     summary: Option<&str>,
     window: tauri::Window,
 ) -> Result<()> {
-    CANCEL_EDIT.store(false, Ordering::Relaxed);
+    CANCEL_ACTION.store(false, Ordering::Relaxed);
 
     for t in titles {
-        if CANCEL_EDIT.load(Ordering::Relaxed) {
+        if CANCEL_ACTION.load(Ordering::Relaxed) {
             println!("cancel_edit true");
             break;
         }
@@ -237,9 +237,9 @@ pub async fn update_profile_store(mut profiles: Vec<Profile>, current: usize) ->
 /// Command to upload files.
 #[command]
 pub async fn upload(text: &str, files: Vec<&str>, window: tauri::Window) -> Result<()> {
-    CANCEL_UPLOAD.store(false, Ordering::Relaxed);
+    CANCEL_ACTION.store(false, Ordering::Relaxed);
     let mut file_iter = files.iter();
-    while !CANCEL_UPLOAD.load(Ordering::Relaxed) {
+    while !CANCEL_ACTION.load(Ordering::Relaxed) {
         if let Some(file) = file_iter.next() {
             // Check if path resolves to a file. Skip upload otherwise.
             if std::fs::metadata(file)?.is_file() {

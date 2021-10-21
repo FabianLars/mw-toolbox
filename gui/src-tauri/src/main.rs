@@ -24,23 +24,20 @@ mod menu;
 // There is nothing we can do if init fails, so let's panic in the disco.
 static CLIENT: Lazy<AsyncMutex<Client>> = Lazy::new(|| AsyncMutex::new(Client::new("").unwrap()));
 
-/// Global boolean to cancel editing in auto-save mode.
-static CANCEL_EDIT: AtomicBool = AtomicBool::new(false);
-/// Global boolean to cancel file upload.
-static CANCEL_UPLOAD: AtomicBool = AtomicBool::new(false);
+/// Global boolean to cancel automatic actions.
+/// Currently this includes:
+/// - editing in auto-save mode.
+/// - file uploads (stopping inbetween).
+static CANCEL_ACTION: AtomicBool = AtomicBool::new(false);
 
 fn main() {
     pretty_env_logger::init();
 
     let builder = tauri::Builder::default()
         .on_page_load(|window, _| {
-            // Listener to cancel file upload.
-            window.listen("cancel-upload", move |_| {
-                CANCEL_UPLOAD.store(true, Ordering::Relaxed);
-            });
-            // Listener to cancel editing in auto-save mode.
-            window.listen("cancel-autoedit", move |_| {
-                CANCEL_EDIT.store(true, Ordering::Relaxed);
+            // Listener to cancel actions, see above.
+            window.listen("cancel-action", move |_| {
+                CANCEL_ACTION.store(true, Ordering::Relaxed);
             });
             // add OS as global window wariable, because Windows is Windows i guess.
             // Used on Windows for:
