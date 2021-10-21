@@ -1,6 +1,6 @@
 [package]
 authors = ["FabianLars <fabianlars@fabianlars.de>"]
-edition = "2018"
+edition = "2021"
 name = "storage"
 publish = false
 version = "0.1.0"

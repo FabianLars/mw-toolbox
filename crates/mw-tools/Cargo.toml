@@ -1,6 +1,6 @@
 [package]
 authors = ["FabianLars <fabianlars@fabianlars.de>"]
-edition = "2018"
+edition = "2021"
 license = "MIT"
 name = "mw-tools"
 version = "0.1.0"
