@@ -5,7 +5,7 @@ specifiers:
   '@testing-library/react': 12.1.2
   '@types/chai': 4.2.22
   '@types/mocha': 9.0.0
-  '@types/react': 17.0.31
+  '@types/react': 17.0.32
   '@types/react-dom': 17.0.10
   '@typescript-eslint/eslint-plugin': 5.1.0
   '@typescript-eslint/parser': 5.1.0
@@ -32,14 +32,14 @@ dependencies:
   history: 5.0.1
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
-  react-focus-lock: 2.5.2_6d27d6abd5fcfff70e832fae7f4b0d02
+  react-focus-lock: 2.5.2_fdf648e80cd72b304aa4ab0697f7348b
   react-router-dom: 6.0.0-beta.8_94912414cd94cc5bc891cce65dd59788
 
 devDependencies:
   '@testing-library/react': 12.1.2_react-dom@17.0.2+react@17.0.2
   '@types/chai': 4.2.22
   '@types/mocha': 9.0.0
-  '@types/react': 17.0.31
+  '@types/react': 17.0.32
   '@types/react-dom': 17.0.10
   '@typescript-eslint/eslint-plugin': 5.1.0_273a00ec265649c49755eee7222c1c12
   '@typescript-eslint/parser': 5.1.0_eslint@8.1.0+typescript@4.4.4
@@ -601,11 +601,11 @@ packages:
   /@types/react-dom/17.0.10:
     resolution: {integrity: sha512-8oz3NAUId2z/zQdFI09IMhQPNgIbiP8Lslhv39DIDamr846/0spjZK0vnrMak0iB8EKb9QFTTIdg2Wj2zH5a3g==}
     dependencies:
-      '@types/react': 17.0.31
+      '@types/react': 17.0.32
     dev: true
 
-  /@types/react/17.0.31:
-    resolution: {integrity: sha512-MQSR5EL4JZtdWRvqDgz9kXhSDDoy2zMTYyg7UhP+FZ5ttUOocWyxiqFJiI57sUG0BtaEX7WDXYQlkCYkb3X9vQ==}
+  /@types/react/17.0.32:
+    resolution: {integrity: sha512-hAm1pmwA3oZWbkB985RFwNvBRMG0F3KWSiC4/hNmanigKZMiKQoH5Q6etNw8HIDztTGfvXyOjPvdNnvBUCuaPg==}
     dependencies:
       '@types/prop-types': 15.7.4
       '@types/scheduler': 0.16.2
@@ -3231,7 +3231,7 @@ packages:
       scheduler: 0.20.2
     dev: false
 
-  /react-focus-lock/2.5.2_6d27d6abd5fcfff70e832fae7f4b0d02:
+  /react-focus-lock/2.5.2_fdf648e80cd72b304aa4ab0697f7348b:
     resolution: {integrity: sha512-WzpdOnEqjf+/A3EH9opMZWauag7gV0BxFl+EY4ElA4qFqYsUsBLnmo2sELbN5OC30S16GAWMy16B9DLPpdJKAQ==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0
@@ -3241,7 +3241,7 @@ packages:
       prop-types: 15.7.2
       react: 17.0.2
       react-clientside-effect: 1.2.5_react@17.0.2
-      use-callback-ref: 1.2.5_6d27d6abd5fcfff70e832fae7f4b0d02
+      use-callback-ref: 1.2.5_fdf648e80cd72b304aa4ab0697f7348b
       use-sidecar: 1.0.5_react@17.0.2
     transitivePeerDependencies:
       - '@types/react'
@@ -3785,7 +3785,7 @@ packages:
       punycode: 2.1.1
     dev: true
 
-  /use-callback-ref/1.2.5_6d27d6abd5fcfff70e832fae7f4b0d02:
+  /use-callback-ref/1.2.5_fdf648e80cd72b304aa4ab0697f7348b:
     resolution: {integrity: sha512-gN3vgMISAgacF7sqsLPByqoePooY3n2emTH59Ur5d/M8eg4WTWu1xp8i8DHjohftIyEx0S08RiYxbffr4j8Peg==}
     engines: {node: '>=8.5.0'}
     peerDependencies:
@@ -3795,7 +3795,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': 17.0.31
+      '@types/react': 17.0.32
       react: 17.0.2
     dev: false
 
