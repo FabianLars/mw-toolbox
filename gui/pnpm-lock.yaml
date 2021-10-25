@@ -24,7 +24,7 @@ specifiers:
   react-focus-lock: 2.5.2
   react-router-dom: 6.0.0-beta.8
   typescript: 4.4.4
-  vite: 2.6.10
+  vite: 2.6.11
   vite-web-test-runner-plugin: 0.1.0
 
 dependencies:
@@ -53,8 +53,8 @@ devDependencies:
   npm-run-all: 4.1.5
   prettier: 2.4.1
   typescript: 4.4.4
-  vite: 2.6.10
-  vite-web-test-runner-plugin: 0.1.0_vite@2.6.10
+  vite: 2.6.11
+  vite-web-test-runner-plugin: 0.1.0_vite@2.6.11
 
 packages:
 
@@ -3839,16 +3839,16 @@ packages:
     engines: {node: '>= 0.8'}
     dev: true
 
-  /vite-web-test-runner-plugin/0.1.0_vite@2.6.10:
+  /vite-web-test-runner-plugin/0.1.0_vite@2.6.11:
     resolution: {integrity: sha512-AXrkMbtU/QW9mJWzl0j7Zn9UKKwMo4zQw4BPeS4TknwF/tIMqluFdb9J2+QbLIUP72TeiAgobpS72oo/c7kDPw==}
     peerDependencies:
       vite: 2.x
     dependencies:
-      vite: 2.6.10
+      vite: 2.6.11
     dev: true
 
-  /vite/2.6.10:
-    resolution: {integrity: sha512-XbevwpDJMs3lKiGEj0UQScsOCpwHIjFgfzPnFVkPgnxsF9oPv1uGyckLg58XkXv6LnO46KN9yZqJzINFmAxtUg==}
+  /vite/2.6.11:
+    resolution: {integrity: sha512-JWnGmiO1IFwou9aUWS4N0kMyHcgTTt1+2f4bJyzgBJLJDyAqGEX3HewE4jgrL6V4d9+mxs+lZ4L8HL2kyVBe7A==}
     engines: {node: '>=12.2.0'}
     hasBin: true
     peerDependencies:
