@@ -41,9 +41,8 @@
     flex: 2;
     margin-right: 0.75rem;
 }
-.profile > div.w100 {
-    width: 100%;
-    flex: 1;
+.profile > div:last-of-type {
+    flex: 3;
 }
 
 @media screen and (min-width: 48em) {
