@@ -15,7 +15,7 @@ specifiers:
   eslint: 8.1.0
   eslint-config-prettier: 8.3.0
   eslint-plugin-react: 7.26.1
-  history: 5.0.3
+  history: 5.1.0
   minimal-tauri-cli: 1.0.0-beta.7
   npm-run-all: 4.1.5
   prettier: 2.4.1
@@ -29,11 +29,11 @@ specifiers:
 
 dependencies:
   '@tauri-apps/api': 1.0.0-beta.8
-  history: 5.0.3
+  history: 5.1.0
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
   react-focus-lock: 2.5.2_74cdfb704b70bfbe5b519e0c4564d995
-  react-router-dom: 6.0.0-beta.8_3545d4c2a2a8fd318a0735889cf0ce3b
+  react-router-dom: 6.0.0-beta.8_918291af08325ac4350d3c63cbbc041f
 
 devDependencies:
   '@testing-library/react': 12.1.2_react-dom@17.0.2+react@17.0.2
@@ -2226,8 +2226,8 @@ packages:
       function-bind: 1.1.1
     dev: true
 
-  /history/5.0.3:
-    resolution: {integrity: sha512-LoyCVOpCBkNAgrsdpTDZP77fys7lFDg8JdxTr7s6GHueZbTplKf8NAJu3y6/QuJIjk6TFsEGrhtILVP814X8+A==}
+  /history/5.1.0:
+    resolution: {integrity: sha512-zPuQgPacm2vH2xdORvGGz1wQMuHSIB56yNAy5FnLuwOwgSYyPKptJtcMm6Ev+hRGeS+GzhbmRacHzvlESbFwDg==}
     dependencies:
       '@babel/runtime': 7.16.0
     dev: false
@@ -3259,26 +3259,26 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /react-router-dom/6.0.0-beta.8_3545d4c2a2a8fd318a0735889cf0ce3b:
+  /react-router-dom/6.0.0-beta.8_918291af08325ac4350d3c63cbbc041f:
     resolution: {integrity: sha512-WyiIc6EakJDCo6rUmb7VjCtOpEvm8+4V8CiJdmFPud0lppeNf37TNhTnDQszDbP2y29wBUGb94BOFU2X93uILA==}
     peerDependencies:
       history: '>=5'
       react: '>=16.8'
       react-dom: '>=16.8'
     dependencies:
-      history: 5.0.3
+      history: 5.1.0
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-      react-router: 6.0.0-beta.8_history@5.0.3+react@17.0.2
+      react-router: 6.0.0-beta.8_history@5.1.0+react@17.0.2
     dev: false
 
-  /react-router/6.0.0-beta.8_history@5.0.3+react@17.0.2:
+  /react-router/6.0.0-beta.8_history@5.1.0+react@17.0.2:
     resolution: {integrity: sha512-pn3j01FA44yWP5gaHvz3CMVjFnmg5NS/BQ5IIalY7jw2yEKgr+OHB1gxTorakpiMaPOXXbfyUt3t4yZ4UBwE5Q==}
     peerDependencies:
       history: '>=5'
       react: '>=16.8'
     dependencies:
-      history: 5.0.3
+      history: 5.1.0
       react: 17.0.2
     dev: false
 
