@@ -786,8 +786,8 @@ packages:
       semver: 7.3.5
     dev: true
 
-  /@web/dev-server-core/0.3.16:
-    resolution: {integrity: sha512-nj6liCErIGtpuZYPf6QaxGQ9nlaHd8Cf/NBcRhogskvjOVFkF3FS9xpjRw3WidkmOQnk+D0ZGCeXjtTibgy5CA==}
+  /@web/dev-server-core/0.3.17:
+    resolution: {integrity: sha512-vN1dwQ8yDHGiAvCeUo9xFfjo+pFl8TW+pON7k9kfhbegrrB8CKhJDUxmHbZsyQUmjf/iX57/LhuWj1xGhRL8AA==}
     engines: {node: '>=10.0.0'}
     dependencies:
       '@types/koa': 2.13.4
@@ -818,7 +818,7 @@ packages:
     resolution: {integrity: sha512-nPvBAvmk5ybiUekLhaIweI/2SI+uuUL6S7PQimtjG5Ko8Bp1A00WAeVKRGydScqV4iNIxdc+bOjbyaLked96bQ==}
     engines: {node: '>=10.0.0'}
     dependencies:
-      '@web/dev-server-core': 0.3.16
+      '@web/dev-server-core': 0.3.17
       nanocolors: 0.2.13
       parse5: 6.0.1
       rollup: 2.59.0
@@ -829,8 +829,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@web/dev-server/0.1.26:
-    resolution: {integrity: sha512-6gQgvbQwpxEUntgCd15w3b4zjy9c5dkrjV2s9uZA+5jAGHaX64PFrTUx61BqOqVNcEMq6d10rCjXw9qnj/J7ag==}
+  /@web/dev-server/0.1.27:
+    resolution: {integrity: sha512-qrmD+s3IK+KY0khCygEOnf4Cix2ISSm40A9L9s1ToLvQoZ6t9GlgEBPqGvNIhOOCkmzDbWsyoAiuiG10HZkwRQ==}
     engines: {node: '>=10.0.0'}
     hasBin: true
     dependencies:
@@ -838,7 +838,7 @@ packages:
       '@rollup/plugin-node-resolve': 11.2.1
       '@types/command-line-args': 5.2.0
       '@web/config-loader': 0.1.3
-      '@web/dev-server-core': 0.3.16
+      '@web/dev-server-core': 0.3.17
       '@web/dev-server-rollup': 0.3.12
       camelcase: 6.2.0
       command-line-args: 5.2.0
@@ -902,7 +902,7 @@ packages:
       '@types/istanbul-lib-coverage': 2.0.3
       '@types/istanbul-reports': 3.0.1
       '@web/browser-logs': 0.2.5
-      '@web/dev-server-core': 0.3.16
+      '@web/dev-server-core': 0.3.17
       chokidar: 3.5.2
       cli-cursor: 3.1.0
       co-body: 6.1.0
@@ -959,7 +959,7 @@ packages:
     dependencies:
       '@web/browser-logs': 0.2.5
       '@web/config-loader': 0.1.3
-      '@web/dev-server': 0.1.26
+      '@web/dev-server': 0.1.27
       '@web/test-runner-chrome': 0.10.4
       '@web/test-runner-commands': 0.5.13
       '@web/test-runner-core': 0.10.22
@@ -1163,8 +1163,8 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001277
-      electron-to-chromium: 1.3.889
+      caniuse-lite: 1.0.30001278
+      electron-to-chromium: 1.3.890
       escalade: 3.1.1
       node-releases: 2.0.1
       picocolors: 1.0.0
@@ -1216,8 +1216,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /caniuse-lite/1.0.30001277:
-    resolution: {integrity: sha512-J2WtYj2Pl6LBEG214XmbGw1gzZEsYuinQFPqYtpZDB3/vm49qNlrcbJrTMkHKmdRDdmXYwkG0tgOBJsuI+J12Q==}
+  /caniuse-lite/1.0.30001278:
+    resolution: {integrity: sha512-mpF9KeH8u5cMoEmIic/cr7PNS+F5LWBk0t2ekGT60lFf0Wq+n9LspAj0g3P+o7DQhD3sUdlMln4YFAWhFYn9jg==}
     dev: true
 
   /chai/4.3.4:
@@ -1533,8 +1533,8 @@ packages:
     resolution: {integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=}
     dev: true
 
-  /electron-to-chromium/1.3.889:
-    resolution: {integrity: sha512-suEUoPTD1mExjL9TdmH7cvEiWJVM2oEiAi+Y1p0QKxI2HcRlT44qDTP2c1aZmVwRemIPYOpxmV7CxQCOWcm4XQ==}
+  /electron-to-chromium/1.3.890:
+    resolution: {integrity: sha512-VWlVXSkv0cA/OOehrEyqjUTHwV8YXCPTfPvbtoeU2aHR21vI4Ejh5aC4AxUwOmbLbBgb6Gd3URZahoCxtBqCYQ==}
     dev: true
 
   /emoji-regex/8.0.0:
