@@ -14,7 +14,7 @@ specifiers:
   chai: 4.3.4
   eslint: 8.2.0
   eslint-config-prettier: 8.3.0
-  eslint-plugin-react: 7.27.0
+  eslint-plugin-react: 7.27.1
   history: 5.1.0
   minimal-tauri-cli: 1.0.0-beta.7
   npm-run-all: 4.1.5
@@ -48,7 +48,7 @@ devDependencies:
   chai: 4.3.4
   eslint: 8.2.0
   eslint-config-prettier: 8.3.0_eslint@8.2.0
-  eslint-plugin-react: 7.27.0_eslint@8.2.0
+  eslint-plugin-react: 7.27.1_eslint@8.2.0
   minimal-tauri-cli: 1.0.0-beta.7
   npm-run-all: 4.1.5
   prettier: 2.4.1
@@ -1797,8 +1797,8 @@ packages:
       eslint: 8.2.0
     dev: true
 
-  /eslint-plugin-react/7.27.0_eslint@8.2.0:
-    resolution: {integrity: sha512-0Ut+CkzpppgFtoIhdzi2LpdpxxBvgFf99eFqWxJnUrO7mMe0eOiNpou6rvNYeVVV6lWZvTah0BFne7k5xHjARg==}
+  /eslint-plugin-react/7.27.1_eslint@8.2.0:
+    resolution: {integrity: sha512-meyunDjMMYeWr/4EBLTV1op3iSG3mjT/pz5gti38UzfM4OPpNc2m0t2xvKCOMU5D6FSdd34BIMFOvQbW+i8GAA==}
     engines: {node: '>=4'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
