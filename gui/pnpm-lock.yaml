@@ -21,7 +21,7 @@ specifiers:
   prettier: 2.5.1
   react: 17.0.2
   react-dom: 17.0.2
-  react-focus-lock: 2.6.0
+  react-focus-lock: 2.7.0
   react-router-dom: 6.1.1
   typescript: 4.5.3
   vite: 2.7.1
@@ -32,7 +32,7 @@ dependencies:
   history: 5.1.0
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
-  react-focus-lock: 2.6.0_cfedea9b3ed0faf0dded75c187406c5e
+  react-focus-lock: 2.7.0_cfedea9b3ed0faf0dded75c187406c5e
   react-router-dom: 6.1.1_react-dom@17.0.2+react@17.0.2
 
 devDependencies:
@@ -3202,8 +3202,8 @@ packages:
       scheduler: 0.20.2
     dev: false
 
-  /react-focus-lock/2.6.0_cfedea9b3ed0faf0dded75c187406c5e:
-    resolution: {integrity: sha512-2yB5KWyaefbvFDgqvsg/KpIjbqVlhIY2c/dyDcokDLhB3Ib7I4bjsrta5OkI5euUoIu5xBTyBwIQZPykUJAr1g==}
+  /react-focus-lock/2.7.0_cfedea9b3ed0faf0dded75c187406c5e:
+    resolution: {integrity: sha512-kg71clu1bNvvIZmbrp27FUYSzLIW/JEwDdds/0vrHGJ10VO5uep3Jylj0NOOaJitYboGIUm1pACxB/9D8WKSyQ==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
