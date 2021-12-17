@@ -15,7 +15,7 @@ specifiers:
   eslint: 8.4.1
   eslint-config-prettier: 8.3.0
   eslint-plugin-react: 7.27.1
-  history: 5.1.0
+  history: 5.2.0
   minimal-tauri-cli: 1.0.0-beta.7
   npm-run-all: 4.1.5
   prettier: 2.5.1
@@ -29,7 +29,7 @@ specifiers:
 
 dependencies:
   '@tauri-apps/api': 1.0.0-beta.8
-  history: 5.1.0
+  history: 5.2.0
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
   react-focus-lock: 2.7.1_cfedea9b3ed0faf0dded75c187406c5e
@@ -2197,8 +2197,8 @@ packages:
       function-bind: 1.1.1
     dev: true
 
-  /history/5.1.0:
-    resolution: {integrity: sha512-zPuQgPacm2vH2xdORvGGz1wQMuHSIB56yNAy5FnLuwOwgSYyPKptJtcMm6Ev+hRGeS+GzhbmRacHzvlESbFwDg==}
+  /history/5.2.0:
+    resolution: {integrity: sha512-uPSF6lAJb3nSePJ43hN3eKj1dTWpN9gMod0ZssbFTIsen+WehTmEadgL+kg78xLJFdRfrrC//SavDzmRVdE+Ig==}
     dependencies:
       '@babel/runtime': 7.16.5
     dev: false
@@ -3218,7 +3218,7 @@ packages:
       react: '>=16.8'
       react-dom: '>=16.8'
     dependencies:
-      history: 5.1.0
+      history: 5.2.0
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-router: 6.1.1_react@17.0.2
@@ -3229,7 +3229,7 @@ packages:
     peerDependencies:
       react: '>=16.8'
     dependencies:
-      history: 5.1.0
+      history: 5.2.0
       react: 17.0.2
     dev: false
 
