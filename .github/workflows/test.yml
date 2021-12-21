@@ -142,10 +142,5 @@ jobs:
           version: 6.x.x
           run_install: true
 
-      - name: Create vite cache
-        # not pre-bundling the dependencies makes the test itself fail
-        continue-on-error: true
-        run: pnpm test
-
       - name: Run tests
         run: pnpm test

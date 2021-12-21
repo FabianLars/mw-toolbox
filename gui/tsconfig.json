@@ -5,16 +5,8 @@
             "@/*": ["./*"]
         },
         "target": "ESNext",
-        "lib": [
-            "DOM",
-            "DOM.Iterable",
-            "ESNext"
-        ],
-        "types": [
-            "vite/client",
-            "chai",
-            "mocha"
-        ],
+        "lib": ["DOM", "DOM.Iterable", "ESNext"],
+        "types": ["vite/client"],
         "allowJs": false,
         "skipLibCheck": true,
         "esModuleInterop": false,
@@ -28,7 +20,5 @@
         "noEmit": true,
         "jsx": "react-jsx"
     },
-    "include": [
-        "./src"
-    ]
+    "include": ["./src"]
 }

@@ -1,10 +1,13 @@
+/// <reference types="vitest" />
+/// <reference types="vite/client" />
+
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import reactRefresh from '@vitejs/plugin-react-refresh';
+import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: process.env.NODE_ENV !== 'test' ? [reactRefresh()] : [],
+    plugins: [react()],
     resolve: {
         alias: {
             '@': resolve(__dirname, 'src'),
@@ -14,7 +17,12 @@ export default defineConfig({
         target: 'es2020',
         minify: 'esbuild',
     },
-    esbuild: {
-        jsxInject: `import React from 'react'`,
+    test: {
+        // environment: 'happy-dom', // doesn't work :(   TypeError: Cannot read properties of undefined (reading 'length')
+        environment: 'jsdom',
+        watch: false,
+        setupFiles: ['./test/setup.ts'],
+        root: './',
+        global: true,
     },
 });

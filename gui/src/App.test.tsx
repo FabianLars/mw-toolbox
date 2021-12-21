@@ -1,13 +1,12 @@
-import { render } from '@testing-library/react';
-import { expect } from 'chai';
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 import App from './App';
 
 // Placeholder test
 
 describe('<App>', () => {
-    it('renders "Profile 1"', () => {
-        const { getByText } = render(<App />);
-        const el = getByText(/Profile 1/i);
-        expect(document.body.contains(el));
+    it('renders "Profile 1"', async () => {
+        await render(<App />);
+        expect(screen.getByText(/Profile Name/i)).toBeTruthy();
     });
 });

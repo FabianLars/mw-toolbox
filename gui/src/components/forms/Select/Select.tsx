@@ -10,7 +10,7 @@ type Props = {
     isDisabled?: boolean;
     placeholder?: string;
     value?: string | number;
-    onChange: React.ChangeEventHandler<HTMLSelectElement>;
+    onChange?: React.ChangeEventHandler<HTMLSelectElement>;
     children: React.ReactNode;
 };
 
