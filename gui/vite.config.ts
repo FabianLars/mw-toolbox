@@ -24,5 +24,8 @@ export default defineConfig({
         setupFiles: ['./test/setup.ts'],
         root: './',
         global: true,
+        deps: {
+            inline: ['react-focus-lock'],
+        },
     },
 });
