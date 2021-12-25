@@ -49,8 +49,8 @@ jobs:
       - name: Install dependencies (ubuntu only)
         if: runner.os == 'Linux'
         run: |
-          sudo apt update
-          sudo apt install -y libwebkit2gtk-4.0-dev libgtk-3-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.0-dev libgtk-3-dev libappindicator3-dev librsvg2-dev patchelf
 
       # No need for caches for release builds, because they get cleared every week anyway.
 

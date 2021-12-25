@@ -13,7 +13,7 @@ type Result<T, E = Error> = core::result::Result<T, E>;
 
 /// Struct to store users. Each profile is stored in a new instance.
 #[derive(Debug, Default, Serialize, Deserialize)]
-pub struct Profile {
+pub(crate) struct Profile {
     /// Name of the profile
     profile: String,
     /// Username of the account
@@ -29,7 +29,7 @@ pub struct Profile {
 
 /// Return value of [get_page].
 #[derive(Debug, Serialize)]
-pub struct GetPage {
+pub(crate) struct GetPage {
     /// Page content
     content: String,
     /// Whether the content got edited via regex or not.
@@ -38,51 +38,51 @@ pub struct GetPage {
 
 /// Struct for Find&Replace operations. Each operation is stored in a new instance.
 #[derive(Clone, Debug, Deserialize)]
-pub struct FindReplace {
+pub(crate) struct FindReplace {
     /// Value to replace
     #[serde(default)]
-    pub find: String,
+    pub(crate) find: String,
     /// Value to insert
     #[serde(default)]
-    pub replace: String,
+    pub(crate) replace: String,
     /// Whether find and replace fields should be interpreted as a regular expression.
     #[serde(rename = "isRegex", default)]
-    pub is_regex: bool,
+    pub(crate) is_regex: bool,
 }
 
 /// Get json-compatible ([`serde_json::Value`]) objects from runtime cache.
 #[command]
-pub fn cache_get(key: &str, cache: tauri::State<Cache>) -> Option<Value> {
+pub(crate) fn cache_get(key: &str, cache: tauri::State<Cache>) -> Option<Value> {
     cache.lock().get(key).map(|v| v.to_owned())
 }
 
 /// Store json-compatible ([`serde_json::Value`]) objects in runtime cache.
 #[command]
-pub fn cache_set(key: String, value: Value, cache: tauri::State<Cache>) -> bool {
+pub(crate) fn cache_set(key: String, value: Value, cache: tauri::State<Cache>) -> bool {
     cache.lock().insert(key, value).is_some()
 }
 
 /// Command to delete pages.
 #[command]
-pub async fn delete(pages: Vec<&str>, reason: Option<&str>) -> Result<()> {
+pub(crate) async fn delete(pages: Vec<&str>, reason: Option<&str>) -> Result<()> {
     api::delete::delete(&*CLIENT.lock().await, &pages, reason).await
 }
 
 /// Command to download files.
 #[command]
-pub async fn download(files: Vec<&str>) -> Result<()> {
+pub(crate) async fn download(files: Vec<&str>) -> Result<()> {
     api::download::download(&*CLIENT.lock().await, &files).await
 }
 
 /// Command to save edited pages.
 #[command]
-pub async fn edit(title: &str, content: &str, summary: Option<&str>) -> Result<String> {
+pub(crate) async fn edit(title: &str, content: &str, summary: Option<&str>) -> Result<String> {
     api::edit::edit(&*CLIENT.lock().await, title, content, summary).await
 }
 
 /// Command that runs the editor in auto-save mode.
 #[command]
-pub async fn auto_edit(
+pub(crate) async fn auto_edit(
     titles: Vec<&str>,
     patterns: Vec<FindReplace>,
     summary: Option<&str>,
@@ -113,7 +113,7 @@ pub async fn auto_edit(
 
 /// Command to get page content. Runs Find&Replace operations before returning.
 #[command]
-pub async fn get_page(page: &str, patterns: Vec<FindReplace>) -> Result<GetPage> {
+pub(crate) async fn get_page(page: &str, patterns: Vec<FindReplace>) -> Result<GetPage> {
     let mut s = api::parse::get_page_content(&*CLIENT.lock().await, page).await?;
     let mut edited = false;
     for pat in patterns {
@@ -142,7 +142,7 @@ pub async fn get_page(page: &str, patterns: Vec<FindReplace>) -> Result<GetPage>
 
 /// Command to get locally saved users and the index of the last active profile.
 #[command]
-pub async fn init() -> (Vec<Profile>, usize) {
+pub(crate) async fn init() -> (Vec<Profile>, usize) {
     storage::load_secure::<(Vec<Profile>, usize)>("oB9uBQDs")
         .await
         .unwrap_or_default()
@@ -150,7 +150,7 @@ pub async fn init() -> (Vec<Profile>, usize) {
 
 /// Command to get wiki-generated page lists.
 #[command]
-pub async fn list(listtype: &str, param: Option<&str>) -> Result<Vec<String>> {
+pub(crate) async fn list(listtype: &str, param: Option<&str>) -> Result<Vec<String>> {
     let client = CLIENT.lock().await;
     let param = param.unwrap_or_default();
     match listtype {
@@ -175,7 +175,7 @@ pub async fn list(listtype: &str, param: Option<&str>) -> Result<Vec<String>> {
 
 /// Command to login.
 #[command]
-pub async fn login(profiles: Vec<Profile>, current: usize) -> Result<usize> {
+pub(crate) async fn login(profiles: Vec<Profile>, current: usize) -> Result<usize> {
     let current_profile = &profiles[current];
 
     let mut client = CLIENT.lock().await;
@@ -192,13 +192,13 @@ pub async fn login(profiles: Vec<Profile>, current: usize) -> Result<usize> {
 
 /// Command to logout.
 #[command]
-pub async fn logout() -> Result<()> {
+pub(crate) async fn logout() -> Result<()> {
     CLIENT.lock().await.logout().await
 }
 
 /// Command to move pages.
 #[command]
-pub async fn rename(from: Vec<String>, to: Vec<String>) -> Result<()> {
+pub(crate) async fn rename(from: Vec<String>, to: Vec<String>) -> Result<()> {
     api::rename::rename(
         &*CLIENT.lock().await,
         from,
@@ -211,7 +211,7 @@ pub async fn rename(from: Vec<String>, to: Vec<String>) -> Result<()> {
 
 /// Command to purge or nulledit pages.
 #[command]
-pub async fn purge(is_nulledit: bool, pages: Vec<&str>) -> Result<()> {
+pub(crate) async fn purge(is_nulledit: bool, pages: Vec<&str>) -> Result<()> {
     let client = CLIENT.lock().await;
     if is_nulledit {
         api::edit::nulledit(&*client, &pages).await
@@ -222,7 +222,7 @@ pub async fn purge(is_nulledit: bool, pages: Vec<&str>) -> Result<()> {
 
 /// Command to update locally saved users.
 #[command]
-pub async fn update_profile_store(mut profiles: Vec<Profile>, current: usize) -> Result<()> {
+pub(crate) async fn update_profile_store(mut profiles: Vec<Profile>, current: usize) -> Result<()> {
     for p in &mut profiles {
         if !p.save_password {
             p.password = "".to_string();
@@ -236,7 +236,7 @@ pub async fn update_profile_store(mut profiles: Vec<Profile>, current: usize) ->
 
 /// Command to upload files.
 #[command]
-pub async fn upload(text: &str, files: Vec<&str>, window: tauri::Window) -> Result<()> {
+pub(crate) async fn upload(text: &str, files: Vec<&str>, window: tauri::Window) -> Result<()> {
     CANCEL_ACTION.store(false, Ordering::Relaxed);
     let mut file_iter = files.iter();
     while !CANCEL_ACTION.load(Ordering::Relaxed) {
