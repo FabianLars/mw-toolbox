@@ -41,7 +41,7 @@ jobs:
         run: cargo fmt --all -- --check
 
       - name: Compile
-        run: cargo test -- --no-run --locked
+        run: cargo test --no-run --locked
 
       - name: Test
         run: cargo test -- --nocapture --quiet
