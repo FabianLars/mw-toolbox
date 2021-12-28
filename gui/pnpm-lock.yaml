@@ -20,7 +20,7 @@ specifiers:
   react-focus-lock: 2.7.1
   react-router-dom: 6.2.1
   typescript: 4.5.4
-  vite: 2.7.8
+  vite: 2.7.9
   vitest: 0.0.118
 
 dependencies:
@@ -45,8 +45,8 @@ devDependencies:
   minimal-tauri-cli: 1.0.0-beta.7
   prettier: 2.5.1
   typescript: 4.5.4
-  vite: 2.7.8
-  vitest: 0.0.118_jsdom@19.0.0+vite@2.7.8
+  vite: 2.7.9
+  vitest: 0.0.118_jsdom@19.0.0+vite@2.7.9
 
 packages:
 
@@ -2563,8 +2563,8 @@ packages:
     resolution: {integrity: sha512-l8lCEmLcLYZh4nbunNZvQCJc5pv7+RCwa8q/LdUx8u7lsWvPDKmpodJAJNwkAhJC//dFY48KuIEmjtd4RViDrA==}
     dev: true
 
-  /vite/2.7.8:
-    resolution: {integrity: sha512-NOgvRtXUq4/7srE2cTQ2IU1oERdGq2njVOlZtgRrjMO+PPJpncd61/AUzxzZklQ1zBkiWXEVrw3Csq0Sbgr0rQ==}
+  /vite/2.7.9:
+    resolution: {integrity: sha512-CyopIJIRrc26Wnbkch5BCHFhQodzeV4jjSegLAEw1RImvXSuoOo2SfpEW9zRVi188WmjJwCqCaoG25C0r4nekw==}
     engines: {node: '>=12.2.0'}
     hasBin: true
     peerDependencies:
@@ -2587,7 +2587,7 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitest/0.0.118_jsdom@19.0.0+vite@2.7.8:
+  /vitest/0.0.118_jsdom@19.0.0+vite@2.7.9:
     resolution: {integrity: sha512-2zBpowIaVAMPFB+/DkHFpt63QNXMz737dKTpLtC2t4RNUfLS4n+KKg14nFexj5VlhMf4ntSkrvDHnrE+6gFTmg==}
     engines: {node: '>=14.14.0'}
     hasBin: true
@@ -2611,7 +2611,7 @@ packages:
       local-pkg: 0.4.0
       tinypool: 0.0.6
       tinyspy: 0.2.6
-      vite: 2.7.8
+      vite: 2.7.9
     dev: true
 
   /w3c-hr-time/1.0.2:
