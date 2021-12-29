@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import App from './App';
@@ -6,7 +7,7 @@ import App from './App';
 
 describe('<App>', () => {
     it('renders "Profile 1"', async () => {
-        await render(<App />);
-        expect(screen.getByText(/Profile Name/i)).toBeTruthy();
+        render(<App />);
+        expect(screen.getByText(/Profile Name/i)).toBeDefined();
     });
 });

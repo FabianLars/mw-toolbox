@@ -18,14 +18,11 @@ export default defineConfig({
         minify: 'esbuild',
     },
     test: {
-        // environment: 'happy-dom', // doesn't work :(   TypeError: Cannot read properties of undefined (reading 'length')
         environment: 'jsdom',
         watch: false,
-        setupFiles: ['./test/setup.ts'],
-        root: './',
         global: true,
         deps: {
-            inline: ['react-focus-lock'],
+            inline: ['react-focus-lock', '@testing-library/user-event'],
         },
     },
 });
