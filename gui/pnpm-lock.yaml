@@ -24,7 +24,7 @@ specifiers:
   react-router-dom: 6.2.1
   typescript: 4.5.4
   vite: 2.7.10
-  vitest: 0.0.122
+  vitest: 0.0.124
 
 dependencies:
   '@tauri-apps/api': 1.0.0-beta.8
@@ -52,7 +52,7 @@ devDependencies:
   prettier: 2.5.1
   typescript: 4.5.4
   vite: 2.7.10
-  vitest: 0.0.122_jsdom@19.0.0+vite@2.7.10
+  vitest: 0.0.124_jsdom@19.0.0
 
 packages:
 
@@ -2729,16 +2729,18 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitest/0.0.122_jsdom@19.0.0+vite@2.7.10:
-    resolution: {integrity: sha512-ayAY8Ue444rutcU6gXO2fTASmVSEEYGBtrGSRgnVBrBo+RlOkv0i67yUJFLyH3krtKdLbbKGk+lQ5B7kBvhX7w==}
+  /vitest/0.0.124_jsdom@19.0.0:
+    resolution: {integrity: sha512-azhSsniZCRkInFD/VXONs90WrgNDZLq1hemNVBfX+xE44Ock06R+zFSpk2Jz/LYfZhXXFi/Xr32RCjgquKsklw==}
     engines: {node: '>=14.14.0'}
     hasBin: true
     peerDependencies:
+      '@vitest/ui': '*'
       c8: '*'
       happy-dom: '*'
       jsdom: '*'
-      vite: ^2.7.1
     peerDependenciesMeta:
+      '@vitest/ui':
+        optional: true
       c8:
         optional: true
       happy-dom:
@@ -2754,6 +2756,10 @@ packages:
       tinypool: 0.0.6
       tinyspy: 0.2.6
       vite: 2.7.10
+    transitivePeerDependencies:
+      - less
+      - sass
+      - stylus
     dev: true
 
   /w3c-hr-time/1.0.2:
