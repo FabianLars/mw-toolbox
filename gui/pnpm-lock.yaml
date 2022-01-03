@@ -24,7 +24,7 @@ specifiers:
   react-router-dom: 6.2.1
   typescript: 4.5.4
   vite: 2.7.10
-  vitest: 0.0.127
+  vitest: 0.0.128
 
 dependencies:
   '@tauri-apps/api': 1.0.0-beta.8
@@ -52,7 +52,7 @@ devDependencies:
   prettier: 2.5.1
   typescript: 4.5.4
   vite: 2.7.10
-  vitest: 0.0.127_jsdom@19.0.0
+  vitest: 0.0.128_jsdom@19.0.0
 
 packages:
 
@@ -2728,8 +2728,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitest/0.0.127_jsdom@19.0.0:
-    resolution: {integrity: sha512-FAmM07fmSr4UZiQgBIvShewiQeUxj5RxzGkgKjAfNygABm2iZmeR2gm6syGzx3HYsbFWMV9oYAjcnE7ZK5IGoQ==}
+  /vitest/0.0.128_jsdom@19.0.0:
+    resolution: {integrity: sha512-a6rpX9HEr/bu0vPnCHj6UyXVxiiqP8mcvn776sw06zBNvMCD66aB82IxzM17kLs1NyRLtngthMMmwZuOBLIX3g==}
     engines: {node: '>=14.14.0'}
     hasBin: true
     peerDependencies:
