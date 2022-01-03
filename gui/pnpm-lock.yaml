@@ -24,7 +24,7 @@ specifiers:
   react-router-dom: 6.2.1
   typescript: 4.5.4
   vite: 2.7.10
-  vitest: 0.0.129
+  vitest: 0.0.131
 
 dependencies:
   '@tauri-apps/api': 1.0.0-beta.8
@@ -52,7 +52,7 @@ devDependencies:
   prettier: 2.5.1
   typescript: 4.5.4
   vite: 2.7.10
-  vitest: 0.0.129_jsdom@19.0.0
+  vitest: 0.0.131_jsdom@19.0.0
 
 packages:
 
@@ -2570,8 +2570,8 @@ packages:
     resolution: {integrity: sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=}
     dev: true
 
-  /tinypool/0.0.6:
-    resolution: {integrity: sha512-E9vY6eq/Q7fUlSt69cY3y7qXNbVOFaxP+lAEDMKMObLrmO0MmEdUPyjOMgepoMDw/ps/sazl7WIQglnUrunnLg==}
+  /tinypool/0.1.0:
+    resolution: {integrity: sha512-eQXAsrzFBbd4kwSmxE0g64eo/l0St7iGmkRsJVKJ5awRHUyMeSHxMD9samPaWD6fCL+pufv37TEfVcnQdQXAeA==}
     engines: {node: '>=14.0.0'}
     dev: true
 
@@ -2728,8 +2728,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitest/0.0.129_jsdom@19.0.0:
-    resolution: {integrity: sha512-8Wd8AXcIPUGNNMidO72LQfRN6e8W44Q7c0YJo9jZwIq3uXysmtL5pfdeqCcSMMGijSkWZIpiF6TJesr7ETHPPg==}
+  /vitest/0.0.131_jsdom@19.0.0:
+    resolution: {integrity: sha512-8az+/FUECnJTVsJxNJ6RHcy0FqWSlLlUq7prlz74OIWV6Lhh8zrjH2P+7J5uv0HLVgz92NMvWTPGQWk+90tXJQ==}
     engines: {node: '>=14.14.0'}
     hasBin: true
     peerDependencies:
@@ -2752,7 +2752,7 @@ packages:
       chai: 4.3.4
       jsdom: 19.0.0
       local-pkg: 0.4.0
-      tinypool: 0.0.6
+      tinypool: 0.1.0
       tinyspy: 0.2.6
       vite: 2.7.10
     transitivePeerDependencies:
