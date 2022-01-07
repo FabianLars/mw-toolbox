@@ -8,5 +8,6 @@ pub(crate) struct Upload {
 #[derive(Debug, Deserialize)]
 pub(crate) struct Response {
     pub(crate) result: String,
+    #[allow(dead_code)]
     pub(crate) filename: String,
 }

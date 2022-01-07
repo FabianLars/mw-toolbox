@@ -7,6 +7,7 @@ pub(crate) struct Parse {
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct Response {
+    #[allow(dead_code)]
     pub(crate) title: String,
     pub(crate) wikitext: String,
 }

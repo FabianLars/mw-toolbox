@@ -89,6 +89,8 @@ pub(crate) struct NsQuery {
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct Namespace {
+    #[allow(dead_code)]
     pub(crate) id: i32,
+    #[allow(dead_code)]
     pub(crate) name: String,
 }
