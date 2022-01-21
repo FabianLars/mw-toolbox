@@ -14,7 +14,7 @@ specifiers:
   eslint: 8.7.0
   eslint-config-prettier: 8.3.0
   eslint-plugin-react: 7.28.0
-  eslint-plugin-testing-library: 5.0.3
+  eslint-plugin-testing-library: 5.0.4
   history: 5.2.0
   jsdom: 19.0.0
   minimal-tauri-cli: 1.0.0-beta.7
@@ -48,7 +48,7 @@ devDependencies:
   eslint: 8.7.0
   eslint-config-prettier: 8.3.0_eslint@8.7.0
   eslint-plugin-react: 7.28.0_eslint@8.7.0
-  eslint-plugin-testing-library: 5.0.3_eslint@8.7.0+typescript@4.5.5
+  eslint-plugin-testing-library: 5.0.4_eslint@8.7.0+typescript@4.5.5
   jsdom: 19.0.0
   minimal-tauri-cli: 1.0.0-beta.7
   prettier: 2.5.1
@@ -1304,8 +1304,8 @@ packages:
       string.prototype.matchall: 4.0.6
     dev: true
 
-  /eslint-plugin-testing-library/5.0.3_eslint@8.7.0+typescript@4.5.5:
-    resolution: {integrity: sha512-tKZ9G+HnIOnYAhXeoBCiAT8LOdU3m1VquBTKsBW/5zAaB30vq7gC60DIayPfMJt8EZBlqPVzGqSN57sIFmTunQ==}
+  /eslint-plugin-testing-library/5.0.4_eslint@8.7.0+typescript@4.5.5:
+    resolution: {integrity: sha512-zA/NfAENCsJXujvwwiap5gsqLp2U6X7m2XA5nOksl4zzb6GpUmRNAleCll58rEP0brFVj7DZBprlIlMGIhoC7Q==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0, npm: '>=6'}
     peerDependencies:
       eslint: ^7.5.0 || ^8.0.0
