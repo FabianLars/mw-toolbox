@@ -14,9 +14,9 @@ use serde::{de::DeserializeOwned, Serialize};
 use tokio::{fs::File, io::AsyncWriteExt};
 
 static PATH: Lazy<PathBuf> = Lazy::new(|| {
-    let mut path = dirs_next::data_local_dir().expect("Unable to determine local-data-dir path!");
-    path.push("de.fabianlars.mwtoolbox/Storage/");
-    std::fs::create_dir_all(&path).expect("Unable to create storage directory");
+    let mut path = dirs_next::config_dir().expect("Unable to determine config dir.");
+    path.push("de.FabianLars.mw-toolbox/Storage/");
+    std::fs::create_dir_all(&path).expect("Unable to create storage directory.");
     path
 });
 
@@ -39,7 +39,7 @@ pub fn encrypt(data: &[u8]) -> Result<Vec<u8>> {
 
 pub fn decrypt(data: &[u8]) -> Result<Vec<u8>> {
     if data.len() <= 24 {
-        return Err(anyhow!("Value given is too short to be encrypted data"));
+        return Err(anyhow!("Value given is too short to be encrypted data."));
     }
     let cryptkey = Key::from_slice(env!("WTOOLS_AEAD_KEY").as_bytes());
     let aead = XChaCha20Poly1305::new(cryptkey);
