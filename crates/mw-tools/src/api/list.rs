@@ -52,15 +52,14 @@ pub async fn allpages(client: &Client, parameter: Option<&str>) -> Result<Vec<St
                 );
             }
             return Ok(temp);
-        } else {
-            return get_from_api(
-                client,
-                "allpages",
-                "ap",
-                Some(&format!("apnamespace={}", param)),
-            )
-            .await;
         }
+        return get_from_api(
+            client,
+            "allpages",
+            "ap",
+            Some(&format!("apnamespace={}", param)),
+        )
+        .await;
     }
     get_from_api(client, "allpages", "ap", None).await
 }

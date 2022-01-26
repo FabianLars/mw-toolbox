@@ -9,8 +9,8 @@ pub async fn rename(
 ) -> Result<(), Error> {
     let mut actual_destination: Vec<String> = Vec::new();
 
-    match to {
-        Some(inner_to) => match inner_to {
+    if let Some(to) = to {
+        match to {
             Destination::Plain(dest) => {
                 if from.len() != dest.len() {
                     return Err(Error::InvalidInput(
@@ -24,15 +24,14 @@ pub async fn rename(
                     actual_destination.push(x.replace(&replace, &with));
                 }
             }
-        },
-        None => {
-            if prepend.is_none() && append.is_none() {
-                return Err(Error::InvalidInput(
-                    "at least one of 'to', 'prepend' or 'append' needed".to_string(),
-                ));
-            }
-            actual_destination = from.clone();
         }
+    } else {
+        if prepend.is_none() && append.is_none() {
+            return Err(Error::InvalidInput(
+                "at least one of 'to', 'prepend' or 'append' needed".to_string(),
+            ));
+        }
+        actual_destination = from.clone();
     }
 
     if prepend.is_some() || append.is_some() {

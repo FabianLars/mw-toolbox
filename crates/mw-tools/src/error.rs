@@ -35,6 +35,7 @@ pub enum Error {
 }
 
 impl Error {
+    #[must_use]
     pub const fn code(&self) -> &'static str {
         match self {
             Error::MediaWikiApi(_) => "MediaWikiaApi",

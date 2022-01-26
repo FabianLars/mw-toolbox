@@ -27,7 +27,7 @@ pub(crate) struct Profile {
     save_password: bool,
 }
 
-/// Return value of [get_page].
+/// Return value of [`get_page`].
 #[derive(Debug, Serialize)]
 pub(crate) struct GetPage {
     /// Page content
@@ -53,7 +53,7 @@ pub(crate) struct FindReplace {
 /// Get json-compatible ([`serde_json::Value`]) objects from runtime cache.
 #[command]
 pub(crate) fn cache_get(key: &str, cache: tauri::State<Cache>) -> Option<Value> {
-    cache.lock().get(key).map(|v| v.to_owned())
+    cache.lock().get(key).cloned()
 }
 
 /// Store json-compatible ([`serde_json::Value`]) objects in runtime cache.

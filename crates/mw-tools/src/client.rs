@@ -32,7 +32,7 @@ enum ApiResponse<T> {
 impl Client {
     /// Construct a new `Client` with an URL to the mediawiki API (pointing to api.php, including the scheme).
     ///
-    /// You can provide an empty String if you don't have the actual URL yet and change it later with [set_url](Self::set_url).
+    /// You can provide an empty String if you don't have the actual URL yet and change it later with [`set_url`](Self::set_url).
     ///
     /// Either way, there needs to be a correct URL present before logging in!
     ///
@@ -115,6 +115,7 @@ impl Client {
     }
 
     /// Check if the client is logged into the API.
+    #[must_use]
     pub fn is_online(&self) -> bool {
         !self.csrf_token.is_empty()
     }
@@ -160,9 +161,8 @@ impl Client {
                         log::warn!("Rate limited! Retrying after 15 seconds...");
                         tokio::time::sleep(tokio::time::Duration::from_secs(15)).await;
                         continue;
-                    } else {
-                        return Err(Error::MediaWikiApi(err));
                     }
+                    return Err(Error::MediaWikiApi(err));
                 }
             };
         }
@@ -221,9 +221,8 @@ impl Client {
                         log::warn!("Rate limited! Retrying after 15 seconds...");
                         tokio::time::sleep(tokio::time::Duration::from_secs(15)).await;
                         continue;
-                    } else {
-                        return Err(Error::MediaWikiApi(err));
                     }
+                    return Err(Error::MediaWikiApi(err));
                 }
             };
         }
