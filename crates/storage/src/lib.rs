@@ -104,7 +104,7 @@ mod tests {
     use serde::{Deserialize, Serialize};
     use std::collections::HashMap;
 
-    #[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
+    #[derive(Debug, PartialEq, Serialize, Deserialize)]
     struct TestObj {
         bool: bool,
         usize: usize,
@@ -156,6 +156,6 @@ mod tests {
 
         assert_eq!(test_obj, loaded_unsec);
         assert_eq!(test_obj, loaded_sec);
-        assert_eq!(loaded_unsec, loaded_unsec);
+        assert_eq!(loaded_sec, loaded_unsec);
     }
 }
