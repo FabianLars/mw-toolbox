@@ -3,7 +3,7 @@ lockfileVersion: 5.3
 specifiers:
   '@tauri-apps/api': 1.0.0-beta.8
   '@testing-library/dom': 8.11.3
-  '@testing-library/jest-dom': 5.16.1
+  '@testing-library/jest-dom': 5.16.2
   '@testing-library/react': 12.1.2
   '@testing-library/user-event': 13.5.0
   '@types/react': 17.0.38
@@ -37,7 +37,7 @@ dependencies:
 
 devDependencies:
   '@testing-library/dom': 8.11.3
-  '@testing-library/jest-dom': 5.16.1
+  '@testing-library/jest-dom': 5.16.2
   '@testing-library/react': 12.1.2_react-dom@17.0.2+react@17.0.2
   '@testing-library/user-event': 13.5.0_@testing-library+dom@8.11.3
   '@types/react': 17.0.38
@@ -405,8 +405,8 @@ packages:
       pretty-format: 27.4.6
     dev: true
 
-  /@testing-library/jest-dom/5.16.1:
-    resolution: {integrity: sha512-ajUJdfDIuTCadB79ukO+0l8O+QwN0LiSxDaYUTI4LndbbUsGi6rWU1SCexXzBA2NSjlVB9/vbkasQIL3tmPBjw==}
+  /@testing-library/jest-dom/5.16.2:
+    resolution: {integrity: sha512-6ewxs1MXWwsBFZXIk4nKKskWANelkdUehchEOokHsN8X7c2eKXGw+77aRV63UU8f/DTSVUPLaGxdrj4lN7D/ug==}
     engines: {node: '>=8', npm: '>=6', yarn: '>=1'}
     dependencies:
       '@babel/runtime': 7.16.7
