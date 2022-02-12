@@ -3083,9 +3083,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.78"
+version = "1.0.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d23c1ba4cf0efd44be32017709280b32d1cea5c3f1275c3b6d9e8bc54f758085"
+checksum = "8e8d9fa5c3b304765ce1fd9c4c8a3de2c8db365a5b91be52f186efc675681d95"
 dependencies = [
  "itoa 1.0.1",
  "ryu",
@@ -3584,9 +3584,9 @@ dependencies = [
 
 [[package]]
 name = "tauri-build"
-version = "1.0.0-rc.0"
+version = "1.0.0-rc.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "53075d8ce33827474e1c97ef5c75e4a007e9cae81dba4ce8c61f29a459b5aae8"
+checksum = "a35ca6c70dce0dbe3441ab9e6d4ebae9a2315cfe8823662ac86cf517b22831e8"
 dependencies = [
  "anyhow",
  "cargo_toml",

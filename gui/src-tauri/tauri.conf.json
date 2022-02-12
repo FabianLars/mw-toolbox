@@ -32,7 +32,7 @@
             },
             "shell": {
                 "all": false,
-                "open": true
+                "open": "^https://docs.rs/regex/$"
             }
         },
         "windows": [
@@ -46,7 +46,8 @@
             }
         ],
         "security": {
-            "csp": "default-src blob: data: filesystem: ws: http: https: 'unsafe-eval' 'unsafe-inline' 'self' img-src: 'self'"
+            "csp": "default-src 'self'",
+            "freezePrototype": true
         },
         "updater": {
             "active": true,
