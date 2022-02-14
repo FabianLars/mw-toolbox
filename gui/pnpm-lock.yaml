@@ -21,7 +21,7 @@ specifiers:
   prettier: 2.5.1
   react: 17.0.2
   react-dom: 17.0.2
-  react-focus-lock: 2.7.1
+  react-focus-lock: 2.8.1
   react-router-dom: 6.2.1
   typescript: 4.5.5
   vite: 2.8.2
@@ -32,7 +32,7 @@ dependencies:
   history: 5.2.0
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
-  react-focus-lock: 2.7.1_a0c521d4794c7ad97f5f4c1c4a7d5818
+  react-focus-lock: 2.8.1_a0c521d4794c7ad97f5f4c1c4a7d5818
   react-router-dom: 6.2.1_react-dom@17.0.2+react@17.0.2
 
 devDependencies:
@@ -1638,8 +1638,8 @@ packages:
     resolution: {integrity: sha512-WIWGi2L3DyTUvUrwRKgGi9TwxQMUEqPOPQBVi71R96jZXJdFskXEmf54BoZaS1kknGODoIGASGEzBUYdyMCBJg==}
     dev: true
 
-  /focus-lock/0.10.1:
-    resolution: {integrity: sha512-b9yUklCi4fTu2GXn7dnaVf4hiLVVBp7xTiZarAHMODV2To6Bitf6F/UI67RmKbdgJQeVwI1UO0d9HYNbXt3GkA==}
+  /focus-lock/0.10.2:
+    resolution: {integrity: sha512-DSaI/UHZ/02sg1P616aIWgToQcrKKBmcCvomDZ1PZvcJFj350PnWhSJxJ76T3e5/GbtQEARIACtbrdlrF9C5kA==}
     engines: {node: '>=10'}
     dependencies:
       tslib: 2.3.1
@@ -2387,13 +2387,13 @@ packages:
       scheduler: 0.20.2
     dev: false
 
-  /react-focus-lock/2.7.1_a0c521d4794c7ad97f5f4c1c4a7d5818:
-    resolution: {integrity: sha512-ImSeVmcrLKNMqzUsIdqOkXwTVltj79OPu43oT8tVun7eIckA4VdM7UmYUFo3H/UC2nRVgagMZGFnAOQEDiDYcA==}
+  /react-focus-lock/2.8.1_a0c521d4794c7ad97f5f4c1c4a7d5818:
+    resolution: {integrity: sha512-4kb9I7JIiBm0EJ+CsIBQ+T1t5qtmwPRbFGYFQ0t2q2qIpbFbYTHDjnjJVFB7oMBtXityEOQehblJPjqSIf3Amg==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@babel/runtime': 7.17.2
-      focus-lock: 0.10.1
+      focus-lock: 0.10.2
       prop-types: 15.8.1
       react: 17.0.2
       react-clientside-effect: 1.2.5_react@17.0.2
