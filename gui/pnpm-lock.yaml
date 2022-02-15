@@ -24,7 +24,7 @@ specifiers:
   react-focus-lock: 2.8.1
   react-router-dom: 6.2.1
   typescript: 4.5.5
-  vite: 2.8.2
+  vite: 2.8.3
   vitest: 0.3.5
 
 dependencies:
@@ -53,7 +53,7 @@ devDependencies:
   jsdom: 19.0.0
   prettier: 2.5.1
   typescript: 4.5.5
-  vite: 2.8.2
+  vite: 2.8.3
   vitest: 0.3.5_jsdom@19.0.0
 
 packages:
@@ -2870,8 +2870,8 @@ packages:
     resolution: {integrity: sha512-l8lCEmLcLYZh4nbunNZvQCJc5pv7+RCwa8q/LdUx8u7lsWvPDKmpodJAJNwkAhJC//dFY48KuIEmjtd4RViDrA==}
     dev: true
 
-  /vite/2.8.2:
-    resolution: {integrity: sha512-zawfykcPVPYva4KusIWORNLr324Qx86/3NpfQSIOJdjnL5pYhwDoImLYMOh4lFLcP/7//tNuWM2vx2F5OSVC9w==}
+  /vite/2.8.3:
+    resolution: {integrity: sha512-967klrEiG7HEsN7fQYYVETs5495Iu6GpI7YyxoO5yVTJCRxjV8HhWgNWKgrbazjoOB9DQuztL53/nUoNqHNsWg==}
     engines: {node: '>=12.2.0'}
     hasBin: true
     peerDependencies:
@@ -2920,7 +2920,7 @@ packages:
       local-pkg: 0.4.1
       tinypool: 0.1.2
       tinyspy: 0.2.10
-      vite: 2.8.2
+      vite: 2.8.3
     transitivePeerDependencies:
       - less
       - sass
