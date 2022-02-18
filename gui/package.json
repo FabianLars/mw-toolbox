@@ -24,7 +24,7 @@
         "react-router-dom": "6.2.1"
     },
     "devDependencies": {
-        "@tauri-apps/cli": "1.0.0-rc.4",
+        "@tauri-apps/cli": "1.0.0-rc.5",
         "@testing-library/dom": "8.11.3",
         "@testing-library/jest-dom": "5.16.2",
         "@testing-library/react": "12.1.3",
