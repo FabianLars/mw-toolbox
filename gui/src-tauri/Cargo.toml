@@ -14,7 +14,7 @@ custom-protocol = ["tauri/custom-protocol"]
 
 [build-dependencies]
 #tauri-build = {path = "../../../tauri/core/tauri-build", features = [] }
-tauri-build = { version = "1.0.0-rc.2", features = [] }
+tauri-build = { version = "1.0.0-rc.3", features = [] }
 
 [dependencies]
 anyhow = "1"
