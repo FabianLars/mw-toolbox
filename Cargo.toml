@@ -13,7 +13,8 @@ resolver = "2"
 debug = 0
 
 [profile.release]
-codegen-units = 1 
-lto = true 
+codegen-units = 1
+lto = true
 opt-level = "s" #"z"
 panic = "abort"
+strip = "symbols"
