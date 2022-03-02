@@ -13,7 +13,7 @@ specifiers:
   '@typescript-eslint/parser': 5.13.0
   '@vitejs/plugin-react': 1.2.0
   eslint: 8.10.0
-  eslint-config-prettier: 8.4.0
+  eslint-config-prettier: 8.5.0
   eslint-plugin-react: 7.29.2
   eslint-plugin-testing-library: 5.0.5
   history: 5.3.0
@@ -47,7 +47,7 @@ devDependencies:
   '@typescript-eslint/parser': 5.13.0_eslint@8.10.0+typescript@4.6.2
   '@vitejs/plugin-react': 1.2.0
   eslint: 8.10.0
-  eslint-config-prettier: 8.4.0_eslint@8.10.0
+  eslint-config-prettier: 8.5.0_eslint@8.10.0
   eslint-plugin-react: 7.29.2_eslint@8.10.0
   eslint-plugin-testing-library: 5.0.5_eslint@8.10.0+typescript@4.6.2
   jsdom: 19.0.0
@@ -1471,8 +1471,8 @@ packages:
       source-map: 0.6.1
     dev: true
 
-  /eslint-config-prettier/8.4.0_eslint@8.10.0:
-    resolution: {integrity: sha512-CFotdUcMY18nGRo5KGsnNxpznzhkopOcOo0InID+sgQssPrzjvsyKZPvOgymTFeHrFuC3Tzdf2YndhXtULK9Iw==}
+  /eslint-config-prettier/8.5.0_eslint@8.10.0:
+    resolution: {integrity: sha512-obmWKLUNCnhtQRKc+tmnYuQl0pFU1ibYJQ5BGhTVB08bHe9wC8qUeG7c08dj9XX+AuPj1YSGSQIHl1pnDHZR0Q==}
     hasBin: true
     peerDependencies:
       eslint: '>=7.0.0'
