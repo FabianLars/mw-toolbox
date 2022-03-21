@@ -38,14 +38,14 @@
 }
 
 .red {
-    background: #deb2b2;
+    background: #feb2b2;
     color: #1a202c;
-}
-.red:active {
-    background: #f56565;
 }
 .red:not(:active):hover {
     background: var(--color-red);
+}
+.red:active {
+    background: #f56565;
 }
 
 .button[disabled] {
