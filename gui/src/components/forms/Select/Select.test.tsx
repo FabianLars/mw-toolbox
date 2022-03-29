@@ -7,6 +7,7 @@ import Select from './Select';
 
 describe('<Select>', () => {
     it('uncontrolled', async () => {
+        const user = userEvent.setup();
         render(
             <Select label="uncontrolled">
                 <option value="t1">Profile 1</option>
@@ -19,7 +20,7 @@ describe('<Select>', () => {
         expect(screen.getByRole<HTMLOptionElement>('option', { name: /profile 2/i }).selected).toBe(
             false,
         );
-        userEvent.selectOptions(screen.getByLabelText('uncontrolled'), 't2');
+        await user.selectOptions(screen.getByLabelText('uncontrolled'), 't2');
         expect(screen.getByRole<HTMLOptionElement>('option', { name: /profile 1/i }).selected).toBe(
             false,
         );
@@ -28,6 +29,7 @@ describe('<Select>', () => {
         );
     });
     it('controlled', async () => {
+        const user = userEvent.setup();
         const Wrapper = () => {
             const [value, setValue] = useState('t1');
             return (
@@ -50,7 +52,7 @@ describe('<Select>', () => {
         expect(screen.getByRole<HTMLOptionElement>('option', { name: /profile 2/i }).selected).toBe(
             false,
         );
-        userEvent.selectOptions(screen.getByLabelText('controlled'), 't2');
+        await user.selectOptions(screen.getByLabelText('controlled'), 't2');
         expect(screen.getByRole<HTMLOptionElement>('option', { name: /profile 1/i }).selected).toBe(
             false,
         );
