@@ -1818,7 +1818,7 @@ dependencies = [
  "anyhow",
  "mw-tools",
  "once_cell",
- "parking_lot 0.11.2",
+ "parking_lot 0.12.0",
  "pretty_env_logger",
  "regex",
  "reqwest",
