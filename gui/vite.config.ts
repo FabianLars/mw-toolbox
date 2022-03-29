@@ -20,7 +20,7 @@ export default defineConfig({
     test: {
         environment: 'jsdom',
         watch: false,
-        global: true,
+        globals: true,
         deps: {
             inline: ['react-focus-lock', '@testing-library/user-event'],
         },
