@@ -1,4 +1,4 @@
-use tauri::{Menu, MenuItem, Submenu};
+use tauri::{Menu, MenuItem, Submenu, AboutMetadata};
 
 // macOS only
 
@@ -7,7 +7,7 @@ pub(crate) fn menu() -> Menu {
         .add_submenu(Submenu::new(
             "mw-toolbox",
             Menu::new()
-                .add_native_item(MenuItem::About("mw-toolbox".to_string()))
+                .add_native_item(MenuItem::About("mw-toolbox".to_string(), AboutMetadata::new()))
                 .add_native_item(MenuItem::Separator)
                 .add_native_item(MenuItem::Services)
                 .add_native_item(MenuItem::Separator)
