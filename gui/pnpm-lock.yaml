@@ -919,7 +919,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001322
-      electron-to-chromium: 1.4.97
+      electron-to-chromium: 1.4.98
       escalade: 3.1.1
       node-releases: 2.0.2
       picocolors: 1.0.0
@@ -1155,8 +1155,8 @@ packages:
       webidl-conversions: 7.0.0
     dev: true
 
-  /electron-to-chromium/1.4.97:
-    resolution: {integrity: sha512-vqSu7Qn6o5E1uAJQxmq2U69aBhBTxUAXMuT5Sm3jj8kEJciuUcKciktLuTPFSRlwSdNyeu9qah8Nzy9JyxefCw==}
+  /electron-to-chromium/1.4.98:
+    resolution: {integrity: sha512-1IdsuSAnIGVxoYT1LkcUFb9MfjRxdHhCU9qiaDzhl1XvYgK9c8E2O9aJOPgGMQ68CSI8NxmLwrYhjvGauT8yuw==}
     dev: true
 
   /es-abstract/1.19.2:
