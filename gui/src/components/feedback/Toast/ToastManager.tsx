@@ -1,13 +1,13 @@
-import ReactDOM from 'react-dom';
+import { createRoot, Root } from 'react-dom/client';
 import Toast from './Toast';
 
 export class ToastManager {
-    private containerRef: HTMLDivElement;
     private currentToast: React.ReactNode = null;
+    private root: Root;
 
     constructor() {
         const toastContainer = document.getElementById('toast-portal') as HTMLDivElement;
-        this.containerRef = toastContainer;
+        this.root = createRoot(toastContainer);
     }
 
     public show(message: React.ReactNode): void {
@@ -21,17 +21,16 @@ export class ToastManager {
 
     public destroy(): void {
         this.currentToast = null;
-        ReactDOM.unmountComponentAtNode(this.containerRef);
+        this.root.unmount();
     }
 
     private render() {
-        ReactDOM.render(
+        this.root.render(
             this.currentToast ? (
                 <Toast destroy={() => this.destroy()}>{this.currentToast}</Toast>
             ) : (
                 []
             ),
-            this.containerRef,
         );
     }
 }

@@ -1,12 +1,11 @@
-import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import Select from './Select';
 
 describe('<Select>', () => {
-    it('uncontrolled', async () => {
+    test('uncontrolled', async () => {
         const user = userEvent.setup();
         render(
             <Select label="uncontrolled">
@@ -28,7 +27,7 @@ describe('<Select>', () => {
             true,
         );
     });
-    it('controlled', async () => {
+    test('controlled', async () => {
         const user = userEvent.setup();
         const Wrapper = () => {
             const [value, setValue] = useState('t1');

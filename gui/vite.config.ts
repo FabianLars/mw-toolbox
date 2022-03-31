@@ -21,6 +21,7 @@ export default defineConfig({
         environment: 'jsdom',
         watch: false,
         globals: true,
+        setupFiles: './setup-test.ts',
         deps: {
             inline: ['react-focus-lock', '@testing-library/user-event'],
         },
