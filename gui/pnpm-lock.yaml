@@ -19,8 +19,8 @@ specifiers:
   history: 5.3.0
   jsdom: 19.0.0
   prettier: 2.6.1
-  react: 17.0.2
-  react-dom: 17.0.2
+  react: 18.0.0
+  react-dom: 18.0.0
   react-focus-lock: 2.8.1
   react-router-dom: 6.2.2
   typescript: 4.6.3
@@ -30,16 +30,16 @@ specifiers:
 dependencies:
   '@tauri-apps/api': 1.0.0-rc.3
   history: 5.3.0
-  react: 17.0.2
-  react-dom: 17.0.2_react@17.0.2
-  react-focus-lock: 2.8.1_03a98942b76c57740a9573edba2d1cc1
-  react-router-dom: 6.2.2_react-dom@17.0.2+react@17.0.2
+  react: 18.0.0
+  react-dom: 18.0.0_react@18.0.0
+  react-focus-lock: 2.8.1_00a11a054056e3746b551a83b9229751
+  react-router-dom: 6.2.2_react-dom@18.0.0+react@18.0.0
 
 devDependencies:
   '@tauri-apps/cli': 1.0.0-rc.8
   '@testing-library/dom': 8.12.0
   '@testing-library/jest-dom': 5.16.3
-  '@testing-library/react': 12.1.4_react-dom@17.0.2+react@17.0.2
+  '@testing-library/react': 12.1.4_react-dom@18.0.0+react@18.0.0
   '@testing-library/user-event': 14.0.1_@testing-library+dom@8.12.0
   '@types/react': 17.0.43
   '@types/react-dom': 17.0.14
@@ -542,7 +542,7 @@ packages:
       redent: 3.0.0
     dev: true
 
-  /@testing-library/react/12.1.4_react-dom@17.0.2+react@17.0.2:
+  /@testing-library/react/12.1.4_react-dom@18.0.0+react@18.0.0:
     resolution: {integrity: sha512-jiPKOm7vyUw311Hn/HlNQ9P8/lHNtArAx0PisXyFixDDvfl8DbD6EUdbshK5eqauvBSvzZd19itqQ9j3nferJA==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -552,8 +552,8 @@ packages:
       '@babel/runtime': 7.17.8
       '@testing-library/dom': 8.12.0
       '@types/react-dom': 17.0.14
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
+      react: 18.0.0
+      react-dom: 18.0.0_react@18.0.0
     dev: true
 
   /@testing-library/user-event/14.0.1_@testing-library+dom@8.12.0:
@@ -2386,27 +2386,26 @@ packages:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
     dev: true
 
-  /react-clientside-effect/1.2.5_react@17.0.2:
+  /react-clientside-effect/1.2.5_react@18.0.0:
     resolution: {integrity: sha512-2bL8qFW1TGBHozGGbVeyvnggRpMjibeZM2536AKNENLECutp2yfs44IL8Hmpn8qjFQ2K7A9PnYf3vc7aQq/cPA==}
     peerDependencies:
       react: ^15.3.0 || ^16.0.0 || ^17.0.0
     dependencies:
       '@babel/runtime': 7.17.8
-      react: 17.0.2
+      react: 18.0.0
     dev: false
 
-  /react-dom/17.0.2_react@17.0.2:
-    resolution: {integrity: sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==}
+  /react-dom/18.0.0_react@18.0.0:
+    resolution: {integrity: sha512-XqX7uzmFo0pUceWFCt7Gff6IyIMzFUn7QMZrbrQfGxtaxXZIcGQzoNpRLE3fQLnS4XzLLPMZX2T9TRcSrasicw==}
     peerDependencies:
-      react: 17.0.2
+      react: ^18.0.0
     dependencies:
       loose-envify: 1.4.0
-      object-assign: 4.1.1
-      react: 17.0.2
-      scheduler: 0.20.2
+      react: 18.0.0
+      scheduler: 0.21.0
     dev: false
 
-  /react-focus-lock/2.8.1_03a98942b76c57740a9573edba2d1cc1:
+  /react-focus-lock/2.8.1_00a11a054056e3746b551a83b9229751:
     resolution: {integrity: sha512-4kb9I7JIiBm0EJ+CsIBQ+T1t5qtmwPRbFGYFQ0t2q2qIpbFbYTHDjnjJVFB7oMBtXityEOQehblJPjqSIf3Amg==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -2414,10 +2413,10 @@ packages:
       '@babel/runtime': 7.17.8
       focus-lock: 0.10.2
       prop-types: 15.8.1
-      react: 17.0.2
-      react-clientside-effect: 1.2.5_react@17.0.2
-      use-callback-ref: 1.2.5_03a98942b76c57740a9573edba2d1cc1
-      use-sidecar: 1.0.5_react@17.0.2
+      react: 18.0.0
+      react-clientside-effect: 1.2.5_react@18.0.0
+      use-callback-ref: 1.2.5_00a11a054056e3746b551a83b9229751
+      use-sidecar: 1.0.5_react@18.0.0
     transitivePeerDependencies:
       - '@types/react'
     dev: false
@@ -2434,33 +2433,32 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /react-router-dom/6.2.2_react-dom@17.0.2+react@17.0.2:
+  /react-router-dom/6.2.2_react-dom@18.0.0+react@18.0.0:
     resolution: {integrity: sha512-AtYEsAST7bDD4dLSQHDnk/qxWLJdad5t1HFa1qJyUrCeGgEuCSw0VB/27ARbF9Fi/W5598ujvJOm3ujUCVzuYQ==}
     peerDependencies:
       react: '>=16.8'
       react-dom: '>=16.8'
     dependencies:
       history: 5.3.0
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-      react-router: 6.2.2_react@17.0.2
+      react: 18.0.0
+      react-dom: 18.0.0_react@18.0.0
+      react-router: 6.2.2_react@18.0.0
     dev: false
 
-  /react-router/6.2.2_react@17.0.2:
+  /react-router/6.2.2_react@18.0.0:
     resolution: {integrity: sha512-/MbxyLzd7Q7amp4gDOGaYvXwhEojkJD5BtExkuKmj39VEE0m3l/zipf6h2WIB2jyAO0lI6NGETh4RDcktRm4AQ==}
     peerDependencies:
       react: '>=16.8'
     dependencies:
       history: 5.3.0
-      react: 17.0.2
+      react: 18.0.0
     dev: false
 
-  /react/17.0.2:
-    resolution: {integrity: sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==}
+  /react/18.0.0:
+    resolution: {integrity: sha512-x+VL6wbT4JRVPm7EGxXhZ8w8LTROaxPXOqhlGyVSrv0sB1jkyFGgXxJ8LVoPRLvPR6/CIZGFmfzqUa2NYeMr2A==}
     engines: {node: '>=0.10.0'}
     dependencies:
       loose-envify: 1.4.0
-      object-assign: 4.1.1
     dev: false
 
   /redent/3.0.0:
@@ -2549,11 +2547,10 @@ packages:
       xmlchars: 2.2.0
     dev: true
 
-  /scheduler/0.20.2:
-    resolution: {integrity: sha512-2eWfGgAqqWFGqtdMmcL5zCMK1U8KlXv8SQFGglL3CEtd0aDVDWgeF/YoCmvln55m5zSk3J/20hTaSBeSObsQDQ==}
+  /scheduler/0.21.0:
+    resolution: {integrity: sha512-1r87x5fz9MXqswA2ERLo0EbOAU74DpIUO090gIasYTqlVoJeMcl+Z1Rg7WHz+qtPujhS/hGIt9kxZOYBV3faRQ==}
     dependencies:
       loose-envify: 1.4.0
-      object-assign: 4.1.1
     dev: false
 
   /semver/6.3.0:
@@ -2800,7 +2797,7 @@ packages:
       punycode: 2.1.1
     dev: true
 
-  /use-callback-ref/1.2.5_03a98942b76c57740a9573edba2d1cc1:
+  /use-callback-ref/1.2.5_00a11a054056e3746b551a83b9229751:
     resolution: {integrity: sha512-gN3vgMISAgacF7sqsLPByqoePooY3n2emTH59Ur5d/M8eg4WTWu1xp8i8DHjohftIyEx0S08RiYxbffr4j8Peg==}
     engines: {node: '>=8.5.0'}
     peerDependencies:
@@ -2811,17 +2808,17 @@ packages:
         optional: true
     dependencies:
       '@types/react': 17.0.43
-      react: 17.0.2
+      react: 18.0.0
     dev: false
 
-  /use-sidecar/1.0.5_react@17.0.2:
+  /use-sidecar/1.0.5_react@18.0.0:
     resolution: {integrity: sha512-k9jnrjYNwN6xYLj1iaGhonDghfvmeTmYjAiGvOr7clwKfPjMXJf4/HOr7oT5tJwYafgp2tG2l3eZEOfoELiMcA==}
     engines: {node: '>=8.5.0'}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0
     dependencies:
       detect-node-es: 1.1.0
-      react: 17.0.2
+      react: 18.0.0
       tslib: 1.14.1
     dev: false
 
