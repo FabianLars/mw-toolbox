@@ -5,7 +5,7 @@ specifiers:
   '@tauri-apps/cli': 1.0.0-rc.8
   '@testing-library/dom': 8.12.0
   '@testing-library/jest-dom': 5.16.3
-  '@testing-library/react': 12.1.4
+  '@testing-library/react': 13.0.0
   '@testing-library/user-event': 14.0.1
   '@types/react': 17.0.43
   '@types/react-dom': 17.0.14
@@ -39,7 +39,7 @@ devDependencies:
   '@tauri-apps/cli': 1.0.0-rc.8
   '@testing-library/dom': 8.12.0
   '@testing-library/jest-dom': 5.16.3
-  '@testing-library/react': 12.1.4_react-dom@17.0.2+react@17.0.2
+  '@testing-library/react': 13.0.0_react-dom@17.0.2+react@17.0.2
   '@testing-library/user-event': 14.0.1_@testing-library+dom@8.12.0
   '@types/react': 17.0.43
   '@types/react-dom': 17.0.14
@@ -542,12 +542,12 @@ packages:
       redent: 3.0.0
     dev: true
 
-  /@testing-library/react/12.1.4_react-dom@17.0.2+react@17.0.2:
-    resolution: {integrity: sha512-jiPKOm7vyUw311Hn/HlNQ9P8/lHNtArAx0PisXyFixDDvfl8DbD6EUdbshK5eqauvBSvzZd19itqQ9j3nferJA==}
+  /@testing-library/react/13.0.0_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-p0lYA1M7uoEmk2LnCbZLGmHJHyH59sAaZVXChTXlyhV/PRW9LoIh4mdf7tiXsO8BoNG+vN8UnFJff1hbZeXv+w==}
     engines: {node: '>=12'}
     peerDependencies:
-      react: '*'
-      react-dom: '*'
+      react: ^18.0.0
+      react-dom: ^18.0.0
     dependencies:
       '@babel/runtime': 7.17.8
       '@testing-library/dom': 8.12.0
