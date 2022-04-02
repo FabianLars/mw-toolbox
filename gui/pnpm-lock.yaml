@@ -1450,7 +1450,7 @@ packages:
       doctrine: 2.1.0
       eslint: 8.12.0
       estraverse: 5.3.0
-      jsx-ast-utils: 3.2.1
+      jsx-ast-utils: 3.2.2
       minimatch: 3.1.2
       object.entries: 1.1.5
       object.fromentries: 2.0.5
@@ -2083,8 +2083,8 @@ packages:
     hasBin: true
     dev: true
 
-  /jsx-ast-utils/3.2.1:
-    resolution: {integrity: sha512-uP5vu8xfy2F9A6LGC22KO7e2/vGTS1MhP+18f++ZNlf0Ohaxbc9nIEwHAsejlJKyzfZzU5UIhe5ItYkitcZnZA==}
+  /jsx-ast-utils/3.2.2:
+    resolution: {integrity: sha512-HDAyJ4MNQBboGpUnHAVUNJs6X0lh058s6FuixsFGP7MgJYpD6Vasd6nzSG5iIfXu1zAYlHJ/zsOKNlrenTUBnw==}
     engines: {node: '>=4.0'}
     dependencies:
       array-includes: 3.1.4
