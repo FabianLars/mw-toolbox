@@ -4,7 +4,7 @@ specifiers:
   '@tauri-apps/api': 1.0.0-rc.3
   '@tauri-apps/cli': 1.0.0-rc.8
   '@testing-library/dom': 8.13.0
-  '@testing-library/jest-dom': 5.16.3
+  '@testing-library/jest-dom': 5.16.4
   '@testing-library/react': 13.0.0
   '@testing-library/user-event': 14.0.4
   '@types/react': 17.0.43
@@ -38,7 +38,7 @@ dependencies:
 devDependencies:
   '@tauri-apps/cli': 1.0.0-rc.8
   '@testing-library/dom': 8.13.0
-  '@testing-library/jest-dom': 5.16.3
+  '@testing-library/jest-dom': 5.16.4
   '@testing-library/react': 13.0.0_react-dom@18.0.0+react@18.0.0
   '@testing-library/user-event': 14.0.4_@testing-library+dom@8.13.0
   '@types/react': 17.0.43
@@ -527,8 +527,8 @@ packages:
       pretty-format: 27.5.1
     dev: true
 
-  /@testing-library/jest-dom/5.16.3:
-    resolution: {integrity: sha512-u5DfKj4wfSt6akfndfu1eG06jsdyA/IUrlX2n3pyq5UXgXMhXY+NJb8eNK/7pqPWAhCKsCGWDdDO0zKMKAYkEA==}
+  /@testing-library/jest-dom/5.16.4:
+    resolution: {integrity: sha512-Gy+IoFutbMQcky0k+bqqumXZ1cTGswLsFqmNLzNdSKkU9KGV2u9oXhukCbbJ9/LRPKiqwxEE8VpV/+YZlfkPUA==}
     engines: {node: '>=8', npm: '>=6', yarn: '>=1'}
     dependencies:
       '@babel/runtime': 7.17.8
