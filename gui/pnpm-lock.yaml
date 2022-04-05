@@ -3,7 +3,7 @@ lockfileVersion: 5.3
 specifiers:
   '@tauri-apps/api': 1.0.0-rc.3
   '@tauri-apps/cli': 1.0.0-rc.8
-  '@testing-library/dom': 8.12.0
+  '@testing-library/dom': 8.13.0
   '@testing-library/jest-dom': 5.16.3
   '@testing-library/react': 13.0.0
   '@testing-library/user-event': 14.0.4
@@ -37,10 +37,10 @@ dependencies:
 
 devDependencies:
   '@tauri-apps/cli': 1.0.0-rc.8
-  '@testing-library/dom': 8.12.0
+  '@testing-library/dom': 8.13.0
   '@testing-library/jest-dom': 5.16.3
   '@testing-library/react': 13.0.0_react-dom@18.0.0+react@18.0.0
-  '@testing-library/user-event': 14.0.4_@testing-library+dom@8.12.0
+  '@testing-library/user-event': 14.0.4_@testing-library+dom@8.13.0
   '@types/react': 17.0.43
   '@types/react-dom': 17.0.14
   '@typescript-eslint/eslint-plugin': 5.18.0_a07dca3bdfc4bfa60f4dda0c1f9e3287
@@ -513,8 +513,8 @@ packages:
       '@tauri-apps/cli-win32-x64-msvc': 1.0.0-rc.8
     dev: true
 
-  /@testing-library/dom/8.12.0:
-    resolution: {integrity: sha512-rBrJk5WjI02X1edtiUcZhgyhgBhiut96r5Jp8J5qktKdcvLcZpKDW8i2hkGMMItxrghjXuQ5AM6aE0imnFawaw==}
+  /@testing-library/dom/8.13.0:
+    resolution: {integrity: sha512-9VHgfIatKNXQNaZTtLnalIy0jNZzY35a4S3oi08YAt9Hv1VsfZ/DfA45lM8D/UhtHBGJ4/lGwp0PZkVndRkoOQ==}
     engines: {node: '>=12'}
     dependencies:
       '@babel/code-frame': 7.16.7
@@ -550,19 +550,19 @@ packages:
       react-dom: ^18.0.0
     dependencies:
       '@babel/runtime': 7.17.8
-      '@testing-library/dom': 8.12.0
+      '@testing-library/dom': 8.13.0
       '@types/react-dom': 17.0.14
       react: 18.0.0
       react-dom: 18.0.0_react@18.0.0
     dev: true
 
-  /@testing-library/user-event/14.0.4_@testing-library+dom@8.12.0:
+  /@testing-library/user-event/14.0.4_@testing-library+dom@8.13.0:
     resolution: {integrity: sha512-VBZe5lcUsmrQyOwIFvqOxLBoaTw1/Qy4Ek+VgmFYs719bs2SxUp42vbsb7ATlQDkHdj4OIQlucfpwxe5WoG1jA==}
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
     dependencies:
-      '@testing-library/dom': 8.12.0
+      '@testing-library/dom': 8.13.0
     dev: true
 
   /@tootallnate/once/2.0.0:
