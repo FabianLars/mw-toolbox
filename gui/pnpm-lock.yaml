@@ -7,7 +7,7 @@ specifiers:
   '@testing-library/jest-dom': 5.16.4
   '@testing-library/react': 13.0.0
   '@testing-library/user-event': 14.0.4
-  '@types/react': 17.0.43
+  '@types/react': 17.0.44
   '@types/react-dom': 17.0.14
   '@typescript-eslint/eslint-plugin': 5.18.0
   '@typescript-eslint/parser': 5.18.0
@@ -32,7 +32,7 @@ dependencies:
   history: 5.3.0
   react: 18.0.0
   react-dom: 18.0.0_react@18.0.0
-  react-focus-lock: 2.8.1_00a11a054056e3746b551a83b9229751
+  react-focus-lock: 2.8.1_3adb690023d1157f64abd5db2f6a6306
   react-router-dom: 6.3.0_react-dom@18.0.0+react@18.0.0
 
 devDependencies:
@@ -41,7 +41,7 @@ devDependencies:
   '@testing-library/jest-dom': 5.16.4
   '@testing-library/react': 13.0.0_react-dom@18.0.0+react@18.0.0
   '@testing-library/user-event': 14.0.4_@testing-library+dom@8.13.0
-  '@types/react': 17.0.43
+  '@types/react': 17.0.44
   '@types/react-dom': 17.0.14
   '@typescript-eslint/eslint-plugin': 5.18.0_a07dca3bdfc4bfa60f4dda0c1f9e3287
   '@typescript-eslint/parser': 5.18.0_eslint@8.12.0+typescript@4.6.3
@@ -602,11 +602,11 @@ packages:
   /@types/react-dom/17.0.14:
     resolution: {integrity: sha512-H03xwEP1oXmSfl3iobtmQ/2dHF5aBHr8aUMwyGZya6OW45G+xtdzmq6HkncefiBt5JU8DVyaWl/nWZbjZCnzAQ==}
     dependencies:
-      '@types/react': 17.0.43
+      '@types/react': 17.0.44
     dev: true
 
-  /@types/react/17.0.43:
-    resolution: {integrity: sha512-8Q+LNpdxf057brvPu1lMtC5Vn7J119xrP1aq4qiaefNioQUYANF/CYeK4NsKorSZyUGJ66g0IM+4bbjwx45o2A==}
+  /@types/react/17.0.44:
+    resolution: {integrity: sha512-Ye0nlw09GeMp2Suh8qoOv0odfgCoowfM/9MG6WeRD60Gq9wS90bdkdRtYbRkNhXOpG4H+YXGvj4wOWhAC0LJ1g==}
     dependencies:
       '@types/prop-types': 15.7.4
       '@types/scheduler': 0.16.2
@@ -2467,7 +2467,7 @@ packages:
       scheduler: 0.21.0
     dev: false
 
-  /react-focus-lock/2.8.1_00a11a054056e3746b551a83b9229751:
+  /react-focus-lock/2.8.1_3adb690023d1157f64abd5db2f6a6306:
     resolution: {integrity: sha512-4kb9I7JIiBm0EJ+CsIBQ+T1t5qtmwPRbFGYFQ0t2q2qIpbFbYTHDjnjJVFB7oMBtXityEOQehblJPjqSIf3Amg==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -2477,7 +2477,7 @@ packages:
       prop-types: 15.8.1
       react: 18.0.0
       react-clientside-effect: 1.2.5_react@18.0.0
-      use-callback-ref: 1.2.5_00a11a054056e3746b551a83b9229751
+      use-callback-ref: 1.2.5_3adb690023d1157f64abd5db2f6a6306
       use-sidecar: 1.0.5_react@18.0.0
     transitivePeerDependencies:
       - '@types/react'
@@ -2859,7 +2859,7 @@ packages:
       punycode: 2.1.1
     dev: true
 
-  /use-callback-ref/1.2.5_00a11a054056e3746b551a83b9229751:
+  /use-callback-ref/1.2.5_3adb690023d1157f64abd5db2f6a6306:
     resolution: {integrity: sha512-gN3vgMISAgacF7sqsLPByqoePooY3n2emTH59Ur5d/M8eg4WTWu1xp8i8DHjohftIyEx0S08RiYxbffr4j8Peg==}
     engines: {node: '>=8.5.0'}
     peerDependencies:
@@ -2869,7 +2869,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': 17.0.43
+      '@types/react': 17.0.44
       react: 18.0.0
     dev: false
 
