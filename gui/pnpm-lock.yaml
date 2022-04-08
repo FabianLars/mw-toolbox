@@ -8,7 +8,7 @@ specifiers:
   '@testing-library/react': 13.0.0
   '@testing-library/user-event': 14.0.4
   '@types/react': 18.0.0
-  '@types/react-dom': 17.0.14
+  '@types/react-dom': 18.0.0
   '@typescript-eslint/eslint-plugin': 5.18.0
   '@typescript-eslint/parser': 5.18.0
   '@vitejs/plugin-react': 1.3.0
@@ -42,7 +42,7 @@ devDependencies:
   '@testing-library/react': 13.0.0_react-dom@18.0.0+react@18.0.0
   '@testing-library/user-event': 14.0.4_@testing-library+dom@8.13.0
   '@types/react': 18.0.0
-  '@types/react-dom': 17.0.14
+  '@types/react-dom': 18.0.0
   '@typescript-eslint/eslint-plugin': 5.18.0_a07dca3bdfc4bfa60f4dda0c1f9e3287
   '@typescript-eslint/parser': 5.18.0_eslint@8.12.0+typescript@4.6.3
   '@vitejs/plugin-react': 1.3.0
@@ -551,7 +551,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.17.8
       '@testing-library/dom': 8.13.0
-      '@types/react-dom': 17.0.14
+      '@types/react-dom': 18.0.0
       react: 18.0.0
       react-dom: 18.0.0_react@18.0.0
     dev: true
@@ -599,8 +599,8 @@ packages:
     resolution: {integrity: sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ==}
     dev: true
 
-  /@types/react-dom/17.0.14:
-    resolution: {integrity: sha512-H03xwEP1oXmSfl3iobtmQ/2dHF5aBHr8aUMwyGZya6OW45G+xtdzmq6HkncefiBt5JU8DVyaWl/nWZbjZCnzAQ==}
+  /@types/react-dom/18.0.0:
+    resolution: {integrity: sha512-49897Y0UiCGmxZqpC8Blrf6meL8QUla6eb+BBhn69dTXlmuOlzkfr7HHY/O8J25e1lTUMs+YYxSlVDAaGHCOLg==}
     dependencies:
       '@types/react': 18.0.0
     dev: true
