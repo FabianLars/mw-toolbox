@@ -6,7 +6,7 @@ specifiers:
   '@testing-library/dom': 8.13.0
   '@testing-library/jest-dom': 5.16.4
   '@testing-library/react': 13.0.0
-  '@testing-library/user-event': 14.0.4
+  '@testing-library/user-event': 14.1.0
   '@types/react': 18.0.1
   '@types/react-dom': 18.0.0
   '@typescript-eslint/eslint-plugin': 5.18.0
@@ -40,7 +40,7 @@ devDependencies:
   '@testing-library/dom': 8.13.0
   '@testing-library/jest-dom': 5.16.4
   '@testing-library/react': 13.0.0_react-dom@18.0.0+react@18.0.0
-  '@testing-library/user-event': 14.0.4_@testing-library+dom@8.13.0
+  '@testing-library/user-event': 14.1.0_@testing-library+dom@8.13.0
   '@types/react': 18.0.1
   '@types/react-dom': 18.0.0
   '@typescript-eslint/eslint-plugin': 5.18.0_0dd9be2ba5ed9805045f3fec8be848f5
@@ -548,8 +548,8 @@ packages:
       react-dom: 18.0.0_react@18.0.0
     dev: true
 
-  /@testing-library/user-event/14.0.4_@testing-library+dom@8.13.0:
-    resolution: {integrity: sha512-VBZe5lcUsmrQyOwIFvqOxLBoaTw1/Qy4Ek+VgmFYs719bs2SxUp42vbsb7ATlQDkHdj4OIQlucfpwxe5WoG1jA==}
+  /@testing-library/user-event/14.1.0_@testing-library+dom@8.13.0:
+    resolution: {integrity: sha512-+CGfMXlVM+OwREHDEsfTGsXIMI+rjr3a7YBUSutq7soELht+8kQrM5k46xa/WLfHdtX/wqsDIleL6bi4i+xz0w==}
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
