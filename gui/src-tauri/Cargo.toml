@@ -14,7 +14,7 @@ custom-protocol = ["tauri/custom-protocol"]
 
 [build-dependencies]
 #tauri-build = {path = "../../../tauri/core/tauri-build", features = [] }
-tauri-build = { version = "1.0.0-rc.5", features = [] }
+tauri-build = { version = "1.0.0-rc.6", features = [] }
 
 [dependencies]
 anyhow = "1"
@@ -27,7 +27,7 @@ reqwest = "0.11"
 serde = {version = "1", features = ["derive"] }
 serde_json = "1"
 storage = {path = "../../crates/storage"}
-tauri = {version = "1.0.0-rc.6", features = ["dialog-open", "reqwest-client", "shell-open", "updater"] }
+tauri = {version = "1.0.0-rc.7", features = ["dialog-open", "reqwest-client", "shell-open", "updater"] }
 #tauri = {path = "../../../tauri/core/tauri", features = ["dialog-open", "reqwest-client", "shell-open", "updater"] }
 #tauri = {git="https://github.com/tauri-apps/tauri", branch="dev", features = ["dialog-open", "reqwest-client", "shell-open", "updater"] }
 tokio = {version = "1", features = ["sync", "time"] }
