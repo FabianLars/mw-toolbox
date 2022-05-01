@@ -62,7 +62,7 @@ jobs:
           - os: windows-latest
             store: '%LOCALAPPDATA%/pnpm/store'
 
-    runs-on: ${{ matrix.settings.platform }}
+    runs-on: ${{ matrix.settings.os }}
 
     steps:
       - uses: actions/checkout@v3
