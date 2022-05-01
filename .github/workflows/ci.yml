@@ -54,9 +54,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-latest, windows-latest]
+        settings:
+          - os: macos-latest
+            store: '~/Library/pnpm/store'
+          - os: ubuntu-latest
+            store: '~/.local/share/pnpm/store'
+          - os: windows-latest
+            store: '%LOCALAPPDATA%/pnpm/store'
 
-    runs-on: ${{ matrix.platform }}
+    runs-on: ${{ matrix.settings.platform }}
 
     steps:
       - uses: actions/checkout@v3
@@ -84,17 +90,17 @@ jobs:
       - name: Cache pnpm modules
         uses: actions/cache@v3
         with:
-          path: ~/.pnpm-store
+          path: ${{ matrix.settings.store }}
           key: ${{ runner.os }}-pnpm-tauri-${{secrets.CLEAR_CACHE}}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-
 
       - uses: pnpm/action-setup@v2
         with:
-          version: 6.x.x
+          version: 7.x.x
           run_install: true
 
       - name: tauri build
-        run: cd gui && pnpm tauri build -- --debug
+        run: cd gui && pnpm tauri build --debug
 
   typescript:
     runs-on: ubuntu-latest
@@ -112,13 +118,13 @@ jobs:
       - name: Cache pnpm modules
         uses: actions/cache@v3
         with:
-          path: ~/.pnpm-store
+          path: ~/.local/share/pnpm/store
           key: ${{ runner.os }}-pnpm-typescript-${{secrets.CLEAR_CACHE}}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: ${{ runner.os }}-pnpm-cache-${{secrets.CLEAR_CACHE}}-
 
       - uses: pnpm/action-setup@v2
         with:
-          version: 6.x.x
+          version: 7.x.x
           run_install: true
 
       - name: Types
