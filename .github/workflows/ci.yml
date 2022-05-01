@@ -62,6 +62,7 @@ jobs:
           - os: windows-latest
             store: '%LOCALAPPDATA%/pnpm/store'
 
+    name: tauri (${{ matrix.settings.os }})
     runs-on: ${{ matrix.settings.os }}
 
     steps:
