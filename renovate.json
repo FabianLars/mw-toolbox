@@ -3,7 +3,9 @@
     "extends": ["config:base", "group:allNonMajor", "schedule:weekly"],
     "labels": ["dependencies"],
     "lockFileMaintenance": {
-        "enabled": true
+        "enabled": true,
+        "automerge": true,
+        "automergeType": "branch",
         "schedule": ["before 8am on Monday"]
     },
     "packageRules": [
@@ -17,6 +19,11 @@
             "automergeType": "branch",
             "matchUpdateTypes": ["minor"],
             "matchCurrentVersion": ">=1.0.0"
+        },
+        {
+            "automerge": true,
+            "automergeType": "branch",
+            "matchDepTypes": ["devDependencies"]
         }
     ]
 }
