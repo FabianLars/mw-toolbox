@@ -2,7 +2,7 @@
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": ["config:base"],
     "labels": ["dependencies"],
-    "schedule": ["before 8pm on weekdays"]
+    "schedule": ["before 8pm on weekdays"],
     "lockFileMaintenance": {
         "enabled": true,
         "automerge": true,
