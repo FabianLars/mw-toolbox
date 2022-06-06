@@ -2,12 +2,12 @@
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": ["config:base"],
     "labels": ["dependencies"],
-    "schedule": ["before 8pm"],
+    "schedule": ["before 5am on Monday"],
     "lockFileMaintenance": {
         "enabled": true,
         "automerge": true,
         "automergeType": "branch",
-        "schedule": ["before 8am on Monday"]
+        "schedule": ["after 6am on Monday"]
     },
     "packageRules": [
         {
