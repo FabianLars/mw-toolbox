@@ -1,6 +1,6 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": ["config:base", "group:allNonMajor", "schedule:weekly"],
+    "extends": ["config:base", "schedule:weekly"],
     "labels": ["dependencies"],
     "lockFileMaintenance": {
         "enabled": true,
@@ -12,18 +12,24 @@
         {
             "automerge": true,
             "automergeType": "branch",
-            "matchUpdateTypes": ["patch", "pin", "digest"]
+            "matchUpdateTypes": ["patch", "pin", "digest"],
+            "groupName": "all non-major dependencies",
+            "groupSlug": "all-minor-patch"
         },
         {
             "automerge": true,
             "automergeType": "branch",
             "matchUpdateTypes": ["minor"],
-            "matchCurrentVersion": ">=1.0.0"
+            "matchCurrentVersion": ">=1.0.0",
+            "groupName": "all non-major dependencies",
+            "groupSlug": "all-minor-patch"
         },
         {
             "automerge": true,
             "automergeType": "branch",
-            "matchDepTypes": ["devDependencies"]
+            "matchDepTypes": ["devDependencies"],
+            "groupName": "all non-major dependencies",
+            "groupSlug": "all-minor-patch"
         }
     ]
 }
