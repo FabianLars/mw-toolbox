@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@tauri-apps/api': 1.0.0
+  '@tauri-apps/api': 1.0.1
   '@tauri-apps/cli': 1.0.0
   '@testing-library/dom': 8.13.0
   '@testing-library/jest-dom': 5.16.4
@@ -28,7 +28,7 @@ specifiers:
   vitest: 0.15.1
 
 dependencies:
-  '@tauri-apps/api': 1.0.0
+  '@tauri-apps/api': 1.0.1
   history: 5.3.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -424,8 +424,8 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /@tauri-apps/api/1.0.0:
-    resolution: {integrity: sha512-sPnq8/WQumCnyHERTeqKQiryRoM8X4ImMT7K+BJ3zT7bmp/n5162fZS/ZqYIFxKHgQqzwWqT7C96Sb0/CL7WsA==}
+  /@tauri-apps/api/1.0.1:
+    resolution: {integrity: sha512-TJwKkXxtF52kN9Auu5TWD2AE4ssqTrsfdpIrixYwRb3gQ/FuYwvZjrMc9weYpgsW2cMhVNkvKgneNXF/4n04lw==}
     engines: {node: '>= 12.22.0', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
     dependencies:
       type-fest: 2.13.1
