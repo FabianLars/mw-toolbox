@@ -1,31 +1,31 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@tauri-apps/api': 1.0.2
-  '@tauri-apps/cli': 1.0.3
-  '@testing-library/dom': 8.16.0
-  '@testing-library/jest-dom': 5.16.4
-  '@testing-library/react': 13.3.0
-  '@testing-library/user-event': 14.2.1
-  '@types/react': 18.0.15
-  '@types/react-dom': 18.0.6
-  '@typescript-eslint/eslint-plugin': 5.30.6
-  '@typescript-eslint/parser': 5.30.6
-  '@vitejs/plugin-react': 2.0.0
-  eslint: 8.19.0
-  eslint-config-prettier: 8.5.0
-  eslint-plugin-react: 7.30.1
-  eslint-plugin-testing-library: 5.5.1
-  history: 5.3.0
-  jsdom: 20.0.0
-  prettier: 2.7.1
-  react: 18.2.0
-  react-dom: 18.2.0
-  react-focus-lock: 2.9.1
-  react-router-dom: 6.3.0
-  typescript: 4.7.4
-  vite: 3.0.0
-  vitest: 0.18.0
+  '@tauri-apps/api': '1.0'
+  '@tauri-apps/cli': '1.0'
+  '@testing-library/dom': '8.16'
+  '@testing-library/jest-dom': '5.16'
+  '@testing-library/react': '13.3'
+  '@testing-library/user-event': '14.2'
+  '@types/react': '18.0'
+  '@types/react-dom': '18.0'
+  '@typescript-eslint/eslint-plugin': '5.30'
+  '@typescript-eslint/parser': '5.30'
+  '@vitejs/plugin-react': '2.0'
+  eslint: '8.19'
+  eslint-config-prettier: '8.5'
+  eslint-plugin-react: '7.30'
+  eslint-plugin-testing-library: '5.5'
+  history: '5.3'
+  jsdom: '20.0'
+  prettier: '2.7'
+  react: '18.2'
+  react-dom: '18.2'
+  react-focus-lock: '2.9'
+  react-router-dom: '6.3'
+  typescript: '4.7'
+  vite: '3.0'
+  vitest: '0.18'
 
 dependencies:
   '@tauri-apps/api': 1.0.2
@@ -687,14 +687,6 @@ packages:
       - supports-color
     dev: true
 
-  /@typescript-eslint/scope-manager/5.30.0:
-    resolution: {integrity: sha512-3TZxvlQcK5fhTBw5solQucWSJvonXf5yua5nx8OqK94hxdrT7/6W3/CS42MLd/f1BmlmmbGEgQcTHHCktUX5bQ==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    dependencies:
-      '@typescript-eslint/types': 5.30.0
-      '@typescript-eslint/visitor-keys': 5.30.0
-    dev: true
-
   /@typescript-eslint/scope-manager/5.30.6:
     resolution: {integrity: sha512-Hkq5PhLgtVoW1obkqYH0i4iELctEKixkhWLPTYs55doGUKCASvkjOXOd/pisVeLdO24ZX9D6yymJ/twqpJiG3g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -722,35 +714,9 @@ packages:
       - supports-color
     dev: true
 
-  /@typescript-eslint/types/5.30.0:
-    resolution: {integrity: sha512-vfqcBrsRNWw/LBXyncMF/KrUTYYzzygCSsVqlZ1qGu1QtGs6vMkt3US0VNSQ05grXi5Yadp3qv5XZdYLjpp8ag==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    dev: true
-
   /@typescript-eslint/types/5.30.6:
     resolution: {integrity: sha512-HdnP8HioL1F7CwVmT4RaaMX57RrfqsOMclZc08wGMiDYJBsLGBM7JwXM4cZJmbWLzIR/pXg1kkrBBVpxTOwfUg==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    dev: true
-
-  /@typescript-eslint/typescript-estree/5.30.0_typescript@4.7.4:
-    resolution: {integrity: sha512-hDEawogreZB4n1zoqcrrtg/wPyyiCxmhPLpZ6kmWfKF5M5G0clRLaEexpuWr31fZ42F96SlD/5xCt1bT5Qm4Nw==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    peerDependencies:
-      typescript: '*'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-    dependencies:
-      '@typescript-eslint/types': 5.30.0
-      '@typescript-eslint/visitor-keys': 5.30.0
-      debug: 4.3.4
-      globby: 11.1.0
-      is-glob: 4.0.3
-      semver: 7.3.7
-      tsutils: 3.21.0_typescript@4.7.4
-      typescript: 4.7.4
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /@typescript-eslint/typescript-estree/5.30.6_typescript@4.7.4:
@@ -774,24 +740,6 @@ packages:
       - supports-color
     dev: true
 
-  /@typescript-eslint/utils/5.30.0_4x5o4skxv6sl53vpwefgt23khm:
-    resolution: {integrity: sha512-0bIgOgZflLKIcZsWvfklsaQTM3ZUbmtH0rJ1hKyV3raoUYyeZwcjQ8ZUJTzS7KnhNcsVT1Rxs7zeeMHEhGlltw==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    peerDependencies:
-      eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-    dependencies:
-      '@types/json-schema': 7.0.11
-      '@typescript-eslint/scope-manager': 5.30.0
-      '@typescript-eslint/types': 5.30.0
-      '@typescript-eslint/typescript-estree': 5.30.0_typescript@4.7.4
-      eslint: 8.19.0
-      eslint-scope: 5.1.1
-      eslint-utils: 3.0.0_eslint@8.19.0
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-    dev: true
-
   /@typescript-eslint/utils/5.30.6_4x5o4skxv6sl53vpwefgt23khm:
     resolution: {integrity: sha512-xFBLc/esUbLOJLk9jKv0E9gD/OH966M40aY9jJ8GiqpSkP2xOV908cokJqqhVd85WoIvHVHYXxSFE4cCSDzVvA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -808,14 +756,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
       - typescript
-    dev: true
-
-  /@typescript-eslint/visitor-keys/5.30.0:
-    resolution: {integrity: sha512-6WcIeRk2DQ3pHKxU1Ni0qMXJkjO/zLjBymlYBy/53qxe7yjEFSvzKLDToJjURUhSl2Fzhkl4SMXQoETauF74cw==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    dependencies:
-      '@typescript-eslint/types': 5.30.0
-      eslint-visitor-keys: 3.3.0
     dev: true
 
   /@typescript-eslint/visitor-keys/5.30.6:
@@ -1561,7 +1501,7 @@ packages:
     peerDependencies:
       eslint: ^7.5.0 || ^8.0.0
     dependencies:
-      '@typescript-eslint/utils': 5.30.0_4x5o4skxv6sl53vpwefgt23khm
+      '@typescript-eslint/utils': 5.30.6_4x5o4skxv6sl53vpwefgt23khm
       eslint: 8.19.0
     transitivePeerDependencies:
       - supports-color
@@ -2528,7 +2468,7 @@ packages:
   /react-dom/18.2.0_react@18.2.0:
     resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
     peerDependencies:
-      react: ^18.2.0 || ^18.0.0
+      react: ^18.2.0
     dependencies:
       loose-envify: 1.4.0
       react: 18.2.0
@@ -2572,7 +2512,7 @@ packages:
   /react-router-dom/6.3.0_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-uaJj7LKytRxZNQV8+RbzJWnJ8K2nPsOOEuX7aQstlMZKQT0164C+X2w6bnkqU3sjtLvpd5ojrezAyfZ1+0sStw==}
     peerDependencies:
-      react: '>=16.8 || ^18.0.0'
+      react: '>=16.8'
       react-dom: '>=16.8'
     dependencies:
       history: 5.3.0
@@ -2584,7 +2524,7 @@ packages:
   /react-router/6.3.0_react@18.2.0:
     resolution: {integrity: sha512-7Wh1DzVQ+tlFjkeo+ujvjSqSJmkt1+8JO+T5xklPlgrh70y7ogx75ODRW0ThWhY7S+6yEDks8TYrtQe/aoboBQ==}
     peerDependencies:
-      react: '>=16.8 || ^18.0.0'
+      react: '>=16.8'
     dependencies:
       history: 5.3.0
       react: 18.2.0
