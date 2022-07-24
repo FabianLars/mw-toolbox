@@ -13,9 +13,15 @@ export default defineConfig({
             '@': resolve(__dirname, 'src'),
         },
     },
+    server: {
+        strictPort: true,
+    },
+    clearScreen: false,
+    envPrefix: ['VITE_', 'TAURI_'],
     build: {
-        target: 'es2020',
-        minify: 'esbuild',
+        target: ['es2021', 'chrome100', 'safari13'],
+        minify: !process.env.TAURI_DEBUG ? 'esbuild' : false,
+        sourcemap: !!process.env.TAURI_DEBUG,
     },
     test: {
         environment: 'jsdom',

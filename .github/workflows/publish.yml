@@ -75,21 +75,21 @@ jobs:
           username: ftpuser
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: 'target/release/bundle/msi/'
-          server-dir: 'releases/mw-toolbox/latest/win64/'
+          server-dir: 'releases/mw-toolbox/latest/windows/x86_64'
 
       - name: Upload files to the update server (Linux)
         if: runner.os == 'Linux'
         uses: easingthemes/ssh-deploy@main
         with:
           SOURCE: 'target/release/bundle/appimage/'
-          TARGET: '~/wwwcdn/releases/mw-toolbox/latest/linux/'
+          TARGET: '~/wwwcdn/releases/mw-toolbox/latest/linux/x86_64'
 
       - name: Upload files to the update server (macOS)
         if: runner.os == 'macOS'
         uses: easingthemes/ssh-deploy@main
         with:
           SOURCE: 'target/release/bundle/macos/'
-          TARGET: '~/wwwcdn/releases/mw-toolbox/latest/darwin/'
+          TARGET: '~/wwwcdn/releases/mw-toolbox/latest/darwin/x86_64'
 
       - name: Upload release assets (Windows)
         if: runner.os == 'Windows'
