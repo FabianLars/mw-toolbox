@@ -34,7 +34,7 @@ jobs:
             cd ~/wwwcdn/releases/mw-toolbox/
             rm -rf previous/
             mv latest/ previous
-            mkdir -p latest/win64 latest/linux latest/darwin
+            mkdir -p latest/windows latest/linux latest/darwin
 
       - uses: actions-rs/toolchain@v1
         with:
