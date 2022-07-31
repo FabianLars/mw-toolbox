@@ -41,7 +41,7 @@ fn main() {
             });
             // add OS as global window wariable, because Windows is Windows i guess.
             // Used on Windows for:
-            // // 1. App Window needs to be resized before opening <select> dropdowns to fix its position.
+            //  1. <select> elements need to be manually blurred when the window moves.
             //  2. <input type="text"> and <select> elements need padding-bottom: 1px; for proper alignment.
             let _ = window.eval(&format!("window.OS='{}'", std::env::consts::OS));
         })
