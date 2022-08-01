@@ -3,7 +3,7 @@
 use std::path::PathBuf;
 
 use anyhow::{anyhow, Result};
-use chacha20poly1305::aead::{Aead, NewAead};
+use chacha20poly1305::{aead::Aead, KeyInit};
 use chacha20poly1305::{Key, XChaCha20Poly1305, XNonce};
 use once_cell::sync::Lazy;
 use rand_chacha::{
