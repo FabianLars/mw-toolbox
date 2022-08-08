@@ -616,11 +616,11 @@ packages:
   /@types/chai-subset/1.3.3:
     resolution: {integrity: sha512-frBecisrNGz+F4T6bcc+NLeolfiojh5FxW2klu669+8BARtyQv2C/GkNW6FUodVe4BroGMP/wER/YDGc7rEllw==}
     dependencies:
-      '@types/chai': 4.3.2
+      '@types/chai': 4.3.3
     dev: true
 
-  /@types/chai/4.3.2:
-    resolution: {integrity: sha512-TNeRJV5O1L0s7NM4Xg9q8HPbLnyAMQ9twPMul53hWRld//NnjV/VSw7InBCNrPJyWBPhyoSLlzR2mR9Fq5nJTg==}
+  /@types/chai/4.3.3:
+    resolution: {integrity: sha512-hC7OMnszpxhZPduX+m+nrx+uFoLkWOMiR4oa/AZF3MuSETYTZmFfJAHqZEM8MVlvfG7BEUcgvtwoCTxBp6hm3g==}
     dev: true
 
   /@types/jest/28.1.6:
@@ -3010,7 +3010,7 @@ packages:
       jsdom:
         optional: true
     dependencies:
-      '@types/chai': 4.3.2
+      '@types/chai': 4.3.3
       '@types/chai-subset': 1.3.3
       '@types/node': 18.6.4
       chai: 4.3.6
