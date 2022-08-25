@@ -14,7 +14,7 @@ specifiers:
   '@vitejs/plugin-react': '2.0'
   eslint: '8.22'
   eslint-config-prettier: '8.5'
-  eslint-plugin-react: '7.30'
+  eslint-plugin-react: '7.31'
   eslint-plugin-testing-library: '5.6'
   history: '5.3'
   jsdom: '20.0'
@@ -48,7 +48,7 @@ devDependencies:
   '@vitejs/plugin-react': 2.0.1_vite@3.0.9
   eslint: 8.22.0
   eslint-config-prettier: 8.5.0_eslint@8.22.0
-  eslint-plugin-react: 7.30.1_eslint@8.22.0
+  eslint-plugin-react: 7.31.0_eslint@8.22.0
   eslint-plugin-testing-library: 5.6.0_4rv7y5c6xz3vfxwhbrcxxi73bq
   jsdom: 20.0.0
   prettier: 2.7.1
@@ -1595,8 +1595,8 @@ packages:
       eslint: 8.22.0
     dev: true
 
-  /eslint-plugin-react/7.30.1_eslint@8.22.0:
-    resolution: {integrity: sha512-NbEvI9jtqO46yJA3wcRF9Mo0lF9T/jhdHqhCHXiXtD+Zcb98812wvokjWpU7Q4QH5edo6dmqrukxVvWWXHlsUg==}
+  /eslint-plugin-react/7.31.0_eslint@8.22.0:
+    resolution: {integrity: sha512-BWriBttYYCnfb4RO9SB91Og8uA9CPcBMl5UlCOCtuYW1UjhN3QypzEcEHky4ZIRZDKjbO2Blh9BjP8E7W/b1SA==}
     engines: {node: '>=4'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
