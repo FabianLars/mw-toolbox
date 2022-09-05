@@ -11,7 +11,7 @@ specifiers:
   '@types/react-dom': '18.0'
   '@typescript-eslint/eslint-plugin': '5.36'
   '@typescript-eslint/parser': '5.36'
-  '@vitejs/plugin-react': '2.0'
+  '@vitejs/plugin-react': '2.1'
   eslint: '8.23'
   eslint-config-prettier: '8.5'
   eslint-plugin-react: '7.31'
@@ -45,7 +45,7 @@ devDependencies:
   '@types/react-dom': 18.0.6
   '@typescript-eslint/eslint-plugin': 5.36.1_lbwfnm54o3pmr3ypeqp3btnera
   '@typescript-eslint/parser': 5.36.1_yqf6kl63nyoq5megxukfnom5rm
-  '@vitejs/plugin-react': 2.0.1_vite@3.0.9
+  '@vitejs/plugin-react': 2.1.0_vite@3.0.9
   eslint: 8.23.0
   eslint-config-prettier: 8.5.0_eslint@8.23.0
   eslint-plugin-react: 7.31.6_eslint@8.23.0
@@ -844,8 +844,8 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@vitejs/plugin-react/2.0.1_vite@3.0.9:
-    resolution: {integrity: sha512-uINzNHmjrbunlFtyVkST6lY1ewSfz/XwLufG0PIqvLGnpk2nOIOa/1CACTDNcKi1/RwaCzJLmsXwm1NsUVV/NA==}
+  /@vitejs/plugin-react/2.1.0_vite@3.0.9:
+    resolution: {integrity: sha512-am6rPyyU3LzUYne3Gd9oj9c4Rzbq5hQnuGXSMT6Gujq45Il/+bunwq3lrB7wghLkiF45ygMwft37vgJ/NE8IAA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       vite: ^3.0.0
