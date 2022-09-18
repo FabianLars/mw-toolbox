@@ -33,10 +33,12 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
-    - name: install app dependencies
-      run: |
-        cd gui
-        pnpm install
+    - name: Install pnpm and project dependencies
+      uses: pnpm/action-setup@v2
+      with:
+        version: 7.x.x
+        run_install: |
+          - cwd: gui
     - uses: tauri-apps/tauri-action@v0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
