@@ -48,7 +48,7 @@ jobs:
         version: 7.x.x
         run_install: |
           - cwd: gui
-    - uses: tauri-apps/tauri-action@v0
+    - uses: FabianLars/tauri-action@artifacts-path
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
