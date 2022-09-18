@@ -9,21 +9,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target:
-          - {
-              platform: 'macos-latest'
-              args: '--target universal-apple-darwin'
-            }
-          - {
-              platform: 'ubuntu-20.04'
-              args: ''
-            }
-          - {
-              platform: 'windows-latest'
-              args: ''
-            }
+        settings:
+          - platform: 'macos-latest'
+            args: '--target universal-apple-darwin'
+          - platform: 'ubuntu-20.04'
+            args: ''
+          - platform: 'windows-latest'
+            args: ''
 
-    runs-on: ${{ matrix.target.platform }}
+    runs-on: ${{ matrix.settings.platform }}
     steps:
     - uses: actions/checkout@v2
     - name: setup node
@@ -35,7 +29,7 @@ jobs:
       with:
         toolchain: stable
     - name: install dependencies (ubuntu only)
-      if: matrix.target.platform == 'ubuntu-20.04'
+      if: matrix.settings.platform == 'ubuntu-20.04'
       run: |
         sudo apt-get update
         sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
