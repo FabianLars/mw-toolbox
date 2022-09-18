@@ -4,6 +4,14 @@ on:
     branches:
       - release
 
+env:
+  CARGO_INCREMENTAL: 0
+  RUST_BACKTRACE: short
+  # RUSTFLAGS: '-D warnings -W unreachable-pub -W rust-2021-compatibility'
+  RUSTFLAGS: '-W unreachable-pub -W rust-2021-compatibility'
+  WTOOLS_AEAD_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+
 jobs:
   publish-tauri:
     strategy:
