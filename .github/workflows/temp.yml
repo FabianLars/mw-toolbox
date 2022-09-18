@@ -48,6 +48,9 @@ jobs:
         version: 7.x.x
         run_install: |
           - cwd: gui
+    - uses: Swatinem/rust-cache@v1
+        with:
+          cache-on-failure: true
     - uses: FabianLars/tauri-action@artifacts-path
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
