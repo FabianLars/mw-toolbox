@@ -23,7 +23,7 @@ jobs:
           - platform: 'ubuntu-20.04'
             args: ''
           - platform: 'windows-latest'
-            args: ''
+            args: '--target x86_64-pc-windows-msvc'
 
     runs-on: ${{ matrix.settings.platform }}
     steps:
