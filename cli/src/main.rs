@@ -3,7 +3,7 @@
 use std::path::PathBuf;
 
 use anyhow::{anyhow, Result};
-use clap::{ArgEnum, Parser};
+use clap::{Parser, ValueEnum};
 use tokio::{fs, io::AsyncWriteExt};
 
 use api::rename::Destination;
@@ -13,51 +13,46 @@ use mw_tools::{api, Client};
 enum Subcommand {
     Delete {
         /// uses newline separation
-        #[clap(parse(from_os_str))]
         input: PathBuf,
     },
     List {
-        #[clap(arg_enum)]
+        #[arg(value_enum)]
         list_type: ListType,
 
         parameter: Option<String>,
 
-        #[clap(short, long, parse(from_os_str))]
+        #[arg(short, long)]
         output: Option<PathBuf>,
     },
     Move {
         /// uses newline separation
-        #[clap(parse(from_os_str))]
         input: PathBuf,
-        #[clap(long)]
+        #[arg(long)]
         append: Option<String>,
-        #[clap(long)]
+        #[arg(long)]
         prepend: Option<String>,
-        #[clap(long)]
+        #[arg(long)]
         replace: Option<Vec<String>>,
     },
     Nulledit {
         /// uses newline separation
-        #[clap(parse(from_os_str))]
         input: PathBuf,
     },
     Purge {
-        #[clap(short, long)]
+        #[arg(short, long)]
         recursive: bool,
 
-        #[clap(parse(from_os_str))]
         input: PathBuf,
     },
     Upload {
-        #[clap(parse(from_os_str))]
         input: PathBuf,
 
-        #[clap(short, long)]
+        #[arg(short, long)]
         text: Option<String>,
     },
 }
 
-#[derive(ArgEnum, Clone, Debug, PartialEq)]
+#[derive(ValueEnum, Clone, Debug, PartialEq)]
 enum ListType {
     Allimages,
     Allpages,
@@ -79,14 +74,14 @@ enum ListType {
 
 #[derive(Parser, Debug, PartialEq)]
 struct Cli {
-    #[clap(subcommand)]
+    #[command(subcommand)]
     command: Subcommand,
 
-    #[clap(short, long, env = "FANDOM_BOT_NAME", hide_env_values = true)]
+    #[arg(short, long, env = "FANDOM_BOT_NAME", hide_env_values = true)]
     name: String,
-    #[clap(short, long, env = "FANDOM_BOT_PASSWORD", hide_env_values = true)]
+    #[arg(short, long, env = "FANDOM_BOT_PASSWORD", hide_env_values = true)]
     password: String,
-    #[clap(
+    #[arg(
         short,
         long,
         default_value = "https://leagueoflegends.fandom.com/de/api.php"
@@ -201,4 +196,10 @@ async fn main() -> Result<()> {
         }
     }
     Ok(())
+}
+
+#[test]
+fn verify_cli() {
+    use clap::CommandFactory;
+    Cli::command().debug_assert()
 }
