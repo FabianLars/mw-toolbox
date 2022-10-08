@@ -34,7 +34,7 @@
         "@typescript-eslint/eslint-plugin": "5.39",
         "@typescript-eslint/parser": "5.39",
         "@vitejs/plugin-react": "2.1",
-        "eslint": "8.24",
+        "eslint": "8.25",
         "eslint-config-prettier": "8.5",
         "eslint-plugin-react": "7.31",
         "eslint-plugin-testing-library": "5.7",
