@@ -20,7 +20,9 @@ jobs:
         settings:
           - platform: 'macos-latest'
             args: '--target universal-apple-darwin'
-          - platform: 'macos-latest'
+          - platform: 'macos-12'
+            args: ''
+          - platform: 'macos-12'
             args: '--target aarch64-apple-darwin'
           - platform: 'ubuntu-20.04'
             args: ''
@@ -62,3 +64,4 @@ jobs:
         releaseBody: "See the assets to download this version and install."
         releaseDraft: true
         prerelease: false
+        args: ${{ matrix.settings.args }}
