@@ -15,7 +15,7 @@ specifiers:
   eslint: '8.25'
   eslint-config-prettier: '8.5'
   eslint-plugin-react: '7.31'
-  eslint-plugin-testing-library: '5.7'
+  eslint-plugin-testing-library: '5.8'
   history: '5.3'
   jsdom: '20.0'
   prettier: '2.7'
@@ -49,7 +49,7 @@ devDependencies:
   eslint: 8.25.0
   eslint-config-prettier: 8.5.0_eslint@8.25.0
   eslint-plugin-react: 7.31.10_eslint@8.25.0
-  eslint-plugin-testing-library: 5.7.2_z4bbprzjrhnsfa24uvmcbu7f5q
+  eslint-plugin-testing-library: 5.8.0_z4bbprzjrhnsfa24uvmcbu7f5q
   jsdom: 20.0.1
   prettier: 2.7.1
   typescript: 4.8.4
@@ -1564,8 +1564,8 @@ packages:
       string.prototype.matchall: 4.0.7
     dev: true
 
-  /eslint-plugin-testing-library/5.7.2_z4bbprzjrhnsfa24uvmcbu7f5q:
-    resolution: {integrity: sha512-0ZmHeR/DUUgEzW8rwUBRWxuqntipDtpvxK0hymdHnLlABryJkzd+CAHr+XnISaVsTisZ5MLHp6nQF+8COHLLTA==}
+  /eslint-plugin-testing-library/5.8.0_z4bbprzjrhnsfa24uvmcbu7f5q:
+    resolution: {integrity: sha512-QzOKgu4x8WmNq4LdbHb8lz5nBR+KX5kSg5VvIdr/5f1BvHx2IoO1B/tgDa5pD/ng2LsiQ0/HIH6gsUuxpbcrkQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0, npm: '>=6'}
     peerDependencies:
       eslint: ^7.5.0 || ^8.0.0
