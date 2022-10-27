@@ -42,7 +42,7 @@ jobs:
       uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
-        target: aarch64-apple-darwin
+        target: i686-unknown-linux-gnu
     - name: install dependencies (ubuntu only)
       if: matrix.settings.platform == 'ubuntu-20.04'
       run: |
