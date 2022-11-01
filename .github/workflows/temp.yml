@@ -18,18 +18,18 @@ jobs:
       fail-fast: false
       matrix:
         settings:
-#          - platform: 'macos-latest'
-#            args: '--target universal-apple-darwin'
-#          - platform: 'macos-latest'
-#            args: '--target x86_64-apple-darwin'
-#          - platform: 'macos-latest'
-#            args: '--target aarch64-apple-darwin'
-#          - platform: 'macos-latest'
-#            args: ''
+          - platform: 'macos-latest'
+            args: '--target universal-apple-darwin'
+          - platform: 'macos-latest'
+            args: '--target x86_64-apple-darwin'
+          - platform: 'macos-latest'
+            args: '--target aarch64-apple-darwin'
+          - platform: 'macos-latest'
+            args: ''
           - platform: 'ubuntu-20.04'
-            args: '--target i686-unknown-linux-gnu'
-#          - platform: 'windows-latest'
-#            args: '--target x86_64-pc-windows-msvc'
+            args: ''
+          - platform: 'windows-latest'
+            args: '--target x86_64-pc-windows-msvc'
 
     runs-on: ${{ matrix.settings.platform }}
     steps:
@@ -57,7 +57,7 @@ jobs:
     - uses: Swatinem/rust-cache@v1
       with:
         cache-on-failure: true
-    - uses: FabianLars/tauri-action@artifacts-path
+    - uses: tauri-apps/tauri-action@dev
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
