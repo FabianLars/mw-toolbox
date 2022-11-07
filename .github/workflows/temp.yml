@@ -24,8 +24,6 @@ jobs:
             args: '--target x86_64-apple-darwin'
           - platform: 'macos-latest'
             args: '--target aarch64-apple-darwin'
-          - platform: 'macos-latest'
-            args: ''
           - platform: 'ubuntu-20.04'
             args: ''
           - platform: 'windows-latest'
@@ -42,7 +40,7 @@ jobs:
       uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
-        target: i686-unknown-linux-gnu
+        target: aarch64-apple-darwin
     - name: install dependencies (ubuntu only)
       if: matrix.settings.platform == 'ubuntu-20.04'
       run: |
@@ -57,7 +55,7 @@ jobs:
     - uses: Swatinem/rust-cache@v1
       with:
         cache-on-failure: true
-    - uses: tauri-apps/tauri-action@fix/rebuild-dist
+    - uses: tauri-apps/tauri-action@dev
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
