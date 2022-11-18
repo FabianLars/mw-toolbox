@@ -55,7 +55,7 @@ jobs:
     - uses: Swatinem/rust-cache@v2
       with:
         cache-on-failure: true
-    - uses: FabianLars/tauri-action@fix/no-updater
+    - uses: tauri-apps/tauri-action@dev
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
