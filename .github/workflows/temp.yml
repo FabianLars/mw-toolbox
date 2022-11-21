@@ -58,6 +58,7 @@ jobs:
       with:
         node-version: 'lts/*'
         cache: 'pnpm'
+        cache-dependency-path: gui/pnpm-lock.yaml
 
     # Remove this step if you use `npm ci` instead of `npm install` since it deletes the node_modules folder.
     - name: node_modules cache
