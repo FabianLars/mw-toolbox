@@ -61,12 +61,12 @@ jobs:
         cache-dependency-path: gui/pnpm-lock.yaml
 
     # Remove this step if you use `npm ci` instead of `npm install` since it deletes the node_modules folder.
-    - name: node_modules cache
-      uses: actions/cache@v2
-      with:
-        path: '**/node_modules'
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}
-        restore-keys: ${{ runner.os }}-node-
+    #- name: node_modules cache
+    #  uses: actions/cache@v3
+    #  with:
+    #    path: '**/node_modules'
+    #    key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}
+    #    restore-keys: ${{ runner.os }}-node-
 
     - uses: Swatinem/rust-cache@v2
       with:
