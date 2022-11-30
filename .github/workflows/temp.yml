@@ -43,6 +43,7 @@ jobs:
 
 
   publish-tauri:
+    needs: create-release
     strategy:
       fail-fast: false
       matrix:
