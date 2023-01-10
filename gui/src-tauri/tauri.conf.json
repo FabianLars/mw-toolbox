@@ -50,7 +50,7 @@
             "freezePrototype": true
         },
         "updater": {
-            "active": true,
+            "active": false,
             "dialog": true,
             "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDVCRjExMDk5REExQTlBNjgKUldSb21ocmFtUkR4V3lyaW1kQmQvYklqeGkyd2R1TmExQ1MzQVVJanpEZ3A4WjY3M0xsc3BFZU4K",
             "endpoints": [
