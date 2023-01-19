@@ -39,11 +39,16 @@ jobs:
     runs-on: ${{ matrix.settings.platform }}
     container: ${{ matrix.settings.container }}
     steps:
+    - if: matrix.settings.container == 'i386/rust:buster'
+      run: |
+        curl -fsSL https://deb.nodesource.com/setup_16.x | bash - &&\
+        apt-get update
+        apt-get install -y nodejs
+    - uses: actions/checkout@v3
     - name: setup node
       uses: actions/setup-node@v3
       with:
         node-version: 16
-    - uses: actions/checkout@v3
     - uses: dtolnay/rust-toolchain@stable
       with:
         targets: aarch64-apple-darwin,i686-unknown-linux-gnu
