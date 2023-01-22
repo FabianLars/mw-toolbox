@@ -17,7 +17,7 @@ specifiers:
   eslint-plugin-react: '7.32'
   eslint-plugin-testing-library: '5.9'
   history: '5.3'
-  jsdom: '21.0'
+  jsdom: '21.1'
   prettier: '2.8'
   react: '18.2'
   react-dom: '18.2'
@@ -50,11 +50,11 @@ devDependencies:
   eslint-config-prettier: 8.6.0_eslint@8.32.0
   eslint-plugin-react: 7.32.0_eslint@8.32.0
   eslint-plugin-testing-library: 5.9.1_7uibuqfxkfaozanbtbziikiqje
-  jsdom: 21.0.0
+  jsdom: 21.1.0
   prettier: 2.8.3
   typescript: 4.9.4
   vite: 4.0.4
-  vitest: 0.27.1_jsdom@21.0.0
+  vitest: 0.27.1_jsdom@21.1.0
 
 packages:
 
@@ -2323,8 +2323,8 @@ packages:
       argparse: 2.0.1
     dev: true
 
-  /jsdom/21.0.0:
-    resolution: {integrity: sha512-AIw+3ZakSUtDYvhwPwWHiZsUi3zHugpMEKlNPaurviseYoBqo0zBd3zqoUi3LPCNtPFlEP8FiW9MqCZdjb2IYA==}
+  /jsdom/21.1.0:
+    resolution: {integrity: sha512-m0lzlP7qOtthD918nenK3hdItSd2I+V3W9IrBcB36sqDwG+KnUs66IF5GY7laGWUnlM9vTsD0W1QwSEBYWWcJg==}
     engines: {node: '>=14'}
     peerDependencies:
       canvas: ^2.5.0
@@ -3386,7 +3386,7 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitest/0.27.1_jsdom@21.0.0:
+  /vitest/0.27.1_jsdom@21.1.0:
     resolution: {integrity: sha512-1sIpQ1DVFTEn7c1ici1XHcVfdU4nKiBmPtPAtGKJJJLuJjojTv/OHGgcf69P57alM4ty8V4NMv+7Yoi5Cxqx9g==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
@@ -3416,7 +3416,7 @@ packages:
       cac: 6.7.14
       chai: 4.3.7
       debug: 4.3.4
-      jsdom: 21.0.0
+      jsdom: 21.1.0
       local-pkg: 0.4.2
       picocolors: 1.0.0
       source-map: 0.6.1
