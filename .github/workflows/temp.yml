@@ -75,7 +75,7 @@ jobs:
 
     - run: cd gui && pnpm install
 
-    - uses: FabianLars/tauri-action@debug
+    - uses: tauri-apps/tauri-action@refactor
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
