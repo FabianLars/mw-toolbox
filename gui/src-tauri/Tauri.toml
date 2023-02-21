@@ -11,7 +11,7 @@ identifier = "de.FabianLars.mw-toolbox"
 icon = ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"]
 copyright = "MIT"
 category = "DeveloperTool"
-shortDescription = "mw-toolbox GUI",
+shortDescription = "mw-toolbox GUI"
 longDescription = "mw-toolbox GUI"
 
 [tauri.allowlist]
