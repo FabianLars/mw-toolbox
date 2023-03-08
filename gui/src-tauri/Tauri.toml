@@ -38,7 +38,7 @@ csp = "default-src 'self'"
 freezePrototype = true
 
 [tauri.updater]
-active = false
+active = true
 dialog = true
 pubkey = "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDVCRjExMDk5REExQTlBNjgKUldSb21ocmFtUkR4V3lyaW1kQmQvYklqeGkyd2R1TmExQ1MzQVVJanpEZ3A4WjY3M0xsc3BFZU4K"
 endpoints = ["https://api.fabianlars.de/v1/update/mw-toolbox/{{target}}/{{arch}}/{{current_version}}"]
