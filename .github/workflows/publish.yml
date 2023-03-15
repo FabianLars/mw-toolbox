@@ -68,7 +68,7 @@ jobs:
 
       - name: Upload files to the update server (Windows)
         if: runner.os == 'Windows'
-        uses: SamKirkland/FTP-Deploy-Action@4.3.3
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ env.REMOTE_HOST }}
           protocol: ftps
