@@ -75,7 +75,7 @@ jobs:
 
       - run: cd gui && pnpm install
 
-      - uses: tauri-apps/tauri-action@feat/platform-config
+      - uses: tauri-apps/tauri-action@remove-configpath
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -86,3 +86,4 @@ jobs:
           prerelease: false
           #includeDebug: true
           args: ${{ matrix.settings.args }}
+          projectPath: gui
