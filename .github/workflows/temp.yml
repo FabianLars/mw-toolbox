@@ -87,4 +87,4 @@ jobs:
           #includeDebug: true
           args: ${{ matrix.settings.args }}
           projectPath: gui
-          #updaterJsonKeepUniversal: false
+          updaterJsonKeepUniversal: true
