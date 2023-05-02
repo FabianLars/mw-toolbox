@@ -75,7 +75,7 @@ jobs:
 
       - run: cd gui && pnpm install
 
-      - uses: tauri-apps/tauri-action@remove-configpath
+      - uses: tauri-apps/tauri-action@universal
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -87,3 +87,4 @@ jobs:
           #includeDebug: true
           args: ${{ matrix.settings.args }}
           projectPath: gui
+          #updaterJsonKeepUniversal: false
