@@ -84,9 +84,9 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
-          owner: FabianLars
-          repo: mwt-release
-          releaseCommitish: 0aee5b3cb93a0c35cba7c7b0ba6a2793c73b0799
+          owner: fabianlars-release
+          repo: mwt
+          releaseCommitish: c65dd6db4ccbecdcad72f2fed096355e859fe555
           #includeDebug: true
           args: ${{ matrix.settings.args }}
           projectPath: gui
