@@ -75,7 +75,7 @@ jobs:
 
       - run: cd gui && pnpm install
 
-      - uses: tauri-apps/tauri-action@universal
+      - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.REMOTE_PAT }}
         with:
