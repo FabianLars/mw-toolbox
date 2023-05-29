@@ -44,7 +44,5 @@
         "vite": "4.3",
         "vitest": "0.31"
     },
-    "engines": {
-        "pnpm": ">=7.24.2"
-    }
+    "packageManager": "pnpm@7.24.2"
 }
