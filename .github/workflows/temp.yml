@@ -84,10 +84,10 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
-          owner: fabianlars-release
-          repo: mwt
-          releaseCommitish: c65dd6db4ccbecdcad72f2fed096355e859fe555
+          #owner: fabianlars-release
+          #repo: mwt
+          #releaseCommitish: c65dd6db4ccbecdcad72f2fed096355e859fe555
           #includeDebug: true
           args: ${{ matrix.settings.args }}
-          projectPath: gui
-          updaterJsonKeepUniversal: true
+          #projectPath: gui
+          #updaterJsonKeepUniversal: true
