@@ -89,5 +89,5 @@ jobs:
           #releaseCommitish: c65dd6db4ccbecdcad72f2fed096355e859fe555
           #includeDebug: true
           args: ${{ matrix.settings.args }}
-          #projectPath: gui
+          projectPath: gui
           #updaterJsonKeepUniversal: true
