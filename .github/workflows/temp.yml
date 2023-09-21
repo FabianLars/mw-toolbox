@@ -1,4 +1,4 @@
-name: 'publish'
+name: "publish"
 on:
   push:
     branches:
@@ -8,7 +8,7 @@ env:
   CARGO_INCREMENTAL: 0
   RUST_BACKTRACE: short
   # RUSTFLAGS: '-D warnings -W unreachable-pub -W rust-2021-compatibility'
-  RUSTFLAGS: '-W unreachable-pub -W rust-2021-compatibility'
+  RUSTFLAGS: "-W unreachable-pub -W rust-2021-compatibility"
   WTOOLS_AEAD_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
 
@@ -18,20 +18,20 @@ jobs:
       fail-fast: false
       matrix:
         settings:
-          - platform: 'macos-latest'
-            args: '--target universal-apple-darwin'
+          - platform: "macos-latest"
+            args: "--target universal-apple-darwin"
           #- platform: 'macos-latest'
           #  args: '--target x86_64-apple-darwin'
           #- platform: 'macos-latest'
           #  args: '--target aarch64-apple-darwin'
           #- platform: 'macos-latest'
           #  args: '--target aarch64-apple-darwin'
-          - platform: 'ubuntu-20.04'
-            args: ''
-          - platform: 'windows-latest'
-            args: '--target x86_64-pc-windows-msvc'
-          - platform: 'windows-latest'
-            args: '--target i686-pc-windows-msvc'
+          - platform: "ubuntu-20.04"
+            args: ""
+          - platform: "windows-latest"
+            args: "--target x86_64-pc-windows-msvc"
+          - platform: "windows-latest"
+            args: "--target i686-pc-windows-msvc"
 
     runs-on: ${{ matrix.settings.platform }}
     steps:
@@ -57,8 +57,8 @@ jobs:
       - name: Setup node and cache for package data
         uses: actions/setup-node@v3
         with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
+          node-version: "lts/*"
+          cache: "pnpm"
           cache-dependency-path: gui/pnpm-lock.yaml
 
       # Remove this step if you use `npm ci` instead of `npm install` since it deletes the node_modules folder.
@@ -75,13 +75,13 @@ jobs:
 
       - run: cd gui && pnpm install && pnpm build
 
-      - uses: tauri-apps/tauri-action@dev
+      - uses: FabianLars/tauri-action@fix-workspace-version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
-          releaseName: 'App v__VERSION__'
-          releaseBody: 'See the assets to download this version and install.'
+          releaseName: "App v__VERSION__"
+          releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
           #owner: fabianlars-release
