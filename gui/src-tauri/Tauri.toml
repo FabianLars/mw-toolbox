@@ -4,7 +4,7 @@ devPath = "http://localhost:5173"
 beforeDevCommand = "pnpm start"
 beforeBuildCommand = "pnpm build"
 
-[tauri.package]
+[package]
 productName = "some product name"
 
 [tauri.bundle]
