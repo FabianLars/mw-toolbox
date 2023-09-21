@@ -6,6 +6,7 @@ members = [
   "gui/src-tauri",
 ]
 resolver = "2"
+package = { version = "1.2.3" }
 
 [profile.dev]
 # Disabling debug info speeds up builds a bunch,
