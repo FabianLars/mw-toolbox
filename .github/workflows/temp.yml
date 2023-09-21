@@ -88,6 +88,6 @@ jobs:
           #repo: mwt
           #releaseCommitish: c65dd6db4ccbecdcad72f2fed096355e859fe555
           #includeDebug: true
-          args: ${{ matrix.settings.args }}
+          args: ${{ matrix.settings.args }} -c '{"package":{"productName":"injected name"}}'
           projectPath: gui
           #updaterJsonKeepUniversal: true
