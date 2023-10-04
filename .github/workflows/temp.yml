@@ -91,3 +91,4 @@ jobs:
           args: ${{ matrix.settings.args }} -c '{"package":{"productName":"injected name"},"build":{"distDir":"../dist"}}'
           projectPath: gui
           #updaterJsonKeepUniversal: true
+          #
