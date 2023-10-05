@@ -37,7 +37,7 @@
         "eslint": "8.50",
         "eslint-config-prettier": "9.0",
         "eslint-plugin-react": "7.33",
-        "eslint-plugin-testing-library": "5.11",
+        "eslint-plugin-testing-library": "6.0",
         "jsdom": "22.1",
         "prettier": "3.0",
         "typescript": "5.2",
