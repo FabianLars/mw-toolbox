@@ -6,7 +6,6 @@ import './index.css';
 declare global {
     interface Window {
         OS: string;
-        __TAURI__: Record<string, unknown>;
     }
 }
 
