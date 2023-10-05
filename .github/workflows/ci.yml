@@ -6,14 +6,14 @@ on:
   push:
     branches:
       - main
-      - 'renovate/**'
-      - '!renovate/lock-file-maintenance'
+      - "renovate/**"
+      - "!renovate/lock-file-maintenance"
 
 env:
   CARGO_INCREMENTAL: 0
   RUST_BACKTRACE: short
   # RUSTFLAGS: '-D warnings -W unreachable-pub -W rust-2021-compatibility'
-  RUSTFLAGS: '-W unreachable-pub -W rust-2021-compatibility'
+  RUSTFLAGS: "-W unreachable-pub -W rust-2021-compatibility"
   WTOOLS_AEAD_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
 
@@ -21,7 +21,7 @@ jobs:
   rust:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -54,17 +54,17 @@ jobs:
       matrix:
         settings:
           - os: macos-latest
-            store: '~/Library/pnpm/store'
+            store: "~/Library/pnpm/store"
           - os: ubuntu-latest
-            store: '~/.local/share/pnpm/store'
+            store: "~/.local/share/pnpm/store"
           - os: windows-latest
-            store: '%LOCALAPPDATA%/pnpm/store'
+            store: "%LOCALAPPDATA%/pnpm/store"
 
     name: tauri (${{ matrix.settings.os }})
     runs-on: ${{ matrix.settings.os }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Linux dependencies
         if: runner.os == 'Linux'
@@ -81,7 +81,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: "16"
 
       - name: Cache pnpm modules
         uses: actions/cache@v3
@@ -92,7 +92,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2
         with:
-          version: 7.x.x
+          version: 8
           run_install: true
 
       - name: tauri build
@@ -104,12 +104,12 @@ jobs:
       run:
         working-directory: gui
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: "16"
 
       - name: Cache pnpm modules
         uses: actions/cache@v3
@@ -120,7 +120,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2
         with:
-          version: 7.x.x
+          version: 8
           run_install: true
 
       - name: Types

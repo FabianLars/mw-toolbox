@@ -21,7 +21,7 @@ jobs:
     runs-on: ${{ matrix.platform }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Prepare folders on update server
         if: runner.os == 'Linux'
@@ -57,7 +57,7 @@ jobs:
       - name: Install pnpm and project dependencies
         uses: pnpm/action-setup@v2
         with:
-          version: 7.x.x
+          version: 8
           run_install: |
             - cwd: gui
 
@@ -68,7 +68,7 @@ jobs:
 
       - name: Upload files to the update server (Windows)
         if: runner.os == 'Windows'
-        uses: SamKirkland/FTP-Deploy-Action@4.3.3
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ env.REMOTE_HOST }}
           protocol: ftps
