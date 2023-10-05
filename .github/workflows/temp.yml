@@ -36,22 +36,21 @@ jobs:
     runs-on: ${{ matrix.settings.platform }}
     steps:
       - uses: actions/checkout@v4
-      - name: setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
+
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-apple-darwin
+
       - name: install dependencies (ubuntu only)
         if: matrix.settings.platform == 'ubuntu-20.04'
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
+
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 7.x.x
+          version: 8.x.x
           run_install: false
 
       - name: Setup node and cache for package data
