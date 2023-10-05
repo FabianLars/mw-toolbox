@@ -51,7 +51,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 7.x.x
+          version: 8.x.x
           run_install: false
 
       - name: Setup node and cache for package data
@@ -88,7 +88,7 @@ jobs:
           #repo: mwt
           #releaseCommitish: c65dd6db4ccbecdcad72f2fed096355e859fe555
           #includeDebug: true
-          args: ${{ matrix.settings.args }} -c '{"package":{"productName":"injected name"},"build":{"distDir":"../dist"}}'
+          #args: ${{ matrix.settings.args }} -c '{"package":{"productName":"injected name"},"build":{"distDir":"../dist"}}'
           projectPath: gui
           #updaterJsonKeepUniversal: true
           #
