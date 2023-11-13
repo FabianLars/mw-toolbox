@@ -212,8 +212,8 @@ const Edit = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
                                         !isOnline
                                             ? 'Please login first!'
                                             : isRunning
-                                            ? ''
-                                            : 'This might take a while!'
+                                              ? ''
+                                              : 'This might take a while!'
                                     }
                                 >
                                     {isRunning ? 'Stop' : 'Start'}
