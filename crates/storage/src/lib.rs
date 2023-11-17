@@ -21,7 +21,11 @@ static PATH: Lazy<PathBuf> = Lazy::new(|| {
 });
 
 pub fn encrypt(data: &[u8]) -> Result<Vec<u8>> {
-    let cryptkey = Key::from_slice(env!("WTOOLS_AEAD_KEY").as_bytes());
+    #[cfg(debug_assertions)]
+    let __env_key = std::env::var("WTOOLS_AEAD_KEY").unwrap_or("aaaaaaaaaaaaaaaaaaaaaaaa".into());
+    #[cfg(not(debug_assertions))]
+    let __env_key = env!("WTOOLS_AEAD_KEY");
+    let cryptkey = Key::from_slice(__env_key.as_bytes());
     let aead = XChaCha20Poly1305::new(cryptkey);
 
     let mut rng_nonce = [0u8; 24];
