@@ -1,8 +1,7 @@
 [workspace]
 members = [
   "cli",
-  "crates/mw-tools",
-  "crates/storage",
+  "crates/*",
   "gui/src-tauri",
 ]
 resolver = "2"
