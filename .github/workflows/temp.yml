@@ -74,6 +74,7 @@ jobs:
 
       - run: cd gui && pnpm install && pnpm build
 
+#wasd
       - uses: tauri-apps/tauri-action@fix/member-patterns
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
