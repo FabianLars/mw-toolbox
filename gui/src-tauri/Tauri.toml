@@ -17,6 +17,9 @@ category = "DeveloperTool"
 shortDescription = "mw-toolbox GUI"
 longDescription = "mw-toolbox GUI"
 
+[tauri.bundle.windows.wix]
+language = "zh-CN"
+
 [tauri.allowlist]
 all = false
 
