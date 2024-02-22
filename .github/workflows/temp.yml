@@ -75,7 +75,7 @@ jobs:
 
       - run: cd gui && pnpm install && pnpm build
 
-      - uses: tauri-apps/tauri-action@wixlang
+      - uses: tauri-apps/tauri-action@fix-config-merge
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
