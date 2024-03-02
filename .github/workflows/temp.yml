@@ -75,7 +75,7 @@ jobs:
 
       - run: cd gui && pnpm install && pnpm build
 
-      - uses: tauri-apps/tauri-action@fix-config-merge
+      - uses: tauri-apps/tauri-action@dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -89,8 +89,8 @@ jobs:
           #releaseCommitish: c65dd6db4ccbecdcad72f2fed096355e859fe555
           includeDebug: true
           includeRelease: false
-          args: -c gui/test.conf.json
+          #args: -c gui/test.conf.json
           #args: ${{ matrix.settings.args }} -c '{"package":{"productName":"injected name"},"build":{"distDir":"../dist"}}'
-          #projectPath: gui
+          projectPath: gui
           #updaterJsonKeepUniversal: true
           #
