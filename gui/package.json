@@ -42,7 +42,7 @@
         "prettier": "3.2",
         "typescript": "5.4",
         "vite": "4.5",
-        "vitest": "1.5"
+        "vitest": "1.6"
     },
     "pnpm": {
         "auditConfig": {
