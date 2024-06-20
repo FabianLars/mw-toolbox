@@ -40,7 +40,7 @@
         "eslint-plugin-testing-library": "6.2",
         "jsdom": "24.1",
         "prettier": "3.3",
-        "typescript": "5.4",
+        "typescript": "5.5",
         "vite": "4.5",
         "vitest": "1.6"
     },
