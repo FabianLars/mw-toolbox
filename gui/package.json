@@ -20,7 +20,7 @@
         "history": "5.3",
         "react": "18.3",
         "react-dom": "18.3",
-        "react-focus-lock": "2.12",
+        "react-focus-lock": "2.13",
         "react-router-dom": "6.26"
     },
     "devDependencies": {
