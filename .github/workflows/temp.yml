@@ -7,7 +7,7 @@ on:
 
 jobs:
   create-release:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     outputs:
       release_id: ${{ steps.create-release.outputs.result }}
 
