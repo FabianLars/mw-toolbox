@@ -62,7 +62,7 @@ jobs:
           cache-dependency-path: gui/pnpm-lock.yaml
 
       - name: temp test stuff
-        if: matrix.settings.platform == "windows-latest"
+        if: matrix.settings.platform == 'windows-latest'
         run: |
           bash --help
           gitbash --help
