@@ -13,7 +13,7 @@ type Props = {
     footer?: React.ReactNode;
     isOpen?: boolean;
     onClose: () => void;
-    initialFocusRef?: React.RefObject<FocusableElement>;
+    initialFocusRef?: React.RefObject<FocusableElement | null>;
 };
 
 const Modal = ({
