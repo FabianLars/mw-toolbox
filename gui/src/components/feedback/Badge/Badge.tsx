@@ -5,7 +5,7 @@ type Props = {
     type?: 'success' | 'error';
 };
 
-const Badge = ({ children, type }: Props): JSX.Element => {
+const Badge = ({ children, type }: Props) => {
     return <span className={`${cls.badge} ${type ? cls[type] : ''}`}>{children}</span>;
 };
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { invoke } from '@tauri-apps/api/tauri';
-import { open } from '@tauri-apps/api/dialog';
+import { invoke } from '@tauri-apps/api/core';
+import { open } from '@tauri-apps/plugin-dialog';
 import FileList from './FileList';
 import { emit, listen } from '@tauri-apps/api/event';
 import { getCache, setCache } from '@/helpers/invoke';
@@ -19,7 +19,7 @@ type Props = {
     setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Upload = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
+const Upload = ({ isOnline, setNavDisabled }: Props) => {
     const [status, setStatus] = useState(Action.None);
     const [uploadtext, setUploadtext] = useState('');
     const [files, setFiles] = useState<string[]>([]);
@@ -79,7 +79,7 @@ const Upload = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
         };
     }, [files]);
 
-    useEffect(() => setNavDisabled(status !== Action.None), [status]);
+    useEffect(() => setNavDisabled(status !== Action.None), [setNavDisabled, status]);
 
     return (
         <div className={cls.container}>

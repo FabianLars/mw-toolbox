@@ -8,13 +8,7 @@ type Props = {
     isRequired?: boolean;
 };
 
-const Label = ({
-    children,
-    className = '',
-    htmlFor,
-    isDisabled = false,
-    isRequired,
-}: Props): JSX.Element => {
+const Label = ({ children, className = '', htmlFor, isDisabled = false, isRequired }: Props) => {
     return (
         <label
             htmlFor={htmlFor}

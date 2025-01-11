@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import { getCache, setCache } from '@/helpers/invoke';
 import { errorToast, successToast } from '@/helpers/toast';
 import { Button, Textarea } from '@/components';
@@ -16,7 +16,7 @@ type Props = {
     setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Purge = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
+const Purge = ({ isOnline, setNavDisabled }: Props) => {
     const [status, setStatus] = useState(Action.None);
     const [areaValue, setAreaValue] = useState('');
 

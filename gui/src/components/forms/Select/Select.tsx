@@ -24,7 +24,7 @@ const Select = ({
     value,
     onChange,
     children,
-}: Props): JSX.Element => {
+}: Props) => {
     const selRef = useRef<HTMLSelectElement>(null);
 
     useEffect(() => {

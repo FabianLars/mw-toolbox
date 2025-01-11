@@ -16,7 +16,7 @@ type HeaderProps = {
     isOnline: boolean;
 };
 
-const HeaderItem = ({ children, isDisabled = false, to = '/' }: MenuProps): JSX.Element => {
+const HeaderItem = ({ children, isDisabled = false, to = '/' }: MenuProps) => {
     const location = useLocation().pathname;
     return (
         <Link
@@ -31,7 +31,7 @@ const HeaderItem = ({ children, isDisabled = false, to = '/' }: MenuProps): JSX.
     );
 };
 
-const Header = ({ isDisabled, isOnline }: HeaderProps): JSX.Element => {
+const Header = ({ isDisabled, isOnline }: HeaderProps) => {
     return (
         <>
             <nav className={cls.nav}>

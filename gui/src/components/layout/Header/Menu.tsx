@@ -3,17 +3,17 @@ import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import cls from './Menu.module.css';
 
-const Menu = (): JSX.Element => {
+const Menu = () => {
     const [isOpen, setIsOpen] = useState(false);
     const firstRun = useRef(true);
     const clickedOpen = useRef(false);
     const currentIndex = useRef<number | null>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
-    const itemRefs = Array.from({ length: 8 }, () => useRef<HTMLAnchorElement>(null));
+    const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
     const moveFocus = (index: number) => {
         currentIndex.current = index;
-        itemRefs[index].current?.focus();
+        itemRefs.current[index]?.focus();
     };
 
     // focus first element everytime the menu opens
@@ -140,7 +140,9 @@ const Menu = (): JSX.Element => {
                     <Link
                         to={v}
                         key={'menu' + i}
-                        ref={itemRefs[i]}
+                        ref={(el) => {
+                            itemRefs.current[i] = el;
+                        }}
                         onKeyDown={handleItemKeyDown}
                         tabIndex={-1}
                         role="menuitem"

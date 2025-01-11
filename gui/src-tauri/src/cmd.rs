@@ -2,7 +2,7 @@ use std::{collections::HashMap, sync::atomic::Ordering};
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use tauri::command;
+use tauri::{command, Emitter};
 
 use mw_tools::{api, Error};
 
@@ -154,18 +154,18 @@ pub(crate) async fn list(listtype: &str, param: Option<&str>) -> Result<Vec<Stri
     let client = CLIENT.lock().await;
     let param = param.unwrap_or_default();
     match listtype {
-        "allimages" => api::list::allimages(&*client).await,
-        "allpages" => api::list::allpages(&*client, Some(param)).await,
-        "alllinks" => api::list::alllinks(&*client).await,
-        "allcategories" => api::list::allcategories(&*client).await,
-        "backlinks" => api::list::backlinks(&*client, param).await,
-        "categorymembers" => api::list::categorymembers(&*client, param).await,
-        "embeddedin" => api::list::embeddedin(&*client, param).await,
-        "imageusage" => api::list::imageusage(&*client, param).await,
-        "search" => api::list::search(&*client, param).await,
-        "protectedtitles" => api::list::protectedtitles(&*client).await,
-        "querypage" => api::list::querypage(&*client, param).await,
-        "allinfoboxes" => api::list::allinfoboxes(&*client).await,
+        "allimages" => api::list::allimages(&client).await,
+        "allpages" => api::list::allpages(&client, Some(param)).await,
+        "alllinks" => api::list::alllinks(&client).await,
+        "allcategories" => api::list::allcategories(&client).await,
+        "backlinks" => api::list::backlinks(&client, param).await,
+        "categorymembers" => api::list::categorymembers(&client, param).await,
+        "embeddedin" => api::list::embeddedin(&client, param).await,
+        "imageusage" => api::list::imageusage(&client, param).await,
+        "search" => api::list::search(&client, param).await,
+        "protectedtitles" => api::list::protectedtitles(&client).await,
+        "querypage" => api::list::querypage(&client, param).await,
+        "allinfoboxes" => api::list::allinfoboxes(&client).await,
         _ => Err(Error::InvalidInput(format!(
             "Invalid listtype provided: \"{}\"",
             listtype
@@ -214,9 +214,9 @@ pub(crate) async fn rename(from: Vec<String>, to: Vec<String>) -> Result<()> {
 pub(crate) async fn purge(is_nulledit: bool, pages: Vec<&str>) -> Result<()> {
     let client = CLIENT.lock().await;
     if is_nulledit {
-        api::edit::nulledit(&*client, &pages).await
+        api::edit::nulledit(&client, &pages).await
     } else {
-        api::purge::purge(&*client, &pages, true).await
+        api::purge::purge(&client, &pages, true).await
     }
 }
 

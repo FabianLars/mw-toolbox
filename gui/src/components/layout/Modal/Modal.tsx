@@ -1,5 +1,8 @@
+// FIXME:
+/* eslint-disable react-hooks/rules-of-hooks */
+
 import type { FocusableElement } from '@/helpers/types';
-import { useEffect, useRef, useState } from 'react';
+import { JSX, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import FocusLock from 'react-focus-lock';
 import cls from './Modal.module.css';
@@ -46,6 +49,8 @@ const Modal = ({
         }, 1);
 
         return () => document.removeEventListener('keydown', keyDown);
+        // FIXME:
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return ReactDOM.createPortal(

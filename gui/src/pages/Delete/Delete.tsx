@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import { Button, Input, Label, Textarea } from '@/components';
 import { getCache, setCache } from '@/helpers/invoke';
 import { errorToast, successToast } from '@/helpers/toast';
@@ -10,7 +10,7 @@ type Props = {
     setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Delete = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
+const Delete = ({ isOnline, setNavDisabled }: Props) => {
     const [areaValue, setAreaValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [reason, setReason] = useState('');
@@ -26,7 +26,7 @@ const Delete = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
             .finally(() => setIsLoading(false));
     };
 
-    useEffect(() => setNavDisabled(isLoading), [isLoading]);
+    useEffect(() => setNavDisabled(isLoading), [isLoading, setNavDisabled]);
 
     useEffect(() => {
         getCache<string>('delete-reason').then((cache) => {

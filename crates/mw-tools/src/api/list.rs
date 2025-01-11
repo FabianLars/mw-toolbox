@@ -102,7 +102,7 @@ pub async fn exturlusage(client: &Client) -> Result<HashMap<String, Vec<String>>
         let split: Vec<&str> = v.split("~URL~").collect();
         results
             .entry(split[0].to_string())
-            .or_insert_with(Vec::new)
+            .or_default()
             .push(split[1].to_string());
     }
 

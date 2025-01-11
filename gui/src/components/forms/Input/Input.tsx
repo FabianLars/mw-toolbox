@@ -28,7 +28,7 @@ const Input = ({
     value,
     onBlur,
     onChange,
-}: Props): JSX.Element => {
+}: Props) => {
     return (
         <input
             aria-label={label}

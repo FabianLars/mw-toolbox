@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import FindReplaceModal from './FindReplaceModal';
 import { listen, emit } from '@tauri-apps/api/event';
 import { Button, Checkbox, Input, Label, Textarea } from '@/components';
@@ -19,7 +19,7 @@ type Props = {
     setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Edit = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
+const Edit = ({ isOnline, setNavDisabled }: Props) => {
     const [isRunning, setIsRunning] = useState(false);
     const [isAuto, setIsAuto] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -109,7 +109,7 @@ const Edit = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
 
     useEffect(
         () => setNavDisabled(isLoading || isAuto ? isRunning : false),
-        [isLoading, isRunning],
+        [isAuto, isLoading, isRunning, setNavDisabled],
     );
 
     useEffect(() => {

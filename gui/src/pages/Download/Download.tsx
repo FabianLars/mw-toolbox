@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import { getCache, setCache } from '@/helpers/invoke';
 import { errorToast, successToast } from '@/helpers/toast';
 import { Button, Textarea } from '@/components';
@@ -10,7 +10,7 @@ type Props = {
     setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Download = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
+const Download = ({ isOnline, setNavDisabled }: Props) => {
     const [areaValue, setAreaValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -24,7 +24,7 @@ const Download = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
             .finally(() => setIsLoading(false));
     };
 
-    useEffect(() => setNavDisabled(isLoading), [isLoading]);
+    useEffect(() => setNavDisabled(isLoading), [isLoading, setNavDisabled]);
 
     useEffect(() => {
         getCache<string>('download-cache').then((cache) => {

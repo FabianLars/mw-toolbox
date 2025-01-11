@@ -42,9 +42,7 @@ pub async fn upload_multiple<P: AsRef<Path>>(
     text: Option<&str>,
 ) -> Result<(), Error> {
     for file in files {
-        if let Err(err) = upload(client, file, text).await {
-            return Err(err);
-        }
+        upload(client, file, text).await?;
     }
 
     Ok(())

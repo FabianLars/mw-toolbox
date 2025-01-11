@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import { getCache, setCache } from '@/helpers/invoke';
 import { errorToast, successToast } from '@/helpers/toast';
 import { Button, Textarea } from '@/components';
@@ -10,7 +10,7 @@ type Props = {
     setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Move = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
+const Move = ({ isOnline, setNavDisabled }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [areaFrom, setAreaFrom] = useState('');
     const [areaTo, setAreaTo] = useState('');
@@ -26,7 +26,7 @@ const Move = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
             .finally(() => setIsLoading(false));
     };
 
-    useEffect(() => setNavDisabled(isLoading), [isLoading]);
+    useEffect(() => setNavDisabled(isLoading), [isLoading, setNavDisabled]);
 
     useEffect(() => {
         getCache<string>('move-cache-from').then((cache) => {

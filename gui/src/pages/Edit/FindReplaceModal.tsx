@@ -18,7 +18,7 @@ type Props = {
     initialRef?: React.RefObject<HTMLButtonElement>;
 };
 
-const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props): JSX.Element => {
+const FindReplaceModal = ({ isOpen, onClose, patterns, setPatterns }: Props) => {
     const [localPatterns, setLocalPatterns] = useState<Pattern[]>([]);
     const initialRef = useRef<HTMLButtonElement>(null);
 

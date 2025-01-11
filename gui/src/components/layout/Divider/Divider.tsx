@@ -4,7 +4,7 @@ type Props = {
     orientation?: 'horizontal' | 'vertical';
 };
 
-const Divider = ({ orientation = 'horizontal' }: Props): JSX.Element => {
+const Divider = ({ orientation = 'horizontal' }: Props) => {
     return (
         <hr
             aria-orientation={orientation as Props['orientation']}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 
 import { errorToast } from '@/helpers/toast';
 import { Button, Input, Label, Select, Textarea } from '@/components';
@@ -13,7 +13,7 @@ type Props = {
     setNavDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const List = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
+const List = ({ isOnline, setNavDisabled }: Props) => {
     const [loading, setLoading] = useState(false);
     const [listOutput, setListOutput] = useState('');
     const [listType, setListType] = useState('');
@@ -79,7 +79,7 @@ const List = ({ isOnline, setNavDisabled }: Props): JSX.Element => {
         setParamRequired(paramReq);
     }, [listType]);
 
-    useEffect(() => setNavDisabled(loading), [loading]);
+    useEffect(() => setNavDisabled(loading), [loading, setNavDisabled]);
 
     return (
         <div className={cls.container}>

@@ -1,4 +1,4 @@
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 
 import { useEffect, useState } from 'react';
 import { Button, Checkbox, Divider, Input, Label, Select } from '@/components';
@@ -22,7 +22,7 @@ const Account = ({
     currentProfile,
     setCurrentProfile,
     setNavDisabled,
-}: Props): JSX.Element => {
+}: Props) => {
     const [logginin, setLoggingin] = useState(false);
     const [urlInvalid, seturlInvalid] = useState(false);
     const [usernameInvalid, setUsernameInvalid] = useState(false);
@@ -121,7 +121,7 @@ const Account = ({
         }
     }, [profiles, currentProfile]);
 
-    useEffect(() => setNavDisabled(logginin), [logginin]);
+    useEffect(() => setNavDisabled(logginin), [logginin, setNavDisabled]);
 
     return (
         <main className={cls.container}>

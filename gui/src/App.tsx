@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import { Account, Delete, Download, Edit, List, Move, Purge, Upload } from './pages';
 import { Header } from './components';
 import { getCache, setCache } from '@/helpers/invoke';
 import cls from './App.module.css';
 import type { Profile } from './helpers/types';
 
-const App = (): JSX.Element => {
+const App = () => {
     // useRef to make useEffect skip the change from useState
     const mounted = useRef(false);
     // Init dummy object to prevent errors on startup
@@ -59,6 +59,8 @@ const App = (): JSX.Element => {
         } else {
             mounted.current = true;
         }
+        // FIXME:
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [profiles]);
 
     return (
