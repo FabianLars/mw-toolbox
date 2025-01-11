@@ -16,48 +16,45 @@ jobs:
 
     strategy:
       matrix:
-        platform: [macos-latest, ubuntu-20.04, windows-latest]
+        platform: [macos-latest, ubuntu-22.04, windows-latest]
 
     runs-on: ${{ matrix.platform }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Prepare folders on update server
-        if: runner.os == 'Linux'
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ env.REMOTE_HOST }}
-          username: ${{ env.REMOTE_USER }}
-          key: ${{ env.SSH_PRIVATE_KEY }}
-          script: |
-            cd ~/wwwcdn/releases/mw-toolbox/
-            rm -rf previous/
-            mv latest/ previous
-            mkdir -p latest/windows latest/linux latest/darwin
+      # - name: Prepare folders on update server
+      #   if: runner.os == 'Linux'
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ env.REMOTE_HOST }}
+      #     username: ${{ env.REMOTE_USER }}
+      #     key: ${{ env.SSH_PRIVATE_KEY }}
+      #     script: |
+      #       cd ~/wwwcdn/releases/mw-toolbox/
+      #       rm -rf previous/
+      #       mv latest/ previous
+      #       mkdir -p latest/windows latest/linux latest/darwin
 
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
+      - uses: dtolnay/rust-toolchain@stable
 
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: "lts/*"
 
       - name: Install dependencies (ubuntu only)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.0-dev libgtk-3-dev libappindicator3-dev librsvg2-dev
+          sudo apt-get install -y libwebkit2gtk-4.1-dev librsvg2-dev
 
       # No need for caches for release builds, because they get cleared every week anyway.
 
       - name: Install pnpm and project dependencies
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 9
           run_install: |
             - cwd: gui
 
@@ -66,51 +63,51 @@ jobs:
           cd gui
           pnpm tauri build
 
-      - name: Upload files to the update server (Windows)
-        if: runner.os == 'Windows'
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ env.REMOTE_HOST }}
-          protocol: ftps
-          username: ftpuser
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: 'target/release/bundle/msi/'
-          server-dir: 'releases/mw-toolbox/latest/windows/x86_64'
+      # - name: Upload files to the update server (Windows)
+      #   if: runner.os == 'Windows'
+      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      #   with:
+      #     server: ${{ env.REMOTE_HOST }}
+      #     protocol: ftps
+      #     username: ftpuser
+      #     password: ${{ secrets.FTP_PASSWORD }}
+      #     local-dir: 'target/release/bundle/msi/'
+      #     server-dir: 'releases/mw-toolbox/latest/windows/x86_64'
 
-      - name: Upload files to the update server (Linux)
-        if: runner.os == 'Linux'
-        uses: easingthemes/ssh-deploy@main
-        with:
-          SOURCE: 'target/release/bundle/appimage/'
-          TARGET: '~/wwwcdn/releases/mw-toolbox/latest/linux/x86_64'
+      # - name: Upload files to the update server (Linux)
+      #   if: runner.os == 'Linux'
+      #   uses: easingthemes/ssh-deploy@main
+      #   with:
+      #     SOURCE: 'target/release/bundle/appimage/'
+      #     TARGET: '~/wwwcdn/releases/mw-toolbox/latest/linux/x86_64'
 
-      - name: Upload files to the update server (macOS)
-        if: runner.os == 'macOS'
-        uses: easingthemes/ssh-deploy@main
-        with:
-          SOURCE: 'target/release/bundle/macos/'
-          TARGET: '~/wwwcdn/releases/mw-toolbox/latest/darwin/x86_64'
+      # - name: Upload files to the update server (macOS)
+      #   if: runner.os == 'macOS'
+      #   uses: easingthemes/ssh-deploy@main
+      #   with:
+      #     SOURCE: 'target/release/bundle/macos/'
+      #     TARGET: '~/wwwcdn/releases/mw-toolbox/latest/darwin/x86_64'
 
-      - name: Upload release assets (Windows)
-        if: runner.os == 'Windows'
-        uses: ncipollo/release-action@v1
-        with:
-          allowUpdates: true
-          artifacts: target/release/bundle/msi/mw-toolbox_*.msi
-          token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Upload release assets (Windows)
+      #   if: runner.os == 'Windows'
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     allowUpdates: true
+      #     artifacts: target/release/bundle/msi/mw-toolbox_*.msi
+      #     token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload release assets (Linux)
-        if: runner.os == 'Linux'
-        uses: ncipollo/release-action@v1
-        with:
-          allowUpdates: true
-          artifacts: target/release/bundle/appimage/mw-toolbox_*.AppImage
-          token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Upload release assets (Linux)
+      #   if: runner.os == 'Linux'
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     allowUpdates: true
+      #     artifacts: target/release/bundle/appimage/mw-toolbox_*.AppImage
+      #     token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload release assets (macOS)
-        if: runner.os == 'macOS'
-        uses: ncipollo/release-action@v1
-        with:
-          allowUpdates: true
-          artifacts: target/release/bundle/macos/mw-toolbox.app
-          token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Upload release assets (macOS)
+      #   if: runner.os == 'macOS'
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     allowUpdates: true
+      #     artifacts: target/release/bundle/macos/mw-toolbox.app
+      #     token: ${{ secrets.GITHUB_TOKEN }}
