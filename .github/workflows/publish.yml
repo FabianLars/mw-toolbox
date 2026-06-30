@@ -1,7 +1,7 @@
 name: Publish app
 
 on:
-  create:
+  #create:
   workflow_dispatch:
 
 env:
@@ -22,7 +22,7 @@ jobs:
           api-key: ${{ secrets.CN_API_KEY }}
 
   build_desktop:
-    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    #if: ${{ startsWith(github.ref, 'refs/tags/v') }}
 
     strategy:
       matrix:
