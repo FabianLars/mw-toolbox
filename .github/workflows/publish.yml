@@ -54,10 +54,11 @@ jobs:
             - cwd: gui
 
       - name: Build app
+        shell: bash
         run: |
           cargo install tauri-cli --git https://github.com/tauri-apps/tauri --branch feat/truly-portable-appimage
           cd gui
-          cargo tauri build
+          TAURI_BUNDLER_NEW_APPIMAGE_FORMAT=1 cargo tauri build
 
       - name: upload assets
         uses: crabnebula-dev/cloud-release@v0
