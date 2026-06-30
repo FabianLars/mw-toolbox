@@ -2,16 +2,26 @@ name: Publish app
 
 on:
   create:
+  workflow_dispatch:
 
 env:
   WTOOLS_AEAD_KEY: ${{ secrets.WTOOLS_AEAD_KEY }}
   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-  REMOTE_HOST: ${{ secrets.SERVER_IP }}
-  REMOTE_USER: ${{ secrets.USERNAME }}
-  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  CN_APPLICATION: "fabianlars/mw-toolbox"
 
 jobs:
-  mw-toolbox:
+  draft:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - name: create draft release
+        uses: crabnebula-dev/cloud-release@v0
+        with:
+          command: release draft ${{ env.CN_APPLICATION }} --framework tauri
+          api-key: ${{ secrets.CN_API_KEY }}
+
+  build_desktop:
     if: ${{ startsWith(github.ref, 'refs/tags/v') }}
 
     strategy:
@@ -21,25 +31,12 @@ jobs:
     runs-on: ${{ matrix.platform }}
 
     steps:
-      - uses: actions/checkout@v5
-
-      # - name: Prepare folders on update server
-      #   if: runner.os == 'Linux'
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{ env.REMOTE_HOST }}
-      #     username: ${{ env.REMOTE_USER }}
-      #     key: ${{ env.SSH_PRIVATE_KEY }}
-      #     script: |
-      #       cd ~/wwwcdn/releases/mw-toolbox/
-      #       rm -rf previous/
-      #       mv latest/ previous
-      #       mkdir -p latest/windows latest/linux latest/darwin
+      - uses: actions/checkout@v7
 
       - uses: dtolnay/rust-toolchain@stable
 
       - name: Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
 
@@ -49,10 +46,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev librsvg2-dev
 
-      # No need for caches for release builds, because they get cleared every week anyway.
-
       - name: Install pnpm and project dependencies
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: 10
           run_install: |
@@ -63,51 +58,22 @@ jobs:
           cd gui
           pnpm tauri build
 
-      # - name: Upload files to the update server (Windows)
-      #   if: runner.os == 'Windows'
-      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      #   with:
-      #     server: ${{ env.REMOTE_HOST }}
-      #     protocol: ftps
-      #     username: ftpuser
-      #     password: ${{ secrets.FTP_PASSWORD }}
-      #     local-dir: 'target/release/bundle/msi/'
-      #     server-dir: 'releases/mw-toolbox/latest/windows/x86_64'
+      - name: upload assets
+        uses: crabnebula-dev/cloud-release@v0
+        with:
+          command: release upload ${{ env.CN_APPLICATION }} --framework tauri
+          api-key: ${{ secrets.CN_API_KEY }}
 
-      # - name: Upload files to the update server (Linux)
-      #   if: runner.os == 'Linux'
-      #   uses: easingthemes/ssh-deploy@main
-      #   with:
-      #     SOURCE: 'target/release/bundle/appimage/'
-      #     TARGET: '~/wwwcdn/releases/mw-toolbox/latest/linux/x86_64'
+  # publish:
+  #   needs: [build_desktop]
 
-      # - name: Upload files to the update server (macOS)
-      #   if: runner.os == 'macOS'
-      #   uses: easingthemes/ssh-deploy@main
-      #   with:
-      #     SOURCE: 'target/release/bundle/macos/'
-      #     TARGET: '~/wwwcdn/releases/mw-toolbox/latest/darwin/x86_64'
+  #   runs-on: ubuntu-latest
 
-      # - name: Upload release assets (Windows)
-      #   if: runner.os == 'Windows'
-      #   uses: ncipollo/release-action@v1
-      #   with:
-      #     allowUpdates: true
-      #     artifacts: target/release/bundle/msi/mw-toolbox_*.msi
-      #     token: ${{ secrets.GITHUB_TOKEN }}
+  #   steps:
+  #     - uses: actions/checkout@v7
 
-      # - name: Upload release assets (Linux)
-      #   if: runner.os == 'Linux'
-      #   uses: ncipollo/release-action@v1
-      #   with:
-      #     allowUpdates: true
-      #     artifacts: target/release/bundle/appimage/mw-toolbox_*.AppImage
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-
-      # - name: Upload release assets (macOS)
-      #   if: runner.os == 'macOS'
-      #   uses: ncipollo/release-action@v1
-      #   with:
-      #     allowUpdates: true
-      #     artifacts: target/release/bundle/macos/mw-toolbox.app
-      #     token: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: publish release
+  #       uses: crabnebula-dev/cloud-release@v0
+  #       with:
+  #         command: release publish ${{ env.CN_APPLICATION }} --framework tauri
+  #         api-key: ${{ secrets.CN_API_KEY }}
