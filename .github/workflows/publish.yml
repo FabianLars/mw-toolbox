@@ -57,9 +57,9 @@ jobs:
       - name: Build app
         shell: bash
         run: |
-          cargo install tauri-cli --git https://github.com/tauri-apps/tauri --branch feat/truly-portable-appimage
+          cargo install tauri-cli --git https://github.com/tauri-apps/tauri --branch fabianlars/tty-test
           cd gui
-          TAURI_BUNDLER_NEW_APPIMAGE_FORMAT=1 script -q -c 'cargo tauri build -v'
+          TAURI_BUNDLER_NEW_APPIMAGE_FORMAT=1 cargo tauri build -v
 
       - name: upload assets
         uses: crabnebula-dev/cloud-release@v0
