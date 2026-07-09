@@ -25,8 +25,9 @@ jobs:
     #if: ${{ startsWith(github.ref, 'refs/tags/v') }}
 
     strategy:
+      fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-26.04, windows-latest]
+        platform: [ubuntu-26.04]
 
     runs-on: ${{ matrix.platform }}
 
